@@ -13,6 +13,7 @@ export const usersTable = pgTable("users", {
   id: serial("id").primaryKey(),
   clerkUserId: text("clerk_user_id").notNull().unique(),
   name: text("name").notNull().default(""),
+  city: text("city"),
   birthDate: date("birth_date", { mode: "string" }),
   birthTime: text("birth_time"),
   birthPlace: text("birth_place"),

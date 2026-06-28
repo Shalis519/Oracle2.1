@@ -9,6 +9,8 @@
 export interface ContactInput {
   name: string;
   /** @nullable */
+  city?: string | null;
+  /** @nullable */
   birthDate?: string | null;
   /** @nullable */
   deathDate?: string | null;

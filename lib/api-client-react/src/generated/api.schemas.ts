@@ -13,6 +13,8 @@ export interface Profile {
   id: number;
   name: string;
   /** @nullable */
+  city?: string | null;
+  /** @nullable */
   birthDate?: string | null;
   /** @nullable */
   birthTime?: string | null;
@@ -30,6 +32,8 @@ export interface Profile {
 
 export interface ProfileInput {
   name?: string;
+  /** @nullable */
+  city?: string | null;
   /** @nullable */
   birthDate?: string | null;
   /** @nullable */
@@ -140,6 +144,8 @@ export interface Contact {
   id: number;
   name: string;
   /** @nullable */
+  city?: string | null;
+  /** @nullable */
   birthDate?: string | null;
   /** @nullable */
   deathDate?: string | null;
@@ -163,6 +169,8 @@ export interface Contact {
 export interface ContactInput {
   name: string;
   /** @nullable */
+  city?: string | null;
+  /** @nullable */
   birthDate?: string | null;
   /** @nullable */
   deathDate?: string | null;
@@ -183,6 +191,8 @@ export interface ContactInput {
 
 export interface ContactUpdate {
   name?: string;
+  /** @nullable */
+  city?: string | null;
   /** @nullable */
   birthDate?: string | null;
   /** @nullable */

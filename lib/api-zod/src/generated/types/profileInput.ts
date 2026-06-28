@@ -9,6 +9,8 @@
 export interface ProfileInput {
   name?: string;
   /** @nullable */
+  city?: string | null;
+  /** @nullable */
   birthDate?: string | null;
   /** @nullable */
   birthTime?: string | null;

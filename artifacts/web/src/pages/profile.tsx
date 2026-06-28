@@ -18,6 +18,7 @@ export default function ProfilePage() {
 
   const [formData, setFormData] = useState({
     name: "",
+    city: "",
     birthDate: "",
     birthTime: "",
     birthPlace: "",
@@ -29,6 +30,7 @@ export default function ProfilePage() {
     if (profile) {
       setFormData({
         name: profile.name || "",
+        city: profile.city || "",
         birthDate: profile.birthDate ? profile.birthDate.split("T")[0] : "",
         birthTime: profile.birthTime || "",
         birthPlace: profile.birthPlace || "",
@@ -55,6 +57,7 @@ export default function ProfilePage() {
     updateProfile.mutate(
       { data: {
         ...formData,
+        city: formData.city || null,
         birthDate: formData.birthDate || null,
         birthTime: formData.birthTime || null,
         birthPlace: formData.birthPlace || null,
@@ -86,7 +89,7 @@ export default function ProfilePage() {
       <Card className="bg-card/40 backdrop-blur-md border-border shadow-lg">
         <CardHeader>
           <CardTitle className="font-serif text-2xl">Личные данные</CardTitle>
-          <CardDescription>Эти данные используются для расчетов Бацзы и Матрицы Судьбы.</CardDescription>
+          <CardDescription>Эти данные используются для расчетов Бацзы и Матрицы Судьбы. Город проживания нужен для погоды и будущих транзитов.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -105,7 +108,11 @@ export default function ProfilePage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="birthPlace">Место рождения</Label>
-                <Input id="birthPlace" name="birthPlace" placeholder="Город" value={formData.birthPlace} onChange={handleChange} />
+                <Input id="birthPlace" name="birthPlace" placeholder="Город рождения" value={formData.birthPlace} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city">Город проживания</Label>
+                <Input id="city" name="city" placeholder="Например: Москва" value={formData.city} onChange={handleChange} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bedDirection">Направление изголовья кровати</Label>

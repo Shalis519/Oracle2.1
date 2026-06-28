@@ -10,6 +10,8 @@ export interface Profile {
   id: number;
   name: string;
   /** @nullable */
+  city?: string | null;
+  /** @nullable */
   birthDate?: string | null;
   /** @nullable */
   birthTime?: string | null;

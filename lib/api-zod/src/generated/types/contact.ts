@@ -10,6 +10,8 @@ export interface Contact {
   id: number;
   name: string;
   /** @nullable */
+  city?: string | null;
+  /** @nullable */
   birthDate?: string | null;
   /** @nullable */
   deathDate?: string | null;

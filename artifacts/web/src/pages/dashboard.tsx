@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { useGetDashboard, useGetTodayForecast, useSubmitFeedback, getGetTodayForecastQueryKey } from "@workspace/api-client-react";
+import { useGetDashboard, useGetTodayForecast, useSubmitFeedback, useGetProfile, getGetTodayForecastQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUser } from "@clerk/react";
+import { WeatherClock } from "@/components/weather-clock";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
@@ -13,6 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 export default function DashboardPage() {
   const { data: dashboard, isLoading: dashboardLoading } = useGetDashboard();
   const { data: forecast, isLoading: forecastLoading } = useGetTodayForecast();
+  const { data: profile } = useGetProfile();
+  const { user } = useUser();
   const submitFeedback = useSubmitFeedback();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -40,9 +43,19 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h1 className="text-4xl font-serif font-bold mb-2">Оракул Дня</h1>
-        <p className="text-muted-foreground">Ежедневный синтез энергий для осознанного дня.</p>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          {user?.imageUrl && (
+            <img src={user.imageUrl} alt="" className="w-14 h-14 rounded-full border border-border object-cover shrink-0" />
+          )}
+          <div>
+            <h1 className="text-3xl md:text-4xl font-serif font-bold mb-1">
+              {user?.firstName ? `Здравствуйте, ${user.firstName}` : "Оракул Дня"}
+            </h1>
+            <p className="text-muted-foreground">Ежедневный синтез энергий для осознанного дня.</p>
+          </div>
+        </div>
+        <WeatherClock city={profile?.city} />
       </motion.div>
 
       {dashboard && !dashboard.profileComplete && (
@@ -70,7 +83,11 @@ export default function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="leading-relaxed text-lg">{forecast.synthesisText}</p>
+                <div className="space-y-3">
+                  {forecast.synthesisText.split("\n").filter((p: string) => p.trim()).map((para: string, i: number) => (
+                    <p key={i} className="leading-relaxed text-lg">{para}</p>
+                  ))}
+                </div>
                 <div className="grid grid-cols-2 gap-4 mt-6">
                   <div className="p-4 rounded-xl bg-background border border-border">
                     <p className="text-sm text-muted-foreground mb-1">Аркан</p>

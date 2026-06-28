@@ -23,6 +23,7 @@ export const HealthCheckResponse = zod.object({
 export const GetProfileResponse = zod.object({
   "id": zod.number(),
   "name": zod.string(),
+  "city": zod.string().nullish(),
   "birthDate": zod.string().nullish(),
   "birthTime": zod.string().nullish(),
   "birthPlace": zod.string().nullish(),
@@ -39,6 +40,7 @@ export const GetProfileResponse = zod.object({
  */
 export const UpdateProfileBody = zod.object({
   "name": zod.string().optional(),
+  "city": zod.string().nullish(),
   "birthDate": zod.string().nullish(),
   "birthTime": zod.string().nullish(),
   "birthPlace": zod.string().nullish(),
@@ -51,6 +53,7 @@ export const UpdateProfileBody = zod.object({
 export const UpdateProfileResponse = zod.object({
   "id": zod.number(),
   "name": zod.string(),
+  "city": zod.string().nullish(),
   "birthDate": zod.string().nullish(),
   "birthTime": zod.string().nullish(),
   "birthPlace": zod.string().nullish(),
@@ -292,6 +295,7 @@ export const GetFengShuiResponse = zod.object({
 export const ListContactsResponseItem = zod.object({
   "id": zod.number(),
   "name": zod.string(),
+  "city": zod.string().nullish(),
   "birthDate": zod.string().nullish(),
   "deathDate": zod.string().nullish(),
   "phone": zod.string().nullish(),
@@ -312,6 +316,7 @@ export const ListContactsResponse = zod.array(ListContactsResponseItem)
  */
 export const CreateContactBody = zod.object({
   "name": zod.string(),
+  "city": zod.string().nullish(),
   "birthDate": zod.string().nullish(),
   "deathDate": zod.string().nullish(),
   "phone": zod.string().nullish(),
@@ -326,6 +331,7 @@ export const CreateContactBody = zod.object({
 export const CreateContactResponse = zod.object({
   "id": zod.number(),
   "name": zod.string(),
+  "city": zod.string().nullish(),
   "birthDate": zod.string().nullish(),
   "deathDate": zod.string().nullish(),
   "phone": zod.string().nullish(),
@@ -363,6 +369,7 @@ export const GetContactParams = zod.object({
 export const GetContactResponse = zod.object({
   "id": zod.number(),
   "name": zod.string(),
+  "city": zod.string().nullish(),
   "birthDate": zod.string().nullish(),
   "deathDate": zod.string().nullish(),
   "phone": zod.string().nullish(),
@@ -386,6 +393,7 @@ export const UpdateContactParams = zod.object({
 
 export const UpdateContactBody = zod.object({
   "name": zod.string().optional(),
+  "city": zod.string().nullish(),
   "birthDate": zod.string().nullish(),
   "deathDate": zod.string().nullish(),
   "phone": zod.string().nullish(),
@@ -401,6 +409,7 @@ export const UpdateContactBody = zod.object({
 export const UpdateContactResponse = zod.object({
   "id": zod.number(),
   "name": zod.string(),
+  "city": zod.string().nullish(),
   "birthDate": zod.string().nullish(),
   "deathDate": zod.string().nullish(),
   "phone": zod.string().nullish(),

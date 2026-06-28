@@ -14,6 +14,7 @@ export const contactsTable = pgTable("contacts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
   name: text("name").notNull(),
+  city: text("city"),
   birthDate: date("birth_date", { mode: "string" }),
   deathDate: date("death_date", { mode: "string" }),
   phone: text("phone"),

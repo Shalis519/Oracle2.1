@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { Users, Plus, Trash2, Calendar, User } from "lucide-react";
+import { Users, Plus, Trash2, Calendar, User, MapPin } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 
@@ -24,6 +24,8 @@ export default function ContactsPage() {
     name: "",
     birthDate: "",
     relationshipType: "",
+    city: "",
+    birthPlace: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,11 +33,11 @@ export default function ContactsPage() {
     if (!formData.name.trim()) return;
 
     createContact.mutate(
-      { data: { ...formData, birthDate: formData.birthDate || null, relationshipType: formData.relationshipType || null } },
+      { data: { ...formData, birthDate: formData.birthDate || null, relationshipType: formData.relationshipType || null, city: formData.city || null, birthPlace: formData.birthPlace || null } },
       {
         onSuccess: () => {
           setIsOpen(false);
-          setFormData({ name: "", birthDate: "", relationshipType: "" });
+          setFormData({ name: "", birthDate: "", relationshipType: "", city: "", birthPlace: "" });
           toast({ title: "Контакт добавлен" });
           queryClient.invalidateQueries({ queryKey: getListContactsQueryKey() });
         }
@@ -90,6 +92,14 @@ export default function ContactsPage() {
                 <label className="text-sm font-medium">Кем приходится (необязательно)</label>
                 <Input placeholder="Например: Мама, Брат, Друг" value={formData.relationshipType} onChange={e => setFormData(p => ({...p, relationshipType: e.target.value}))} />
               </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Город проживания (необязательно)</label>
+                <Input placeholder="Например: Москва" value={formData.city} onChange={e => setFormData(p => ({...p, city: e.target.value}))} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Место рождения (необязательно)</label>
+                <Input placeholder="Город рождения" value={formData.birthPlace} onChange={e => setFormData(p => ({...p, birthPlace: e.target.value}))} />
+              </div>
               <Button type="submit" className="w-full" disabled={createContact.isPending}>Сохранить</Button>
             </form>
           </DialogContent>
@@ -135,6 +145,17 @@ export default function ContactsPage() {
                       <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {format(new Date(contact.birthDate), "d MMMM", { locale: ru })}
+                      </p>
+                    )}
+                    {contact.city && (
+                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        {contact.city}
+                      </p>
+                    )}
+                    {contact.birthPlace && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Место рождения: {contact.birthPlace}
                       </p>
                     )}
                   </div>

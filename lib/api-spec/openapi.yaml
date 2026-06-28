@@ -534,6 +534,8 @@ components:
           type: integer
         name:
           type: string
+        city:
+          type: ["string", "null"]
         birthDate:
           type: ["string", "null"]
         birthTime:
@@ -556,6 +558,8 @@ components:
       properties:
         name:
           type: string
+        city:
+          type: ["string", "null"]
         birthDate:
           type: ["string", "null"]
         birthTime:
@@ -767,6 +771,8 @@ components:
           type: integer
         name:
           type: string
+        city:
+          type: ["string", "null"]
         birthDate:
           type: ["string", "null"]
         deathDate:
@@ -796,6 +802,8 @@ components:
       properties:
         name:
           type: string
+        city:
+          type: ["string", "null"]
         birthDate:
           type: ["string", "null"]
         deathDate:
@@ -820,6 +828,8 @@ components:
       properties:
         name:
           type: string
+        city:
+          type: ["string", "null"]
         birthDate:
           type: ["string", "null"]
         deathDate:

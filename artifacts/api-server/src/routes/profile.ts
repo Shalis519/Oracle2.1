@@ -13,6 +13,7 @@ const router: IRouter = Router();
 function serialize(user: {
   id: number;
   name: string;
+  city: string | null;
   birthDate: string | null;
   birthTime: string | null;
   birthPlace: string | null;
@@ -25,6 +26,7 @@ function serialize(user: {
   return {
     id: user.id,
     name: user.name,
+    city: user.city,
     birthDate: user.birthDate,
     birthTime: user.birthTime,
     birthPlace: user.birthPlace,
