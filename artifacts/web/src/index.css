@@ -13,9 +13,9 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
-  --color-card: hsl(var(--card));
+  --color-card: var(--card);
   --color-card-foreground: hsl(var(--card-foreground));
-  --color-card-border: hsl(var(--card-border));
+  --color-card-border: var(--card-border);
 
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
@@ -52,14 +52,16 @@
 }
 
 .dark {
-  /* Background: Deep Green #1D4A3E */
+  /* Background: Deep Green #1D4A3E (gradient to #0F2D25) */
   --background: 164 44% 20%;
-  --foreground: 45 30% 90%;
+  --background-deep: 164 49% 12%;
+  /* Text: warm light #E8E0D8 */
+  --foreground: 30 26% 88%;
   
-  /* Cards/Surfaces: Clay #C27A5A */
-  --card: 18 43% 55%;
-  --card-foreground: 45 30% 10%;
-  --card-border: 18 40% 45%;
+  /* Cards/Surfaces: frosted Clay glass #C27A5A */
+  --card: hsla(18, 43%, 55%, 0.16);
+  --card-foreground: 30 26% 90%;
+  --card-border: hsla(18, 42%, 62%, 0.22);
 
   /* Popover */
   --popover: 164 44% 15%;
@@ -85,12 +87,12 @@
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 45 30% 90%;
 
-  /* Neutral UI Elements */
+  /* Neutral UI Elements (warm taupe text #A89888) */
   --muted: 164 30% 25%;
-  --muted-foreground: 164 15% 65%;
+  --muted-foreground: 30 16% 64%;
 
-  --border: 164 30% 30%;
-  --input: 164 30% 25%;
+  --border: 18 26% 36%;
+  --input: 18 26% 36%;
   --ring: 222 90% 63%;
 
   --sidebar: 164 44% 18%;
@@ -109,6 +111,29 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground selection:bg-primary selection:text-primary-foreground;
+    @apply font-sans antialiased text-foreground selection:bg-primary selection:text-primary-foreground;
+    min-height: 100vh;
+    background-color: hsl(var(--background));
+    background-image: radial-gradient(
+      ellipse at 20% 0%,
+      hsl(var(--background-deep)) 0%,
+      hsl(var(--background)) 70%
+    );
+    background-attachment: fixed;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background-deep));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(18 43% 55%);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(23 46% 69%);
   }
 }

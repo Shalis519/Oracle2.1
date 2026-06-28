@@ -1,0 +1,421 @@
+/* ============================================================
+   AETHER ORACLE — ЦВЕТА 2027 ГОДА
+   Основано на трендах WGSN/Coloro
+   ============================================================ */
+
+/* ---------- ПЕРЕМЕННЫЕ (ЦВЕТА) ---------- */
+:root {
+    /* Основные цвета 2027 */
+    --deep-green: #1D4A3E;       /* Основной фон */
+    --clay: #C27A5A;             /* Карточки, панели */
+    --luminous-blue: #4A7CF7;    /* Кнопки, ссылки, активные элементы */
+    --meadowland-green: #7BB661; /* Индикаторы, галочки */
+    --peaceful-lilac: #B39BC8;   /* Заголовки, духовные блоки */
+    --pop-pink: #F28D9E;         /* Уведомления, позитив */
+    
+    /* Дополнительные оттенки */
+    --deep-green-dark: #0F2D25;  /* Для градиентов */
+    --clay-light: #D4A68A;       /* Для ховеров */
+    --text-light: #E8E0D8;       /* Основной текст */
+    --text-muted: #A89888;       /* Второстепенный текст */
+    --glass-bg: rgba(194, 122, 90, 0.15); /* Полупрозрачный фон */
+}
+
+/* ---------- ГЛОБАЛЬНЫЕ СТИЛИ ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--deep-green);
+    color: var(--text-light);
+    min-height: 100vh;
+    line-height: 1.6;
+    background-image: radial-gradient(ellipse at 20% 50%, var(--deep-green-dark) 0%, var(--deep-green) 70%);
+}
+
+a {
+    color: var(--luminous-blue);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--peaceful-lilac);
+}
+
+/* ---------- КОНТЕЙНЕР ---------- */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+}
+
+/* ---------- КАРТОЧКИ ---------- */
+.card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(194, 122, 90, 0.2);
+    border-radius: 20px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- ЗАГОЛОВКИ ---------- */
+h1, h2, h3, h4 {
+    color: var(--peaceful-lilac);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 8px;
+}
+
+h2 {
+    font-size: 1.4rem;
+    font-weight: 300;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(179, 155, 200, 0.2);
+    padding-bottom: 8px;
+}
+
+/* ---------- КНОПКИ ---------- */
+.btn {
+    display: inline-block;
+    padding: 10px 28px;
+    border: none;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: center;
+    background: var(--luminous-blue);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(74, 124, 247, 0.3);
+}
+
+.btn:hover {
+    background: #6394FF;
+    transform: scale(1.02);
+    box-shadow: 0 6px 24px rgba(74, 124, 247, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(194, 122, 90, 0.3);
+    box-shadow: none;
+    color: var(--text-light);
+}
+
+.btn-secondary:hover {
+    background: rgba(194, 122, 90, 0.5);
+    transform: scale(1.02);
+}
+
+.btn-success {
+    background: var(--meadowland-green);
+    box-shadow: 0 4px 16px rgba(123, 182, 97, 0.3);
+}
+
+.btn-success:hover {
+    background: #8DC97A;
+}
+
+.btn-danger {
+    background: #D95B5B;
+    box-shadow: 0 4px 16px rgba(217, 91, 91, 0.3);
+}
+
+.btn-danger:hover {
+    background: #E57373;
+}
+
+/* ---------- ИНДИКАТОРЫ / ПРОГРЕСС-БАРЫ ---------- */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 8px 0 12px;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--meadowland-green), var(--luminous-blue));
+    transition: width 0.6s ease;
+}
+
+/* ---------- ГАЛОЧКИ (ЧЕК-БОКСЫ) ---------- */
+.task-check {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.task-check:hover {
+    background: rgba(194, 122, 90, 0.15);
+}
+
+.task-check input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--meadowland-green);
+    cursor: pointer;
+    filter: drop-shadow(0 0 4px rgba(123, 182, 97, 0.3));
+}
+
+.task-check.completed {
+    opacity: 0.7;
+    text-decoration: line-through;
+}
+
+/* ---------- КНОПКИ ОБРАТНОЙ СВЯЗИ ---------- */
+.feedback-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 12px 0 8px;
+}
+
+.feedback-btn {
+    padding: 8px 20px;
+    border: 2px solid transparent;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 0.9rem;
+}
+
+.feedback-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: scale(1.04);
+}
+
+.feedback-btn.exact {
+    border-color: var(--meadowland-green);
+}
+.feedback-btn.exact:hover,
+.feedback-btn.exact.active {
+    background: var(--meadowland-green);
+    color: #fff;
+}
+
+.feedback-btn.partial {
+    border-color: var(--pop-pink);
+}
+.feedback-btn.partial:hover,
+.feedback-btn.partial.active {
+    background: var(--pop-pink);
+    color: #fff;
+}
+
+.feedback-btn.failed {
+    border-color: #D95B5B;
+}
+.feedback-btn.failed:hover,
+.feedback-btn.failed.active {
+    background: #D95B5B;
+    color: #fff;
+}
+
+/* ---------- ПОЛЯ ВВОДА ---------- */
+input, textarea, select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(194, 122, 90, 0.25);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--text-light);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--luminous-blue);
+    box-shadow: 0 0 0 3px rgba(74, 124, 247, 0.15);
+}
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ---------- НАВИГАЦИЯ ---------- */
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(194, 122, 90, 0.15);
+    margin-bottom: 24px;
+}
+
+.nav a {
+    color: var(--text-muted);
+    padding: 4px 0;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.nav a:hover,
+.nav a.active {
+    color: var(--text-light);
+    border-bottom-color: var(--luminous-blue);
+}
+
+/* ---------- АВАТАР / ФОТО ---------- */
+.avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(179, 155, 200, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-large {
+    width: 120px;
+    height: 120px;
+}
+
+/* ---------- УВЕДОМЛЕНИЯ ---------- */
+.alert {
+    padding: 14px 20px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    border-left: 4px solid;
+}
+
+.alert-warning {
+    background: rgba(242, 141, 158, 0.12);
+    border-color: var(--pop-pink);
+    color: #F5A0B0;
+}
+
+.alert-success {
+    background: rgba(123, 182, 97, 0.12);
+    border-color: var(--meadowland-green);
+    color: #A0D48A;
+}
+
+.alert-info {
+    background: rgba(74, 124, 247, 0.12);
+    border-color: var(--luminous-blue);
+    color: #8AB0FF;
+}
+
+/* ---------- АДАПТИВНОСТЬ (МОБИЛЬНЫЕ) ---------- */
+@media (max-width: 640px) {
+    .container {
+        padding: 12px 12px 32px;
+    }
+    
+    .card {
+        padding: 18px 16px;
+        border-radius: 16px;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    .feedback-buttons {
+        gap: 8px;
+    }
+    
+    .feedback-btn {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+    }
+    
+    .nav {
+        gap: 4px 12px;
+    }
+    
+    .nav a {
+        font-size: 0.85rem;
+    }
+}
+
+/* ---------- КАРТА ПУТЕШЕСТВИЙ (amCharts) ---------- */
+#chartdiv {
+    width: 100%;
+    height: 500px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(194, 122, 90, 0.15);
+}
+
+/* ---------- СТАТИСТИКА ПУТЕШЕСТВИЙ ---------- */
+.travel-stats {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin: 16px 0 20px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--peaceful-lilac);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ---------- СКРОЛЛБАР ---------- */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--deep-green-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--clay);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--clay-light);
+}
