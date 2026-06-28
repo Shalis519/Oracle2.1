@@ -26,6 +26,7 @@ import type {
   ContactUpdate,
   DailyForecast,
   Dashboard,
+  DayActivations,
   Dream,
   DreamInput,
   FamilyConnection,
@@ -442,6 +443,83 @@ export function useGetTodayForecast<TData = Awaited<ReturnType<typeof getTodayFo
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetTodayForecastQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetTodayActivationsUrl = () => {
+
+
+
+
+  return `/api/activations/today`
+}
+
+/**
+ * @summary Get Feng Shui activation events for today
+ */
+export const getTodayActivations = async ( options?: RequestInit): Promise<DayActivations> => {
+
+  return customFetch<DayActivations>(getGetTodayActivationsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetTodayActivationsQueryKey = () => {
+    return [
+    `/api/activations/today`
+    ] as const;
+    }
+
+
+export const getGetTodayActivationsQueryOptions = <TData = Awaited<ReturnType<typeof getTodayActivations>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTodayActivations>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetTodayActivationsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTodayActivations>>> = ({ signal }) => getTodayActivations({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTodayActivations>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetTodayActivationsQueryResult = NonNullable<Awaited<ReturnType<typeof getTodayActivations>>>
+export type GetTodayActivationsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get Feng Shui activation events for today
+ */
+
+export function useGetTodayActivations<TData = Awaited<ReturnType<typeof getTodayActivations>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getTodayActivations>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetTodayActivationsQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

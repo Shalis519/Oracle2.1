@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './activationItem';
 export * from './arcanaDetail';
 export * from './baziPillar';
 export * from './baziStar';
@@ -15,6 +16,7 @@ export * from './contactInput';
 export * from './contactUpdate';
 export * from './dailyForecast';
 export * from './dashboard';
+export * from './dayActivations';
 export * from './dream';
 export * from './dreamInput';
 export * from './familyConnection';

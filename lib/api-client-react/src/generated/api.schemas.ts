@@ -134,6 +134,19 @@ export interface DailyForecast {
   feedback?: Feedback | null;
 }
 
+export interface ActivationItem {
+  hour: string;
+  title: string;
+  /** @nullable */
+  audience: string | null;
+  paragraphs: string[];
+}
+
+export interface DayActivations {
+  date: string;
+  items: ActivationItem[];
+}
+
 export interface FeedbackInput {
   accuracy: string;
   /** @nullable */

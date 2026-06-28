@@ -14,6 +14,8 @@ tags:
     description: User profile and birth data
   - name: forecast
     description: Daily synthesized forecast and feedback
+  - name: activations
+    description: Feng Shui activation events
   - name: systems
     description: Esoteric systems (Matrix of Destiny, Bazi, Feng Shui)
   - name: contacts
@@ -94,6 +96,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DailyForecast"
+
+  /activations/today:
+    get:
+      operationId: getTodayActivations
+      tags: [activations]
+      summary: Get Feng Shui activation events for today
+      responses:
+        "200":
+          description: Today's activations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DayActivations"
 
   /forecast/history:
     get:
@@ -736,6 +751,32 @@ components:
           oneOf:
             - $ref: "#/components/schemas/Feedback"
             - type: "null"
+
+    ActivationItem:
+      type: object
+      required: [hour, title, audience, paragraphs]
+      properties:
+        hour:
+          type: string
+        title:
+          type: string
+        audience:
+          type: ["string", "null"]
+        paragraphs:
+          type: array
+          items:
+            type: string
+
+    DayActivations:
+      type: object
+      required: [date, items]
+      properties:
+        date:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivationItem"
 
     Feedback:
       type: object

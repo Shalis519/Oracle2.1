@@ -155,6 +155,20 @@ export const GetTodayForecastResponse = zod.object({
 
 
 /**
+ * @summary Get Feng Shui activation events for today
+ */
+export const GetTodayActivationsResponse = zod.object({
+  "date": zod.string(),
+  "items": zod.array(zod.object({
+  "hour": zod.string(),
+  "title": zod.string(),
+  "audience": zod.string().nullable(),
+  "paragraphs": zod.array(zod.string())
+}))
+})
+
+
+/**
  * @summary List past forecasts
  */
 export const ListForecastsResponseItem = zod.object({
