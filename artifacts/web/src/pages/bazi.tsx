@@ -31,67 +31,82 @@ export default function BaziPage() {
     );
   }
 
+  // Traditional display order, right-to-left: Hour, Day, Month, Year.
+  const orderedPillars = [...bazi.pillars].reverse();
+
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
+    <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h1 className="text-4xl font-serif font-bold mb-2 flex items-center gap-3">
-          <Compass className="text-primary" />
+        <h1 className="text-2xl font-serif font-bold mb-1 flex items-center gap-2">
+          <Compass className="w-6 h-6 text-primary" />
           Бацзы
         </h1>
-        <p className="text-muted-foreground">Четыре столпа судьбы и энергетический потенциал.</p>
+        <p className="text-sm text-muted-foreground">Четыре столпа судьбы и энергетический потенциал.</p>
       </motion.div>
 
-      <Card className="bg-card/40 backdrop-blur-md border-primary/20 shadow-lg mb-8">
-        <CardHeader>
-          <CardTitle className="font-serif text-2xl">Господин Дня: {bazi.dayMaster}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-medium">
-              Элемент: {bazi.dayElement}
-            </span>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <Card className="bg-card/40 backdrop-blur-md overflow-hidden">
+          <div className="grid grid-cols-4 divide-x divide-border">
+            {orderedPillars.map((pillar, i) => {
+              const isDay = pillar.name === "День";
+              return (
+                <div key={i} className="flex flex-col text-center">
+                  <div
+                    className={`py-1.5 text-[11px] font-semibold uppercase tracking-wide ${
+                      isDay ? "bg-primary/20 text-primary" : "bg-muted/60 text-muted-foreground"
+                    }`}
+                  >
+                    {pillar.name}
+                  </div>
+                  <div className="py-3 px-1 border-t border-border">
+                    <div className={`font-serif font-bold leading-tight ${isDay ? "text-primary text-lg" : "text-base"}`}>
+                      {pillar.heavenlyStem}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5">{pillar.element}</div>
+                  </div>
+                  <div className="py-3 px-1 border-t border-border bg-muted/20">
+                    <div className="font-serif font-bold text-base leading-tight">{pillar.earthlyBranch}</div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <p className="text-lg leading-relaxed">{bazi.dayElementMeaning}</p>
+        </Card>
+      </motion.div>
+
+      <Card className="bg-card/40 backdrop-blur-md border-primary/20">
+        <CardHeader className="pb-2">
+          <CardTitle className="font-serif text-lg">Господин дня: {bazi.dayMaster}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-medium">
+            Элемент: {bazi.dayElement}
+          </span>
+          <p className="text-sm leading-relaxed text-muted-foreground">{bazi.dayElementMeaning}</p>
         </CardContent>
       </Card>
 
-      <h2 className="text-2xl font-serif font-bold mb-4">Четыре столпа</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {bazi.pillars.map((pillar, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }}>
-            <Card className="bg-card/40 backdrop-blur-md h-full text-center py-4">
-              <CardHeader className="pb-2 pt-2">
-                <CardTitle className="text-sm text-muted-foreground">{pillar.name}</CardTitle>
+      <div>
+        <h2 className="text-lg font-serif font-bold mb-3 flex items-center gap-2">
+          <Star className="w-5 h-5 text-secondary" />
+          Символические звезды
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {bazi.stars.map((star, i) => (
+            <Card key={i} className="bg-card/40 backdrop-blur-md">
+              <CardHeader className="pb-1.5">
+                <CardTitle className="font-serif text-base text-secondary">{star.name}</CardTitle>
+                {star.sector && <span className="text-xs text-muted-foreground">Сектор: {star.sector}</span>}
               </CardHeader>
-              <CardContent className="pb-2 space-y-2">
-                <div className="text-xl font-serif font-bold">{pillar.heavenlyStem}</div>
-                <div className="text-xl font-serif font-bold">{pillar.earthlyBranch}</div>
-                <div className="text-xs text-muted-foreground mt-2">{pillar.element}</div>
+              <CardContent className="space-y-2">
+                <p className="text-sm">{star.description}</p>
+                <p className="text-sm italic text-muted-foreground border-l-2 border-secondary/50 pl-3 py-1">
+                  {star.advice}
+                </p>
               </CardContent>
             </Card>
-          </motion.div>
-        ))}
-      </div>
-
-      <h2 className="text-2xl font-serif font-bold mb-4 flex items-center gap-2">
-        <Star className="w-6 h-6 text-secondary" />
-        Символические звезды
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {bazi.stars.map((star, i) => (
-          <Card key={i} className="bg-card/40 backdrop-blur-md">
-            <CardHeader className="pb-2">
-              <CardTitle className="font-serif text-xl text-secondary">{star.name}</CardTitle>
-              {star.sector && <span className="text-xs text-muted-foreground">Сектор: {star.sector}</span>}
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <p className="text-sm">{star.description}</p>
-              <p className="text-sm italic text-muted-foreground border-l-2 border-secondary/50 pl-3 py-1">
-                {star.advice}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
