@@ -45,27 +45,32 @@ export default function BaziPage() {
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <Card className="bg-card/40 backdrop-blur-md overflow-hidden">
+        <Card className="bg-card/40 backdrop-blur-md overflow-hidden w-full max-w-[260px]">
           <div className="grid grid-cols-4 divide-x divide-border">
             {orderedPillars.map((pillar, i) => {
               const isDay = pillar.name === "День";
+              const [branchName, branchRest] = pillar.earthlyBranch.split(" (");
+              const branchAnimal = branchRest ? branchRest.replace(")", "") : "";
               return (
                 <div key={i} className="flex flex-col text-center">
                   <div
-                    className={`py-1.5 text-[11px] font-semibold uppercase tracking-wide ${
+                    className={`py-1 text-[10px] font-semibold uppercase tracking-wide ${
                       isDay ? "bg-primary/20 text-primary" : "bg-muted/60 text-muted-foreground"
                     }`}
                   >
                     {pillar.name}
                   </div>
-                  <div className="py-3 px-1 border-t border-border">
-                    <div className={`font-serif font-bold leading-tight ${isDay ? "text-primary text-lg" : "text-base"}`}>
+                  <div className="py-2 px-0.5 border-t border-border">
+                    <div className={`font-serif font-bold leading-tight ${isDay ? "text-primary text-base" : "text-sm"}`}>
                       {pillar.heavenlyStem}
                     </div>
-                    <div className="text-[10px] text-muted-foreground mt-0.5">{pillar.element}</div>
+                    <div className="text-[9px] text-muted-foreground mt-0.5 leading-tight">{pillar.element}</div>
                   </div>
-                  <div className="py-3 px-1 border-t border-border bg-muted/20">
-                    <div className="font-serif font-bold text-base leading-tight">{pillar.earthlyBranch}</div>
+                  <div className="py-2 px-0.5 border-t border-border bg-muted/20">
+                    <div className="font-serif font-bold text-sm leading-tight">{branchName}</div>
+                    {branchAnimal && (
+                      <div className="text-[9px] text-muted-foreground mt-0.5 leading-tight">{branchAnimal}</div>
+                    )}
                   </div>
                 </div>
               );
