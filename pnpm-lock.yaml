@@ -193,6 +193,9 @@ importers:
       http-proxy-middleware:
         specifier: ^4.1.1
         version: 4.1.1
+      lunar-typescript:
+        specifier: ^1.8.6
+        version: 1.8.6
       pino:
         specifier: ^9.14.0
         version: 9.14.0
@@ -2524,6 +2527,9 @@ packages:
     resolution: {integrity: sha512-7r1/yUuflQDSt4f1bpn5ZAocyIxcTyVyBBChSVtBKn5M+392cPmI5YJMWOJKk/HUWGm5wg83chlAZtCcGbEZtw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  lunar-typescript@1.8.6:
+    resolution: {integrity: sha512-5Eo4T/cnuXfrgO4k5LCpOGHIUOuz5hCF/IfNv0T29WY2shR36Hiz+ecN9WjnUuxUKhql9gbOkPaQoqLFKtPRNA==}
 
   lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
@@ -5162,6 +5168,8 @@ snapshots:
   lucide-react@0.545.0(react@19.1.0):
     dependencies:
       react: 19.1.0
+
+  lunar-typescript@1.8.6: {}
 
   lunr@2.3.9: {}
 

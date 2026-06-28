@@ -7,6 +7,12 @@ import {
 } from "./data/bazi";
 import { getFlyingStar, type FlyingStarData } from "./data/fengshui";
 import { DREAM_MEANINGS, DEFAULT_DREAM_INTERPRETATION } from "./data/dreams";
+import { Solar } from "lunar-typescript";
+
+// Canonical order of the ten Heavenly Stems (天干) and twelve Earthly Branches
+// (地支). Indices align 1:1 with HEAVENLY_STEMS / EARTHLY_BRANCHES.
+const GAN_CN = "甲乙丙丁戊己庚辛壬癸".split("");
+const ZHI_CN = "子丑寅卯辰巳午未申酉戌亥".split("");
 
 /** Reduce any positive number to the 1..22 arcana range. */
 export function reduceToArcana(n: number): number {
@@ -111,9 +117,12 @@ export interface BaziResult {
 }
 
 /**
- * Simplified Four Pillars computation. Uses a continuous sexagenary day
- * count anchored to a known jiazi reference date. Hour pillar uses birth time
- * when available, otherwise defaults to noon.
+ * Four Pillars (四柱八字) computation backed by the `lunar-typescript` library,
+ * which derives the sexagenary pillars from real solar terms (节气) and the
+ * Lichun (立春) year boundary — so the year and month pillars are accurate for
+ * dates near term boundaries. The hour pillar uses the birth time when
+ * available, otherwise defaults to noon. The returned Chinese stem/branch
+ * characters are mapped back to our Russian content arrays by canonical index.
  */
 export function computeBazi(
   birthDate: string,
@@ -121,33 +130,72 @@ export function computeBazi(
 ): BaziResult | null {
   const d = parseDate(birthDate);
   if (!d) return null;
-
-  const utc = Date.UTC(d.year, d.month - 1, d.day);
-  // Reference: 2000-01-07 was a Jia-Zi (甲子) day → stem index 0, branch index 0.
-  const ref = Date.UTC(2000, 0, 7);
-  const dayCount = Math.round((utc - ref) / 86400000);
+  // Guard against malformed-but-regex-valid dates (e.g. 2020-13-40) before
+  // handing them to the calendar library, which throws on out-of-range input.
+  if (d.month < 1 || d.month > 12 || d.day < 1 || d.day > 31) return null;
 
   const mod = (a: number, n: number) => ((a % n) + n) % n;
 
-  const dayStemIdx = mod(dayCount, 10);
-  const dayBranchIdx = mod(dayCount, 12);
-
-  // Year pillar — sexagenary year (1984 = Jia-Zi year).
-  const yearStemIdx = mod(d.year - 1984, 10);
-  const yearBranchIdx = mod(d.year - 1984, 12);
-
-  // Month pillar — branch tied to solar month, stem derived from year stem.
-  const monthBranchIdx = mod(d.month + 1, 12);
-  const monthStemIdx = mod(yearStemIdx * 2 + d.month, 10);
-
-  // Hour pillar.
   let hour = 12;
+  let minute = 0;
   if (birthTime) {
     const hm = /^(\d{1,2}):(\d{2})/.exec(birthTime);
-    if (hm) hour = Number(hm[1]);
+    if (hm) {
+      const h = Number(hm[1]);
+      const m = Number(hm[2]);
+      // Ignore an unparseable time rather than failing the whole chart.
+      if (h >= 0 && h <= 23 && m >= 0 && m <= 59) {
+        hour = h;
+        minute = m;
+      }
+    }
   }
-  const hourBranchIdx = mod(Math.floor((hour + 1) / 2), 12);
-  const hourStemIdx = mod(dayStemIdx * 2 + hourBranchIdx, 10);
+
+  // The calendar library throws on impossible dates; treat any failure as
+  // "cannot compute" so callers get a clean null instead of a 500.
+  let yearStemIdx: number,
+    yearBranchIdx: number,
+    monthStemIdx: number,
+    monthBranchIdx: number,
+    dayStemIdx: number,
+    dayBranchIdx: number,
+    hourStemIdx: number,
+    hourBranchIdx: number;
+  try {
+    const solar = Solar.fromYmdHms(d.year, d.month, d.day, hour, minute, 0);
+    const eightChar = solar.getLunar().getEightChar();
+
+    const ganIdx = (c: string) => GAN_CN.indexOf(c);
+    const zhiIdx = (c: string) => ZHI_CN.indexOf(c);
+
+    yearStemIdx = ganIdx(eightChar.getYearGan());
+    yearBranchIdx = zhiIdx(eightChar.getYearZhi());
+    monthStemIdx = ganIdx(eightChar.getMonthGan());
+    monthBranchIdx = zhiIdx(eightChar.getMonthZhi());
+    dayStemIdx = ganIdx(eightChar.getDayGan());
+    dayBranchIdx = zhiIdx(eightChar.getDayZhi());
+    hourStemIdx = ganIdx(eightChar.getTimeGan());
+    hourBranchIdx = zhiIdx(eightChar.getTimeZhi());
+  } catch {
+    return null;
+  }
+
+  // Surface an unexpected character mapping as a failure rather than silently
+  // defaulting to 甲/子 and producing a wrong chart.
+  if (
+    [
+      yearStemIdx,
+      yearBranchIdx,
+      monthStemIdx,
+      monthBranchIdx,
+      dayStemIdx,
+      dayBranchIdx,
+      hourStemIdx,
+      hourBranchIdx,
+    ].some((i) => i < 0)
+  ) {
+    return null;
+  }
 
   const stem = (i: number) => HEAVENLY_STEMS[i];
   const branch = (i: number) => EARTHLY_BRANCHES[i];
@@ -182,11 +230,12 @@ export function computeBazi(
     },
   ];
 
-  // Pick symbolic stars deterministically from the day count.
-  const starCount = 2 + mod(dayCount, 2);
+  // Pick symbolic stars deterministically from the sexagenary day index.
+  const daySeed = mod(dayStemIdx * 12 + dayBranchIdx, 60);
+  const starCount = 2 + mod(daySeed, 2);
   const stars: BaziStarResult[] = [];
   for (let i = 0; i < starCount; i++) {
-    const s = SYMBOLIC_STARS[mod(dayCount + i * 3, SYMBOLIC_STARS.length)];
+    const s = SYMBOLIC_STARS[mod(daySeed + i * 3, SYMBOLIC_STARS.length)];
     stars.push({
       name: s.name,
       description: s.description,

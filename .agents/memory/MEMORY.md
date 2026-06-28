@@ -1,2 +1,3 @@
 - [Orval query hooks](orval-query-hooks.md) — generated query hook options REQUIRE an explicit `queryKey`; pass `getGet<Name>QueryKey()` or typecheck fails (TS2741).
 - [Interactive world map](interactive-world-map.md) — travel map uses d3-geo + topojson + world-atlas (NOT react-simple-maps) to avoid React 19 peer conflicts; store countries by ISO alpha-2.
+- [Bazi computation](bazi-computation.md) — Four Pillars computed locally with `lunar-typescript` (NOT an external API); accurate solar-term/Lichun boundaries; must range-validate + try/catch.
