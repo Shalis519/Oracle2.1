@@ -1,12 +1,61 @@
-import { useGetFengShui, getGetFengShuiQueryKey } from "@workspace/api-client-react";
+import { useGetFengShui, getGetFengShuiQueryKey, useGetProfile, useUpdateProfile, getGetProfileQueryKey } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { Wind, AlertCircle, AlertTriangle } from "lucide-react";
 
+const DIRECTIONS = [
+  "Север",
+  "Северо-восток",
+  "Восток",
+  "Юго-восток",
+  "Юг",
+  "Юго-запад",
+  "Запад",
+  "Северо-запад",
+];
+
 export default function FengShuiPage() {
   const { data: fengshui, isLoading, error } = useGetFengShui({ query: { retry: false, queryKey: getGetFengShuiQueryKey() } });
+  const { data: profile } = useGetProfile();
+  const updateProfile = useUpdateProfile();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const saveDirection = (value: string) => {
+    updateProfile.mutate(
+      { data: { bedDirection: value || null } },
+      {
+        onSuccess: () => {
+          toast({ title: "Направление изголовья сохранено" });
+          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetFengShuiQueryKey() });
+        },
+        onError: () => {
+          toast({ title: "Ошибка при сохранении", variant: "destructive" });
+        },
+      },
+    );
+  };
+
+  const DirectionSelector = ({ compact = false }: { compact?: boolean }) => (
+    <div className={compact ? "space-y-2 max-w-xs mx-auto w-full" : "space-y-2 max-w-sm w-full"}>
+      <Label htmlFor="bedDirection">Направление изголовья кровати</Label>
+      <Select value={profile?.bedDirection ?? ""} onValueChange={saveDirection} disabled={updateProfile.isPending}>
+        <SelectTrigger id="bedDirection">
+          <SelectValue placeholder="Выберите направление" />
+        </SelectTrigger>
+        <SelectContent>
+          {DIRECTIONS.map((d) => (
+            <SelectItem key={d} value={d}>{d}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
 
   if (isLoading) {
     return <div className="flex h-[50vh] items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
@@ -20,13 +69,11 @@ export default function FengShuiPage() {
         <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive mb-4">
           <AlertCircle className="w-8 h-8" />
         </div>
-        <h1 className="text-3xl font-serif font-bold">Данные не заполнены</h1>
+        <h1 className="text-3xl font-serif font-bold">Укажите направление изголовья</h1>
         <p className="text-muted-foreground max-w-md">
-          Для анализа Фэн-шуй необходимо указать направление изголовья вашей кровати. Пожалуйста, укажите это в настройках профиля.
+          Для анализа Фэн-шуй выберите направление изголовья вашей кровати. Расчет летящих звезд появится сразу после выбора.
         </p>
-        <Link href="/profile">
-          <Button size="lg" className="mt-4">Перейти в профиль</Button>
-        </Link>
+        <DirectionSelector compact />
       </div>
     );
   }
@@ -41,6 +88,12 @@ export default function FengShuiPage() {
         <p className="text-muted-foreground">Анализ летящих звезд для вашего пространства.</p>
       </motion.div>
 
+      <Card className="bg-card/40 backdrop-blur-md border-border">
+        <CardContent className="pt-6">
+          <DirectionSelector />
+        </CardContent>
+      </Card>
+
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.1 }}>
         <Card className={`bg-card/40 backdrop-blur-md shadow-xl ${fengshui.isUnfavorable ? 'border-destructive/50' : 'border-success/50'}`}>
           <CardHeader className="text-center pb-2">
@@ -53,7 +106,7 @@ export default function FengShuiPage() {
                 <span className="text-sm mt-1">{fengshui.starName}</span>
               </div>
             </div>
-            
+
             {fengshui.isUnfavorable && (
               <div className="bg-destructive/10 text-destructive px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium">
                 <AlertTriangle className="w-4 h-4" />

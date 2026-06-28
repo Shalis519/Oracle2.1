@@ -3,7 +3,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -22,7 +21,6 @@ export default function ProfilePage() {
     birthDate: "",
     birthTime: "",
     birthPlace: "",
-    bedDirection: "",
     notificationsEnabled: false,
   });
 
@@ -34,7 +32,6 @@ export default function ProfilePage() {
         birthDate: profile.birthDate ? profile.birthDate.split("T")[0] : "",
         birthTime: profile.birthTime || "",
         birthPlace: profile.birthPlace || "",
-        bedDirection: profile.bedDirection || "",
         notificationsEnabled: profile.notificationsEnabled || false,
       });
     }
@@ -42,10 +39,6 @@ export default function ProfilePage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSwitchChange = (checked: boolean) => {
@@ -61,7 +54,6 @@ export default function ProfilePage() {
         birthDate: formData.birthDate || null,
         birthTime: formData.birthTime || null,
         birthPlace: formData.birthPlace || null,
-        bedDirection: formData.bedDirection || null,
       } },
       {
         onSuccess: () => {
@@ -113,24 +105,6 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <Label htmlFor="city">Город проживания</Label>
                 <Input id="city" name="city" placeholder="Например: Москва" value={formData.city} onChange={handleChange} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bedDirection">Направление изголовья кровати</Label>
-                <Select value={formData.bedDirection} onValueChange={(val) => handleSelectChange("bedDirection", val)}>
-                  <SelectTrigger id="bedDirection">
-                    <SelectValue placeholder="Выберите направление" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Север">Север</SelectItem>
-                    <SelectItem value="Северо-восток">Северо-восток</SelectItem>
-                    <SelectItem value="Восток">Восток</SelectItem>
-                    <SelectItem value="Юго-восток">Юго-восток</SelectItem>
-                    <SelectItem value="Юг">Юг</SelectItem>
-                    <SelectItem value="Юго-запад">Юго-запад</SelectItem>
-                    <SelectItem value="Запад">Запад</SelectItem>
-                    <SelectItem value="Северо-запад">Северо-запад</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </div>
 
