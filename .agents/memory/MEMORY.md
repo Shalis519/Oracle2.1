@@ -1,0 +1,1 @@
+- [Orval query hooks](orval-query-hooks.md) — generated query hook options REQUIRE an explicit `queryKey`; pass `getGet<Name>QueryKey()` or typecheck fails (TS2741).

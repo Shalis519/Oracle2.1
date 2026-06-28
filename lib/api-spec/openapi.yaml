@@ -3,13 +3,27 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Aether Oracle API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: profile
+    description: User profile and birth data
+  - name: forecast
+    description: Daily synthesized forecast and feedback
+  - name: systems
+    description: Esoteric systems (Matrix of Destiny, Bazi, Feng Shui)
+  - name: contacts
+    description: Contacts and family tree
+  - name: dreams
+    description: Dream journal and interpretation
+  - name: tasks
+    description: Habit tracker tasks
+  - name: travel
+    description: Travel map
 paths:
   /healthz:
     get:
@@ -24,6 +38,484 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      summary: Get the current user's profile
+      responses:
+        "200":
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+    put:
+      operationId: updateProfile
+      tags: [profile]
+      summary: Update the current user's profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [forecast]
+      summary: Combined home dashboard summary
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+
+  /forecast/today:
+    get:
+      operationId: getTodayForecast
+      tags: [forecast]
+      summary: Get today's synthesized forecast
+      responses:
+        "200":
+          description: Today's forecast
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DailyForecast"
+
+  /forecast/history:
+    get:
+      operationId: listForecasts
+      tags: [forecast]
+      summary: List past forecasts
+      responses:
+        "200":
+          description: Forecast history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DailyForecast"
+
+  /forecast/{id}/feedback:
+    post:
+      operationId: submitFeedback
+      tags: [forecast]
+      summary: Submit feedback on a forecast
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackInput"
+      responses:
+        "200":
+          description: Saved feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feedback"
+
+  /matrix:
+    get:
+      operationId: getMatrix
+      tags: [systems]
+      summary: Get the user's Matrix of Destiny breakdown
+      responses:
+        "200":
+          description: Personal matrix
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PersonalMatrix"
+
+  /bazi:
+    get:
+      operationId: getBazi
+      tags: [systems]
+      summary: Get the user's Bazi (Four Pillars) breakdown
+      responses:
+        "200":
+          description: Bazi summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaziSummary"
+
+  /fengshui:
+    get:
+      operationId: getFengShui
+      tags: [systems]
+      summary: Get the flying star for the user's bed direction
+      responses:
+        "200":
+          description: Feng shui info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FengShuiInfo"
+
+  /contacts:
+    get:
+      operationId: listContacts
+      tags: [contacts]
+      summary: List contacts
+      responses:
+        "200":
+          description: Contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Contact"
+    post:
+      operationId: createContact
+      tags: [contacts]
+      summary: Create a contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactInput"
+      responses:
+        "201":
+          description: Created contact
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+
+  /contacts/birthdays:
+    get:
+      operationId: listUpcomingBirthdays
+      tags: [contacts]
+      summary: Upcoming contact birthdays within 7 days
+      responses:
+        "200":
+          description: Upcoming birthdays
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UpcomingBirthday"
+
+  /contacts/{id}:
+    get:
+      operationId: getContact
+      tags: [contacts]
+      summary: Get a contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Contact
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+    patch:
+      operationId: updateContact
+      tags: [contacts]
+      summary: Update a contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactUpdate"
+      responses:
+        "200":
+          description: Updated contact
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+    delete:
+      operationId: deleteContact
+      tags: [contacts]
+      summary: Delete a contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /connections:
+    get:
+      operationId: listFamilyConnections
+      tags: [contacts]
+      summary: List family tree connections
+      responses:
+        "200":
+          description: Connections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FamilyConnection"
+    post:
+      operationId: createFamilyConnection
+      tags: [contacts]
+      summary: Create a family tree connection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FamilyConnectionInput"
+      responses:
+        "201":
+          description: Created connection
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FamilyConnection"
+
+  /connections/{id}:
+    delete:
+      operationId: deleteFamilyConnection
+      tags: [contacts]
+      summary: Delete a family tree connection
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /dreams:
+    get:
+      operationId: listDreams
+      tags: [dreams]
+      summary: List dream journal entries
+      responses:
+        "200":
+          description: Dreams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Dream"
+    post:
+      operationId: createDream
+      tags: [dreams]
+      summary: Record a dream and get an interpretation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DreamInput"
+      responses:
+        "201":
+          description: Created dream with interpretation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dream"
+
+  /dreams/{id}:
+    delete:
+      operationId: deleteDream
+      tags: [dreams]
+      summary: Delete a dream entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /tasks:
+    get:
+      operationId: listTasks
+      tags: [tasks]
+      summary: List habit tasks for a date
+      parameters:
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+    post:
+      operationId: createTask
+      tags: [tasks]
+      summary: Create a habit task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskInput"
+      responses:
+        "201":
+          description: Created task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+
+  /tasks/{id}:
+    patch:
+      operationId: updateTask
+      tags: [tasks]
+      summary: Update a habit task progress
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskUpdate"
+      responses:
+        "200":
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+
+  /travels:
+    get:
+      operationId: listTravels
+      tags: [travel]
+      summary: List travel markers
+      responses:
+        "200":
+          description: Travels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Travel"
+    post:
+      operationId: createTravel
+      tags: [travel]
+      summary: Mark a country as visited or wishlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TravelInput"
+      responses:
+        "201":
+          description: Created travel marker
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Travel"
+
+  /travels/stats:
+    get:
+      operationId: getTravelStats
+      tags: [travel]
+      summary: Travel counts
+      responses:
+        "200":
+          description: Travel stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TravelStats"
+
+  /travels/{id}:
+    patch:
+      operationId: updateTravel
+      tags: [travel]
+      summary: Update a travel marker
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TravelUpdate"
+      responses:
+        "200":
+          description: Updated travel marker
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Travel"
+    delete:
+      operationId: deleteTravel
+      tags: [travel]
+      summary: Delete a travel marker
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +526,520 @@ components:
       required:
         - status
 
+    Profile:
+      type: object
+      required: [id, name, notificationsEnabled, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        birthDate:
+          type: ["string", "null"]
+        birthTime:
+          type: ["string", "null"]
+        birthPlace:
+          type: ["string", "null"]
+        photoPath:
+          type: ["string", "null"]
+        bedDirection:
+          type: ["string", "null"]
+        avatarType:
+          type: ["string", "null"]
+        notificationsEnabled:
+          type: boolean
+        createdAt:
+          type: string
+
+    ProfileInput:
+      type: object
+      properties:
+        name:
+          type: string
+        birthDate:
+          type: ["string", "null"]
+        birthTime:
+          type: ["string", "null"]
+        birthPlace:
+          type: ["string", "null"]
+        photoPath:
+          type: ["string", "null"]
+        bedDirection:
+          type: ["string", "null"]
+        avatarType:
+          type: ["string", "null"]
+        notificationsEnabled:
+          type: boolean
+
+    ArcanaDetail:
+      type: object
+      required: [number, name, essence, pros, cons, herbs, oils, cocktail, affirmation, health, energyChannels, nutrition]
+      properties:
+        number:
+          type: integer
+        name:
+          type: string
+        essence:
+          type: string
+        pros:
+          type: array
+          items:
+            type: string
+        cons:
+          type: array
+          items:
+            type: string
+        herbs:
+          type: array
+          items:
+            type: string
+        oils:
+          type: array
+          items:
+            type: string
+        cocktail:
+          type: string
+        affirmation:
+          type: string
+        health:
+          type: string
+        energyChannels:
+          type: string
+        nutrition:
+          type: string
+
+    BaziPillar:
+      type: object
+      required: [name, heavenlyStem, earthlyBranch, element]
+      properties:
+        name:
+          type: string
+        heavenlyStem:
+          type: string
+        earthlyBranch:
+          type: string
+        element:
+          type: string
+
+    BaziStar:
+      type: object
+      required: [name, description, advice]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        advice:
+          type: string
+        sector:
+          type: ["string", "null"]
+
+    BaziSummary:
+      type: object
+      required: [dayMaster, dayElement, dayElementMeaning, pillars, stars]
+      properties:
+        dayMaster:
+          type: string
+        dayElement:
+          type: string
+        dayElementMeaning:
+          type: string
+        pillars:
+          type: array
+          items:
+            $ref: "#/components/schemas/BaziPillar"
+        stars:
+          type: array
+          items:
+            $ref: "#/components/schemas/BaziStar"
+
+    FengShuiInfo:
+      type: object
+      required: [direction, starNumber, starName, influence, recommendation, isUnfavorable]
+      properties:
+        direction:
+          type: string
+        starNumber:
+          type: integer
+        starName:
+          type: string
+        influence:
+          type: string
+        recommendation:
+          type: string
+        isUnfavorable:
+          type: boolean
+
+    MatrixPoint:
+      type: object
+      required: [position, arcanaNumber, arcanaName, essence]
+      properties:
+        position:
+          type: string
+        arcanaNumber:
+          type: integer
+        arcanaName:
+          type: string
+        essence:
+          type: string
+
+    PersonalMatrix:
+      type: object
+      required: [birthDate, points]
+      properties:
+        birthDate:
+          type: string
+        points:
+          type: array
+          items:
+            $ref: "#/components/schemas/MatrixPoint"
+
+    DailyForecast:
+      type: object
+      required: [id, date, arcanaNumber, arcanaName, baziElement, hasWarning, synthesisText, matrix, bazi, conflicts, warnings]
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+        arcanaNumber:
+          type: integer
+        arcanaName:
+          type: string
+        baziElement:
+          type: string
+        hasWarning:
+          type: boolean
+        synthesisText:
+          type: string
+        matrix:
+          $ref: "#/components/schemas/ArcanaDetail"
+        bazi:
+          $ref: "#/components/schemas/BaziSummary"
+        fengShui:
+          oneOf:
+            - $ref: "#/components/schemas/FengShuiInfo"
+            - type: "null"
+        conflicts:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+        feedback:
+          oneOf:
+            - $ref: "#/components/schemas/Feedback"
+            - type: "null"
+
+    Feedback:
+      type: object
+      required: [id, forecastId, date, accuracy, createdAt]
+      properties:
+        id:
+          type: integer
+        forecastId:
+          type: integer
+        date:
+          type: string
+        accuracy:
+          type: string
+        comment:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    FeedbackInput:
+      type: object
+      required: [accuracy]
+      properties:
+        accuracy:
+          type: string
+        comment:
+          type: ["string", "null"]
+
+    Contact:
+      type: object
+      required: [id, name, notificationDays, isActive, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        birthDate:
+          type: ["string", "null"]
+        deathDate:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        relationshipType:
+          type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+        birthPlace:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        notificationDays:
+          type: integer
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+
+    ContactInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        birthDate:
+          type: ["string", "null"]
+        deathDate:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        relationshipType:
+          type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+        birthPlace:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        notificationDays:
+          type: integer
+
+    ContactUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        birthDate:
+          type: ["string", "null"]
+        deathDate:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        relationshipType:
+          type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+        birthPlace:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        notificationDays:
+          type: integer
+        isActive:
+          type: boolean
+
+    UpcomingBirthday:
+      type: object
+      required: [contactId, name, birthDate, daysUntil]
+      properties:
+        contactId:
+          type: integer
+        name:
+          type: string
+        birthDate:
+          type: string
+        daysUntil:
+          type: integer
+        turningAge:
+          type: ["integer", "null"]
+
+    FamilyConnection:
+      type: object
+      required: [id, contactId1, contactId2, connectionType, createdAt]
+      properties:
+        id:
+          type: integer
+        contactId1:
+          type: integer
+        contactId2:
+          type: integer
+        connectionType:
+          type: string
+        createdAt:
+          type: string
+
+    FamilyConnectionInput:
+      type: object
+      required: [contactId1, contactId2, connectionType]
+      properties:
+        contactId1:
+          type: integer
+        contactId2:
+          type: integer
+        connectionType:
+          type: string
+
+    Dream:
+      type: object
+      required: [id, date, dreamText, interpretation, keywords, createdAt]
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+        dreamText:
+          type: string
+        interpretation:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+
+    DreamInput:
+      type: object
+      required: [dreamText]
+      properties:
+        dreamText:
+          type: string
+
+    Task:
+      type: object
+      required: [id, date, taskType, taskText, targetValue, actualValue, isCompleted, isDailyGoal]
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+        taskType:
+          type: string
+        taskText:
+          type: string
+        targetValue:
+          type: integer
+        actualValue:
+          type: integer
+        isCompleted:
+          type: boolean
+        isDailyGoal:
+          type: boolean
+
+    TaskInput:
+      type: object
+      required: [taskType, taskText]
+      properties:
+        date:
+          type: ["string", "null"]
+        taskType:
+          type: string
+        taskText:
+          type: string
+        targetValue:
+          type: integer
+        actualValue:
+          type: integer
+        isDailyGoal:
+          type: boolean
+
+    TaskUpdate:
+      type: object
+      properties:
+        actualValue:
+          type: integer
+        isCompleted:
+          type: boolean
+
+    Travel:
+      type: object
+      required: [id, countryCode, countryName, visited, wishlist, createdAt]
+      properties:
+        id:
+          type: integer
+        countryCode:
+          type: string
+        countryName:
+          type: string
+        visited:
+          type: boolean
+        wishlist:
+          type: boolean
+        visitedDate:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    TravelInput:
+      type: object
+      required: [countryCode, countryName]
+      properties:
+        countryCode:
+          type: string
+        countryName:
+          type: string
+        visited:
+          type: boolean
+        wishlist:
+          type: boolean
+        visitedDate:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    TravelUpdate:
+      type: object
+      properties:
+        visited:
+          type: boolean
+        wishlist:
+          type: boolean
+        visitedDate:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    TravelStats:
+      type: object
+      required: [visitedCount, wishlistCount]
+      properties:
+        visitedCount:
+          type: integer
+        wishlistCount:
+          type: integer
+
+    Dashboard:
+      type: object
+      required: [profileComplete, upcomingBirthdaysCount, waterProgress, waterTarget, stepsProgress, stepsTarget]
+      properties:
+        profileComplete:
+          type: boolean
+        arcanaNumber:
+          type: ["integer", "null"]
+        arcanaName:
+          type: ["string", "null"]
+        baziElement:
+          type: ["string", "null"]
+        hasWarning:
+          type: boolean
+        affirmation:
+          type: ["string", "null"]
+        upcomingBirthdaysCount:
+          type: integer
+        waterProgress:
+          type: integer
+        waterTarget:
+          type: integer
+        stepsProgress:
+          type: integer
+        stepsTarget:
+          type: integer
+        recentDream:
+          oneOf:
+            - $ref: "#/components/schemas/Dream"
+            - type: "null"

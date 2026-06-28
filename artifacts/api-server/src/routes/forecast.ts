@@ -1,0 +1,287 @@
+import { Router, type IRouter } from "express";
+import { and, desc, eq } from "drizzle-orm";
+import {
+  db,
+  forecastsTable,
+  feedbackTable,
+  dreamsTable,
+  contactsTable,
+  tasksTable,
+  type Forecast,
+  type Feedback,
+} from "@workspace/db";
+import {
+  GetTodayForecastResponse,
+  ListForecastsResponse,
+  SubmitFeedbackParams,
+  SubmitFeedbackBody,
+  SubmitFeedbackResponse,
+  GetDashboardResponse,
+} from "@workspace/api-zod";
+import { requireAuth } from "../lib/auth";
+import {
+  computeDailyForecast,
+  todayString,
+  type DailyForecastResult,
+} from "../lib/oracle";
+import { daysUntilBirthday } from "../lib/dates";
+
+const router: IRouter = Router();
+
+function serializeFeedback(fb: Feedback) {
+  return {
+    id: fb.id,
+    forecastId: fb.forecastId,
+    date: fb.date,
+    accuracy: fb.accuracy,
+    comment: fb.comment,
+    createdAt: fb.createdAt.toISOString(),
+  };
+}
+
+function buildForecast(row: Forecast, fb: Feedback | null) {
+  const payload = row.payload as Pick<
+    DailyForecastResult,
+    "matrix" | "bazi" | "fengShui" | "conflicts" | "warnings"
+  >;
+  return {
+    id: row.id,
+    date: row.date,
+    arcanaNumber: row.arcanaNumber,
+    arcanaName: row.arcanaName,
+    baziElement: row.baziElement,
+    hasWarning: row.hasWarning,
+    synthesisText: row.synthesisText,
+    matrix: payload.matrix,
+    bazi: payload.bazi,
+    fengShui: payload.fengShui ?? null,
+    conflicts: payload.conflicts ?? [],
+    warnings: payload.warnings ?? [],
+    feedback: fb ? serializeFeedback(fb) : null,
+  };
+}
+
+async function getOrComputeToday(
+  userId: number,
+  birthDate: string | null,
+  birthTime: string | null,
+  bedDirection: string | null,
+): Promise<Forecast | null> {
+  const date = todayString();
+  const [existing] = await db
+    .select()
+    .from(forecastsTable)
+    .where(and(eq(forecastsTable.userId, userId), eq(forecastsTable.date, date)));
+  if (existing) return existing;
+
+  if (!birthDate) return null;
+  const result = computeDailyForecast(birthDate, birthTime, bedDirection, date);
+  if (!result) return null;
+
+  const [created] = await db
+    .insert(forecastsTable)
+    .values({
+      userId,
+      date,
+      arcanaNumber: result.arcanaNumber,
+      arcanaName: result.arcanaName,
+      baziElement: result.baziElement,
+      hasWarning: result.hasWarning,
+      synthesisText: result.synthesisText,
+      payload: {
+        matrix: result.matrix,
+        bazi: result.bazi,
+        fengShui: result.fengShui,
+        conflicts: result.conflicts,
+        warnings: result.warnings,
+      },
+    })
+    .returning();
+  return created;
+}
+
+router.get("/forecast/today", requireAuth, async (req, res): Promise<void> => {
+  const user = req.localUser!;
+  if (!user.birthDate) {
+    res
+      .status(400)
+      .json({ error: "Заполните дату рождения в профиле, чтобы получить прогноз." });
+    return;
+  }
+  const row = await getOrComputeToday(
+    user.id,
+    user.birthDate,
+    user.birthTime,
+    user.bedDirection,
+  );
+  if (!row) {
+    res.status(400).json({ error: "Не удалось рассчитать прогноз." });
+    return;
+  }
+  const [fb] = await db
+    .select()
+    .from(feedbackTable)
+    .where(eq(feedbackTable.forecastId, row.id));
+  res.json(GetTodayForecastResponse.parse(buildForecast(row, fb ?? null)));
+});
+
+router.get("/forecast/history", requireAuth, async (req, res): Promise<void> => {
+  const rows = await db
+    .select()
+    .from(forecastsTable)
+    .where(eq(forecastsTable.userId, req.localUser!.id))
+    .orderBy(desc(forecastsTable.date));
+
+  const fbRows = await db
+    .select()
+    .from(feedbackTable)
+    .where(eq(feedbackTable.userId, req.localUser!.id));
+  const fbByForecast = new Map(fbRows.map((f) => [f.forecastId, f]));
+
+  res.json(
+    ListForecastsResponse.parse(
+      rows.map((r) => buildForecast(r, fbByForecast.get(r.id) ?? null)),
+    ),
+  );
+});
+
+router.post(
+  "/forecast/:id/feedback",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    const params = SubmitFeedbackParams.safeParse(req.params);
+    if (!params.success) {
+      res.status(400).json({ error: params.error.message });
+      return;
+    }
+    const body = SubmitFeedbackBody.safeParse(req.body);
+    if (!body.success) {
+      res.status(400).json({ error: body.error.message });
+      return;
+    }
+
+    const [forecast] = await db
+      .select()
+      .from(forecastsTable)
+      .where(
+        and(
+          eq(forecastsTable.id, params.data.id),
+          eq(forecastsTable.userId, req.localUser!.id),
+        ),
+      );
+    if (!forecast) {
+      res.status(404).json({ error: "Прогноз не найден." });
+      return;
+    }
+
+    const [existing] = await db
+      .select()
+      .from(feedbackTable)
+      .where(eq(feedbackTable.forecastId, forecast.id));
+
+    let row: Feedback;
+    if (existing) {
+      [row] = await db
+        .update(feedbackTable)
+        .set({ accuracy: body.data.accuracy, comment: body.data.comment ?? null })
+        .where(eq(feedbackTable.id, existing.id))
+        .returning();
+    } else {
+      [row] = await db
+        .insert(feedbackTable)
+        .values({
+          userId: req.localUser!.id,
+          forecastId: forecast.id,
+          date: forecast.date,
+          accuracy: body.data.accuracy,
+          comment: body.data.comment ?? null,
+        })
+        .returning();
+    }
+
+    res.json(SubmitFeedbackResponse.parse(serializeFeedback(row)));
+  },
+);
+
+router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
+  const user = req.localUser!;
+  const date = todayString();
+  const profileComplete = !!user.birthDate;
+
+  let arcanaNumber: number | null = null;
+  let arcanaName: string | null = null;
+  let baziElement: string | null = null;
+  let hasWarning = false;
+  let affirmation: string | null = null;
+
+  if (profileComplete) {
+    const row = await getOrComputeToday(
+      user.id,
+      user.birthDate,
+      user.birthTime,
+      user.bedDirection,
+    );
+    if (row) {
+      const payload = row.payload as Pick<DailyForecastResult, "matrix">;
+      arcanaNumber = row.arcanaNumber;
+      arcanaName = row.arcanaName;
+      baziElement = row.baziElement;
+      hasWarning = row.hasWarning;
+      affirmation = payload.matrix?.affirmation ?? null;
+    }
+  }
+
+  const contacts = await db
+    .select()
+    .from(contactsTable)
+    .where(
+      and(eq(contactsTable.userId, user.id), eq(contactsTable.isActive, true)),
+    );
+  const upcomingBirthdaysCount = contacts.filter((c) => {
+    if (!c.birthDate) return false;
+    const d = daysUntilBirthday(c.birthDate);
+    return d !== null && d <= 7;
+  }).length;
+
+  const tasks = await db
+    .select()
+    .from(tasksTable)
+    .where(and(eq(tasksTable.userId, user.id), eq(tasksTable.date, date)));
+  const water = tasks.find((t) => t.taskType === "water");
+  const steps = tasks.find((t) => t.taskType === "steps");
+
+  const [recentDream] = await db
+    .select()
+    .from(dreamsTable)
+    .where(eq(dreamsTable.userId, user.id))
+    .orderBy(desc(dreamsTable.createdAt))
+    .limit(1);
+
+  res.json(
+    GetDashboardResponse.parse({
+      profileComplete,
+      arcanaNumber,
+      arcanaName,
+      baziElement,
+      hasWarning,
+      affirmation,
+      upcomingBirthdaysCount,
+      waterProgress: water?.actualValue ?? 0,
+      waterTarget: water?.targetValue ?? 8,
+      stepsProgress: steps?.actualValue ?? 0,
+      stepsTarget: steps?.targetValue ?? 10000,
+      recentDream: recentDream
+        ? {
+            id: recentDream.id,
+            date: recentDream.date,
+            dreamText: recentDream.dreamText,
+            interpretation: recentDream.interpretation,
+            keywords: recentDream.keywords,
+            createdAt: recentDream.createdAt.toISOString(),
+          }
+        : null,
+    }),
+  );
+});
+
+export default router;

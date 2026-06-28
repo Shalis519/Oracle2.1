@@ -1,6 +1,6 @@
-# [Project name]
+# Aether Oracle (Этер Оракул)
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A Russian-language esoteric self-knowledge web platform: daily synthesis forecasts combining Matrix of Destiny, Bazi, and Feng Shui, plus a dream journal, habit/ritual tracker, contacts with family tree, and a travel map.
 
 ## Run & Operate
 
@@ -22,23 +22,37 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- API contract (source of truth): `lib/api-spec/openapi.yaml` (keep `info.title` = "Api" — it controls codegen filenames)
+- Generated React Query hooks + types: `lib/api-client-react/src/generated/`
+- Generated Zod schemas: `lib/api-zod/src/generated/`
+- DB schema (source of truth): `lib/db/src/schema/*.ts` (users, forecasts, feedback, contacts, familyConnections, dreams, tasks, travels)
+- Backend domain logic: `artifacts/api-server/src/lib/oracle.ts` (Matrix/Bazi/FengShui/dreams/daily forecast), `lib/auth.ts` (Clerk JIT bridge), `lib/dates.ts`
+- Esoteric content data: `artifacts/api-server/src/data/` (arcana, bazi, fengshui, dreams)
+- API routes: `artifacts/api-server/src/routes/` (registered in `index.ts`)
+- Frontend pages: `artifacts/web/src/pages/`; theme tokens: `artifacts/web/src/index.css`; auth/router shell: `artifacts/web/src/App.tsx`
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Users are JIT-provisioned in the local `users` table on first authenticated request, keyed by Clerk user id (`getOrCreateUser` in `lib/auth.ts`). Every query is scoped to `req.localUser.id`.
+- Daily forecast is computed once per user per day and persisted in `forecasts` (scalar columns for list views + a `payload` jsonb holding the full matrix/bazi/fengShui/conflicts/warnings).
+- Systems endpoints return 400 when prerequisites are missing: matrix/bazi need `birthDate`, fengshui needs `bedDirection`. The UI prompts the user to complete their profile.
+- Astrology is soft-disabled (no AstroAsk key provisioned).
+- All UI copy is Russian; no emojis anywhere in the UI.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Daily synthesis "Oracle of the Day" (Tarot arcana + Bazi element + Feng Shui stars + synthesis text + feedback), Matrix of Destiny (22 arcana), Bazi (four pillars / day master / symbolic stars), Feng Shui flying stars for 2026 by bed direction, dream journal with interpretation + keywords, habit/ritual tracker (water/steps/rituals by date), contacts with family tree and upcoming birthdays, and a travel map (visited / wishlist). Multi-user via Clerk auth. Tarot is a stub.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- All user-facing text must be in Russian.
+- No emojis anywhere in the UI.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- After editing `lib/api-spec/openapi.yaml`, run `pnpm --filter @workspace/api-spec run codegen` before using new hooks/schemas.
+- Parameterized query hooks require an explicit `queryKey` in options, e.g. `useGetMatrix({ query: { queryKey: getGetMatrixQueryKey() } })` — omitting it is a TS error.
+- Route ordering matters: `/contacts/birthdays` before `/contacts/:id`, `/travels/stats` before `/travels/:id`.
 
 ## Pointers
 

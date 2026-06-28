@@ -1,0 +1,52 @@
+import { Router, type IRouter } from "express";
+import {
+  GetMatrixResponse,
+  GetBaziResponse,
+  GetFengShuiResponse,
+} from "@workspace/api-zod";
+import { requireAuth } from "../lib/auth";
+import { computeMatrix, computeBazi, computeFengShui } from "../lib/oracle";
+
+const router: IRouter = Router();
+
+router.get("/matrix", requireAuth, async (req, res): Promise<void> => {
+  const user = req.localUser!;
+  if (!user.birthDate) {
+    res.status(400).json({ error: "Заполните дату рождения в профиле." });
+    return;
+  }
+  const result = computeMatrix(user.birthDate);
+  if (!result) {
+    res.status(400).json({ error: "Некорректная дата рождения." });
+    return;
+  }
+  res.json(GetMatrixResponse.parse(result));
+});
+
+router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
+  const user = req.localUser!;
+  if (!user.birthDate) {
+    res.status(400).json({ error: "Заполните дату рождения в профиле." });
+    return;
+  }
+  const result = computeBazi(user.birthDate, user.birthTime);
+  if (!result) {
+    res.status(400).json({ error: "Некорректная дата рождения." });
+    return;
+  }
+  res.json(GetBaziResponse.parse(result));
+});
+
+router.get("/fengshui", requireAuth, async (req, res): Promise<void> => {
+  const user = req.localUser!;
+  if (!user.bedDirection) {
+    res
+      .status(400)
+      .json({ error: "Укажите направление кровати в профиле для анализа фэн-шуй." });
+    return;
+  }
+  const result = computeFengShui(user.bedDirection);
+  res.json(GetFengShuiResponse.parse(result));
+});
+
+export default router;

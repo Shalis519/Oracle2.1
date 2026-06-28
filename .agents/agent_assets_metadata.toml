@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "uK0oCVuIWqRql1vximZi5"
+uri = "file://artifacts/web/public/logo.png"
+type = "image"
+title = "mystical aether oracle logo"
