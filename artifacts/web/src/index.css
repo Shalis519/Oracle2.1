@@ -110,6 +110,11 @@
     @apply border-border;
   }
 
+  /* Compact density: scales all rem-based sizing (text, spacing, widths) down. */
+  html {
+    font-size: 81.25%;
+  }
+
   body {
     @apply font-sans antialiased text-foreground selection:bg-primary selection:text-primary-foreground;
     min-height: 100vh;
