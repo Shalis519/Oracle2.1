@@ -5,6 +5,7 @@ import {
   integer,
   boolean,
   date,
+  time,
   timestamp,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
@@ -16,6 +17,7 @@ export const contactsTable = pgTable("contacts", {
   name: text("name").notNull(),
   city: text("city"),
   birthDate: date("birth_date", { mode: "string" }),
+  birthTime: time("birth_time"),
   deathDate: date("death_date", { mode: "string" }),
   phone: text("phone"),
   email: text("email"),

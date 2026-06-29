@@ -7,13 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { Users, Plus, Trash2, Pencil, Calendar, User, MapPin, Phone, Mail, Search } from "lucide-react";
+import { Users, Plus, Trash2, Pencil, Calendar, Clock, User, MapPin, Phone, Mail, Search } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 
 type FormData = {
   name: string;
   birthDate: string;
+  birthTime: string;
   relationshipType: string;
   city: string;
   birthPlace: string;
@@ -24,6 +25,7 @@ type FormData = {
 const emptyForm: FormData = {
   name: "",
   birthDate: "",
+  birthTime: "",
   relationshipType: "",
   city: "",
   birthPlace: "",
@@ -66,6 +68,7 @@ export default function ContactsPage() {
     setFormData({
       name: contact.name ?? "",
       birthDate: contact.birthDate ?? "",
+      birthTime: contact.birthTime?.slice(0, 5) ?? "",
       relationshipType: contact.relationshipType ?? "",
       city: contact.city ?? "",
       birthPlace: contact.birthPlace ?? "",
@@ -82,6 +85,7 @@ export default function ContactsPage() {
     const payload = {
       name: formData.name,
       birthDate: formData.birthDate || null,
+      birthTime: formData.birthTime || null,
       relationshipType: formData.relationshipType || null,
       city: formData.city || null,
       birthPlace: formData.birthPlace || null,
@@ -148,6 +152,11 @@ export default function ContactsPage() {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Дата рождения (необязательно)</label>
                 <Input type="date" value={formData.birthDate} onChange={e => setFormData(p => ({...p, birthDate: e.target.value}))} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Время рождения (необязательно)</label>
+                <Input type="time" value={formData.birthTime} onChange={e => setFormData(p => ({...p, birthTime: e.target.value}))} />
+                <p className="text-xs text-muted-foreground">Понадобится для расчета совместимости в западной астрологии.</p>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Кем приходится (необязательно)</label>
@@ -235,6 +244,12 @@ export default function ContactsPage() {
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           {format(new Date(contact.birthDate), "d MMMM", { locale: ru })}
+                        </span>
+                      )}
+                      {contact.birthTime && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {contact.birthTime.slice(0, 5)}
                         </span>
                       )}
                       {contact.phone && (

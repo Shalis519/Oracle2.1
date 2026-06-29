@@ -954,6 +954,8 @@ components:
           type: ["string", "null"]
         birthDate:
           type: ["string", "null"]
+        birthTime:
+          type: ["string", "null"]
         deathDate:
           type: ["string", "null"]
         phone:
@@ -985,6 +987,8 @@ components:
           type: ["string", "null"]
         birthDate:
           type: ["string", "null"]
+        birthTime:
+          type: ["string", "null"]
         deathDate:
           type: ["string", "null"]
         phone:
@@ -1010,6 +1014,8 @@ components:
         city:
           type: ["string", "null"]
         birthDate:
+          type: ["string", "null"]
+        birthTime:
           type: ["string", "null"]
         deathDate:
           type: ["string", "null"]

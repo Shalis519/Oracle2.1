@@ -34,6 +34,7 @@ function serialize(c: Contact) {
     name: c.name,
     city: c.city,
     birthDate: c.birthDate,
+    birthTime: c.birthTime,
     deathDate: c.deathDate,
     phone: c.phone,
     email: c.email,

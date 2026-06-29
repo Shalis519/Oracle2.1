@@ -14,6 +14,8 @@ export interface Contact {
   /** @nullable */
   birthDate?: string | null;
   /** @nullable */
+  birthTime?: string | null;
+  /** @nullable */
   deathDate?: string | null;
   /** @nullable */
   phone?: string | null;
