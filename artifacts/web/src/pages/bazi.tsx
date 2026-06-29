@@ -55,6 +55,7 @@ export default function BaziPage() {
   };
 
   const promo = bazi.promotionActivation;
+  const noble = bazi.nobleHelperActivation;
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
@@ -144,6 +145,52 @@ export default function BaziPage() {
               <p className="text-sm italic text-muted-foreground border-l-2 border-primary/50 pl-3 py-1">
                 {promo.recommendation}
               </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {noble && (
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <Card className="bg-card/40 backdrop-blur-md border-secondary/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-secondary" />
+                Активизация «Благородный помощник»
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm leading-relaxed">
+                <span className="font-medium">Цель:</span> {noble.goal}.
+              </p>
+
+              <p className="text-sm leading-relaxed text-muted-foreground">{noble.taichi}</p>
+
+              <p className="text-sm leading-relaxed">
+                Сегодня ({formatDate(noble.date)}) — день Благородного ({noble.animal}). В секторе{" "}
+                <span className="font-semibold text-secondary">
+                  {noble.sector} ({noble.degrees})
+                </span>{" "}
+                проведите уборку и позвоните в колокольчик. Озвучьте намерение по цели. Весь процесс должен занять не менее 15 минут.
+              </p>
+
+              <div>
+                <p className="text-sm font-medium mb-1">Благоприятные часы (двухчасовки):</p>
+                <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                  {noble.hours.map((h, i) => (
+                    <li key={i}>
+                      {h.animal} ({h.period})
+                      {h.preferred ? " — час самого Благородного, предпочтительно" : ""}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {noble.caution && (
+                <p className="text-sm italic text-muted-foreground border-l-2 border-destructive/50 pl-3 py-1">
+                  {noble.caution}
+                </p>
+              )}
             </CardContent>
           </Card>
         </motion.div>

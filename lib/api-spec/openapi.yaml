@@ -968,6 +968,10 @@ components:
           anyOf:
             - $ref: "#/components/schemas/PromotionActivation"
             - type: "null"
+        nobleHelperActivation:
+          anyOf:
+            - $ref: "#/components/schemas/NobleHelperActivation"
+            - type: "null"
 
     PromotionActivation:
       type: object
@@ -997,6 +1001,42 @@ components:
           items:
             type: string
         recommendation:
+          type: string
+
+    NobleHelperHour:
+      type: object
+      required: [animal, period, preferred]
+      properties:
+        animal:
+          type: string
+        period:
+          type: string
+        preferred:
+          type: boolean
+
+    NobleHelperActivation:
+      type: object
+      required: [goal, taichi, animal, sector, degrees, hours, instruction, caution, date]
+      properties:
+        goal:
+          type: string
+        taichi:
+          type: string
+        animal:
+          type: string
+        sector:
+          type: string
+        degrees:
+          type: string
+        hours:
+          type: array
+          items:
+            $ref: "#/components/schemas/NobleHelperHour"
+        instruction:
+          type: string
+        caution:
+          type: ["string", "null"]
+        date:
           type: string
 
     FengShuiInfo:

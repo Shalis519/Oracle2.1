@@ -38,6 +38,8 @@ export * from './journalInput';
 export * from './listTasksParams';
 export * from './loss';
 export * from './matrixPoint';
+export * from './nobleHelperActivation';
+export * from './nobleHelperHour';
 export * from './personalMatrix';
 export * from './profile';
 export * from './profileInput';

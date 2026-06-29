@@ -10,6 +10,7 @@ import {
   computeBazi,
   computeFengShui,
   computePromotionActivation,
+  computeNobleHelperActivation,
 } from "../lib/oracle";
 
 const router: IRouter = Router();
@@ -40,7 +41,17 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
     return;
   }
   const promotionActivation = computePromotionActivation(user.birthDate);
-  res.json(GetBaziResponse.parse({ ...result, promotionActivation }));
+  const nobleHelperActivation = computeNobleHelperActivation(
+    user.birthDate,
+    user.birthTime,
+  );
+  res.json(
+    GetBaziResponse.parse({
+      ...result,
+      promotionActivation,
+      nobleHelperActivation,
+    }),
+  );
 });
 
 router.get("/fengshui", requireAuth, async (req, res): Promise<void> => {

@@ -241,6 +241,21 @@ export const GetTodayForecastResponse = zod.object({
   "periodEnd": zod.string(),
   "helps": zod.array(zod.string()),
   "recommendation": zod.string()
+}),zod.null()]).optional(),
+  "nobleHelperActivation": zod.union([zod.object({
+  "goal": zod.string(),
+  "taichi": zod.string(),
+  "animal": zod.string(),
+  "sector": zod.string(),
+  "degrees": zod.string(),
+  "hours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "preferred": zod.boolean()
+})),
+  "instruction": zod.string(),
+  "caution": zod.string().nullable(),
+  "date": zod.string()
 }),zod.null()]).optional()
 }),
   "fengShui": zod.union([zod.object({
@@ -327,6 +342,21 @@ export const ListForecastsResponseItem = zod.object({
   "periodEnd": zod.string(),
   "helps": zod.array(zod.string()),
   "recommendation": zod.string()
+}),zod.null()]).optional(),
+  "nobleHelperActivation": zod.union([zod.object({
+  "goal": zod.string(),
+  "taichi": zod.string(),
+  "animal": zod.string(),
+  "sector": zod.string(),
+  "degrees": zod.string(),
+  "hours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "preferred": zod.boolean()
+})),
+  "instruction": zod.string(),
+  "caution": zod.string().nullable(),
+  "date": zod.string()
 }),zod.null()]).optional()
 }),
   "fengShui": zod.union([zod.object({
@@ -414,6 +444,21 @@ export const GetBaziResponse = zod.object({
   "periodEnd": zod.string(),
   "helps": zod.array(zod.string()),
   "recommendation": zod.string()
+}),zod.null()]).optional(),
+  "nobleHelperActivation": zod.union([zod.object({
+  "goal": zod.string(),
+  "taichi": zod.string(),
+  "animal": zod.string(),
+  "sector": zod.string(),
+  "degrees": zod.string(),
+  "hours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "preferred": zod.boolean()
+})),
+  "instruction": zod.string(),
+  "caution": zod.string().nullable(),
+  "date": zod.string()
 }),zod.null()]).optional()
 })
 

@@ -200,6 +200,25 @@ export interface PromotionActivation {
   recommendation: string;
 }
 
+export interface NobleHelperHour {
+  animal: string;
+  period: string;
+  preferred: boolean;
+}
+
+export interface NobleHelperActivation {
+  goal: string;
+  taichi: string;
+  animal: string;
+  sector: string;
+  degrees: string;
+  hours: NobleHelperHour[];
+  instruction: string;
+  /** @nullable */
+  caution: string | null;
+  date: string;
+}
+
 export interface BaziSummary {
   dayMaster: string;
   dayElement: string;
@@ -207,6 +226,7 @@ export interface BaziSummary {
   pillars: BaziPillar[];
   stars: BaziStar[];
   promotionActivation?: PromotionActivation | null;
+  nobleHelperActivation?: NobleHelperActivation | null;
 }
 
 export interface FengShuiInfo {

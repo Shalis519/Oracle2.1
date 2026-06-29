@@ -7,6 +7,7 @@
  */
 import type { BaziPillar } from './baziPillar';
 import type { BaziStar } from './baziStar';
+import type { NobleHelperActivation } from './nobleHelperActivation';
 import type { PromotionActivation } from './promotionActivation';
 
 export interface BaziSummary {
@@ -16,4 +17,5 @@ export interface BaziSummary {
   pillars: BaziPillar[];
   stars: BaziStar[];
   promotionActivation?: PromotionActivation | null;
+  nobleHelperActivation?: NobleHelperActivation | null;
 }

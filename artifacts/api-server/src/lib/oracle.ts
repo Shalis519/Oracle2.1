@@ -435,6 +435,240 @@ export function computePromotionActivation(
   };
 }
 
+// --- "Благородный помощник" (Noble Helper / 天乙贵人) activation -------------
+
+export interface NobleHelperHour {
+  /** Animal of the favourable double-hour. */
+  animal: string;
+  /** Clock span of the double-hour, e.g. "09:00–11:00". */
+  period: string;
+  /** True for the Noble's own hour (the most auspicious choice). */
+  preferred: boolean;
+}
+
+export interface NobleHelperActivationResult {
+  goal: string;
+  taichi: string;
+  /** Animal of the Noble being activated today (= today's day branch). */
+  animal: string;
+  /** 24-mountain sub-sector, e.g. "Юго-восток-3". */
+  sector: string;
+  /** Degree span of the sub-sector, e.g. "142,5°–157,5°". */
+  degrees: string;
+  hours: NobleHelperHour[];
+  instruction: string;
+  /** Caution note when the sector falls under the year's Three Sha, else null. */
+  caution: string | null;
+  /** The activation day, ISO yyyy-mm-dd. */
+  date: string;
+}
+
+// Noble Helper (天乙贵人) branches by birth-stem element + polarity.
+const NOBLE_HELPER_BY_STEM: Record<string, string[]> = {
+  "Дерево-Ян": ["Коза", "Бык"],
+  "Дерево-Инь": ["Обезьяна", "Крыса"],
+  "Огонь-Ян": ["Петух", "Свинья"],
+  "Огонь-Инь": ["Свинья", "Петух"],
+  "Земля-Ян": ["Бык", "Коза"],
+  "Земля-Инь": ["Крыса", "Обезьяна"],
+  "Металл-Ян": ["Бык", "Коза"],
+  "Металл-Инь": ["Тигр", "Лошадь"],
+  "Вода-Ян": ["Кролик", "Змея"],
+  "Вода-Инь": ["Змея", "Кролик"],
+};
+
+// 24-mountain sub-sector and degree span of each Earthly Branch (index 子=0 … 亥=11).
+const BRANCH_SECTOR: Record<number, { sector: string; degrees: string }> = {
+  0: { sector: "Север-2", degrees: "352,5°–7,5°" },
+  1: { sector: "Северо-восток-1", degrees: "22,5°–37,5°" },
+  2: { sector: "Северо-восток-3", degrees: "52,5°–67,5°" },
+  3: { sector: "Восток-2", degrees: "82,5°–97,5°" },
+  4: { sector: "Юго-восток-1", degrees: "112,5°–127,5°" },
+  5: { sector: "Юго-восток-3", degrees: "142,5°–157,5°" },
+  6: { sector: "Юг-2", degrees: "172,5°–187,5°" },
+  7: { sector: "Юго-запад-1", degrees: "202,5°–217,5°" },
+  8: { sector: "Юго-запад-3", degrees: "232,5°–247,5°" },
+  9: { sector: "Запад-2", degrees: "262,5°–277,5°" },
+  10: { sector: "Северо-запад-1", degrees: "292,5°–307,5°" },
+  11: { sector: "Северо-запад-3", degrees: "322,5°–337,5°" },
+};
+
+// Two-hour periods by branch index (子=0 starts at 23:00).
+const TWO_HOUR_PERIODS = [
+  "23:00–01:00",
+  "01:00–03:00",
+  "03:00–05:00",
+  "05:00–07:00",
+  "07:00–09:00",
+  "09:00–11:00",
+  "11:00–13:00",
+  "13:00–15:00",
+  "15:00–17:00",
+  "17:00–19:00",
+  "19:00–21:00",
+  "21:00–23:00",
+];
+
+// Six-harmony (六合 слияние) partner of each branch by index.
+const SIX_HARMONY = [1, 0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+// Triple-combination frames (三合 союз).
+const SAN_HE_GROUPS = [
+  [8, 0, 4], // 申子辰
+  [11, 3, 7], // 亥卯未
+  [2, 6, 10], // 寅午戌
+  [5, 9, 1], // 巳酉丑
+];
+// Seasonal/directional trios (三會 сезон).
+const SEASONAL_GROUPS = [
+  [2, 3, 4], // 寅卯辰
+  [5, 6, 7], // 巳午未
+  [8, 9, 10], // 申酉戌
+  [11, 0, 1], // 亥子丑
+];
+
+/** Branches carrying the year's Three Sha (三煞), by the current year branch. */
+function threeShaBranches(yearBranchIdx: number): number[] {
+  if ([8, 0, 4].includes(yearBranchIdx)) return [5, 6, 7]; // 申子辰 → юг
+  if ([2, 6, 10].includes(yearBranchIdx)) return [11, 0, 1]; // 寅午戌 → север
+  if ([5, 9, 1].includes(yearBranchIdx)) return [2, 3, 4]; // 巳酉丑 → восток
+  return [8, 9, 10]; // 亥卯未 → запад
+}
+
+/**
+ * "Благородный помощник" (Noble Helper) activation shown on the Bazi page.
+ *
+ * The user's Noble Helpers come from the birth-year and birth-day heavenly
+ * stems. An activation is published only on a day whose day-branch equals one of
+ * those Noble animals ("день Благородного"). The day is suppressed when the
+ * Noble clashes (六冲) with the user's natal year/day branch, when the sector is
+ * the year's Grand Duke (Тай Суй), or when it carries the annual 5-yellow star.
+ * Sectors under the year's Three Sha activate with a caution. Favourable hours
+ * are the Noble's own double-hour plus its attracting hours (六合/三合/三會).
+ * Returns null when there is no activation today — the UI then shows nothing.
+ */
+export function computeNobleHelperActivation(
+  birthDate: string,
+  birthTime: string | null,
+  today: Date = new Date(),
+): NobleHelperActivationResult | null {
+  const d = parseDate(birthDate);
+  if (!d) return null;
+  if (d.month < 1 || d.month > 12 || d.day < 1 || d.day > 31) return null;
+
+  let nobleIdxs: number[];
+  let selfBranchIdxs: number[];
+  let todayBranchIdx: number;
+  let yearBranchIdx: number;
+  try {
+    let hour = 12;
+    let minute = 0;
+    if (birthTime) {
+      const hm = /^(\d{1,2}):(\d{2})/.exec(birthTime);
+      if (hm) {
+        const h = Number(hm[1]);
+        const m = Number(hm[2]);
+        if (h >= 0 && h <= 23 && m >= 0 && m <= 59) {
+          hour = h;
+          minute = m;
+        }
+      }
+    }
+    const birthEC = Solar.fromYmdHms(d.year, d.month, d.day, hour, minute, 0)
+      .getLunar()
+      .getEightChar();
+    const yearStem = HEAVENLY_STEMS[GAN_CN.indexOf(birthEC.getYearGan())];
+    const dayStem = HEAVENLY_STEMS[GAN_CN.indexOf(birthEC.getDayGan())];
+    if (!yearStem || !dayStem) return null;
+
+    const yBranch = ZHI_CN.indexOf(birthEC.getYearZhi());
+    const dBranch = ZHI_CN.indexOf(birthEC.getDayZhi());
+    selfBranchIdxs = [yBranch, dBranch].filter((i) => i >= 0);
+
+    const nobleAnimals = new Set<string>([
+      ...(NOBLE_HELPER_BY_STEM[`${yearStem.element}-${yearStem.polarity}`] ?? []),
+      ...(NOBLE_HELPER_BY_STEM[`${dayStem.element}-${dayStem.polarity}`] ?? []),
+    ]);
+    nobleIdxs = [...nobleAnimals]
+      .map((a) => ANIMAL_ORDER.indexOf(a))
+      .filter((i) => i >= 0);
+
+    const todayLunar = Solar.fromYmdHms(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      today.getDate(),
+      12,
+      0,
+      0,
+    ).getLunar();
+    const todayEC = todayLunar.getEightChar();
+    todayBranchIdx = ZHI_CN.indexOf(todayEC.getDayZhi());
+    yearBranchIdx = ZHI_CN.indexOf(todayEC.getYearZhi());
+    if (todayBranchIdx < 0 || yearBranchIdx < 0) return null;
+  } catch {
+    return null;
+  }
+
+  // Today must be a "day of the Noble".
+  if (!nobleIdxs.includes(todayBranchIdx)) return null;
+  const nobleIdx = todayBranchIdx;
+
+  // Avoid clashes (六冲) with the user's natal year/day branch.
+  const clashOf = (i: number) => (i + 6) % 12;
+  if (selfBranchIdxs.some((s) => clashOf(s) === nobleIdx)) return null;
+
+  // Do not activate the Grand Duke (Тай Суй) sector — the year branch.
+  if (nobleIdx === yearBranchIdx) return null;
+
+  // Do not disturb the sector holding the annual 5-yellow misfortune star.
+  const dir8 = BRANCH_SECTOR[nobleIdx].sector.replace(/-\d+$/, "");
+  if (getFlyingStar(dir8).starNumber === 5) return null;
+
+  const caution = threeShaBranches(yearBranchIdx).includes(nobleIdx)
+    ? "В этом году сектор попадает под влияние Трёх Ша. Активируйте мягко и осторожно, без резких перестановок."
+    : null;
+
+  // Favourable hours: the Noble's own double-hour plus its attracting hours.
+  const attract = new Set<number>();
+  attract.add(SIX_HARMONY[nobleIdx]);
+  for (const g of SAN_HE_GROUPS) {
+    if (g.includes(nobleIdx)) g.forEach((x) => attract.add(x));
+  }
+  for (const g of SEASONAL_GROUPS) {
+    if (g.includes(nobleIdx)) g.forEach((x) => attract.add(x));
+  }
+  attract.delete(nobleIdx);
+  const hours: NobleHelperHour[] = [
+    {
+      animal: ANIMAL_ORDER[nobleIdx],
+      period: TWO_HOUR_PERIODS[nobleIdx],
+      preferred: true,
+    },
+    ...[...attract]
+      .sort((a, b) => a - b)
+      .map((i) => ({
+        animal: ANIMAL_ORDER[i],
+        period: TWO_HOUR_PERIODS[i],
+        preferred: false,
+      })),
+  ];
+
+  const { sector, degrees } = BRANCH_SECTOR[nobleIdx];
+  const hoursText = hours.map((h) => `${h.animal} (${h.period})`).join(", ");
+  const instruction = `В секторе ${sector} (${degrees}), в один из благоприятных часов (${hoursText}) проведите уборку и позвоните в колокольчик. Озвучьте намерение по цели. Весь процесс должен занять не менее 15 минут.`;
+
+  return {
+    goal: "поиск нужных людей, защита и поддержка, решение проблем, исполнение желаний",
+    taichi: "Используйте малый или большой тайчи.",
+    animal: ANIMAL_ORDER[nobleIdx],
+    sector,
+    degrees,
+    hours,
+    instruction,
+    caution,
+    date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`,
+  };
+}
+
 export interface DreamResult {
   interpretation: string;
   keywords: string[];
