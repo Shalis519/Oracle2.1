@@ -20,6 +20,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { userProfileAppearance } from "@/lib/clerk-appearance";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -124,7 +125,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <div className="p-4 border-t border-border bg-card/50">
           <button
             type="button"
-            onClick={() => openUserProfile()}
+            onClick={() => openUserProfile({ appearance: userProfileAppearance })}
             title="Изменить фото и имя"
             className="flex items-center gap-3 mb-4 px-2 py-2 w-full rounded-lg text-left transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
           >

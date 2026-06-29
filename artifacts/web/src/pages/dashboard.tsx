@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ChatWidget } from "@/components/chat-widget";
+import { userProfileAppearance } from "@/lib/clerk-appearance";
 
 const HOUR_RANGES: Record<string, string> = {
   "Крыса": "23:00–01:00",
@@ -74,7 +75,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-4">
           <button
             type="button"
-            onClick={() => openUserProfile()}
+            onClick={() => openUserProfile({ appearance: userProfileAppearance })}
             title="Изменить фото и имя"
             aria-label="Изменить фото и имя"
             className="w-14 h-14 rounded-full border border-border overflow-hidden shrink-0 bg-muted flex items-center justify-center transition-shadow hover:ring-2 hover:ring-primary/50 focus:outline-none focus:ring-2 focus:ring-primary"
