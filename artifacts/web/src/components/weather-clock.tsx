@@ -11,7 +11,9 @@ import {
   CloudLightning,
   Clock,
   MapPin,
+  HandCoins,
 } from "lucide-react";
+import thanksQr from "@assets/IMG_0981_1782720808473.jpg";
 
 interface WeatherInfo {
   temperature: number;
@@ -49,6 +51,7 @@ async function fetchWeather(city: string): Promise<WeatherInfo | null> {
 
 export function WeatherClock({ city }: { city: string | null | undefined }) {
   const [now, setNow] = useState(new Date());
+  const [showThanks, setShowThanks] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000);
@@ -68,37 +71,69 @@ export function WeatherClock({ city }: { city: string | null | undefined }) {
   const { label, Icon } = weather ? describeWeather(weather.code) : { label: "", Icon: Cloud };
 
   return (
-    <div className="flex items-center gap-5 rounded-2xl bg-card/40 backdrop-blur-md border border-border px-5 py-3">
-      <div className="flex items-center gap-2">
-        <Clock className="w-5 h-5 text-primary" />
-        <div className="leading-tight">
-          <div className="font-mono text-xl font-bold tabular-nums">{timeStr}</div>
-          <div className="text-xs text-muted-foreground capitalize">{dateStr}</div>
+    <div className="rounded-2xl bg-card/40 backdrop-blur-md border border-border px-5 py-3">
+      <div className="flex items-center gap-5">
+        <div className="flex items-center gap-2">
+          <Clock className="w-5 h-5 text-primary" />
+          <div className="leading-tight">
+            <div className="font-mono text-xl font-bold tabular-nums">{timeStr}</div>
+            <div className="text-xs text-muted-foreground capitalize">{dateStr}</div>
+          </div>
         </div>
+
+        <div className="h-9 w-px bg-border" />
+
+        {city ? (
+          weather ? (
+            <div className="flex items-center gap-2">
+              <Icon className="w-6 h-6 text-secondary" />
+              <div className="leading-tight">
+                <div className="text-xl font-bold">{weather.temperature}°</div>
+                <div className="text-xs text-muted-foreground">{label}</div>
+              </div>
+            </div>
+          ) : isLoading ? (
+            <div className="text-xs text-muted-foreground animate-pulse">Загрузка погоды…</div>
+          ) : (
+            <div className="text-xs text-muted-foreground">Погода недоступна</div>
+          )
+        ) : (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <MapPin className="w-4 h-4" />
+            Укажите город в профиле
+          </div>
+        )}
       </div>
 
-      <div className="h-9 w-px bg-border" />
+      <div className="mt-3 pt-3 border-t border-border">
+        <button
+          type="button"
+          onClick={() => setShowThanks((v) => !v)}
+          className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+          aria-expanded={showThanks}
+        >
+          <HandCoins className="w-4 h-4" />
+          Поблагодарить
+        </button>
 
-      {city ? (
-        weather ? (
-          <div className="flex items-center gap-2">
-            <Icon className="w-6 h-6 text-secondary" />
-            <div className="leading-tight">
-              <div className="text-xl font-bold">{weather.temperature}°</div>
-              <div className="text-xs text-muted-foreground">{label}</div>
-            </div>
+        {showThanks && (
+          <div className="mt-3 flex flex-col items-center gap-3">
+            <img
+              src={thanksQr}
+              alt="QR-код для благодарности"
+              className="w-40 h-40 rounded-lg bg-white p-2"
+            />
+            <a
+              href="https://tbank.ru/cf/88rx8d2TvHq"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-primary underline underline-offset-2 hover:text-primary/80 break-all text-center"
+            >
+              tbank.ru/cf/88rx8d2TvHq
+            </a>
           </div>
-        ) : isLoading ? (
-          <div className="text-xs text-muted-foreground animate-pulse">Загрузка погоды…</div>
-        ) : (
-          <div className="text-xs text-muted-foreground">Погода недоступна</div>
-        )
-      ) : (
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <MapPin className="w-4 h-4" />
-          Укажите город в профиле
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
