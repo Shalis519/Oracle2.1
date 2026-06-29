@@ -257,6 +257,184 @@ export function computeFengShui(bedDirection: string): FlyingStarData {
   return getFlyingStar(bedDirection);
 }
 
+// --- "Удача продвижения" (Promotion Luck) Feng Shui activation -------------
+
+export interface PromotionActivationResult {
+  /** Promotion animal derived from the birth-year heavenly stem. */
+  animal: string;
+  /** Compass sector that holds the promotion animal this Bazi month. */
+  direction: string;
+  /** Degree span of the sector, or null for the central palace. */
+  degrees: string | null;
+  /** Start of the current Bazi month (inclusive), ISO yyyy-mm-dd. */
+  periodStart: string;
+  /** Start of the next Bazi month (the sector changes then), ISO yyyy-mm-dd. */
+  periodEnd: string;
+  helps: string[];
+  recommendation: string;
+}
+
+// Promotion animal by birth-year heavenly stem (element + polarity).
+const PROMOTION_ANIMAL_BY_STEM: Record<string, string> = {
+  "Дерево-Ян": "Тигр",
+  "Дерево-Инь": "Кролик",
+  "Огонь-Ян": "Змея",
+  "Огонь-Инь": "Лошадь",
+  "Земля-Ян": "Змея",
+  "Земля-Инь": "Лошадь",
+  "Металл-Ян": "Обезьяна",
+  "Металл-Инь": "Петух",
+  "Вода-Ян": "Свинья",
+  "Вода-Инь": "Крыса",
+};
+
+// Twelve animals in Earthly-Branch order (子=0 … 亥=11).
+const ANIMAL_ORDER = [
+  "Крыса",
+  "Бык",
+  "Тигр",
+  "Кролик",
+  "Дракон",
+  "Змея",
+  "Лошадь",
+  "Коза",
+  "Обезьяна",
+  "Петух",
+  "Собака",
+  "Свинья",
+];
+
+// Lo Shu forward-fly path: the central palace first, then the order in which
+// energy flies through the eight outer palaces. Index = step offset.
+const FLY_ORDER_DIRECTIONS = [
+  "Центр",
+  "Северо-запад",
+  "Запад",
+  "Северо-восток",
+  "Юг",
+  "Север",
+  "Юго-запад",
+  "Восток",
+  "Юго-восток",
+];
+
+// Degree span (45° each) of the eight compass sectors. The centre has none.
+const SECTOR_DEGREES: Record<string, string> = {
+  Север: "337,5°–22,5°",
+  "Северо-восток": "22,5°–67,5°",
+  Восток: "67,5°–112,5°",
+  "Юго-восток": "112,5°–157,5°",
+  Юг: "157,5°–202,5°",
+  "Юго-запад": "202,5°–247,5°",
+  Запад: "247,5°–292,5°",
+  "Северо-запад": "292,5°–337,5°",
+};
+
+/**
+ * Central flying star for a given Bazi month. The Tiger-month (立春) seed depends
+ * on the year-branch group, then the centre descends by one each month (顺布 of
+ * the monthly chart), wrapping 1..9.
+ */
+function monthlyCenterStar(yearBranchIdx: number, monthBranchIdx: number): number {
+  let start: number;
+  if ([0, 6, 3, 9].includes(yearBranchIdx)) {
+    start = 8; // 子午卯酉
+  } else if ([4, 10, 1, 7].includes(yearBranchIdx)) {
+    start = 5; // 辰戌丑未
+  } else {
+    start = 2; // 寅申巳亥
+  }
+  const monthNum = ((monthBranchIdx - 2 + 12) % 12) + 1; // Tiger month = 1
+  const c = start - (monthNum - 1);
+  return (((c - 1) % 9) + 9) % 9 + 1;
+}
+
+/**
+ * "Удача продвижения" activation shown on the Bazi page.
+ *
+ * The promotion animal is fixed by the birth-year heavenly stem. Each Bazi month
+ * the current month's animal is placed in the central palace and the remaining
+ * animals are distributed along the Lo Shu fly path; the sector holding the
+ * promotion animal is the activation sector for that month. Three animals are
+ * always absent from the nine palaces — if the promotion animal is one of them,
+ * there is no activation this month. The activation is also suppressed when the
+ * sector carries an afflicting annual or monthly flying star (2 or 5).
+ */
+export function computePromotionActivation(
+  birthDate: string,
+  today: Date = new Date(),
+): PromotionActivationResult | null {
+  const d = parseDate(birthDate);
+  if (!d) return null;
+  if (d.month < 1 || d.month > 12 || d.day < 1 || d.day > 31) return null;
+
+  let promoAnimalIdx: number;
+  let monthBranchIdx: number;
+  let yearBranchIdx: number;
+  let periodStart: string;
+  let periodEnd: string;
+  try {
+    // Promotion animal from the BIRTH-year heavenly stem.
+    const birthEC = Solar.fromYmdHms(d.year, d.month, d.day, 12, 0, 0)
+      .getLunar()
+      .getEightChar();
+    const stem = HEAVENLY_STEMS[GAN_CN.indexOf(birthEC.getYearGan())];
+    if (!stem) return null;
+    const promoAnimal =
+      PROMOTION_ANIMAL_BY_STEM[`${stem.element}-${stem.polarity}`];
+    if (!promoAnimal) return null;
+    promoAnimalIdx = ANIMAL_ORDER.indexOf(promoAnimal);
+
+    // Current Bazi month/year (solar-term accurate) for the month chart.
+    const todayLunar = Solar.fromYmdHms(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      today.getDate(),
+      12,
+      0,
+      0,
+    ).getLunar();
+    const todayEC = todayLunar.getEightChar();
+    monthBranchIdx = ZHI_CN.indexOf(todayEC.getMonthZhi());
+    yearBranchIdx = ZHI_CN.indexOf(todayEC.getYearZhi());
+    if (promoAnimalIdx < 0 || monthBranchIdx < 0 || yearBranchIdx < 0) {
+      return null;
+    }
+
+    periodStart = todayLunar.getPrevJie().getSolar().toYmd();
+    periodEnd = todayLunar.getNextJie().getSolar().toYmd();
+  } catch {
+    return null;
+  }
+
+  // Step offset of the promotion animal along the fly path. The month animal
+  // sits in the centre (offset 0); offsets 9..11 fall outside the nine palaces.
+  const offset = (((promoAnimalIdx - monthBranchIdx) % 12) + 12) % 12;
+  if (offset > 8) return null;
+
+  const direction = FLY_ORDER_DIRECTIONS[offset];
+
+  // Annual star comes from the existing 2026 chart; the monthly star flies
+  // forward from its central seed along the same path.
+  const annualStar = getFlyingStar(direction).starNumber;
+  const monthlyStar =
+    ((monthlyCenterStar(yearBranchIdx, monthBranchIdx) - 1 + offset) % 9) + 1;
+  if ([2, 5].includes(annualStar) || [2, 5].includes(monthlyStar)) {
+    return null;
+  }
+
+  return {
+    animal: ANIMAL_ORDER[promoAnimalIdx],
+    direction,
+    degrees: SECTOR_DEGREES[direction] ?? null,
+    periodStart,
+    periodEnd,
+    helps: ["увеличить денежные активы", "избавиться от негатива"],
+    recommendation:
+      "Проводите в этом секторе много времени, делайте в нём перестановки и уборку в дни благородных.",
+  };
+}
+
 export interface DreamResult {
   interpretation: string;
   keywords: string[];

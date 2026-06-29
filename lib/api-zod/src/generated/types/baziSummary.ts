@@ -7,6 +7,7 @@
  */
 import type { BaziPillar } from './baziPillar';
 import type { BaziStar } from './baziStar';
+import type { PromotionActivation } from './promotionActivation';
 
 export interface BaziSummary {
   dayMaster: string;
@@ -14,4 +15,5 @@ export interface BaziSummary {
   dayElementMeaning: string;
   pillars: BaziPillar[];
   stars: BaziStar[];
+  promotionActivation?: PromotionActivation | null;
 }

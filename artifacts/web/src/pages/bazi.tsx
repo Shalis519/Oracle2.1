@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Compass, AlertCircle, Star } from "lucide-react";
+import { Compass, AlertCircle, Star, Sparkles } from "lucide-react";
 import BaziHoursCalculator from "@/components/bazi-hours-calculator";
 
 export default function BaziPage() {
@@ -38,6 +38,23 @@ export default function BaziPage() {
 
   // Traditional display order, right-to-left: Hour, Day, Month, Year.
   const orderedPillars = [...bazi.pillars].reverse();
+
+  const formatDate = (iso: string) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+    return m ? `${m[3]}.${m[2]}.${m[1]}` : iso;
+  };
+  // The activation holds until the day before the next Bazi month begins.
+  const formatEnd = (iso: string) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+    if (!m) return iso;
+    const dt = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    dt.setDate(dt.getDate() - 1);
+    const dd = String(dt.getDate()).padStart(2, "0");
+    const mm = String(dt.getMonth() + 1).padStart(2, "0");
+    return `${dd}.${mm}.${dt.getFullYear()}`;
+  };
+
+  const promo = bazi.promotionActivation;
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
@@ -95,6 +112,42 @@ export default function BaziPage() {
           <p className="text-sm leading-relaxed text-muted-foreground">{bazi.dayElementMeaning}</p>
         </CardContent>
       </Card>
+
+      {promo && (
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <Card className="bg-card/40 backdrop-blur-md border-primary/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                Активизация «Удача продвижения»
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm leading-relaxed">
+                Активизация на сектор{" "}
+                <span className="font-semibold text-primary">
+                  {promo.direction}
+                  {promo.degrees ? ` (${promo.degrees})` : ""}
+                </span>{" "}
+                весь период с {formatDate(promo.periodStart)} по {formatEnd(promo.periodEnd)}.
+              </p>
+
+              <div>
+                <p className="text-sm font-medium mb-1">Помогает:</p>
+                <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                  {promo.helps.map((h, i) => (
+                    <li key={i}>{h}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <p className="text-sm italic text-muted-foreground border-l-2 border-primary/50 pl-3 py-1">
+                {promo.recommendation}
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       <div>
         <h2 className="text-lg font-serif font-bold mb-3 flex items-center gap-2">

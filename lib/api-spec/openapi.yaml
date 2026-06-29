@@ -809,6 +809,40 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/BaziStar"
+        promotionActivation:
+          anyOf:
+            - $ref: "#/components/schemas/PromotionActivation"
+            - type: "null"
+
+    PromotionActivation:
+      type: object
+      required:
+        [
+          animal,
+          direction,
+          degrees,
+          periodStart,
+          periodEnd,
+          helps,
+          recommendation,
+        ]
+      properties:
+        animal:
+          type: string
+        direction:
+          type: string
+        degrees:
+          type: ["string", "null"]
+        periodStart:
+          type: string
+        periodEnd:
+          type: string
+        helps:
+          type: array
+          items:
+            type: string
+        recommendation:
+          type: string
 
     FengShuiInfo:
       type: object

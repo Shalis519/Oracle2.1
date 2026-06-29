@@ -131,7 +131,16 @@ export const GetTodayForecastResponse = zod.object({
   "description": zod.string(),
   "advice": zod.string(),
   "sector": zod.string().nullish()
-}))
+})),
+  "promotionActivation": zod.union([zod.object({
+  "animal": zod.string(),
+  "direction": zod.string(),
+  "degrees": zod.string().nullable(),
+  "periodStart": zod.string(),
+  "periodEnd": zod.string(),
+  "helps": zod.array(zod.string()),
+  "recommendation": zod.string()
+}),zod.null()]).optional()
 }),
   "fengShui": zod.union([zod.object({
   "direction": zod.string(),
@@ -208,7 +217,16 @@ export const ListForecastsResponseItem = zod.object({
   "description": zod.string(),
   "advice": zod.string(),
   "sector": zod.string().nullish()
-}))
+})),
+  "promotionActivation": zod.union([zod.object({
+  "animal": zod.string(),
+  "direction": zod.string(),
+  "degrees": zod.string().nullable(),
+  "periodStart": zod.string(),
+  "periodEnd": zod.string(),
+  "helps": zod.array(zod.string()),
+  "recommendation": zod.string()
+}),zod.null()]).optional()
 }),
   "fengShui": zod.union([zod.object({
   "direction": zod.string(),
@@ -286,7 +304,16 @@ export const GetBaziResponse = zod.object({
   "description": zod.string(),
   "advice": zod.string(),
   "sector": zod.string().nullish()
-}))
+})),
+  "promotionActivation": zod.union([zod.object({
+  "animal": zod.string(),
+  "direction": zod.string(),
+  "degrees": zod.string().nullable(),
+  "periodStart": zod.string(),
+  "periodEnd": zod.string(),
+  "helps": zod.array(zod.string()),
+  "recommendation": zod.string()
+}),zod.null()]).optional()
 })
 
 

@@ -5,7 +5,12 @@ import {
   GetFengShuiResponse,
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
-import { computeMatrix, computeBazi, computeFengShui } from "../lib/oracle";
+import {
+  computeMatrix,
+  computeBazi,
+  computeFengShui,
+  computePromotionActivation,
+} from "../lib/oracle";
 
 const router: IRouter = Router();
 
@@ -34,7 +39,8 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
     res.status(400).json({ error: "Некорректная дата рождения." });
     return;
   }
-  res.json(GetBaziResponse.parse(result));
+  const promotionActivation = computePromotionActivation(user.birthDate);
+  res.json(GetBaziResponse.parse({ ...result, promotionActivation }));
 });
 
 router.get("/fengshui", requireAuth, async (req, res): Promise<void> => {

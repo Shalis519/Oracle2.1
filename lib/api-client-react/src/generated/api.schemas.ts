@@ -112,12 +112,24 @@ export interface BaziStar {
   sector?: string | null;
 }
 
+export interface PromotionActivation {
+  animal: string;
+  direction: string;
+  /** @nullable */
+  degrees: string | null;
+  periodStart: string;
+  periodEnd: string;
+  helps: string[];
+  recommendation: string;
+}
+
 export interface BaziSummary {
   dayMaster: string;
   dayElement: string;
   dayElementMeaning: string;
   pillars: BaziPillar[];
   stars: BaziStar[];
+  promotionActivation?: PromotionActivation | null;
 }
 
 export interface FengShuiInfo {

@@ -36,6 +36,7 @@ export * from './matrixPoint';
 export * from './personalMatrix';
 export * from './profile';
 export * from './profileInput';
+export * from './promotionActivation';
 export * from './searchCitiesParams';
 export * from './task';
 export * from './taskInput';
