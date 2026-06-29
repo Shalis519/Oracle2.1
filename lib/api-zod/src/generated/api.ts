@@ -255,7 +255,8 @@ export const GetTodayForecastResponse = zod.object({
 })),
   "instruction": zod.string(),
   "caution": zod.string().nullable(),
-  "date": zod.string()
+  "date": zod.string(),
+  "daysUntil": zod.number()
 }),zod.null()]).optional()
 }),
   "fengShui": zod.union([zod.object({
@@ -356,7 +357,8 @@ export const ListForecastsResponseItem = zod.object({
 })),
   "instruction": zod.string(),
   "caution": zod.string().nullable(),
-  "date": zod.string()
+  "date": zod.string(),
+  "daysUntil": zod.number()
 }),zod.null()]).optional()
 }),
   "fengShui": zod.union([zod.object({
@@ -458,7 +460,8 @@ export const GetBaziResponse = zod.object({
 })),
   "instruction": zod.string(),
   "caution": zod.string().nullable(),
-  "date": zod.string()
+  "date": zod.string(),
+  "daysUntil": zod.number()
 }),zod.null()]).optional()
 })
 

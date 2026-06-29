@@ -461,6 +461,8 @@ export interface NobleHelperActivationResult {
   caution: string | null;
   /** The activation day, ISO yyyy-mm-dd. */
   date: string;
+  /** Whole days from today until the activation (0 = today, up to 3 ahead). */
+  daysUntil: number;
 }
 
 // Noble Helper (天乙贵人) branches by birth-stem element + polarity.
@@ -538,13 +540,16 @@ function threeShaBranches(yearBranchIdx: number): number[] {
  * "Благородный помощник" (Noble Helper) activation shown on the Bazi page.
  *
  * The user's Noble Helpers come from the birth-year and birth-day heavenly
- * stems. An activation is published only on a day whose day-branch equals one of
- * those Noble animals ("день Благородного"). The day is suppressed when the
- * Noble clashes (六冲) with the user's natal year/day branch, when the sector is
- * the year's Grand Duke (Тай Суй), or when it carries the annual 5-yellow star.
- * Sectors under the year's Three Sha activate with a caution. Favourable hours
- * are the Noble's own double-hour plus its attracting hours (六合/三合/三會).
- * Returns null when there is no activation today — the UI then shows nothing.
+ * stems. An activation falls on a day whose day-branch equals one of those Noble
+ * animals ("день Благородного"). To give the user time to prepare, the card is
+ * published from three days before the activation up to and including the day
+ * itself; the nearest upcoming activation in that window is returned. A day is
+ * skipped when the Noble clashes (六冲) with the user's natal year/day branch,
+ * when the sector is the year's Grand Duke (Тай Суй), or when it carries the
+ * annual 5-yellow star. Sectors under the year's Three Sha activate with a
+ * caution. Favourable hours are the Noble's own double-hour plus its attracting
+ * hours (六合/三合/三會). Returns null when no activation falls within the next
+ * three days — the UI then shows nothing.
  */
 export function computeNobleHelperActivation(
   birthDate: string,
@@ -557,8 +562,6 @@ export function computeNobleHelperActivation(
 
   let nobleIdxs: number[];
   let selfBranchIdxs: number[];
-  let todayBranchIdx: number;
-  let yearBranchIdx: number;
   try {
     let hour = 12;
     let minute = 0;
@@ -591,82 +594,102 @@ export function computeNobleHelperActivation(
     nobleIdxs = [...nobleAnimals]
       .map((a) => ANIMAL_ORDER.indexOf(a))
       .filter((i) => i >= 0);
-
-    const todayLunar = Solar.fromYmdHms(
-      today.getFullYear(),
-      today.getMonth() + 1,
-      today.getDate(),
-      12,
-      0,
-      0,
-    ).getLunar();
-    const todayEC = todayLunar.getEightChar();
-    todayBranchIdx = ZHI_CN.indexOf(todayEC.getDayZhi());
-    yearBranchIdx = ZHI_CN.indexOf(todayEC.getYearZhi());
-    if (todayBranchIdx < 0 || yearBranchIdx < 0) return null;
   } catch {
     return null;
   }
 
-  // Today must be a "day of the Noble".
-  if (!nobleIdxs.includes(todayBranchIdx)) return null;
-  const nobleIdx = todayBranchIdx;
+  // Scan from today up to three days ahead; return the nearest activation so the
+  // card appears starting three days before the activation day.
+  for (let offset = 0; offset <= 3; offset++) {
+    const target = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + offset,
+    );
 
-  // Avoid clashes (六冲) with the user's natal year/day branch.
-  const clashOf = (i: number) => (i + 6) % 12;
-  if (selfBranchIdxs.some((s) => clashOf(s) === nobleIdx)) return null;
+    let dayBranchIdx: number;
+    let yearBranchIdx: number;
+    try {
+      const ec = Solar.fromYmdHms(
+        target.getFullYear(),
+        target.getMonth() + 1,
+        target.getDate(),
+        12,
+        0,
+        0,
+      )
+        .getLunar()
+        .getEightChar();
+      dayBranchIdx = ZHI_CN.indexOf(ec.getDayZhi());
+      yearBranchIdx = ZHI_CN.indexOf(ec.getYearZhi());
+    } catch {
+      continue;
+    }
+    if (dayBranchIdx < 0 || yearBranchIdx < 0) continue;
 
-  // Do not activate the Grand Duke (Тай Суй) sector — the year branch.
-  if (nobleIdx === yearBranchIdx) return null;
+    // The target day must be a "day of the Noble".
+    if (!nobleIdxs.includes(dayBranchIdx)) continue;
+    const nobleIdx = dayBranchIdx;
 
-  // Do not disturb the sector holding the annual 5-yellow misfortune star.
-  const dir8 = BRANCH_SECTOR[nobleIdx].sector.replace(/-\d+$/, "");
-  if (getFlyingStar(dir8).starNumber === 5) return null;
+    // Skip clashes (六冲) with the user's natal year/day branch.
+    const clashOf = (i: number) => (i + 6) % 12;
+    if (selfBranchIdxs.some((s) => clashOf(s) === nobleIdx)) continue;
 
-  const caution = threeShaBranches(yearBranchIdx).includes(nobleIdx)
-    ? "В этом году сектор попадает под влияние Трёх Ша. Активируйте мягко и осторожно, без резких перестановок."
-    : null;
+    // Skip the Grand Duke (Тай Суй) sector — the year branch.
+    if (nobleIdx === yearBranchIdx) continue;
 
-  // Favourable hours: the Noble's own double-hour plus its attracting hours.
-  const attract = new Set<number>();
-  attract.add(SIX_HARMONY[nobleIdx]);
-  for (const g of SAN_HE_GROUPS) {
-    if (g.includes(nobleIdx)) g.forEach((x) => attract.add(x));
-  }
-  for (const g of SEASONAL_GROUPS) {
-    if (g.includes(nobleIdx)) g.forEach((x) => attract.add(x));
-  }
-  attract.delete(nobleIdx);
-  const hours: NobleHelperHour[] = [
-    {
+    // Skip the sector holding the annual 5-yellow misfortune star.
+    const dir8 = BRANCH_SECTOR[nobleIdx].sector.replace(/-\d+$/, "");
+    if (getFlyingStar(dir8).starNumber === 5) continue;
+
+    const caution = threeShaBranches(yearBranchIdx).includes(nobleIdx)
+      ? "В этом году сектор попадает под влияние Трёх Ша. Активируйте мягко и осторожно, без резких перестановок."
+      : null;
+
+    // Favourable hours: the Noble's own double-hour plus its attracting hours.
+    const attract = new Set<number>();
+    attract.add(SIX_HARMONY[nobleIdx]);
+    for (const g of SAN_HE_GROUPS) {
+      if (g.includes(nobleIdx)) g.forEach((x) => attract.add(x));
+    }
+    for (const g of SEASONAL_GROUPS) {
+      if (g.includes(nobleIdx)) g.forEach((x) => attract.add(x));
+    }
+    attract.delete(nobleIdx);
+    const hours: NobleHelperHour[] = [
+      {
+        animal: ANIMAL_ORDER[nobleIdx],
+        period: TWO_HOUR_PERIODS[nobleIdx],
+        preferred: true,
+      },
+      ...[...attract]
+        .sort((a, b) => a - b)
+        .map((i) => ({
+          animal: ANIMAL_ORDER[i],
+          period: TWO_HOUR_PERIODS[i],
+          preferred: false,
+        })),
+    ];
+
+    const { sector, degrees } = BRANCH_SECTOR[nobleIdx];
+    const hoursText = hours.map((h) => `${h.animal} (${h.period})`).join(", ");
+    const instruction = `В секторе ${sector} (${degrees}), в один из благоприятных часов (${hoursText}) проведите уборку и позвоните в колокольчик. Озвучьте намерение по цели. Весь процесс должен занять не менее 15 минут.`;
+
+    return {
+      goal: "поиск нужных людей, защита и поддержка, решение проблем, исполнение желаний",
+      taichi: "Используйте малый или большой тайчи.",
       animal: ANIMAL_ORDER[nobleIdx],
-      period: TWO_HOUR_PERIODS[nobleIdx],
-      preferred: true,
-    },
-    ...[...attract]
-      .sort((a, b) => a - b)
-      .map((i) => ({
-        animal: ANIMAL_ORDER[i],
-        period: TWO_HOUR_PERIODS[i],
-        preferred: false,
-      })),
-  ];
+      sector,
+      degrees,
+      hours,
+      instruction,
+      caution,
+      date: `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, "0")}-${String(target.getDate()).padStart(2, "0")}`,
+      daysUntil: offset,
+    };
+  }
 
-  const { sector, degrees } = BRANCH_SECTOR[nobleIdx];
-  const hoursText = hours.map((h) => `${h.animal} (${h.period})`).join(", ");
-  const instruction = `В секторе ${sector} (${degrees}), в один из благоприятных часов (${hoursText}) проведите уборку и позвоните в колокольчик. Озвучьте намерение по цели. Весь процесс должен занять не менее 15 минут.`;
-
-  return {
-    goal: "поиск нужных людей, защита и поддержка, решение проблем, исполнение желаний",
-    taichi: "Используйте малый или большой тайчи.",
-    animal: ANIMAL_ORDER[nobleIdx],
-    sector,
-    degrees,
-    hours,
-    instruction,
-    caution,
-    date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`,
-  };
+  return null;
 }
 
 export interface DreamResult {

@@ -167,12 +167,24 @@ export default function BaziPage() {
               <p className="text-sm leading-relaxed text-muted-foreground">{noble.taichi}</p>
 
               <p className="text-sm leading-relaxed">
-                Сегодня ({formatDate(noble.date)}) — день Благородного ({noble.animal}). В секторе{" "}
+                {noble.daysUntil === 0
+                  ? `Сегодня (${formatDate(noble.date)}) — день Благородного`
+                  : noble.daysUntil === 1
+                    ? `Завтра (${formatDate(noble.date)}) — день Благородного`
+                    : `${formatDate(noble.date)} (через ${noble.daysUntil} дн.) — день Благородного`}{" "}
+                ({noble.animal}). В секторе{" "}
                 <span className="font-semibold text-secondary">
                   {noble.sector} ({noble.degrees})
                 </span>{" "}
                 проведите уборку и позвоните в колокольчик. Озвучьте намерение по цели. Весь процесс должен занять не менее 15 минут.
               </p>
+
+              {noble.daysUntil > 0 && (
+                <p className="text-sm leading-relaxed text-secondary/90">
+                  Подготовьтесь заранее: активизация состоится через {noble.daysUntil}{" "}
+                  {noble.daysUntil === 1 ? "день" : noble.daysUntil < 5 ? "дня" : "дней"}.
+                </p>
+              )}
 
               <div>
                 <p className="text-sm font-medium mb-1">Благоприятные часы (двухчасовки):</p>

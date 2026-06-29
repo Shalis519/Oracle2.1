@@ -1016,7 +1016,7 @@ components:
 
     NobleHelperActivation:
       type: object
-      required: [goal, taichi, animal, sector, degrees, hours, instruction, caution, date]
+      required: [goal, taichi, animal, sector, degrees, hours, instruction, caution, date, daysUntil]
       properties:
         goal:
           type: string
@@ -1038,6 +1038,8 @@ components:
           type: ["string", "null"]
         date:
           type: string
+        daysUntil:
+          type: integer
 
     FengShuiInfo:
       type: object

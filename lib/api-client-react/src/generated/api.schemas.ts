@@ -217,6 +217,7 @@ export interface NobleHelperActivation {
   /** @nullable */
   caution: string | null;
   date: string;
+  daysUntil: number;
 }
 
 export interface BaziSummary {
