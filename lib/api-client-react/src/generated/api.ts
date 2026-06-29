@@ -40,6 +40,8 @@ import type {
   FeedbackInput,
   FengShuiInfo,
   HealthStatus,
+  Journal,
+  JournalInput,
   ListTasksParams,
   PersonalMatrix,
   Profile,
@@ -305,6 +307,153 @@ export const useUpdateProfile = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getUpdateProfileMutationOptions(options));
+    }
+
+export const getGetJournalUrl = () => {
+
+
+
+
+  return `/api/journal`
+}
+
+/**
+ * @summary Get the current user's life journal
+ */
+export const getJournal = async ( options?: RequestInit): Promise<Journal> => {
+
+  return customFetch<Journal>(getGetJournalUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetJournalQueryKey = () => {
+    return [
+    `/api/journal`
+    ] as const;
+    }
+
+
+export const getGetJournalQueryOptions = <TData = Awaited<ReturnType<typeof getJournal>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getJournal>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetJournalQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getJournal>>> = ({ signal }) => getJournal({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getJournal>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetJournalQueryResult = NonNullable<Awaited<ReturnType<typeof getJournal>>>
+export type GetJournalQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get the current user's life journal
+ */
+
+export function useGetJournal<TData = Awaited<ReturnType<typeof getJournal>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getJournal>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetJournalQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateJournalUrl = () => {
+
+
+
+
+  return `/api/journal`
+}
+
+/**
+ * @summary Update the current user's life journal
+ */
+export const updateJournal = async (journalInput: JournalInput, options?: RequestInit): Promise<Journal> => {
+
+  return customFetch<Journal>(getUpdateJournalUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(journalInput)
+  }
+);}
+
+
+
+
+export const getUpdateJournalMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateJournal>>, TError,{data: BodyType<JournalInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateJournal>>, TError,{data: BodyType<JournalInput>}, TContext> => {
+
+const mutationKey = ['updateJournal'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateJournal>>, {data: BodyType<JournalInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  updateJournal(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateJournalMutationResult = NonNullable<Awaited<ReturnType<typeof updateJournal>>>
+    export type UpdateJournalMutationBody = BodyType<JournalInput>
+    export type UpdateJournalMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Update the current user's life journal
+ */
+export const useUpdateJournal = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateJournal>>, TError,{data: BodyType<JournalInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateJournal>>,
+        TError,
+        {data: BodyType<JournalInput>},
+        TContext
+      > => {
+      return useMutation(getUpdateJournalMutationOptions(options));
     }
 
 export const getGetDashboardUrl = () => {

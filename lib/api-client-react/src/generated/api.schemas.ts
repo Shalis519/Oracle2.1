@@ -82,6 +82,83 @@ export interface ProfileInput {
   notificationsEnabled?: boolean;
 }
 
+export interface ChildBirth {
+  date: string;
+  name?: string;
+}
+
+export interface Relocation {
+  date: string;
+  city: string;
+}
+
+export interface JobChange {
+  date: string;
+  field: string;
+}
+
+export interface Loss {
+  date: string;
+  who: string;
+}
+
+export interface Journal {
+  id: number;
+  /** @nullable */
+  marriageDate?: string | null;
+  /** @nullable */
+  divorceDate?: string | null;
+  children: ChildBirth[];
+  relocations: Relocation[];
+  jobChanges: JobChange[];
+  losses: Loss[];
+  /** @nullable */
+  heightCm?: number | null;
+  /** @nullable */
+  weightKg?: number | null;
+  /** @nullable */
+  bloodType?: string | null;
+  /** @nullable */
+  chronicConditions?: string | null;
+  /** @nullable */
+  allergies?: string | null;
+  /** @nullable */
+  smoking?: boolean | null;
+  /** @nullable */
+  fears?: string | null;
+  /** @nullable */
+  lastMenstruationDate?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface JournalInput {
+  /** @nullable */
+  marriageDate?: string | null;
+  /** @nullable */
+  divorceDate?: string | null;
+  children?: ChildBirth[];
+  relocations?: Relocation[];
+  jobChanges?: JobChange[];
+  losses?: Loss[];
+  /** @nullable */
+  heightCm?: number | null;
+  /** @nullable */
+  weightKg?: number | null;
+  /** @nullable */
+  bloodType?: string | null;
+  /** @nullable */
+  chronicConditions?: string | null;
+  /** @nullable */
+  allergies?: string | null;
+  /** @nullable */
+  smoking?: boolean | null;
+  /** @nullable */
+  fears?: string | null;
+  /** @nullable */
+  lastMenstruationDate?: string | null;
+}
+
 export interface ArcanaDetail {
   number: number;
   name: string;

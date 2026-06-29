@@ -14,7 +14,8 @@ import {
   Layers,
   Menu,
   X,
-  User
+  User,
+  BookHeart
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     { href: "/fengshui", label: "Фэн-шуй", icon: Wind },
     { href: "/tarot", label: "Таро", icon: Star },
     { href: "/dreams", label: "Сны и сонник", icon: Moon },
+    { href: "/journal", label: "Мой дневник", icon: BookHeart },
     { href: "/contacts", label: "Контакты", icon: Users },
     { href: "/habits", label: "Трекер привычек", icon: ListTodo },
     { href: "/travel", label: "Карта путешествий", icon: MapIcon },

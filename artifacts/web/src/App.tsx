@@ -19,6 +19,7 @@ import DreamsPage from "./pages/dreams";
 import HabitsPage from "./pages/habits";
 import TravelPage from "./pages/travel";
 import TarotPage from "./pages/tarot";
+import JournalPage from "./pages/journal";
 import NotFound from "./pages/not-found";
 import AppLayout from "./components/layout/app-layout";
 
@@ -200,6 +201,7 @@ function ClerkProviderWithRoutes() {
             <Route path="/fengshui" component={() => <ProtectedRoute component={FengShuiPage} />} />
             <Route path="/contacts" component={() => <ProtectedRoute component={ContactsPage} />} />
             <Route path="/dreams" component={() => <ProtectedRoute component={DreamsPage} />} />
+            <Route path="/journal" component={() => <ProtectedRoute component={JournalPage} />} />
             <Route path="/habits" component={() => <ProtectedRoute component={HabitsPage} />} />
             <Route path="/travel" component={() => <ProtectedRoute component={TravelPage} />} />
             <Route path="/tarot" component={() => <ProtectedRoute component={TarotPage} />} />

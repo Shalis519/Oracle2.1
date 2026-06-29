@@ -10,6 +10,7 @@ import dreamsRouter from "./dreams";
 import tasksRouter from "./tasks";
 import travelRouter from "./travel";
 import chatRouter from "./chat";
+import journalRouter from "./journal";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use(dreamsRouter);
 router.use(tasksRouter);
 router.use(travelRouter);
 router.use(chatRouter);
+router.use(journalRouter);
 
 export default router;

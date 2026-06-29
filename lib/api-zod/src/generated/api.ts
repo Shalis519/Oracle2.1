@@ -66,6 +66,107 @@ export const UpdateProfileResponse = zod.object({
 
 
 /**
+ * @summary Get the current user's life journal
+ */
+export const GetJournalResponse = zod.object({
+  "id": zod.number(),
+  "marriageDate": zod.string().nullish(),
+  "divorceDate": zod.string().nullish(),
+  "children": zod.array(zod.object({
+  "date": zod.string(),
+  "name": zod.string().optional()
+})),
+  "relocations": zod.array(zod.object({
+  "date": zod.string(),
+  "city": zod.string()
+})),
+  "jobChanges": zod.array(zod.object({
+  "date": zod.string(),
+  "field": zod.string()
+})),
+  "losses": zod.array(zod.object({
+  "date": zod.string(),
+  "who": zod.string()
+})),
+  "heightCm": zod.number().nullish(),
+  "weightKg": zod.number().nullish(),
+  "bloodType": zod.string().nullish(),
+  "chronicConditions": zod.string().nullish(),
+  "allergies": zod.string().nullish(),
+  "smoking": zod.boolean().nullish(),
+  "fears": zod.string().nullish(),
+  "lastMenstruationDate": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Update the current user's life journal
+ */
+export const UpdateJournalBody = zod.object({
+  "marriageDate": zod.string().nullish(),
+  "divorceDate": zod.string().nullish(),
+  "children": zod.array(zod.object({
+  "date": zod.string(),
+  "name": zod.string().optional()
+})).optional(),
+  "relocations": zod.array(zod.object({
+  "date": zod.string(),
+  "city": zod.string()
+})).optional(),
+  "jobChanges": zod.array(zod.object({
+  "date": zod.string(),
+  "field": zod.string()
+})).optional(),
+  "losses": zod.array(zod.object({
+  "date": zod.string(),
+  "who": zod.string()
+})).optional(),
+  "heightCm": zod.number().nullish(),
+  "weightKg": zod.number().nullish(),
+  "bloodType": zod.string().nullish(),
+  "chronicConditions": zod.string().nullish(),
+  "allergies": zod.string().nullish(),
+  "smoking": zod.boolean().nullish(),
+  "fears": zod.string().nullish(),
+  "lastMenstruationDate": zod.string().nullish()
+})
+
+export const UpdateJournalResponse = zod.object({
+  "id": zod.number(),
+  "marriageDate": zod.string().nullish(),
+  "divorceDate": zod.string().nullish(),
+  "children": zod.array(zod.object({
+  "date": zod.string(),
+  "name": zod.string().optional()
+})),
+  "relocations": zod.array(zod.object({
+  "date": zod.string(),
+  "city": zod.string()
+})),
+  "jobChanges": zod.array(zod.object({
+  "date": zod.string(),
+  "field": zod.string()
+})),
+  "losses": zod.array(zod.object({
+  "date": zod.string(),
+  "who": zod.string()
+})),
+  "heightCm": zod.number().nullish(),
+  "weightKg": zod.number().nullish(),
+  "bloodType": zod.string().nullish(),
+  "chronicConditions": zod.string().nullish(),
+  "allergies": zod.string().nullish(),
+  "smoking": zod.boolean().nullish(),
+  "fears": zod.string().nullish(),
+  "lastMenstruationDate": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
  * @summary Combined home dashboard summary
  */
 export const GetDashboardResponse = zod.object({

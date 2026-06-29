@@ -28,6 +28,8 @@ tags:
     description: Travel map
   - name: chat
     description: Global chat (Болталка)
+  - name: journal
+    description: Personal life journal (life events and health survey)
 paths:
   /healthz:
     get:
@@ -72,6 +74,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Profile"
+
+  /journal:
+    get:
+      operationId: getJournal
+      tags: [journal]
+      summary: Get the current user's life journal
+      responses:
+        "200":
+          description: Journal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Journal"
+    put:
+      operationId: updateJournal
+      tags: [journal]
+      summary: Update the current user's life journal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JournalInput"
+      responses:
+        "200":
+          description: Updated journal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Journal"
 
   /dashboard:
     get:
@@ -727,6 +759,129 @@ components:
           type: ["string", "null"]
         notificationsEnabled:
           type: boolean
+
+    ChildBirth:
+      type: object
+      required: [date]
+      properties:
+        date:
+          type: string
+        name:
+          type: string
+
+    Relocation:
+      type: object
+      required: [date, city]
+      properties:
+        date:
+          type: string
+        city:
+          type: string
+
+    JobChange:
+      type: object
+      required: [date, field]
+      properties:
+        date:
+          type: string
+        field:
+          type: string
+
+    Loss:
+      type: object
+      required: [date, who]
+      properties:
+        date:
+          type: string
+        who:
+          type: string
+
+    Journal:
+      type: object
+      required: [id, children, relocations, jobChanges, losses, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        marriageDate:
+          type: ["string", "null"]
+        divorceDate:
+          type: ["string", "null"]
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChildBirth"
+        relocations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Relocation"
+        jobChanges:
+          type: array
+          items:
+            $ref: "#/components/schemas/JobChange"
+        losses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Loss"
+        heightCm:
+          type: ["integer", "null"]
+        weightKg:
+          type: ["integer", "null"]
+        bloodType:
+          type: ["string", "null"]
+        chronicConditions:
+          type: ["string", "null"]
+        allergies:
+          type: ["string", "null"]
+        smoking:
+          type: ["boolean", "null"]
+        fears:
+          type: ["string", "null"]
+        lastMenstruationDate:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    JournalInput:
+      type: object
+      properties:
+        marriageDate:
+          type: ["string", "null"]
+        divorceDate:
+          type: ["string", "null"]
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChildBirth"
+        relocations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Relocation"
+        jobChanges:
+          type: array
+          items:
+            $ref: "#/components/schemas/JobChange"
+        losses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Loss"
+        heightCm:
+          type: ["integer", "null"]
+        weightKg:
+          type: ["integer", "null"]
+        bloodType:
+          type: ["string", "null"]
+        chronicConditions:
+          type: ["string", "null"]
+        allergies:
+          type: ["string", "null"]
+        smoking:
+          type: ["boolean", "null"]
+        fears:
+          type: ["string", "null"]
+        lastMenstruationDate:
+          type: ["string", "null"]
 
     ArcanaDetail:
       type: object

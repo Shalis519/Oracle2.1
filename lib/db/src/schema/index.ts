@@ -7,3 +7,4 @@ export * from "./dreams";
 export * from "./tasks";
 export * from "./travels";
 export * from "./messages";
+export * from "./lifeJournal";
