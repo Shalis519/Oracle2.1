@@ -10,6 +10,22 @@ import type {
 const VS = "\uFE0E";
 const g = (s: string) => (s ? s + VS : s);
 
+const ROMAN = [
+  "I",
+  "II",
+  "III",
+  "IV",
+  "V",
+  "VI",
+  "VII",
+  "VIII",
+  "IX",
+  "X",
+  "XI",
+  "XII",
+];
+const toRoman = (n: number) => ROMAN[n - 1] ?? String(n);
+
 const SIGN_KEYS = [
   "aries",
   "taurus",
@@ -204,7 +220,7 @@ export default function NatalWheel({
               fontSize={12}
               fill="hsl(164 15% 55%)"
             >
-              {h.number}
+              {toRoman(h.number)}
             </text>
           </g>
         );

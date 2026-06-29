@@ -12,6 +12,22 @@ import NatalWheel from "@/components/natal-wheel";
 const VS = "\uFE0E";
 const glyph = (s: string) => (s ? s + VS : s);
 
+const ROMAN = [
+  "I",
+  "II",
+  "III",
+  "IV",
+  "V",
+  "VI",
+  "VII",
+  "VIII",
+  "IX",
+  "X",
+  "XI",
+  "XII",
+];
+const toRoman = (n: number) => ROMAN[n - 1] ?? String(n);
+
 export default function AstrologyPage() {
   const {
     data: chart,
@@ -132,7 +148,7 @@ export default function AstrologyPage() {
                       <span className="tabular-nums">{b.degreeInSign}</span>
                       {b.house && (
                         <span className="text-xs text-muted-foreground/70">
-                          · {b.house} дом
+                          · {toRoman(b.house)} дом
                         </span>
                       )}
                       {b.retrograde && (
@@ -188,7 +204,7 @@ export default function AstrologyPage() {
                   key={h.number}
                   className="flex items-center justify-between px-4 py-2 text-sm border-b border-border"
                 >
-                  <span className="text-muted-foreground">{h.number} дом</span>
+                  <span className="text-muted-foreground">{toRoman(h.number)} дом</span>
                   <span className="flex items-center gap-1.5">
                     <span className="text-secondary">{glyph(h.signSymbol)}</span>
                     <span className="tabular-nums text-muted-foreground">
