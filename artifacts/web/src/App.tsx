@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { ClerkProvider, SignIn, SignUp, Show, useClerk } from "@clerk/react";
 import { publishableKeyFromHost } from "@clerk/react/internal";
 import { shadcn } from "@clerk/themes";
-import { Switch, Route, useLocation, Router as WouterRouter, Redirect } from "wouter";
+import { Switch, Route, useLocation, Router as WouterRouter, Redirect, Link } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -20,6 +20,7 @@ import HabitsPage from "./pages/habits";
 import TravelPage from "./pages/travel";
 import TarotPage from "./pages/tarot";
 import JournalPage from "./pages/journal";
+import PrivacyPage from "./pages/privacy";
 import NotFound from "./pages/not-found";
 import AppLayout from "./components/layout/app-layout";
 
@@ -102,9 +103,18 @@ function SignInPage() {
 
 function SignUpPage() {
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-8 relative overflow-hidden">
+    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(179,155,200,0.15),transparent_50%)] pointer-events-none"></div>
-      <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} />
+      <div className="relative z-10 flex flex-col items-center gap-5">
+        <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} />
+        <p className="max-w-sm text-center text-sm text-muted-foreground">
+          Регистрируясь, вы соглашаетесь с{" "}
+          <Link href="/privacy" className="text-primary underline-offset-4 hover:underline">
+            Политикой обработки персональных данных
+          </Link>
+          .
+        </p>
+      </div>
     </div>
   );
 }
@@ -193,6 +203,7 @@ function ClerkProviderWithRoutes() {
             <Route path="/" component={HomeRedirect} />
             <Route path="/sign-in/*?" component={SignInPage} />
             <Route path="/sign-up/*?" component={SignUpPage} />
+            <Route path="/privacy" component={PrivacyPage} />
             
             <Route path="/dashboard" component={() => <ProtectedRoute component={DashboardPage} />} />
             <Route path="/profile" component={() => <ProtectedRoute component={ProfilePage} />} />
