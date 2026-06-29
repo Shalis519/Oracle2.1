@@ -37,6 +37,7 @@ export default function DashboardPage() {
   const submitFeedback = useSubmitFeedback();
 
   const displayName =
+    profile?.name?.trim() ||
     user?.firstName ||
     user?.username ||
     user?.fullName ||

@@ -28,6 +28,7 @@ async function resolveAuthor(
   clerkUserId: string,
   fallbackName: string,
 ): Promise<{ name: string; avatar: string | null }> {
+  const localName = fallbackName?.trim();
   try {
     const user = await clerkClient.users.getUser(clerkUserId);
     const full = [user.firstName, user.lastName]
@@ -35,14 +36,14 @@ async function resolveAuthor(
       .join(" ")
       .trim();
     const name =
+      localName ||
       full ||
       user.username ||
       user.primaryEmailAddress?.emailAddress?.split("@")[0] ||
-      fallbackName ||
       "Гость";
     return { name, avatar: user.imageUrl ?? null };
   } catch {
-    return { name: fallbackName || "Гость", avatar: null };
+    return { name: localName || "Гость", avatar: null };
   }
 }
 
