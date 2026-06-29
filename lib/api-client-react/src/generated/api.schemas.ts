@@ -378,6 +378,21 @@ export interface Dashboard {
   recentDream?: Dream | null;
 }
 
+export interface ChatMessage {
+  id: number;
+  authorName: string;
+  /** @nullable */
+  authorAvatar?: string | null;
+  body: string;
+  createdAt: string;
+  mine: boolean;
+}
+
+export interface ChatMessageInput {
+  /** @maxLength 8192 */
+  body: string;
+}
+
 export type SearchCitiesParams = {
 q: string;
 };

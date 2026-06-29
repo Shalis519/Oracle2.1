@@ -9,6 +9,7 @@ import contactsRouter from "./contacts";
 import dreamsRouter from "./dreams";
 import tasksRouter from "./tasks";
 import travelRouter from "./travel";
+import chatRouter from "./chat";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use(contactsRouter);
 router.use(dreamsRouter);
 router.use(tasksRouter);
 router.use(travelRouter);
+router.use(chatRouter);
 
 export default router;

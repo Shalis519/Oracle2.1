@@ -6,3 +6,4 @@ export * from "./familyConnections";
 export * from "./dreams";
 export * from "./tasks";
 export * from "./travels";
+export * from "./messages";

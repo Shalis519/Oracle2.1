@@ -13,6 +13,8 @@ export * from './baziHoursResult';
 export * from './baziPillar';
 export * from './baziStar';
 export * from './baziSummary';
+export * from './chatMessage';
+export * from './chatMessageInput';
 export * from './city';
 export * from './contact';
 export * from './contactInput';

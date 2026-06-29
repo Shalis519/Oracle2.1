@@ -26,6 +26,8 @@ tags:
     description: Habit tracker tasks
   - name: travel
     description: Travel map
+  - name: chat
+    description: Global chat (Болталка)
 paths:
   /healthz:
     get:
@@ -570,6 +572,38 @@ paths:
       responses:
         "204":
           description: Deleted
+
+  /chat/messages:
+    get:
+      operationId: listChatMessages
+      tags: [chat]
+      summary: List global chat messages in chronological order
+      responses:
+        "200":
+          description: Chat messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessage"
+    post:
+      operationId: sendChatMessage
+      tags: [chat]
+      summary: Post a message to the global chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatMessageInput"
+      responses:
+        "201":
+          description: Created chat message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatMessage"
 
 components:
   schemas:
@@ -1198,3 +1232,28 @@ components:
           oneOf:
             - $ref: "#/components/schemas/Dream"
             - type: "null"
+
+    ChatMessage:
+      type: object
+      required: [id, authorName, body, createdAt, mine]
+      properties:
+        id:
+          type: integer
+        authorName:
+          type: string
+        authorAvatar:
+          type: ["string", "null"]
+        body:
+          type: string
+        createdAt:
+          type: string
+        mine:
+          type: boolean
+
+    ChatMessageInput:
+      type: object
+      required: [body]
+      properties:
+        body:
+          type: string
+          maxLength: 8192

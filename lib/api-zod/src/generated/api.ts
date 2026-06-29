@@ -733,3 +733,38 @@ export const DeleteTravelParams = zod.object({
 export const DeleteTravelResponse = zod.void()
 
 
+/**
+ * @summary List global chat messages in chronological order
+ */
+export const ListChatMessagesResponseItem = zod.object({
+  "id": zod.number(),
+  "authorName": zod.string(),
+  "authorAvatar": zod.string().nullish(),
+  "body": zod.string(),
+  "createdAt": zod.string(),
+  "mine": zod.boolean()
+})
+export const ListChatMessagesResponse = zod.array(ListChatMessagesResponseItem)
+
+
+/**
+ * @summary Post a message to the global chat
+ */
+export const sendChatMessageBodyBodyMax = 8192;
+
+
+
+export const SendChatMessageBody = zod.object({
+  "body": zod.string().max(sendChatMessageBodyBodyMax)
+})
+
+export const SendChatMessageResponse = zod.object({
+  "id": zod.number(),
+  "authorName": zod.string(),
+  "authorAvatar": zod.string().nullish(),
+  "body": zod.string(),
+  "createdAt": zod.string(),
+  "mine": zod.boolean()
+})
+
+
