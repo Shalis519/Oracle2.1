@@ -324,6 +324,75 @@ function buildAngle(
   };
 }
 
+// Classical (traditional) orbs of the planets — full orbs in degrees.
+// The orb allowed for an aspect between two bodies is the average of their
+// two orbs (i.e. the sum of their "moieties" / half-orbs), per Lilly.
+const CLASSICAL_ORB: Record<string, number> = {
+  sun: 15,
+  moon: 12,
+  mercury: 7,
+  venus: 7,
+  mars: 8,
+  jupiter: 9,
+  saturn: 9,
+  // Modern planets / points are not part of the classical tradition; assigned
+  // modest orbs so only tight contacts register.
+  uranus: 5,
+  neptune: 5,
+  pluto: 5,
+  chiron: 4,
+  northnode: 3,
+  southnode: 3,
+  lilith: 3,
+};
+const DEFAULT_ORB = 4;
+const moiety = (key: string) => (CLASSICAL_ORB[key] ?? DEFAULT_ORB) / 2;
+
+const MAJOR_ASPECTS: { key: string; angle: number }[] = [
+  { key: "conjunction", angle: 0 },
+  { key: "sextile", angle: 60 },
+  { key: "square", angle: 90 },
+  { key: "trine", angle: 120 },
+  { key: "opposition", angle: 180 },
+];
+
+// Compute major aspects between bodies using classical per-planet orbs.
+function computeAspects(bodies: NatalBody[]): NatalAspect[] {
+  const out: NatalAspect[] = [];
+  for (let i = 0; i < bodies.length; i++) {
+    for (let j = i + 1; j < bodies.length; j++) {
+      const b1 = bodies[i];
+      const b2 = bodies[j];
+      let sep = Math.abs(b1.longitude - b2.longitude) % 360;
+      if (sep > 180) sep = 360 - sep;
+      const allowed = moiety(b1.key) + moiety(b2.key);
+      let best: { key: string; diff: number } | null = null;
+      for (const asp of MAJOR_ASPECTS) {
+        const diff = Math.abs(sep - asp.angle);
+        if (diff <= allowed && (best === null || diff < best.diff)) {
+          best = { key: asp.key, diff };
+        }
+      }
+      if (best) {
+        const info = ASPECT_RU[best.key] ?? { label: best.key, symbol: "" };
+        out.push({
+          body1: b1.name,
+          body1Symbol: b1.symbol,
+          body2: b2.name,
+          body2Symbol: b2.symbol,
+          type: info.label,
+          typeKey: best.key,
+          typeSymbol: info.symbol,
+          orb: Number(best.diff.toFixed(2)),
+        });
+      }
+    }
+  }
+  // Tightest aspects first.
+  out.sort((a, z) => a.orb - z.orb);
+  return out;
+}
+
 export function computeNatalChart(input: NatalChartInput): NatalChart {
   const origin = new Origin({
     year: input.year,
@@ -339,9 +408,7 @@ export function computeNatalChart(input: NatalChartInput): NatalChart {
     origin,
     houseSystem: "placidus",
     zodiac: "tropical",
-    aspectPoints: ["bodies", "points"],
-    aspectWithPoints: ["bodies", "points"],
-    aspectTypes: ["major"],
+    // Aspects are computed separately using classical per-planet orbs.
     language: "en",
   });
 
@@ -387,25 +454,7 @@ export function computeNatalChart(input: NatalChartInput): NatalChart {
     };
   });
 
-  const aspects: NatalAspect[] = horoscope.Aspects.all
-    .filter(
-      (a) =>
-        BODY_RU[a.point1Key] !== undefined &&
-        BODY_RU[a.point2Key] !== undefined,
-    )
-    .map((a) => {
-      const info = ASPECT_RU[a.aspectKey] ?? { label: a.aspectKey, symbol: "" };
-      return {
-        body1: BODY_RU[a.point1Key] ?? a.point1Key,
-        body1Symbol: BODY_SYMBOL[a.point1Key] ?? "",
-        body2: BODY_RU[a.point2Key] ?? a.point2Key,
-        body2Symbol: BODY_SYMBOL[a.point2Key] ?? "",
-        type: info.label,
-        typeKey: a.aspectKey,
-        typeSymbol: info.symbol,
-        orb: Number(a.orb.toFixed(2)),
-      };
-    });
+  const aspects: NatalAspect[] = computeAspects(bodies);
 
   return {
     bodies,
