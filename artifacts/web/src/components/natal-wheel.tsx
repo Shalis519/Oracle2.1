@@ -73,6 +73,8 @@ interface NatalWheelProps {
 
 const SIZE = 620;
 const C = SIZE / 2;
+// Padding around the wheel so angle labels (ASC/DSC/MC/IC) are never clipped.
+const PAD = 30;
 
 const R_OUTER = 300;
 const R_ZODIAC_IN = 256;
@@ -90,7 +92,6 @@ export default function NatalWheel({
   aspects,
 }: NatalWheelProps) {
   const asc = angles.find((a) => a.key === "ascendant");
-  const mc = angles.find((a) => a.key === "midheaven");
   const ascLon = asc?.longitude ?? 0;
 
   // Map an ecliptic longitude to an SVG point. Ascendant sits on the left
@@ -135,8 +136,8 @@ export default function NatalWheel({
 
   return (
     <svg
-      viewBox={`0 0 ${SIZE} ${SIZE}`}
-      className="w-full h-auto max-w-[620px] mx-auto select-none"
+      viewBox={`${-PAD} ${-PAD} ${SIZE + PAD * 2} ${SIZE + PAD * 2}`}
+      className="w-full h-auto max-w-[680px] mx-auto select-none"
       role="img"
       aria-label="Натальная карта"
     >
@@ -209,8 +210,8 @@ export default function NatalWheel({
               y1={a.y}
               x2={b.x}
               y2={b.y}
-              stroke={isAngular ? "hsl(45 55% 60% / 0.55)" : "hsl(45 30% 60% / 0.25)"}
-              strokeWidth={isAngular ? 1.5 : 0.75}
+              stroke={isAngular ? "hsl(45 55% 60% / 0.6)" : "hsl(45 30% 60% / 0.45)"}
+              strokeWidth={isAngular ? 1.5 : 1}
             />
             <text
               x={numPos.x}
@@ -248,26 +249,37 @@ export default function NatalWheel({
         );
       })}
 
-      {/* angle markers (ASC / MC) */}
-      {[asc, mc].map((ang) =>
-        ang ? (
+      {/* angle markers (ASC / DSC / MC / IC) */}
+      {angles.map((ang) => {
+        const o = toXY(R_OUTER, ang.longitude);
+        const inn = toXY(R_ASPECT, ang.longitude);
+        const lab = toXY(R_OUTER + 17, ang.longitude);
+        const isMain = ang.key === "ascendant" || ang.key === "midheaven";
+        return (
           <g key={ang.key}>
-            {(() => {
-              const o = toXY(R_OUTER, ang.longitude);
-              const inn = toXY(R_ASPECT, ang.longitude);
-              const lab = toXY(R_OUTER + 12, ang.longitude);
-              return (
-                <>
-                  <line x1={inn.x} y1={inn.y} x2={o.x} y2={o.y} stroke="hsl(45 60% 65% / 0.5)" strokeWidth={1} strokeDasharray="3 3" />
-                  <text x={lab.x} y={lab.y} textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={700} fill="hsl(45 60% 70%)">
-                    {ang.abbr}
-                  </text>
-                </>
-              );
-            })()}
+            <line
+              x1={inn.x}
+              y1={inn.y}
+              x2={o.x}
+              y2={o.y}
+              stroke={isMain ? "hsl(45 65% 68% / 0.7)" : "hsl(45 55% 62% / 0.4)"}
+              strokeWidth={isMain ? 1.5 : 1}
+              strokeDasharray="4 3"
+            />
+            <text
+              x={lab.x}
+              y={lab.y}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={12}
+              fontWeight={700}
+              fill={isMain ? "hsl(45 65% 72%)" : "hsl(45 40% 62%)"}
+            >
+              {ang.abbr}
+            </text>
           </g>
-        ) : null,
-      )}
+        );
+      })}
 
       {/* planets */}
       {placed.map(({ b, lon, displayLon }) => {
