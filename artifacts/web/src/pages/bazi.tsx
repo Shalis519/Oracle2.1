@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Compass, AlertCircle, Star } from "lucide-react";
+import BaziHoursCalculator from "@/components/bazi-hours-calculator";
 
 export default function BaziPage() {
   const { data: bazi, isLoading, error } = useGetBazi({ query: { retry: false, queryKey: getGetBaziQueryKey() } });
@@ -16,17 +17,21 @@ export default function BaziPage() {
 
   if (isMissingData) {
     return (
-      <div className="p-6 md:p-10 max-w-3xl mx-auto space-y-8 flex flex-col items-center text-center mt-12">
-        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive mb-4">
-          <AlertCircle className="w-8 h-8" />
+      <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-8">
+        <div className="flex flex-col items-center text-center space-y-4 mt-8">
+          <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
+            <AlertCircle className="w-8 h-8" />
+          </div>
+          <h1 className="text-3xl font-serif font-bold">Данные не заполнены</h1>
+          <p className="text-muted-foreground max-w-md">
+            Для расчета карты Бацзы необходима дата вашего рождения. Пожалуйста, заполните ее в настройках профиля.
+          </p>
+          <Link href="/profile">
+            <Button size="lg" className="mt-2">Перейти в профиль</Button>
+          </Link>
         </div>
-        <h1 className="text-3xl font-serif font-bold">Данные не заполнены</h1>
-        <p className="text-muted-foreground max-w-md">
-          Для расчета карты Бацзы необходима дата вашего рождения. Пожалуйста, заполните ее в настройках профиля.
-        </p>
-        <Link href="/profile">
-          <Button size="lg" className="mt-4">Перейти в профиль</Button>
-        </Link>
+
+        <BaziHoursCalculator />
       </div>
     );
   }
@@ -113,6 +118,8 @@ export default function BaziPage() {
           ))}
         </div>
       </div>
+
+      <BaziHoursCalculator />
     </div>
   );
 }

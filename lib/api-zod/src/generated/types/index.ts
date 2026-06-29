@@ -8,9 +8,12 @@
 
 export * from './activationItem';
 export * from './arcanaDetail';
+export * from './baziHoursInput';
+export * from './baziHoursResult';
 export * from './baziPillar';
 export * from './baziStar';
 export * from './baziSummary';
+export * from './city';
 export * from './contact';
 export * from './contactInput';
 export * from './contactUpdate';
@@ -25,11 +28,13 @@ export * from './feedback';
 export * from './feedbackInput';
 export * from './fengShuiInfo';
 export * from './healthStatus';
+export * from './hourInterval';
 export * from './listTasksParams';
 export * from './matrixPoint';
 export * from './personalMatrix';
 export * from './profile';
 export * from './profileInput';
+export * from './searchCitiesParams';
 export * from './task';
 export * from './taskInput';
 export * from './taskUpdate';

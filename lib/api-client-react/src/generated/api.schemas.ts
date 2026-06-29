@@ -9,6 +9,39 @@ export interface HealthStatus {
   status: string;
 }
 
+export interface City {
+  name: string;
+  country: string;
+  lat: number;
+  lng: number;
+  timezone: string;
+}
+
+export interface BaziHoursInput {
+  lat: number;
+  lng: number;
+  utcOffset: number;
+  date: string;
+  doubledRat: boolean;
+}
+
+export interface HourInterval {
+  animal: string;
+  /** @nullable */
+  start: string | null;
+  /** @nullable */
+  end: string | null;
+}
+
+export interface BaziHoursResult {
+  sunrise: string;
+  sunset: string;
+  shiftMinutes: number;
+  solar: HourInterval[];
+  rubber: HourInterval[];
+  combined: HourInterval[];
+}
+
 export interface Profile {
   id: number;
   name: string;
@@ -344,6 +377,10 @@ export interface Dashboard {
   stepsTarget: number;
   recentDream?: Dream | null;
 }
+
+export type SearchCitiesParams = {
+q: string;
+};
 
 export type ListTasksParams = {
 date?: string;

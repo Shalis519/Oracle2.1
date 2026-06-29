@@ -304,6 +304,56 @@ export const GetFengShuiResponse = zod.object({
 
 
 /**
+ * @summary Search the offline world city database for the hour calculator
+ */
+export const SearchCitiesQueryParams = zod.object({
+  "q": zod.coerce.string()
+})
+
+export const SearchCitiesResponseItem = zod.object({
+  "name": zod.string(),
+  "country": zod.string(),
+  "lat": zod.number(),
+  "lng": zod.number(),
+  "timezone": zod.string()
+})
+export const SearchCitiesResponse = zod.array(SearchCitiesResponseItem)
+
+
+/**
+ * @summary Compute Chinese double-hours (solar / rubber / combined) for a place
+ */
+export const ComputeBaziHoursBody = zod.object({
+  "lat": zod.number(),
+  "lng": zod.number(),
+  "utcOffset": zod.number(),
+  "date": zod.string(),
+  "doubledRat": zod.boolean()
+})
+
+export const ComputeBaziHoursResponse = zod.object({
+  "sunrise": zod.string(),
+  "sunset": zod.string(),
+  "shiftMinutes": zod.number(),
+  "solar": zod.array(zod.object({
+  "animal": zod.string(),
+  "start": zod.string().nullable(),
+  "end": zod.string().nullable()
+})),
+  "rubber": zod.array(zod.object({
+  "animal": zod.string(),
+  "start": zod.string().nullable(),
+  "end": zod.string().nullable()
+})),
+  "combined": zod.array(zod.object({
+  "animal": zod.string(),
+  "start": zod.string().nullable(),
+  "end": zod.string().nullable()
+}))
+})
+
+
+/**
  * @summary List contacts
  */
 export const ListContactsResponseItem = zod.object({

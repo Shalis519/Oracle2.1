@@ -189,6 +189,46 @@ paths:
               schema:
                 $ref: "#/components/schemas/FengShuiInfo"
 
+  /cities/search:
+    get:
+      operationId: searchCities
+      tags: [systems]
+      summary: Search the offline world city database for the hour calculator
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Matching cities (most populous first)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/City"
+
+  /bazi/hours:
+    post:
+      operationId: computeBaziHours
+      tags: [systems]
+      summary: Compute Chinese double-hours (solar / rubber / combined) for a place
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BaziHoursInput"
+      responses:
+        "200":
+          description: Hour tables for the three time variants
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaziHoursResult"
+
   /contacts:
     get:
       operationId: listContacts
@@ -540,6 +580,70 @@ components:
           type: string
       required:
         - status
+
+    City:
+      type: object
+      required: [name, country, lat, lng, timezone]
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        timezone:
+          type: string
+
+    BaziHoursInput:
+      type: object
+      required: [lat, lng, utcOffset, date, doubledRat]
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+        utcOffset:
+          type: number
+        date:
+          type: string
+        doubledRat:
+          type: boolean
+
+    HourInterval:
+      type: object
+      required: [animal, start, end]
+      properties:
+        animal:
+          type: string
+        start:
+          type: ["string", "null"]
+        end:
+          type: ["string", "null"]
+
+    BaziHoursResult:
+      type: object
+      required: [sunrise, sunset, shiftMinutes, solar, rubber, combined]
+      properties:
+        sunrise:
+          type: string
+        sunset:
+          type: string
+        shiftMinutes:
+          type: number
+        solar:
+          type: array
+          items:
+            $ref: "#/components/schemas/HourInterval"
+        rubber:
+          type: array
+          items:
+            $ref: "#/components/schemas/HourInterval"
+        combined:
+          type: array
+          items:
+            $ref: "#/components/schemas/HourInterval"
 
     Profile:
       type: object

@@ -20,7 +20,10 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  BaziHoursInput,
+  BaziHoursResult,
   BaziSummary,
+  City,
   Contact,
   ContactInput,
   ContactUpdate,
@@ -39,6 +42,7 @@ import type {
   PersonalMatrix,
   Profile,
   ProfileInput,
+  SearchCitiesParams,
   Task,
   TaskInput,
   TaskUpdate,
@@ -910,6 +914,160 @@ export function useGetFengShui<TData = Awaited<ReturnType<typeof getFengShui>>, 
 
 
 
+
+export const getSearchCitiesUrl = (params: SearchCitiesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/cities/search?${stringifiedParams}` : `/api/cities/search`
+}
+
+/**
+ * @summary Search the offline world city database for the hour calculator
+ */
+export const searchCities = async (params: SearchCitiesParams, options?: RequestInit): Promise<City[]> => {
+
+  return customFetch<City[]>(getSearchCitiesUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getSearchCitiesQueryKey = (params?: SearchCitiesParams,) => {
+    return [
+    `/api/cities/search`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getSearchCitiesQueryOptions = <TData = Awaited<ReturnType<typeof searchCities>>, TError = ErrorType<unknown>>(params: SearchCitiesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof searchCities>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getSearchCitiesQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof searchCities>>> = ({ signal }) => searchCities(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof searchCities>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type SearchCitiesQueryResult = NonNullable<Awaited<ReturnType<typeof searchCities>>>
+export type SearchCitiesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Search the offline world city database for the hour calculator
+ */
+
+export function useSearchCities<TData = Awaited<ReturnType<typeof searchCities>>, TError = ErrorType<unknown>>(
+ params: SearchCitiesParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof searchCities>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getSearchCitiesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getComputeBaziHoursUrl = () => {
+
+
+
+
+  return `/api/bazi/hours`
+}
+
+/**
+ * @summary Compute Chinese double-hours (solar / rubber / combined) for a place
+ */
+export const computeBaziHours = async (baziHoursInput: BaziHoursInput, options?: RequestInit): Promise<BaziHoursResult> => {
+
+  return customFetch<BaziHoursResult>(getComputeBaziHoursUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(baziHoursInput)
+  }
+);}
+
+
+
+
+export const getComputeBaziHoursMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof computeBaziHours>>, TError,{data: BodyType<BaziHoursInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof computeBaziHours>>, TError,{data: BodyType<BaziHoursInput>}, TContext> => {
+
+const mutationKey = ['computeBaziHours'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof computeBaziHours>>, {data: BodyType<BaziHoursInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  computeBaziHours(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ComputeBaziHoursMutationResult = NonNullable<Awaited<ReturnType<typeof computeBaziHours>>>
+    export type ComputeBaziHoursMutationBody = BodyType<BaziHoursInput>
+    export type ComputeBaziHoursMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Compute Chinese double-hours (solar / rubber / combined) for a place
+ */
+export const useComputeBaziHours = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof computeBaziHours>>, TError,{data: BodyType<BaziHoursInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof computeBaziHours>>,
+        TError,
+        {data: BodyType<BaziHoursInput>},
+        TContext
+      > => {
+      return useMutation(getComputeBaziHoursMutationOptions(options));
+    }
 
 export const getListContactsUrl = () => {
 
