@@ -124,7 +124,7 @@ export default function BaziPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm leading-relaxed">
-                Активизация на сектор{" "}
+                Активизация в секторе{" "}
                 <span className="font-semibold text-primary">
                   {promo.direction}
                   {promo.degrees ? ` (${promo.degrees})` : ""}
