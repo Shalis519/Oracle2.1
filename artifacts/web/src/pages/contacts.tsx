@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { Users, Plus, Trash2, Pencil, Calendar, User, MapPin, Phone, Mail } from "lucide-react";
+import { Users, Plus, Trash2, Pencil, Calendar, User, MapPin, Phone, Mail, Search } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 
@@ -43,6 +43,17 @@ export default function ContactsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<FormData>(emptyForm);
+  const [search, setSearch] = useState("");
+
+  const query = search.trim().toLowerCase();
+  const visibleContacts = (contacts ?? [])
+    .filter((c) => {
+      if (!query) return true;
+      return [c.name, c.relationshipType, c.city, c.birthPlace, c.phone, c.email]
+        .filter(Boolean)
+        .some((field) => field!.toLowerCase().includes(query));
+    })
+    .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "", "ru"));
 
   const openCreate = () => {
     setEditingId(null);
@@ -185,51 +196,71 @@ export default function ContactsPage() {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Поиск по имени, городу, телефону..."
+          className="pl-10"
+        />
+      </div>
+
+      <div className="space-y-3">
         {isLoading ? (
-          <div className="col-span-full flex justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
-        ) : contacts && contacts.length > 0 ? (
-          contacts.map((contact, i) => (
-            <motion.div key={contact.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}>
+          <div className="flex justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
+        ) : !contacts || contacts.length === 0 ? (
+          <div className="text-center p-12 border border-dashed border-border rounded-xl text-muted-foreground">
+            У вас пока нет сохраненных контактов.
+          </div>
+        ) : visibleContacts.length === 0 ? (
+          <div className="text-center p-12 border border-dashed border-border rounded-xl text-muted-foreground">
+            Ничего не найдено.
+          </div>
+        ) : (
+          visibleContacts.map((contact, i) => (
+            <motion.div key={contact.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
               <Card className="bg-card/40 backdrop-blur-md hover:border-primary/50 transition-colors group">
-                <CardContent className="p-5 flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground shrink-0 border border-border">
-                    <User className="w-6 h-6" />
+                <CardContent className="p-4 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground shrink-0 border border-border">
+                    <User className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-lg truncate">{contact.name}</h3>
-                    {contact.relationshipType && <p className="text-sm text-muted-foreground truncate">{contact.relationshipType}</p>}
-                    {contact.birthDate && (
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {format(new Date(contact.birthDate), "d MMMM", { locale: ru })}
-                      </p>
-                    )}
-                    {contact.phone && (
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                        <Phone className="w-3 h-3" />
-                        <a href={`tel:${contact.phone}`} className="hover:text-primary truncate">{contact.phone}</a>
-                      </p>
-                    )}
-                    {contact.email && (
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                        <Mail className="w-3 h-3" />
-                        <a href={`mailto:${contact.email}`} className="hover:text-primary truncate">{contact.email}</a>
-                      </p>
-                    )}
-                    {contact.city && (
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {contact.city}
-                      </p>
-                    )}
-                    {contact.birthPlace && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Место рождения: {contact.birthPlace}
-                      </p>
-                    )}
+                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+                      <h3 className="font-bold text-lg truncate">{contact.name}</h3>
+                      {contact.relationshipType && <span className="text-sm text-muted-foreground truncate">{contact.relationshipType}</span>}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-muted-foreground">
+                      {contact.birthDate && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {format(new Date(contact.birthDate), "d MMMM", { locale: ru })}
+                        </span>
+                      )}
+                      {contact.phone && (
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3 h-3" />
+                          <a href={`tel:${contact.phone}`} className="hover:text-primary truncate">{contact.phone}</a>
+                        </span>
+                      )}
+                      {contact.email && (
+                        <span className="flex items-center gap-1">
+                          <Mail className="w-3 h-3" />
+                          <a href={`mailto:${contact.email}`} className="hover:text-primary truncate">{contact.email}</a>
+                        </span>
+                      )}
+                      {contact.city && (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          {contact.city}
+                        </span>
+                      )}
+                      {contact.birthPlace && (
+                        <span>Место рождения: {contact.birthPlace}</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(contact)}>
                       <Pencil className="w-4 h-4" />
                     </Button>
@@ -241,10 +272,6 @@ export default function ContactsPage() {
               </Card>
             </motion.div>
           ))
-        ) : (
-          <div className="col-span-full text-center p-12 border border-dashed border-border rounded-xl text-muted-foreground">
-            У вас пока нет сохраненных контактов.
-          </div>
         )}
       </div>
     </div>
