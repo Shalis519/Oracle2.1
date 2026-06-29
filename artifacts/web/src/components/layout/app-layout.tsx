@@ -27,7 +27,7 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   const [location] = useLocation();
-  const { signOut } = useClerk();
+  const { signOut, openUserProfile } = useClerk();
   const { user } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -122,8 +122,13 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </ScrollArea>
         
         <div className="p-4 border-t border-border bg-card/50">
-          <div className="flex items-center gap-3 mb-4 px-2">
-            <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center border border-border overflow-hidden">
+          <button
+            type="button"
+            onClick={() => openUserProfile()}
+            title="Изменить фото и имя"
+            className="flex items-center gap-3 mb-4 px-2 py-2 w-full rounded-lg text-left transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center border border-border overflow-hidden shrink-0">
               {user?.imageUrl ? (
                 <img src={user.imageUrl} alt="Avatar" className="h-full w-full object-cover" />
               ) : (
@@ -131,10 +136,10 @@ export default function AppLayout({ children }: AppLayoutProps) {
               )}
             </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-medium truncate">{user?.fullName || "Пользователь"}</p>
+              <p className="text-sm font-medium truncate">{user?.fullName || user?.username || "Пользователь"}</p>
               <p className="text-xs text-muted-foreground truncate">{user?.primaryEmailAddress?.emailAddress}</p>
             </div>
-          </div>
+          </button>
           
           <div className="flex flex-col gap-1">
             <Link href="/profile">

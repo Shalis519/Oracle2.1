@@ -1,6 +1,6 @@
 import { useGetDashboard, useGetTodayForecast, useSubmitFeedback, useGetProfile, useGetTodayActivations, getGetTodayActivationsQueryKey, getGetTodayForecastQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useUser } from "@clerk/react";
+import { useUser, useClerk } from "@clerk/react";
 import { WeatherClock } from "@/components/weather-clock";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,7 +33,15 @@ export default function DashboardPage() {
   const { data: activations } = useGetTodayActivations({ query: { queryKey: getGetTodayActivationsQueryKey() } });
   const { data: profile } = useGetProfile();
   const { user } = useUser();
+  const { openUserProfile } = useClerk();
   const submitFeedback = useSubmitFeedback();
+
+  const displayName =
+    user?.firstName ||
+    user?.username ||
+    user?.fullName ||
+    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
+    "Гость";
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -63,12 +71,24 @@ export default function DashboardPage() {
     <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          {user?.imageUrl && (
-            <img src={user.imageUrl} alt="" className="w-14 h-14 rounded-full border border-border object-cover shrink-0" />
-          )}
+          <button
+            type="button"
+            onClick={() => openUserProfile()}
+            title="Изменить фото и имя"
+            aria-label="Изменить фото и имя"
+            className="w-14 h-14 rounded-full border border-border overflow-hidden shrink-0 bg-muted flex items-center justify-center transition-shadow hover:ring-2 hover:ring-primary/50 focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            {user?.imageUrl ? (
+              <img src={user.imageUrl} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-lg font-serif text-muted-foreground">
+                {displayName.charAt(0).toUpperCase()}
+              </span>
+            )}
+          </button>
           <div>
             <h1 className="text-3xl md:text-4xl font-serif font-bold mb-1">
-              {user?.firstName ? `Здравствуйте, ${user.firstName}` : "Оракул Дня"}
+              {displayName}, сегодня твой лучший день!
             </h1>
             <p className="text-muted-foreground">Ежедневный синтез энергий для осознанного дня.</p>
           </div>
