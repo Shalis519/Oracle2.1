@@ -54,6 +54,12 @@ export interface Profile {
   /** @nullable */
   birthPlace?: string | null;
   /** @nullable */
+  birthLatitude?: number | null;
+  /** @nullable */
+  birthLongitude?: number | null;
+  /** @nullable */
+  birthTimezone?: string | null;
+  /** @nullable */
   photoPath?: string | null;
   /** @nullable */
   bedDirection?: string | null;
@@ -73,6 +79,12 @@ export interface ProfileInput {
   birthTime?: string | null;
   /** @nullable */
   birthPlace?: string | null;
+  /** @nullable */
+  birthLatitude?: number | null;
+  /** @nullable */
+  birthLongitude?: number | null;
+  /** @nullable */
+  birthTimezone?: string | null;
   /** @nullable */
   photoPath?: string | null;
   /** @nullable */
@@ -509,8 +521,74 @@ export interface ChatMessageInput {
   body: string;
 }
 
+export interface NatalBody {
+  key: string;
+  name: string;
+  symbol: string;
+  sign: string;
+  signKey: string;
+  signSymbol: string;
+  longitude: number;
+  degreeInSign: string;
+  /** @nullable */
+  house: number | null;
+  retrograde: boolean;
+}
+
+export interface NatalAngle {
+  key: string;
+  name: string;
+  abbr: string;
+  sign: string;
+  signKey: string;
+  signSymbol: string;
+  longitude: number;
+  degreeInSign: string;
+}
+
+export interface NatalHouse {
+  number: number;
+  sign: string;
+  signKey: string;
+  signSymbol: string;
+  longitude: number;
+  degreeInSign: string;
+}
+
+export interface NatalAspect {
+  body1: string;
+  body1Symbol: string;
+  body2: string;
+  body2Symbol: string;
+  type: string;
+  typeKey: string;
+  typeSymbol: string;
+  orb: number;
+}
+
+export interface NatalChartMeta {
+  timezone: string;
+  julianDate: number;
+  utc: string;
+  latitude: number;
+  longitude: number;
+  houseSystem: string;
+}
+
+export interface NatalChart {
+  bodies: NatalBody[];
+  angles: NatalAngle[];
+  houses: NatalHouse[];
+  aspects: NatalAspect[];
+  meta: NatalChartMeta;
+}
+
 export type SearchCitiesParams = {
 q: string;
+};
+
+export type GetNatalChart400 = {
+  error?: string;
 };
 
 export type ListTasksParams = {

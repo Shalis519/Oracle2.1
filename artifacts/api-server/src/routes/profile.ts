@@ -17,6 +17,9 @@ function serialize(user: {
   birthDate: string | null;
   birthTime: string | null;
   birthPlace: string | null;
+  birthLatitude: number | null;
+  birthLongitude: number | null;
+  birthTimezone: string | null;
   photoPath: string | null;
   bedDirection: string | null;
   avatarType: string | null;
@@ -30,6 +33,9 @@ function serialize(user: {
     birthDate: user.birthDate,
     birthTime: user.birthTime,
     birthPlace: user.birthPlace,
+    birthLatitude: user.birthLatitude,
+    birthLongitude: user.birthLongitude,
+    birthTimezone: user.birthTimezone,
     photoPath: user.photoPath,
     bedDirection: user.bedDirection,
     avatarType: user.avatarType,

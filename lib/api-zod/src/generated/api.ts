@@ -27,6 +27,9 @@ export const GetProfileResponse = zod.object({
   "birthDate": zod.string().nullish(),
   "birthTime": zod.string().nullish(),
   "birthPlace": zod.string().nullish(),
+  "birthLatitude": zod.number().nullish(),
+  "birthLongitude": zod.number().nullish(),
+  "birthTimezone": zod.string().nullish(),
   "photoPath": zod.string().nullish(),
   "bedDirection": zod.string().nullish(),
   "avatarType": zod.string().nullish(),
@@ -44,6 +47,9 @@ export const UpdateProfileBody = zod.object({
   "birthDate": zod.string().nullish(),
   "birthTime": zod.string().nullish(),
   "birthPlace": zod.string().nullish(),
+  "birthLatitude": zod.number().nullish(),
+  "birthLongitude": zod.number().nullish(),
+  "birthTimezone": zod.string().nullish(),
   "photoPath": zod.string().nullish(),
   "bedDirection": zod.string().nullish(),
   "avatarType": zod.string().nullish(),
@@ -57,6 +63,9 @@ export const UpdateProfileResponse = zod.object({
   "birthDate": zod.string().nullish(),
   "birthTime": zod.string().nullish(),
   "birthPlace": zod.string().nullish(),
+  "birthLatitude": zod.number().nullish(),
+  "birthLongitude": zod.number().nullish(),
+  "birthTimezone": zod.string().nullish(),
   "photoPath": zod.string().nullish(),
   "bedDirection": zod.string().nullish(),
   "avatarType": zod.string().nullish(),
@@ -526,6 +535,61 @@ export const ComputeBaziHoursResponse = zod.object({
   "start": zod.string().nullable(),
   "end": zod.string().nullable()
 }))
+})
+
+
+/**
+ * @summary Compute the user's western natal chart (Placidus, tropical)
+ */
+export const GetNatalChartResponse = zod.object({
+  "bodies": zod.array(zod.object({
+  "key": zod.string(),
+  "name": zod.string(),
+  "symbol": zod.string(),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "signSymbol": zod.string(),
+  "longitude": zod.number(),
+  "degreeInSign": zod.string(),
+  "house": zod.number().nullable(),
+  "retrograde": zod.boolean()
+})),
+  "angles": zod.array(zod.object({
+  "key": zod.string(),
+  "name": zod.string(),
+  "abbr": zod.string(),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "signSymbol": zod.string(),
+  "longitude": zod.number(),
+  "degreeInSign": zod.string()
+})),
+  "houses": zod.array(zod.object({
+  "number": zod.number(),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "signSymbol": zod.string(),
+  "longitude": zod.number(),
+  "degreeInSign": zod.string()
+})),
+  "aspects": zod.array(zod.object({
+  "body1": zod.string(),
+  "body1Symbol": zod.string(),
+  "body2": zod.string(),
+  "body2Symbol": zod.string(),
+  "type": zod.string(),
+  "typeKey": zod.string(),
+  "typeSymbol": zod.string(),
+  "orb": zod.number()
+})),
+  "meta": zod.object({
+  "timezone": zod.string(),
+  "julianDate": zod.number(),
+  "utc": zod.string(),
+  "latitude": zod.number(),
+  "longitude": zod.number(),
+  "houseSystem": zod.string()
+})
 })
 
 

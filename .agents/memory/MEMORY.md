@@ -1,4 +1,5 @@
 - [Orval query hooks](orval-query-hooks.md) — generated query hook options REQUIRE an explicit `queryKey`; pass `getGet<Name>QueryKey()` or typecheck fails (TS2741).
+- [circular-natal-horoscope-js](circular-natal-horoscope.md) — ephemeris for natal charts; `Origin.timezone` is an OBJECT not a string — never put it in API responses, pass your own IANA string.
 - [Feng Shui flying stars](feng-shui-flying-stars.md) — Lo Shu forward-fly path, monthly center seeds, 2/5 suppression, Jie month interval; reuse for any sector/star activation.
 - [Text validation pitfalls](text-validation-pitfalls.md) — JS `\b` is ASCII-only (use letter-class lookarounds for Cyrillic); `maxLength`/`.length` count UTF-16 units not code points (use `Array.from` for emoji-safe limits).
 - [Bazi hours & city data](bazi-hours-and-city-data.md) — tvoibazi double-hours port (mean-solar shift, no EoT; combined=arc intersection), GeoNames ru names need geonameid join, big JSON asset copied to dist via build.mjs.

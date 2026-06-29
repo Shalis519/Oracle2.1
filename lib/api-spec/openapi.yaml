@@ -263,6 +263,28 @@ paths:
               schema:
                 $ref: "#/components/schemas/BaziHoursResult"
 
+  /astrology/natal:
+    get:
+      operationId: getNatalChart
+      tags: [systems]
+      summary: Compute the user's western natal chart (Placidus, tropical)
+      responses:
+        "200":
+          description: Natal chart
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NatalChart"
+        "400":
+          description: Missing birth data (date, time or coordinates)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
   /contacts:
     get:
       operationId: listContacts
@@ -727,6 +749,12 @@ components:
           type: ["string", "null"]
         birthPlace:
           type: ["string", "null"]
+        birthLatitude:
+          type: ["number", "null"]
+        birthLongitude:
+          type: ["number", "null"]
+        birthTimezone:
+          type: ["string", "null"]
         photoPath:
           type: ["string", "null"]
         bedDirection:
@@ -750,6 +778,12 @@ components:
         birthTime:
           type: ["string", "null"]
         birthPlace:
+          type: ["string", "null"]
+        birthLatitude:
+          type: ["number", "null"]
+        birthLongitude:
+          type: ["number", "null"]
+        birthTimezone:
           type: ["string", "null"]
         photoPath:
           type: ["string", "null"]
@@ -1494,3 +1528,127 @@ components:
         body:
           type: string
           maxLength: 8192
+
+    NatalBody:
+      type: object
+      required: [key, name, symbol, sign, signKey, signSymbol, longitude, degreeInSign, house, retrograde]
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+        sign:
+          type: string
+        signKey:
+          type: string
+        signSymbol:
+          type: string
+        longitude:
+          type: number
+        degreeInSign:
+          type: string
+        house:
+          type: ["integer", "null"]
+        retrograde:
+          type: boolean
+
+    NatalAngle:
+      type: object
+      required: [key, name, abbr, sign, signKey, signSymbol, longitude, degreeInSign]
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        abbr:
+          type: string
+        sign:
+          type: string
+        signKey:
+          type: string
+        signSymbol:
+          type: string
+        longitude:
+          type: number
+        degreeInSign:
+          type: string
+
+    NatalHouse:
+      type: object
+      required: [number, sign, signKey, signSymbol, longitude, degreeInSign]
+      properties:
+        number:
+          type: integer
+        sign:
+          type: string
+        signKey:
+          type: string
+        signSymbol:
+          type: string
+        longitude:
+          type: number
+        degreeInSign:
+          type: string
+
+    NatalAspect:
+      type: object
+      required: [body1, body1Symbol, body2, body2Symbol, type, typeKey, typeSymbol, orb]
+      properties:
+        body1:
+          type: string
+        body1Symbol:
+          type: string
+        body2:
+          type: string
+        body2Symbol:
+          type: string
+        type:
+          type: string
+        typeKey:
+          type: string
+        typeSymbol:
+          type: string
+        orb:
+          type: number
+
+    NatalChartMeta:
+      type: object
+      required: [timezone, julianDate, utc, latitude, longitude, houseSystem]
+      properties:
+        timezone:
+          type: string
+        julianDate:
+          type: number
+        utc:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        houseSystem:
+          type: string
+
+    NatalChart:
+      type: object
+      required: [bodies, angles, houses, aspects, meta]
+      properties:
+        bodies:
+          type: array
+          items:
+            $ref: "#/components/schemas/NatalBody"
+        angles:
+          type: array
+          items:
+            $ref: "#/components/schemas/NatalAngle"
+        houses:
+          type: array
+          items:
+            $ref: "#/components/schemas/NatalHouse"
+        aspects:
+          type: array
+          items:
+            $ref: "#/components/schemas/NatalAspect"
+        meta:
+          $ref: "#/components/schemas/NatalChartMeta"

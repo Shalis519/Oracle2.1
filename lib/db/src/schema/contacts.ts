@@ -7,6 +7,7 @@ import {
   date,
   time,
   timestamp,
+  doublePrecision,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
@@ -24,6 +25,9 @@ export const contactsTable = pgTable("contacts", {
   relationshipType: text("relationship_type"),
   gender: text("gender"),
   birthPlace: text("birth_place"),
+  birthLatitude: doublePrecision("birth_latitude"),
+  birthLongitude: doublePrecision("birth_longitude"),
+  birthTimezone: text("birth_timezone"),
   notes: text("notes"),
   notificationDays: integer("notification_days").notNull().default(1),
   isActive: boolean("is_active").notNull().default(true),

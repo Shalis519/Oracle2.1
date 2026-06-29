@@ -17,6 +17,12 @@ export interface ProfileInput {
   /** @nullable */
   birthPlace?: string | null;
   /** @nullable */
+  birthLatitude?: number | null;
+  /** @nullable */
+  birthLongitude?: number | null;
+  /** @nullable */
+  birthTimezone?: string | null;
+  /** @nullable */
   photoPath?: string | null;
   /** @nullable */
   bedDirection?: string | null;

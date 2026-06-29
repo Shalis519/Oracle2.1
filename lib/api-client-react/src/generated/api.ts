@@ -39,10 +39,12 @@ import type {
   Feedback,
   FeedbackInput,
   FengShuiInfo,
+  GetNatalChart400,
   HealthStatus,
   Journal,
   JournalInput,
   ListTasksParams,
+  NatalChart,
   PersonalMatrix,
   Profile,
   ProfileInput,
@@ -1219,6 +1221,83 @@ export const useComputeBaziHours = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getComputeBaziHoursMutationOptions(options));
     }
+
+export const getGetNatalChartUrl = () => {
+
+
+
+
+  return `/api/astrology/natal`
+}
+
+/**
+ * @summary Compute the user's western natal chart (Placidus, tropical)
+ */
+export const getNatalChart = async ( options?: RequestInit): Promise<NatalChart> => {
+
+  return customFetch<NatalChart>(getGetNatalChartUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetNatalChartQueryKey = () => {
+    return [
+    `/api/astrology/natal`
+    ] as const;
+    }
+
+
+export const getGetNatalChartQueryOptions = <TData = Awaited<ReturnType<typeof getNatalChart>>, TError = ErrorType<GetNatalChart400>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getNatalChart>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetNatalChartQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNatalChart>>> = ({ signal }) => getNatalChart({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getNatalChart>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetNatalChartQueryResult = NonNullable<Awaited<ReturnType<typeof getNatalChart>>>
+export type GetNatalChartQueryError = ErrorType<GetNatalChart400>
+
+
+/**
+ * @summary Compute the user's western natal chart (Placidus, tropical)
+ */
+
+export function useGetNatalChart<TData = Awaited<ReturnType<typeof getNatalChart>>, TError = ErrorType<GetNatalChart400>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getNatalChart>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetNatalChartQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getListContactsUrl = () => {
 
