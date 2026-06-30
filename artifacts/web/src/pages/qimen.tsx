@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import {
-  Footprints,
   Compass,
   ScrollText,
   Target,
@@ -55,6 +54,44 @@ const JIFU_ACTIVATION: string[] = [
   "Обязательно нужно четко сформулировать свое желание, медитировать и визуализировать в минимальных деталях, укажите место, сроки, стоимость, размеры, год выпуска, цвет, когда, где, и т.д.",
   "Следует помнить, что чем чаще Вы общаетесь с духом – тем быстрее будут исполняться Ваши желания, поэтому не забывать вовремя проводить активации.",
 ];
+
+const GEN_AREAS: string[] = [
+  "операции с недвижимостью",
+  "романтических отношениях",
+  "учеба, экзамены, презентации",
+  "работа с документами",
+  "подписание контрактов",
+  "благоприятно для свадьбы",
+  "разного рода соглашений",
+  "начала новых проектов",
+  "привлечение денежных поступлений",
+  "богатства",
+  "получение помощи",
+  "защита",
+  "нейтрализация негатива",
+  "подавать прошение",
+  "решать вопросы карьеры",
+  "решение споров и разногласий",
+  "продвижение по службе",
+  "выигрыш",
+  "получение финансовых доходов",
+];
+
+const GEN_NOTE =
+  "Перед проведением активации ЧЁТКО формулируйте цель и желание!!";
+
+const GEN_PROCESS: string[] = [
+  "Найдите нужный сектор в доме",
+  "Поставьте активатор в этом секторе в указанную двухчасовку минимум на 1,5 часа.",
+];
+
+function pluralDays(n: number): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "день";
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "дня";
+  return "дней";
+}
 
 const MONTHS_RU = [
   "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -212,6 +249,7 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
 export default function QimenPage() {
   const [rulesOpen, setRulesOpen] = useState(false);
   const [jifuInfoOpen, setJifuInfoOpen] = useState(false);
+  const [genInfoOpen, setGenInfoOpen] = useState(false);
   const { data, isLoading } = useGetQimen({
     query: { retry: false, queryKey: getGetQimenQueryKey() },
   });
@@ -331,12 +369,40 @@ export default function QimenPage() {
 
       {/* Персональные структуры «Три Генерала» — требуют дату рождения */}
       <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Footprints className="w-5 h-5 text-emerald-400" />
-          <h2 className="text-xl font-serif font-semibold">
-            Структуры «Три Генерала»
-          </h2>
-        </div>
+        <h2 className="text-xl font-serif font-semibold">
+          <Dialog open={genInfoOpen} onOpenChange={setGenInfoOpen}>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-emerald-300/60 underline-offset-4 hover:text-emerald-200 transition-colors"
+              >
+                Структуры «Три Генерала»
+                <Info className="w-4 h-4 text-emerald-300/80" />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="font-serif">
+                  АКТИВАЦИЯ помогает в:
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 text-sm leading-relaxed">
+                <ul className="list-disc list-outside space-y-1.5 pl-5">
+                  {GEN_AREAS.map((a, i) => (
+                    <li key={i}>{a}</li>
+                  ))}
+                </ul>
+                <p className="font-medium text-emerald-200">{GEN_NOTE}</p>
+                <p className="font-semibold text-emerald-200">Процесс активации:</p>
+                <ol className="list-decimal list-outside space-y-1.5 pl-5">
+                  {GEN_PROCESS.map((p, i) => (
+                    <li key={i}>{p}</li>
+                  ))}
+                </ol>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </h2>
 
         {!hasBirthDate ? (
           <Card className="bg-card/40 backdrop-blur-md">
@@ -364,8 +430,9 @@ export default function QimenPage() {
         ) : (
           <Card className="bg-card/40 backdrop-blur-md">
             <CardContent className="py-10 text-center text-sm text-muted-foreground">
-              На ближайшие {windowDays} дней благоприятных структур не найдено.
-              Загляните позже — структуры появляются по благоприятным дням и часам.
+              На ближайшие {windowDays} {pluralDays(windowDays)} благоприятных
+              структур не найдено. Загляните позже — структуры появляются по
+              благоприятным дням и часам.
             </CardContent>
           </Card>
         )}
