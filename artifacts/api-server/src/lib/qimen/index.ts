@@ -61,8 +61,8 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const hasBirthDate = !!opts.birthDate;
   const yearBranch = hasBirthDate ? birthYearBranch(opts.birthDate!, opts.birthTime) : -1;
 
-  // Джи Фу is universal (no personal/六冲 gate): compute for everyone.
-  const jiFuWishes = computeJiFuWishes(from, days);
+  // Джи Фу is universal (no personal/六冲 gate) and shown for the current day only.
+  const jiFuWishes = computeJiFuWishes(from, 1);
 
   const structures: QimenStructure[] = [];
   if (!hasBirthDate || yearBranch < 0) {

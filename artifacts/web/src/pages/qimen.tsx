@@ -21,7 +21,6 @@ import {
   Sparkles,
   AlertCircle,
   Info,
-  Clock,
 } from "lucide-react";
 
 const WALK_RULES: string[] = [
@@ -122,6 +121,8 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
   if (w.matchMonth) scales.push("месяц");
   if (w.matchYear) scales.push("год");
 
+  const hourWindow = w.hourLabel.match(/\(([^)]*)\)/)?.[0] ?? "";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -133,7 +134,8 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
           <div className="flex items-start justify-between gap-3">
             <p className="text-sm leading-relaxed">
               Джи Фу в час{" "}
-              <span className="font-semibold text-amber-200">{w.hourAnimalGen}</span> на{" "}
+              <span className="font-semibold text-amber-200">{w.hourAnimalGen}</span>
+              {hourWindow ? ` ${hourWindow}` : ""} сидеть спиной на{" "}
               <span className="font-semibold text-amber-200">{w.directionLoc}</span>. Сила
               взаимодействия с ним{" "}
               <span className="font-semibold text-amber-200">{w.strength} балла</span>.
@@ -144,10 +146,6 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
           </div>
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-amber-300/70" />
-              {w.hourLabel}
-            </span>
             <span className="flex items-center gap-1.5">
               <Compass className="w-3.5 h-3.5 text-amber-300/70" />
               {w.direction}
@@ -269,8 +267,7 @@ export default function QimenPage() {
         ) : (
           <Card className="bg-card/40 backdrop-blur-md">
             <CardContent className="py-8 text-center text-sm text-muted-foreground">
-              На ближайшие {windowDays} дней сильных совпадений сектора Джи Фу не
-              найдено.
+              На сегодня сильных совпадений сектора Джи Фу не найдено.
             </CardContent>
           </Card>
         )}
