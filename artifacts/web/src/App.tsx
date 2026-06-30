@@ -13,6 +13,7 @@ import DashboardPage from "./pages/dashboard";
 import ProfilePage from "./pages/profile";
 import MatrixPage from "./pages/matrix";
 import BaziPage from "./pages/bazi";
+import QimenPage from "./pages/qimen";
 import AstrologyPage from "./pages/astrology";
 import FengShuiPage from "./pages/fengshui";
 import ContactsPage from "./pages/contacts";
@@ -210,6 +211,7 @@ function ClerkProviderWithRoutes() {
             <Route path="/profile" component={() => <ProtectedRoute component={ProfilePage} />} />
             <Route path="/matrix" component={() => <ProtectedRoute component={MatrixPage} />} />
             <Route path="/bazi" component={() => <ProtectedRoute component={BaziPage} />} />
+            <Route path="/qimen" component={() => <ProtectedRoute component={QimenPage} />} />
             <Route path="/astrology" component={() => <ProtectedRoute component={AstrologyPage} />} />
             <Route path="/fengshui" component={() => <ProtectedRoute component={FengShuiPage} />} />
             <Route path="/contacts" component={() => <ProtectedRoute component={ContactsPage} />} />
