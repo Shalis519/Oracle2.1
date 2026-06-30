@@ -40,7 +40,10 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
     res.status(400).json({ error: "Некорректная дата рождения." });
     return;
   }
-  const promotionActivation = computePromotionActivation(user.birthDate);
+  const promotionActivation = computePromotionActivation(
+    user.birthDate,
+    user.birthTime,
+  );
   const nobleHelperActivation = computeNobleHelperActivation(
     user.birthDate,
     user.birthTime,

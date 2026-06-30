@@ -6,9 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface NobleHelperHour {
+export interface AvoidHour {
   animal: string;
   period: string;
-  preferred: boolean;
   reason: string;
 }

@@ -261,7 +261,19 @@ export const GetTodayForecastResponse = zod.object({
   "periodStart": zod.string(),
   "periodEnd": zod.string(),
   "helps": zod.array(zod.string()),
-  "recommendation": zod.string()
+  "recommendation": zod.string(),
+  "hours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "preferred": zod.boolean(),
+  "reason": zod.string()
+})),
+  "avoidHours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "reason": zod.string()
+})),
+  "nobleDate": zod.string().nullable()
 }),zod.null()]).optional(),
   "nobleHelperActivation": zod.union([zod.object({
   "goal": zod.string(),
@@ -272,7 +284,13 @@ export const GetTodayForecastResponse = zod.object({
   "hours": zod.array(zod.object({
   "animal": zod.string(),
   "period": zod.string(),
-  "preferred": zod.boolean()
+  "preferred": zod.boolean(),
+  "reason": zod.string()
+})),
+  "avoidHours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "reason": zod.string()
 })),
   "instruction": zod.string(),
   "caution": zod.string().nullable(),
@@ -363,7 +381,19 @@ export const ListForecastsResponseItem = zod.object({
   "periodStart": zod.string(),
   "periodEnd": zod.string(),
   "helps": zod.array(zod.string()),
-  "recommendation": zod.string()
+  "recommendation": zod.string(),
+  "hours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "preferred": zod.boolean(),
+  "reason": zod.string()
+})),
+  "avoidHours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "reason": zod.string()
+})),
+  "nobleDate": zod.string().nullable()
 }),zod.null()]).optional(),
   "nobleHelperActivation": zod.union([zod.object({
   "goal": zod.string(),
@@ -374,7 +404,13 @@ export const ListForecastsResponseItem = zod.object({
   "hours": zod.array(zod.object({
   "animal": zod.string(),
   "period": zod.string(),
-  "preferred": zod.boolean()
+  "preferred": zod.boolean(),
+  "reason": zod.string()
+})),
+  "avoidHours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "reason": zod.string()
 })),
   "instruction": zod.string(),
   "caution": zod.string().nullable(),
@@ -466,7 +502,19 @@ export const GetBaziResponse = zod.object({
   "periodStart": zod.string(),
   "periodEnd": zod.string(),
   "helps": zod.array(zod.string()),
-  "recommendation": zod.string()
+  "recommendation": zod.string(),
+  "hours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "preferred": zod.boolean(),
+  "reason": zod.string()
+})),
+  "avoidHours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "reason": zod.string()
+})),
+  "nobleDate": zod.string().nullable()
 }),zod.null()]).optional(),
   "nobleHelperActivation": zod.union([zod.object({
   "goal": zod.string(),
@@ -477,7 +525,13 @@ export const GetBaziResponse = zod.object({
   "hours": zod.array(zod.object({
   "animal": zod.string(),
   "period": zod.string(),
-  "preferred": zod.boolean()
+  "preferred": zod.boolean(),
+  "reason": zod.string()
+})),
+  "avoidHours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "reason": zod.string()
 })),
   "instruction": zod.string(),
   "caution": zod.string().nullable(),

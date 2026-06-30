@@ -208,6 +208,19 @@ export interface BaziStar {
   sector?: string | null;
 }
 
+export interface NobleHelperHour {
+  animal: string;
+  period: string;
+  preferred: boolean;
+  reason: string;
+}
+
+export interface AvoidHour {
+  animal: string;
+  period: string;
+  reason: string;
+}
+
 export interface PromotionActivation {
   animal: string;
   direction: string;
@@ -217,12 +230,10 @@ export interface PromotionActivation {
   periodEnd: string;
   helps: string[];
   recommendation: string;
-}
-
-export interface NobleHelperHour {
-  animal: string;
-  period: string;
-  preferred: boolean;
+  hours: NobleHelperHour[];
+  avoidHours: AvoidHour[];
+  /** @nullable */
+  nobleDate: string | null;
 }
 
 export interface NobleHelperActivation {
@@ -232,6 +243,7 @@ export interface NobleHelperActivation {
   sector: string;
   degrees: string;
   hours: NobleHelperHour[];
+  avoidHours: AvoidHour[];
   instruction: string;
   /** @nullable */
   caution: string | null;

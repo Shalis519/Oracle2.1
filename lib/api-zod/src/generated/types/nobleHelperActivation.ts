@@ -5,6 +5,7 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { AvoidHour } from './avoidHour';
 import type { NobleHelperHour } from './nobleHelperHour';
 
 export interface NobleHelperActivation {
@@ -14,6 +15,7 @@ export interface NobleHelperActivation {
   sector: string;
   degrees: string;
   hours: NobleHelperHour[];
+  avoidHours: AvoidHour[];
   instruction: string;
   /** @nullable */
   caution: string | null;

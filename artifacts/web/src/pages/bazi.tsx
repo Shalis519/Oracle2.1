@@ -145,6 +145,35 @@ export default function BaziPage() {
               <p className="text-sm italic text-muted-foreground border-l-2 border-primary/50 pl-3 py-1">
                 {promo.recommendation}
               </p>
+
+              {promo.hours.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium mb-1">
+                    Благоприятные часы (двухчасовки)
+                    {promo.nobleDate ? ` в день Благородного (${formatDate(promo.nobleDate)})` : ""}:
+                  </p>
+                  <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                    {promo.hours.map((h, i) => (
+                      <li key={i}>
+                        {h.animal} ({h.period}) — {h.reason}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {promo.avoidHours.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium mb-1">Исключённые часы:</p>
+                  <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                    {promo.avoidHours.map((h, i) => (
+                      <li key={i}>
+                        {h.animal} ({h.period}) — {h.reason}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </CardContent>
           </Card>
         </motion.div>
@@ -191,12 +220,24 @@ export default function BaziPage() {
                 <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
                   {noble.hours.map((h, i) => (
                     <li key={i}>
-                      {h.animal} ({h.period})
-                      {h.preferred ? " — час самого Благородного, предпочтительно" : ""}
+                      {h.animal} ({h.period}) — {h.reason}
                     </li>
                   ))}
                 </ul>
               </div>
+
+              {noble.avoidHours.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium mb-1">Исключённые часы:</p>
+                  <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                    {noble.avoidHours.map((h, i) => (
+                      <li key={i}>
+                        {h.animal} ({h.period}) — {h.reason}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {noble.caution && (
                 <p className="text-sm italic text-muted-foreground border-l-2 border-destructive/50 pl-3 py-1">

@@ -1035,6 +1035,9 @@ components:
           periodEnd,
           helps,
           recommendation,
+          hours,
+          avoidHours,
+          nobleDate,
         ]
       properties:
         animal:
@@ -1053,10 +1056,20 @@ components:
             type: string
         recommendation:
           type: string
+        hours:
+          type: array
+          items:
+            $ref: "#/components/schemas/NobleHelperHour"
+        avoidHours:
+          type: array
+          items:
+            $ref: "#/components/schemas/AvoidHour"
+        nobleDate:
+          type: ["string", "null"]
 
     NobleHelperHour:
       type: object
-      required: [animal, period, preferred]
+      required: [animal, period, preferred, reason]
       properties:
         animal:
           type: string
@@ -1064,10 +1077,23 @@ components:
           type: string
         preferred:
           type: boolean
+        reason:
+          type: string
+
+    AvoidHour:
+      type: object
+      required: [animal, period, reason]
+      properties:
+        animal:
+          type: string
+        period:
+          type: string
+        reason:
+          type: string
 
     NobleHelperActivation:
       type: object
-      required: [goal, taichi, animal, sector, degrees, hours, instruction, caution, date, daysUntil]
+      required: [goal, taichi, animal, sector, degrees, hours, avoidHours, instruction, caution, date, daysUntil]
       properties:
         goal:
           type: string
@@ -1083,6 +1109,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/NobleHelperHour"
+        avoidHours:
+          type: array
+          items:
+            $ref: "#/components/schemas/AvoidHour"
         instruction:
           type: string
         caution:

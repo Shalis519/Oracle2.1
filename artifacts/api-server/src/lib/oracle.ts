@@ -272,6 +272,12 @@ export interface PromotionActivationResult {
   periodEnd: string;
   helps: string[];
   recommendation: string;
+  /** Favourable double-hours on the nearest day of the Noble (по правилу выбора часов), or [] when none falls within the lookahead window. */
+  hours: NobleHelperHour[];
+  /** Favourable-by-affinity hours excluded by the selection rule, with the reason. */
+  avoidHours: AvoidHour[];
+  /** ISO date of the nearest day of the Noble the hours apply to, or null. */
+  nobleDate: string | null;
 }
 
 // Promotion animal by birth-year heavenly stem (element + polarity).
@@ -362,6 +368,7 @@ function monthlyCenterStar(yearBranchIdx: number, monthBranchIdx: number): numbe
  */
 export function computePromotionActivation(
   birthDate: string,
+  birthTime: string | null,
   today: Date = new Date(),
 ): PromotionActivationResult | null {
   const d = parseDate(birthDate);
@@ -414,6 +421,10 @@ export function computePromotionActivation(
 
   const direction = FLY_ORDER_DIRECTIONS[offset];
 
+  // The sector work is done "в дни Благородного"; surface the favourable hours of
+  // the nearest day of the Noble so the user picks a good двухчасовка for it.
+  const noble = computeNobleHelperActivation(birthDate, birthTime, today);
+
   // Annual star comes from the existing 2026 chart; the monthly star flies
   // forward from its central seed along the same path.
   const annualStar = getFlyingStar(direction).starNumber;
@@ -432,6 +443,9 @@ export function computePromotionActivation(
     helps: ["увеличить денежные активы", "избавиться от негатива"],
     recommendation:
       "Проводите в этом секторе много времени, делайте в нём перестановки и уборку в дни благородных.",
+    hours: noble?.hours ?? [],
+    avoidHours: noble?.avoidHours ?? [],
+    nobleDate: noble?.date ?? null,
   };
 }
 
@@ -444,6 +458,8 @@ export interface NobleHelperHour {
   period: string;
   /** True for the Noble's own hour (the most auspicious choice). */
   preferred: boolean;
+  /** Why the hour is favourable (Russian): own hour / слияние / союз / сезон. */
+  reason: string;
 }
 
 export interface NobleHelperActivationResult {
@@ -456,6 +472,8 @@ export interface NobleHelperActivationResult {
   /** Degree span of the sub-sector, e.g. "142,5°–157,5°". */
   degrees: string;
   hours: NobleHelperHour[];
+  /** Favourable-by-affinity hours excluded by the selection rule, with the reason. */
+  avoidHours: AvoidHour[];
   instruction: string;
   /** Caution note when the sector falls under the year's Three Sha, else null. */
   caution: string | null;
@@ -536,6 +554,113 @@ function threeShaBranches(yearBranchIdx: number): number[] {
   return [8, 9, 10]; // 亥卯未 → запад
 }
 
+/** Six-clash (六冲) partner of an Earthly Branch by index. */
+const clashOf = (i: number): number => (i + 6) % 12;
+
+export interface AvoidHour {
+  /** Animal of the excluded double-hour. */
+  animal: string;
+  /** Clock span of the double-hour. */
+  period: string;
+  /** Why the hour is excluded from the recommendation (Russian). */
+  reason: string;
+}
+
+/**
+ * Selects the favourable double-hours for an activation following the mingli
+ * date-selection rule (правило выбора удачных двухчасовок).
+ *
+ * The anchor's own hour (the day of the Noble = the day branch) is preferred;
+ * additional favourable hours are those combining with the anchor via six-harmony
+ * (六合 слияние), three-harmony (三合 союз) or the seasonal trio (三會 сезон).
+ * An hour is excluded when it:
+ *   - falls in the day pillar's void (空亡) — «пустой час»;
+ *   - clashes (六冲) with the day branch (日破) — «разрушитель дня»;
+ *   - clashes with the month branch (月破) — «неиспользуемый час»;
+ *   - clashes with one of the user's natal branches — «нежелательный час».
+ * Excluded favourable hours are returned in `avoidHours` with their reason.
+ */
+function selectActivationHours(opts: {
+  anchorIdx: number;
+  dayBranchIdx: number;
+  monthBranchIdx: number;
+  natalBranchIdxs: number[];
+  voidBranchIdxs: number[];
+}): { hours: NobleHelperHour[]; avoidHours: AvoidHour[] } {
+  const { anchorIdx, dayBranchIdx, monthBranchIdx, natalBranchIdxs, voidBranchIdxs } =
+    opts;
+
+  // Candidate favourable hours, each tagged with why it is favourable. Insertion
+  // order sets priority: the Noble's own hour first, then 六合 / 三合 / 三會.
+  const candidates = new Map<number, string>();
+  candidates.set(anchorIdx, "час самого Благородного, предпочтительно");
+  const six = SIX_HARMONY[anchorIdx];
+  if (!candidates.has(six)) candidates.set(six, "слияние с Благородным (六合)");
+  for (const g of SAN_HE_GROUPS) {
+    if (g.includes(anchorIdx)) {
+      for (const x of g) {
+        if (!candidates.has(x)) candidates.set(x, "союз с Благородным (三合)");
+      }
+    }
+  }
+  for (const g of SEASONAL_GROUPS) {
+    if (g.includes(anchorIdx)) {
+      for (const x of g) {
+        if (!candidates.has(x)) candidates.set(x, "сезон с Благородным (三會)");
+      }
+    }
+  }
+
+  const excludeReason = (idx: number): string | null => {
+    if (voidBranchIdxs.includes(idx)) {
+      return "пустой час — попадает в пустоту дня (Кун Ван)";
+    }
+    if (idx === clashOf(dayBranchIdx)) {
+      return "разрушитель дня — столкновение с днём";
+    }
+    if (idx === clashOf(monthBranchIdx)) {
+      return "неиспользуемый час — столкновение с месяцем";
+    }
+    if (natalBranchIdxs.some((n) => idx === clashOf(n))) {
+      return "нежелательный час — столкновение с вашей картой";
+    }
+    return null;
+  };
+
+  const hours: NobleHelperHour[] = [];
+  const avoidHours: AvoidHour[] = [];
+  for (const [idx, reason] of candidates) {
+    // The Noble's own hour anchors the whole activation, so it is always offered
+    // as the preferred choice; the exclusions only prune the supplementary
+    // affinity hours (слияние / союз / сезон).
+    if (idx === anchorIdx) {
+      hours.push({
+        animal: ANIMAL_ORDER[idx],
+        period: TWO_HOUR_PERIODS[idx],
+        preferred: true,
+        reason,
+      });
+      continue;
+    }
+    const ex = excludeReason(idx);
+    if (ex) {
+      avoidHours.push({
+        animal: ANIMAL_ORDER[idx],
+        period: TWO_HOUR_PERIODS[idx],
+        reason: ex,
+      });
+    } else {
+      hours.push({
+        animal: ANIMAL_ORDER[idx],
+        period: TWO_HOUR_PERIODS[idx],
+        preferred: false,
+        reason,
+      });
+    }
+  }
+  return { hours, avoidHours };
+}
+
 /**
  * "Благородный помощник" (Noble Helper) activation shown on the Bazi page.
  *
@@ -547,9 +672,11 @@ function threeShaBranches(yearBranchIdx: number): number[] {
  * skipped when the Noble clashes (六冲) with the user's natal year/day branch,
  * when the sector is the year's Grand Duke (Тай Суй), or when it carries the
  * annual 5-yellow star. Sectors under the year's Three Sha activate with a
- * caution. Favourable hours are the Noble's own double-hour plus its attracting
- * hours (六合/三合/三會). Returns null when no activation falls within the next
- * three days — the UI then shows nothing.
+ * caution. Favourable hours are the Noble's own double-hour (always offered as
+ * preferred) plus its harmony hours (六合/三合/三會); hours that are void (空亡),
+ * clash the day (六冲), break the month (月破), or clash the user's natal branches
+ * are excluded into avoidHours. Returns null when no activation falls within the
+ * next three days — the UI then shows nothing.
  */
 export function computeNobleHelperActivation(
   birthDate: string,
@@ -609,6 +736,8 @@ export function computeNobleHelperActivation(
 
     let dayBranchIdx: number;
     let yearBranchIdx: number;
+    let monthBranchIdx: number;
+    let voidBranchIdxs: number[];
     try {
       const ec = Solar.fromYmdHms(
         target.getFullYear(),
@@ -622,17 +751,21 @@ export function computeNobleHelperActivation(
         .getEightChar();
       dayBranchIdx = ZHI_CN.indexOf(ec.getDayZhi());
       yearBranchIdx = ZHI_CN.indexOf(ec.getYearZhi());
+      monthBranchIdx = ZHI_CN.indexOf(ec.getMonthZhi());
+      // Day pillar void (空亡 Кун Ван): the two branches with no stem in the day's xun.
+      voidBranchIdxs = Array.from(ec.getDayXunKong())
+        .map((c) => ZHI_CN.indexOf(c))
+        .filter((i) => i >= 0);
     } catch {
       continue;
     }
-    if (dayBranchIdx < 0 || yearBranchIdx < 0) continue;
+    if (dayBranchIdx < 0 || yearBranchIdx < 0 || monthBranchIdx < 0) continue;
 
     // The target day must be a "day of the Noble".
     if (!nobleIdxs.includes(dayBranchIdx)) continue;
     const nobleIdx = dayBranchIdx;
 
     // Skip clashes (六冲) with the user's natal year/day branch.
-    const clashOf = (i: number) => (i + 6) % 12;
     if (selfBranchIdxs.some((s) => clashOf(s) === nobleIdx)) continue;
 
     // Skip the Grand Duke (Тай Суй) sector — the year branch.
@@ -646,30 +779,16 @@ export function computeNobleHelperActivation(
       ? "В этом году сектор попадает под влияние Трёх Ша. Активируйте мягко и осторожно, без резких перестановок."
       : null;
 
-    // Favourable hours: the Noble's own double-hour plus its attracting hours.
-    const attract = new Set<number>();
-    attract.add(SIX_HARMONY[nobleIdx]);
-    for (const g of SAN_HE_GROUPS) {
-      if (g.includes(nobleIdx)) g.forEach((x) => attract.add(x));
-    }
-    for (const g of SEASONAL_GROUPS) {
-      if (g.includes(nobleIdx)) g.forEach((x) => attract.add(x));
-    }
-    attract.delete(nobleIdx);
-    const hours: NobleHelperHour[] = [
-      {
-        animal: ANIMAL_ORDER[nobleIdx],
-        period: TWO_HOUR_PERIODS[nobleIdx],
-        preferred: true,
-      },
-      ...[...attract]
-        .sort((a, b) => a - b)
-        .map((i) => ({
-          animal: ANIMAL_ORDER[i],
-          period: TWO_HOUR_PERIODS[i],
-          preferred: false,
-        })),
-    ];
+    // Favourable hours follow the mingli double-hour selection rule: the Noble's
+    // own hour is preferred, joined by hours combining with it (六合/三合/三會),
+    // minus the excluded hours (пустой / разрушитель дня / неиспользуемый / нежелательный).
+    const { hours, avoidHours } = selectActivationHours({
+      anchorIdx: nobleIdx,
+      dayBranchIdx,
+      monthBranchIdx,
+      natalBranchIdxs: selfBranchIdxs,
+      voidBranchIdxs,
+    });
 
     const { sector, degrees } = BRANCH_SECTOR[nobleIdx];
     const hoursText = hours.map((h) => `${h.animal} (${h.period})`).join(", ");
@@ -682,6 +801,7 @@ export function computeNobleHelperActivation(
       sector,
       degrees,
       hours,
+      avoidHours,
       instruction,
       caution,
       date: `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, "0")}-${String(target.getDate()).padStart(2, "0")}`,

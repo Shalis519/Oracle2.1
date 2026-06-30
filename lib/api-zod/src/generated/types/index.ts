@@ -8,6 +8,7 @@
 
 export * from './activationItem';
 export * from './arcanaDetail';
+export * from './avoidHour';
 export * from './baziHoursInput';
 export * from './baziHoursResult';
 export * from './baziPillar';
