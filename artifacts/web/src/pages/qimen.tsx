@@ -31,8 +31,7 @@ const WALK_RULES: string[] = [
   "Не совмещайте в одной прогулке цели, которые противоречат друг другу.",
 ];
 
-const JIFU_INFO =
-  "Дух Джи Фу помогает исполнять просьбы и желания. Сила взаимодействия, учитывает совпадение сектора по году, месяцу, дню и часу. Мах 4 балла.";
+const JIFU_INFO = "Дух Джи Фу помогает исполнять просьбы и желания.";
 
 const MONTHS_RU = [
   "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -136,9 +135,7 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
               Джи Фу в час{" "}
               <span className="font-semibold text-amber-200">{w.hourAnimalGen}</span>
               {hourWindow ? ` ${hourWindow}` : ""} сидеть спиной на{" "}
-              <span className="font-semibold text-amber-200">{w.directionLoc}</span>. Сила
-              взаимодействия с ним{" "}
-              <span className="font-semibold text-amber-200">{w.strength} балла</span>.
+              <span className="font-semibold text-amber-200">{w.directionLoc}</span>.
             </p>
             <span className="shrink-0 rounded-full bg-amber-400/15 px-3 py-1 text-xs font-medium text-amber-200">
               {formatDate(w.date)}
@@ -162,6 +159,9 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
                 {label}
               </span>
             ))}
+            <span className="text-base leading-none" aria-label={`Сила взаимодействия: ${w.strength}`}>
+              {"\u{1F9D8}\u200D\u2640\uFE0F".repeat(w.strength)}
+            </span>
           </div>
         </CardContent>
       </Card>
