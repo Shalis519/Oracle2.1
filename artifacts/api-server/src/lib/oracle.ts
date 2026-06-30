@@ -308,10 +308,16 @@ export function computeFengShui(
     // Keep the annual star as the monthly fallback.
   }
 
+  // The annual 5-yellow (У Хуан) misfortune star overrides everything: whenever
+  // it lands in the sector — as the annual OR the monthly star, with any other
+  // star — only its own caution recommendation is given.
+  const FIVE_YELLOW = 5;
   const recommendation =
-    annual.starNumber === monthly.starNumber
-      ? annual.recommendation
-      : `${annual.recommendation} В этом месяце сектор также под влиянием звезды «${monthly.starName}»: ${monthly.recommendation}`;
+    annual.starNumber === FIVE_YELLOW || monthly.starNumber === FIVE_YELLOW
+      ? getStarByNumber(FIVE_YELLOW).recommendation
+      : annual.starNumber === monthly.starNumber
+        ? annual.recommendation
+        : `${annual.recommendation} В этом месяце сектор также под влиянием звезды «${monthly.starName}»: ${monthly.recommendation}`;
 
   return {
     direction: annual.direction,
