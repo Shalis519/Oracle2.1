@@ -8,6 +8,7 @@
 import type { ChildBirth } from './childBirth';
 import type { JobChange } from './jobChange';
 import type { Loss } from './loss';
+import type { Marriage } from './marriage';
 import type { Relocation } from './relocation';
 
 export interface JournalInput {
@@ -15,6 +16,7 @@ export interface JournalInput {
   marriageDate?: string | null;
   /** @nullable */
   divorceDate?: string | null;
+  marriages?: Marriage[];
   children?: ChildBirth[];
   relocations?: Relocation[];
   jobChanges?: JobChange[];

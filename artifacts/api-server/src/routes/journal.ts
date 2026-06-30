@@ -15,6 +15,7 @@ function serialize(j: LifeJournal) {
     id: j.id,
     marriageDate: j.marriageDate,
     divorceDate: j.divorceDate,
+    marriages: j.marriages,
     children: j.children,
     relocations: j.relocations,
     jobChanges: j.jobChanges,

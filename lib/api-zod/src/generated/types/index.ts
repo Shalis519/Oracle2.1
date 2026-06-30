@@ -38,6 +38,7 @@ export * from './journal';
 export * from './journalInput';
 export * from './listTasksParams';
 export * from './loss';
+export * from './marriage';
 export * from './matrixPoint';
 export * from './natalAngle';
 export * from './natalAspect';

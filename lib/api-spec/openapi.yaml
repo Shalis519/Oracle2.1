@@ -830,9 +830,18 @@ components:
         who:
           type: string
 
+    Marriage:
+      type: object
+      required: [date]
+      properties:
+        date:
+          type: string
+        divorceDate:
+          type: string
+
     Journal:
       type: object
-      required: [id, children, relocations, jobChanges, losses, createdAt, updatedAt]
+      required: [id, marriages, children, relocations, jobChanges, losses, createdAt, updatedAt]
       properties:
         id:
           type: integer
@@ -840,6 +849,10 @@ components:
           type: ["string", "null"]
         divorceDate:
           type: ["string", "null"]
+        marriages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marriage"
         children:
           type: array
           items:
@@ -884,6 +897,10 @@ components:
           type: ["string", "null"]
         divorceDate:
           type: ["string", "null"]
+        marriages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marriage"
         children:
           type: array
           items:

@@ -114,12 +114,18 @@ export interface Loss {
   who: string;
 }
 
+export interface Marriage {
+  date: string;
+  divorceDate?: string;
+}
+
 export interface Journal {
   id: number;
   /** @nullable */
   marriageDate?: string | null;
   /** @nullable */
   divorceDate?: string | null;
+  marriages: Marriage[];
   children: ChildBirth[];
   relocations: Relocation[];
   jobChanges: JobChange[];
@@ -149,6 +155,7 @@ export interface JournalInput {
   marriageDate?: string | null;
   /** @nullable */
   divorceDate?: string | null;
+  marriages?: Marriage[];
   children?: ChildBirth[];
   relocations?: Relocation[];
   jobChanges?: JobChange[];

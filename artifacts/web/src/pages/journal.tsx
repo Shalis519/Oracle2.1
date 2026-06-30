@@ -113,6 +113,7 @@ function ListSection({
 const emptyState = {
   marriageDate: "",
   divorceDate: "",
+  marriages: [] as Row[],
   lastMenstruationDate: "",
   heightCm: "",
   weightKg: "",
@@ -145,9 +146,23 @@ export default function JournalPage() {
 
   useEffect(() => {
     if (!journal) return;
+    const loadedMarriages = (journal.marriages ?? []).map((m) => ({
+      date: m.date ?? "",
+      divorceDate: m.divorceDate ?? "",
+    }));
+    const marriages =
+      loadedMarriages.length === 0 && journal.marriageDate
+        ? [
+            {
+              date: journal.marriageDate,
+              divorceDate: journal.divorceDate ?? "",
+            },
+          ]
+        : loadedMarriages;
     setForm({
       marriageDate: journal.marriageDate ?? "",
       divorceDate: journal.divorceDate ?? "",
+      marriages,
       lastMenstruationDate: journal.lastMenstruationDate ?? "",
       heightCm: journal.heightCm != null ? String(journal.heightCm) : "",
       weightKg: journal.weightKg != null ? String(journal.weightKg) : "",
@@ -188,8 +203,12 @@ export default function JournalPage() {
     updateJournal.mutate(
       {
         data: {
-          marriageDate: form.marriageDate || null,
-          divorceDate: form.divorceDate || null,
+          marriageDate: null,
+          divorceDate: null,
+          marriages: keepRows(form.marriages, ["date"]).map((m) => ({
+            date: m.date,
+            ...(m.divorceDate ? { divorceDate: m.divorceDate } : {}),
+          })) as { date: string; divorceDate?: string }[],
           lastMenstruationDate: form.lastMenstruationDate || null,
           heightCm: form.heightCm ? parseInt10(form.heightCm) : null,
           weightKg: form.weightKg ? parseInt10(form.weightKg) : null,
@@ -251,26 +270,21 @@ export default function JournalPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="marriageDate">Дата брака</Label>
-                <Input
-                  id="marriageDate"
-                  type="date"
-                  value={form.marriageDate}
-                  onChange={(e) => setField("marriageDate", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="divorceDate">Дата развода</Label>
-                <Input
-                  id="divorceDate"
-                  type="date"
-                  value={form.divorceDate}
-                  onChange={(e) => setField("divorceDate", e.target.value)}
-                />
-              </div>
-            </div>
+            <ListSection
+              title="Браки и разводы"
+              description="Даты вступления в брак и, при наличии, развода. Можно добавить несколько."
+              addLabel="Добавить брак"
+              fields={[
+                { key: "date", label: "Дата брака", type: "date" },
+                {
+                  key: "divorceDate",
+                  label: "Дата развода (по желанию)",
+                  type: "date",
+                },
+              ]}
+              rows={form.marriages}
+              onChange={(rows) => setField("marriages", rows)}
+            />
 
             <ListSection
               title="Роды (даты детей)"
@@ -386,10 +400,14 @@ export default function JournalPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value={UNSET}>Не указано</SelectItem>
-                    <SelectItem value="A">A</SelectItem>
-                    <SelectItem value="B">B</SelectItem>
-                    <SelectItem value="O">O</SelectItem>
-                    <SelectItem value="AB">AB</SelectItem>
+                    <SelectItem value="I+">I полож.</SelectItem>
+                    <SelectItem value="I-">I отр.</SelectItem>
+                    <SelectItem value="II+">II полож.</SelectItem>
+                    <SelectItem value="II-">II отр.</SelectItem>
+                    <SelectItem value="III+">III полож.</SelectItem>
+                    <SelectItem value="III-">III отр.</SelectItem>
+                    <SelectItem value="IV+">IV полож.</SelectItem>
+                    <SelectItem value="IV-">IV отр.</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

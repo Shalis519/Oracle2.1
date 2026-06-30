@@ -81,6 +81,10 @@ export const GetJournalResponse = zod.object({
   "id": zod.number(),
   "marriageDate": zod.string().nullish(),
   "divorceDate": zod.string().nullish(),
+  "marriages": zod.array(zod.object({
+  "date": zod.string(),
+  "divorceDate": zod.string().optional()
+})),
   "children": zod.array(zod.object({
   "date": zod.string(),
   "name": zod.string().optional()
@@ -116,6 +120,10 @@ export const GetJournalResponse = zod.object({
 export const UpdateJournalBody = zod.object({
   "marriageDate": zod.string().nullish(),
   "divorceDate": zod.string().nullish(),
+  "marriages": zod.array(zod.object({
+  "date": zod.string(),
+  "divorceDate": zod.string().optional()
+})).optional(),
   "children": zod.array(zod.object({
   "date": zod.string(),
   "name": zod.string().optional()
@@ -146,6 +154,10 @@ export const UpdateJournalResponse = zod.object({
   "id": zod.number(),
   "marriageDate": zod.string().nullish(),
   "divorceDate": zod.string().nullish(),
+  "marriages": zod.array(zod.object({
+  "date": zod.string(),
+  "divorceDate": zod.string().optional()
+})),
   "children": zod.array(zod.object({
   "date": zod.string(),
   "name": zod.string().optional()

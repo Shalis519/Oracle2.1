@@ -15,12 +15,14 @@ export type ChildBirth = { date: string; name?: string };
 export type Relocation = { date: string; city: string };
 export type JobChange = { date: string; field: string };
 export type Loss = { date: string; who: string };
+export type Marriage = { date: string; divorceDate?: string };
 
 export const lifeJournalsTable = pgTable("life_journals", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().unique(),
   marriageDate: date("marriage_date", { mode: "string" }),
   divorceDate: date("divorce_date", { mode: "string" }),
+  marriages: jsonb("marriages").$type<Marriage[]>().notNull().default([]),
   children: jsonb("children").$type<ChildBirth[]>().notNull().default([]),
   relocations: jsonb("relocations").$type<Relocation[]>().notNull().default([]),
   jobChanges: jsonb("job_changes").$type<JobChange[]>().notNull().default([]),
