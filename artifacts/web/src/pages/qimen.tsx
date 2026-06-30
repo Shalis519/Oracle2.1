@@ -23,7 +23,7 @@ interface QimenWalk {
 const WALK_RULES: string[] = [
   "Выходите точно в указанный двухчасовой интервал (час). Раньше или позже энергия уже другая.",
   "Двигайтесь в указанном направлении от своего дома или текущей точки. Пройдите ощутимое расстояние, не разворачивайтесь сразу.",
-  "Перед выходом чётко, вслух озвучьте своё намерение по теме активизации.",
+  "Перед выходом чётко, вслух озвучьте своё намерение по теме активации.",
   "Будьте активны и вовлечены: прогулка должна быть осознанной, а не формальной.",
   "Не совмещайте в одной прогулке цели, которые противоречат друг другу.",
 ];
@@ -31,7 +31,7 @@ const WALK_RULES: string[] = [
 const SAMPLE_WALKS: QimenWalk[] = [
   {
     date: "3 июля",
-    name: "Нефритовая дева",
+    name: "Нефритовая Леди",
     goal: "знакомства, романтические встречи, приятная компания",
     direction: "СЗ (северо-запад)",
     hour: "час Петуха (17:00–19:00)",
@@ -52,7 +52,7 @@ function WalkCard({ walk }: { walk: QimenWalk }) {
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="font-serif text-lg flex items-center gap-2">
               <Footprints className="w-5 h-5 text-emerald-400" />
-              Прогулка «{walk.name}»
+              Структура «{walk.name}»
             </CardTitle>
             <span className="shrink-0 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-300">
               {walk.date}
@@ -103,8 +103,7 @@ export default function QimenPage() {
               Ци Мэнь Дунь Цзя
             </h1>
             <p className="text-sm text-muted-foreground">
-              Индивидуальные активизации-прогулки по благоприятным направлениям и
-              часам.
+              Индивидуальные структуры по благоприятным направлениям и часам.
             </p>
           </div>
           <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
@@ -134,7 +133,7 @@ export default function QimenPage() {
       {walks.length > 0 ? (
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground">
-            Пример формата. Персональные активизации появятся здесь после
+            Пример формата. Персональные структуры появятся здесь после
             подключения расчётов.
           </p>
           {walks.map((walk, i) => (
@@ -144,7 +143,7 @@ export default function QimenPage() {
       ) : (
         <Card className="bg-card/40 backdrop-blur-md">
           <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            Сейчас активных прогулок нет. Загляните позже — активизации
+            Сейчас доступных структур нет. Загляните позже — структуры
             появляются по благоприятным дням.
           </CardContent>
         </Card>
