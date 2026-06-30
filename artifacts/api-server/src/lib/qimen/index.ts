@@ -38,6 +38,7 @@ export interface QimenResult {
 
 export interface ComputeOptions {
   birthDate?: string | null; // ISO yyyy-mm-dd
+  birthTime?: string | null; // "HH:MM" (affects 立春 year-pillar boundary)
   from?: Date;
   days?: number;
 }
@@ -54,7 +55,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const days = opts.days ?? 14;
   const from = opts.from ?? new Date();
   const hasBirthDate = !!opts.birthDate;
-  const yearBranch = hasBirthDate ? birthYearBranch(opts.birthDate!) : -1;
+  const yearBranch = hasBirthDate ? birthYearBranch(opts.birthDate!, opts.birthTime) : -1;
 
   const structures: QimenStructure[] = [];
   if (!hasBirthDate || yearBranch < 0) {

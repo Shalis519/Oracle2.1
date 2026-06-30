@@ -114,7 +114,7 @@ export function dayNumber(d: Date): number {
  * Year-pillar branch index (0..11) for a birth date, using the 立春 (Lichun) year boundary.
  * Returns -1 for malformed or invalid dates (caller treats as "no usable birth date").
  */
-export function birthYearBranch(iso: string): number {
+export function birthYearBranch(iso: string, time?: string | null): number {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? "");
   if (!m) return -1;
   const y = Number(m[1]);
@@ -125,8 +125,21 @@ export function birthYearBranch(iso: string): number {
   if (probe.getFullYear() !== y || probe.getMonth() !== mo - 1 || probe.getDate() !== d) {
     return -1;
   }
+  // Year pillar flips at 立春 (Lichun), which can fall on the birth date itself,
+  // so the birth TIME matters. Use it when present; default to noon otherwise.
+  let hh = 12;
+  let mi = 0;
+  const t = /^(\d{2}):(\d{2})/.exec(time ?? "");
+  if (t) {
+    const h = Number(t[1]);
+    const min = Number(t[2]);
+    if (h >= 0 && h <= 23 && min >= 0 && min <= 59) {
+      hh = h;
+      mi = min;
+    }
+  }
   try {
-    const zhi = Solar.fromYmd(y, mo, d).getLunar().getEightChar().getYearZhi();
+    const zhi = Solar.fromYmdHms(y, mo, d, hh, mi, 0).getLunar().getEightChar().getYearZhi();
     return BRANCHES.indexOf(zhi as (typeof BRANCHES)[number]);
   } catch {
     return -1;

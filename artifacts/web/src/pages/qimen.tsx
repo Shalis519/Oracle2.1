@@ -74,7 +74,7 @@ function StructureCard({ s }: { s: QimenStructure }) {
               <span className="font-semibold text-emerald-300">
                 {s.direction}
               </span>{" "}
-              ({s.dom}) в {s.hourLabel}.
+              в {s.hourLabel}.
             </p>
           </div>
           <div className="flex items-start gap-2 text-sm">
