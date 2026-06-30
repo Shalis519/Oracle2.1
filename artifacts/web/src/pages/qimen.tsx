@@ -114,13 +114,31 @@ function StructureCard({ s }: { s: QimenStructure }) {
   );
 }
 
+function wishGuidance(w: JiFuWish): string {
+  const y = w.matchYear;
+  const m = w.matchMonth;
+  const d = w.matchDay;
+  // hour is always part of the match (it is the anchor).
+  if (m && !y && !d)
+    return "Просить помощи в вопросах, которые должны решиться в течении месяца и надо получить срочно промежуточный результат, но не конечный.";
+  if (y && d && !m)
+    return "Просить помощи в делах, решении вопросов, связанных с длительными процессами, которые не требуют сиюминутного решения, но их надо сдвинуть с места в течении суток.";
+  if (m && d && !y)
+    return "Просить помощи в срочных, быстрых делах, текущие и промежуточные процессы.";
+  if (y && !m && !d)
+    return "Просить помощи в делах, связанных с длительными процессами которые не требуют сиюминутного решения, но их надо сдвинуть с места в течении суток.";
+  if (d && !y && !m)
+    return "Просить помощи в быстрых делах, текущие промежуточные процессы.";
+  return "";
+}
+
 function JiFuWishCard({ w }: { w: JiFuWish }) {
   const scales: string[] = ["час"];
   if (w.matchDay) scales.push("день");
   if (w.matchMonth) scales.push("месяц");
   if (w.matchYear) scales.push("год");
 
-  const hourWindow = w.hourLabel.match(/\(([^)]*)\)/)?.[0] ?? "";
+  const guidance = wishGuidance(w);
 
   return (
     <motion.div
@@ -131,21 +149,20 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
       <Card className="bg-card/40 backdrop-blur-md border-amber-400/30">
         <CardContent className="py-4 space-y-3">
           <div className="flex items-start justify-between gap-3">
-            <p className="text-sm leading-relaxed">
-              Джи Фу в час{" "}
-              <span className="font-semibold text-amber-200">{w.hourAnimalGen}</span>
-              {hourWindow ? ` ${hourWindow}` : ""} сидеть спиной на{" "}
-              <span className="font-semibold text-amber-200">{w.directionLoc}</span>.
-            </p>
+            <div className="space-y-1.5">
+              <p className="text-sm leading-relaxed">
+                <span className="font-semibold text-amber-200">{w.hourLabel}</span>{" "}
+                <span className="font-semibold text-amber-200">{w.direction}</span> сидеть
+                спиной
+              </p>
+              {guidance ? (
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {guidance}
+                </p>
+              ) : null}
+            </div>
             <span className="shrink-0 rounded-full bg-amber-400/15 px-3 py-1 text-xs font-medium text-amber-200">
               {formatDate(w.date)}
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Compass className="w-3.5 h-3.5 text-amber-300/70" />
-              {w.direction}
             </span>
           </div>
 
