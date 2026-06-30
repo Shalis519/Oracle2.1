@@ -223,19 +223,19 @@ export default function BaziHoursCalculator() {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 min-w-0">
             <Label htmlFor="bazi-hours-date">Дата</Label>
             <input
               id="bazi-hours-date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 min-w-0">
             <Label>Часовой пояс</Label>
-            <div className="flex h-9 items-center rounded-md border border-input bg-muted/20 px-3 text-sm text-muted-foreground">
+            <div className="flex h-9 items-center rounded-md border border-input bg-muted/20 px-3 text-sm text-muted-foreground truncate">
               {city ? offsetLabel(utcOffset) : "—"}
             </div>
           </div>
