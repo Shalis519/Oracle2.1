@@ -5,7 +5,7 @@ import {
   ELEMENT_MEANINGS,
   SYMBOLIC_STARS,
 } from "./data/bazi";
-import { getFlyingStar, type FlyingStarData } from "./data/fengshui";
+import { getFlyingStar, getStarByNumber, type FlyingStarData } from "./data/fengshui";
 import { DREAM_MEANINGS, DEFAULT_DREAM_INTERPRETATION } from "./data/dreams";
 import { Solar } from "lunar-typescript";
 
@@ -253,8 +253,78 @@ export function computeBazi(
   };
 }
 
-export function computeFengShui(bedDirection: string): FlyingStarData {
-  return getFlyingStar(bedDirection);
+/**
+ * Feng Shui flying-star reading for a bed direction. Returns both the year's
+ * flying star at that sector (from the 2026 annual chart) and the MONTHLY flying
+ * star that visits the same sector in the current Bazi month, plus a single
+ * combined recommendation. The monthly star flies forward from its central seed
+ * along the same Lo Shu path; on any failure it falls back to the annual star.
+ */
+export interface FengShuiResult {
+  direction: string;
+  // Годовая звезда.
+  starNumber: number;
+  starName: string;
+  influence: string;
+  isUnfavorable: boolean;
+  // Месячная звезда.
+  monthlyStarNumber: number;
+  monthlyStarName: string;
+  monthlyInfluence: string;
+  monthlyIsUnfavorable: boolean;
+  // Объединённая рекомендация (годовая + месячная).
+  recommendation: string;
+}
+
+export function computeFengShui(
+  bedDirection: string,
+  today: Date = new Date(),
+): FengShuiResult {
+  const annual = getFlyingStar(bedDirection);
+
+  // Default the monthly star to the annual one; overwrite it once the current
+  // Bazi month is known.
+  let monthly: FlyingStarData = annual;
+  try {
+    const todayEC = Solar.fromYmdHms(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      today.getDate(),
+      12,
+      0,
+      0,
+    )
+      .getLunar()
+      .getEightChar();
+    const monthBranchIdx = ZHI_CN.indexOf(todayEC.getMonthZhi());
+    const yearBranchIdx = ZHI_CN.indexOf(todayEC.getYearZhi());
+    const offset = FLY_ORDER_DIRECTIONS.indexOf(annual.direction);
+    if (monthBranchIdx >= 0 && yearBranchIdx >= 0 && offset >= 0) {
+      const monthlyNum =
+        ((monthlyCenterStar(yearBranchIdx, monthBranchIdx) - 1 + offset) % 9) + 1;
+      monthly = getStarByNumber(monthlyNum);
+    }
+  } catch {
+    // Keep the annual star as the monthly fallback.
+  }
+
+  const recommendation =
+    annual.starNumber === monthly.starNumber
+      ? annual.recommendation
+      : `${annual.recommendation} В этом месяце сектор также под влиянием звезды «${monthly.starName}»: ${monthly.recommendation}`;
+
+  return {
+    direction: annual.direction,
+    starNumber: annual.starNumber,
+    starName: annual.starName,
+    influence: annual.influence,
+    isUnfavorable: annual.isUnfavorable,
+    monthlyStarNumber: monthly.starNumber,
+    monthlyStarName: monthly.starName,
+    monthlyInfluence: monthly.influence,
+    monthlyIsUnfavorable: monthly.isUnfavorable,
+    recommendation,
+  };
 }
 
 // --- "Удача продвижения" (Promotion Luck) Feng Shui activation -------------
@@ -843,7 +913,7 @@ export interface DailyForecastResult {
   synthesisText: string;
   matrix: ArcanaData;
   bazi: BaziResult;
-  fengShui: FlyingStarData | null;
+  fengShui: FengShuiResult | null;
   conflicts: string[];
   warnings: string[];
 }

@@ -11,6 +11,10 @@ export interface FengShuiInfo {
   starNumber: number;
   starName: string;
   influence: string;
-  recommendation: string;
   isUnfavorable: boolean;
+  monthlyStarNumber: number;
+  monthlyStarName: string;
+  monthlyInfluence: string;
+  monthlyIsUnfavorable: boolean;
+  recommendation: string;
 }

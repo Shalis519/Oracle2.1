@@ -1124,7 +1124,19 @@ components:
 
     FengShuiInfo:
       type: object
-      required: [direction, starNumber, starName, influence, recommendation, isUnfavorable]
+      required:
+        [
+          direction,
+          starNumber,
+          starName,
+          influence,
+          isUnfavorable,
+          monthlyStarNumber,
+          monthlyStarName,
+          monthlyInfluence,
+          monthlyIsUnfavorable,
+          recommendation,
+        ]
       properties:
         direction:
           type: string
@@ -1134,10 +1146,18 @@ components:
           type: string
         influence:
           type: string
-        recommendation:
-          type: string
         isUnfavorable:
           type: boolean
+        monthlyStarNumber:
+          type: integer
+        monthlyStarName:
+          type: string
+        monthlyInfluence:
+          type: string
+        monthlyIsUnfavorable:
+          type: boolean
+        recommendation:
+          type: string
 
     MatrixPoint:
       type: object

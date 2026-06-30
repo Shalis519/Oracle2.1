@@ -34,3 +34,16 @@ models Feng Shui charts. Keep new activations consistent with them.
 produces a plausible-but-wrong sector. **How to apply:** any future
 sector-based Bazi activation should reuse `FLY_ORDER_DIRECTIONS`,
 `monthlyCenterStar`, and the 2/5 suppression rule rather than re-deriving them.
+
+- **Monthly star at a sector** = fly the monthly center forward by the sector's
+  offset in `FLY_ORDER_DIRECTIONS`: `((monthlyCenterStar(yearBr,monthBr) - 1 +
+  offset) % 9) + 1`. Each of the 9 stars appears once in `FLYING_STARS_2026`, so
+  that annual table doubles as a star-number→meaning lookup (`getStarByNumber`).
+  `computeFengShui` returns annual + monthly + a combined recommendation and
+  falls back monthly=annual on any lunar-typescript failure.
+
+- **Schema-tightening pitfall:** `FengShuiInfo` is embedded in `DailyForecast`,
+  which is persisted as jsonb. Adding required fields breaks `*.parse()` of old
+  stored payloads. `buildForecast` backfills new monthly fields from the annual
+  ones before parse. ANY future required field added to a schema that is stored
+  in a forecast payload needs the same backfill, or history/today endpoints 500.

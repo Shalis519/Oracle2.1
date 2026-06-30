@@ -44,6 +44,19 @@ function buildForecast(row: Forecast, fb: Feedback | null) {
     DailyForecastResult,
     "matrix" | "bazi" | "fengShui" | "conflicts" | "warnings"
   >;
+  // Legacy forecasts were stored before the monthly flying star existed; backfill
+  // the monthly fields from the annual star so the response still validates.
+  const rawFengShui = payload.fengShui ?? null;
+  const fengShui = rawFengShui
+    ? {
+        ...rawFengShui,
+        monthlyStarNumber: rawFengShui.monthlyStarNumber ?? rawFengShui.starNumber,
+        monthlyStarName: rawFengShui.monthlyStarName ?? rawFengShui.starName,
+        monthlyInfluence: rawFengShui.monthlyInfluence ?? rawFengShui.influence,
+        monthlyIsUnfavorable:
+          rawFengShui.monthlyIsUnfavorable ?? rawFengShui.isUnfavorable,
+      }
+    : null;
   return {
     id: row.id,
     date: row.date,
@@ -54,7 +67,7 @@ function buildForecast(row: Forecast, fb: Feedback | null) {
     synthesisText: row.synthesisText,
     matrix: payload.matrix,
     bazi: payload.bazi,
-    fengShui: payload.fengShui ?? null,
+    fengShui,
     conflicts: payload.conflicts ?? [],
     warnings: payload.warnings ?? [],
     feedback: fb ? serializeFeedback(fb) : null,

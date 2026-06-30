@@ -303,8 +303,12 @@ export const GetTodayForecastResponse = zod.object({
   "starNumber": zod.number(),
   "starName": zod.string(),
   "influence": zod.string(),
-  "recommendation": zod.string(),
-  "isUnfavorable": zod.boolean()
+  "isUnfavorable": zod.boolean(),
+  "monthlyStarNumber": zod.number(),
+  "monthlyStarName": zod.string(),
+  "monthlyInfluence": zod.string(),
+  "monthlyIsUnfavorable": zod.boolean(),
+  "recommendation": zod.string()
 }),zod.null()]).optional(),
   "conflicts": zod.array(zod.string()),
   "warnings": zod.array(zod.string()),
@@ -423,8 +427,12 @@ export const ListForecastsResponseItem = zod.object({
   "starNumber": zod.number(),
   "starName": zod.string(),
   "influence": zod.string(),
-  "recommendation": zod.string(),
-  "isUnfavorable": zod.boolean()
+  "isUnfavorable": zod.boolean(),
+  "monthlyStarNumber": zod.number(),
+  "monthlyStarName": zod.string(),
+  "monthlyInfluence": zod.string(),
+  "monthlyIsUnfavorable": zod.boolean(),
+  "recommendation": zod.string()
 }),zod.null()]).optional(),
   "conflicts": zod.array(zod.string()),
   "warnings": zod.array(zod.string()),
@@ -549,8 +557,12 @@ export const GetFengShuiResponse = zod.object({
   "starNumber": zod.number(),
   "starName": zod.string(),
   "influence": zod.string(),
-  "recommendation": zod.string(),
-  "isUnfavorable": zod.boolean()
+  "isUnfavorable": zod.boolean(),
+  "monthlyStarNumber": zod.number(),
+  "monthlyStarName": zod.string(),
+  "monthlyInfluence": zod.string(),
+  "monthlyIsUnfavorable": zod.boolean(),
+  "recommendation": zod.string()
 })
 
 

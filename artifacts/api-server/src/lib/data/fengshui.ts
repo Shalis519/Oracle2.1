@@ -116,3 +116,14 @@ export const FLYING_STARS_2026: Record<string, FlyingStarData> = {
 export function getFlyingStar(direction: string): FlyingStarData {
   return FLYING_STARS_2026[direction] ?? FLYING_STARS_2026["Центр"];
 }
+
+// Each of the nine flying stars appears exactly once in the 2026 annual chart,
+// so the chart doubles as a star-number -> meaning lookup. This is reused to
+// describe the MONTHLY flying star that visits a sector in a given Bazi month.
+const STAR_BY_NUMBER: Record<number, FlyingStarData> = Object.fromEntries(
+  Object.values(FLYING_STARS_2026).map((s) => [s.starNumber, s]),
+);
+
+export function getStarByNumber(starNumber: number): FlyingStarData {
+  return STAR_BY_NUMBER[starNumber] ?? FLYING_STARS_2026["Центр"];
+}

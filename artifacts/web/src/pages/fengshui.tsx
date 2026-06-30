@@ -95,29 +95,51 @@ export default function FengShuiPage() {
       </Card>
 
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.1 }}>
-        <Card className={`bg-card/40 backdrop-blur-md shadow-xl ${fengshui.isUnfavorable ? 'border-destructive/50' : 'border-success/50'}`}>
+        <Card className={`bg-card/40 backdrop-blur-md shadow-xl ${fengshui.isUnfavorable || fengshui.monthlyIsUnfavorable ? 'border-destructive/50' : 'border-success/50'}`}>
           <CardHeader className="text-center pb-2">
             <CardTitle className="font-serif text-xl text-muted-foreground">Направление изголовья: {fengshui.direction}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center text-center space-y-6">
-            <div className={`w-32 h-32 rounded-full flex items-center justify-center border-4 ${fengshui.isUnfavorable ? 'border-destructive text-destructive' : 'border-success text-success'}`}>
-              <div className="flex flex-col items-center">
-                <span className="text-4xl font-bold font-serif">{fengshui.starNumber}</span>
-                <span className="text-sm mt-1">{fengshui.starName}</span>
+            <div className="flex items-end justify-center gap-5">
+              <div className="flex flex-col items-center gap-2">
+                <div className={`w-32 h-32 rounded-full flex items-center justify-center border-4 ${fengshui.isUnfavorable ? 'border-destructive text-destructive' : 'border-success text-success'}`}>
+                  <span className="text-4xl font-bold font-serif">{fengshui.starNumber}</span>
+                </div>
+                <span className="text-xs uppercase tracking-wide text-muted-foreground">Годовая звезда</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center border-4 ${fengshui.monthlyIsUnfavorable ? 'border-destructive text-destructive' : 'border-success text-success'}`}>
+                  <span className="text-3xl font-bold font-serif">{fengshui.monthlyStarNumber}</span>
+                </div>
+                <span className="text-xs uppercase tracking-wide text-muted-foreground">Месячная звезда</span>
               </div>
             </div>
 
-            {fengshui.isUnfavorable && (
-              <div className="bg-destructive/10 text-destructive px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium">
-                <AlertTriangle className="w-4 h-4" />
-                Неблагоприятная звезда в этом году
+            {(fengshui.isUnfavorable || fengshui.monthlyIsUnfavorable) && (
+              <div className="flex flex-col items-center gap-2">
+                {fengshui.isUnfavorable && (
+                  <div className="bg-destructive/10 text-destructive px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium">
+                    <AlertTriangle className="w-4 h-4" />
+                    Неблагоприятная годовая звезда
+                  </div>
+                )}
+                {fengshui.monthlyIsUnfavorable && (
+                  <div className="bg-destructive/10 text-destructive px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium">
+                    <AlertTriangle className="w-4 h-4" />
+                    Неблагоприятная месячная звезда
+                  </div>
+                )}
               </div>
             )}
 
             <div className="space-y-4 max-w-xl mx-auto text-left">
               <div>
-                <h3 className="font-bold text-lg mb-1">Влияние:</h3>
+                <h3 className="font-bold text-lg mb-1">Влияние годовой звезды «{fengshui.starName}»:</h3>
                 <p className="text-muted-foreground">{fengshui.influence}</p>
+              </div>
+              <div>
+                <h3 className="font-bold text-lg mb-1">Влияние месячной звезды «{fengshui.monthlyStarName}»:</h3>
+                <p className="text-muted-foreground">{fengshui.monthlyInfluence}</p>
               </div>
               <div className="bg-muted/50 p-4 rounded-xl border border-border">
                 <h3 className="font-bold text-lg mb-1 flex items-center gap-2">
