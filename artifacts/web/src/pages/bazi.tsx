@@ -1,10 +1,50 @@
 import { useGetBazi, getGetBaziQueryKey } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Compass, AlertCircle, Sparkles } from "lucide-react";
+import { Compass, AlertCircle, Sparkles, Coins } from "lucide-react";
 import BaziHoursCalculator from "@/components/bazi-hours-calculator";
+
+const MONTHS_GENITIVE = [
+  "января",
+  "февраля",
+  "марта",
+  "апреля",
+  "мая",
+  "июня",
+  "июля",
+  "августа",
+  "сентября",
+  "октября",
+  "ноября",
+  "декабря",
+];
+
+function formatSpendingDays(dates: string[]): string {
+  const groups: { month: number; year: number; days: number[] }[] = [];
+  for (const iso of dates) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+    if (!m) continue;
+    const year = Number(m[1]);
+    const month = Number(m[2]) - 1;
+    const day = Number(m[3]);
+    const last = groups[groups.length - 1];
+    if (!last || last.month !== month || last.year !== year) {
+      groups.push({ month, year, days: [day] });
+    } else {
+      last.days.push(day);
+    }
+  }
+  return groups
+    .map((g) => `${g.days.join(", ")} ${MONTHS_GENITIVE[g.month]}`)
+    .join(", ");
+}
 
 export default function BaziPage() {
   const { data: bazi, isLoading, error } = useGetBazi({ query: { retry: false, queryKey: getGetBaziQueryKey() } });
@@ -206,6 +246,34 @@ export default function BaziPage() {
                   {noble.caution}
                 </p>
               )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {bazi.spendingDays.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <Card className="bg-card/40 backdrop-blur-md border-amber-500/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Coins className="w-5 h-5 text-amber-500" />
+                Грабитель богатства
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-relaxed">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="font-semibold underline decoration-dotted underline-offset-4 cursor-help">
+                      Дни трат
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-sm leading-relaxed">
+                    Запланируйте «добровольные траты»: оплатите счета, совершайте покупки, займитесь благотворительностью, делайте подарки. Это «подкармливает» денежную энергию.
+                  </TooltipContent>
+                </Tooltip>
+                : {formatSpendingDays(bazi.spendingDays)}.
+              </p>
             </CardContent>
           </Card>
         </motion.div>
