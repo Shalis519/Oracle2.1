@@ -56,8 +56,7 @@ function StructureCard({ s }: { s: QimenStructure }) {
       <Card className="bg-card/40 backdrop-blur-md border-emerald-500/30">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-3">
-            <CardTitle className="font-serif text-lg flex items-center gap-2">
-              <Footprints className="w-5 h-5 text-emerald-400" />
+            <CardTitle className="font-serif text-lg">
               Структура «{s.structureName}»
             </CardTitle>
             <span className="shrink-0 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-300">
@@ -75,7 +74,7 @@ function StructureCard({ s }: { s: QimenStructure }) {
           <div className="flex items-start gap-2 text-sm">
             <Compass className="w-4 h-4 mt-0.5 shrink-0 text-emerald-400/80" />
             <p className="leading-relaxed">
-              Двигайся на{" "}
+              Сектор{" "}
               <span className="font-semibold text-emerald-300">
                 {s.direction}
               </span>{" "}
@@ -201,8 +200,7 @@ export default function QimenPage() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-serif font-bold mb-1 flex items-center gap-2">
-              <Footprints className="w-6 h-6 text-emerald-400" />
+            <h1 className="text-2xl font-serif font-bold mb-1">
               Ци Мэнь Дунь Цзя
             </h1>
             <p className="text-sm text-muted-foreground">
