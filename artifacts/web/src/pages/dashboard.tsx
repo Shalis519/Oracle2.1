@@ -1,4 +1,4 @@
-import { useGetDashboard, useGetTodayForecast, useSubmitFeedback, useGetProfile, useGetTodayActivations, getGetTodayActivationsQueryKey, getGetTodayForecastQueryKey } from "@workspace/api-client-react";
+import { useGetDashboard, useGetTodayForecast, useSubmitFeedback, useGetProfile, useGetTodayActivations, useListUpcomingBirthdays, getGetTodayActivationsQueryKey, getGetTodayForecastQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser, useClerk } from "@clerk/react";
 import { WeatherClock } from "@/components/weather-clock";
@@ -31,6 +31,8 @@ export default function DashboardPage() {
   const { data: dashboard, isLoading: dashboardLoading } = useGetDashboard();
   const { data: forecast, isLoading: forecastLoading } = useGetTodayForecast();
   const { data: activations } = useGetTodayActivations({ query: { queryKey: getGetTodayActivationsQueryKey() } });
+  const { data: birthdays } = useListUpcomingBirthdays();
+  const todayBirthdays = birthdays?.filter((b) => b.daysUntil === 0) ?? [];
   const { data: profile } = useGetProfile();
   const { user } = useUser();
   const { openUserProfile } = useClerk();
@@ -220,49 +222,26 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          <div className="space-y-6">
-            <Card className="bg-card/40 backdrop-blur-md">
-              <CardHeader>
-                <CardTitle className="font-serif">Активность</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Вода</span>
-                    <span>{dashboard?.waterProgress} / {dashboard?.waterTarget} стаканов</span>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500" style={{ width: `${Math.min(100, ((dashboard?.waterProgress || 0) / (dashboard?.waterTarget || 1)) * 100)}%` }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Шаги</span>
-                    <span>{dashboard?.stepsProgress} / {dashboard?.stepsTarget} шагов</span>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-green-500" style={{ width: `${Math.min(100, ((dashboard?.stepsProgress || 0) / (dashboard?.stepsTarget || 1)) * 100)}%` }}></div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card/40 backdrop-blur-md">
-              <CardHeader>
-                <CardTitle className="font-serif flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-secondary" />
-                  Дни рождения
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {dashboard?.upcomingBirthdaysCount ? (
-                  <p className="text-sm text-muted-foreground">Ближайших дней рождения: <strong>{dashboard.upcomingBirthdaysCount}</strong></p>
-                ) : (
-                  <p className="text-sm text-muted-foreground">В ближайшие 7 дней именинников нет.</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          {todayBirthdays.length > 0 && (
+            <div className="space-y-6">
+              <Card className="bg-card/40 backdrop-blur-md">
+                <CardHeader>
+                  <CardTitle className="font-serif flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-secondary" />
+                    Дни рождения
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {todayBirthdays.map((b) => (
+                    <p key={b.contactId} className="text-sm">
+                      Сегодня день рождения: <strong>{b.name}</strong>
+                      {b.turningAge ? <span className="text-secondary"> ({b.turningAge} лет)</span> : null}
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       ) : (
         <Card className="bg-card/40 backdrop-blur-md p-8 text-center">
