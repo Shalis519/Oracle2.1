@@ -663,20 +663,20 @@ function selectActivationHours(opts: {
   // Candidate favourable hours, each tagged with why it is favourable. Insertion
   // order sets priority: the Noble's own hour first, then 六合 / 三合 / 三會.
   const candidates = new Map<number, string>();
-  candidates.set(anchorIdx, "час самого Благородного, предпочтительно");
+  candidates.set(anchorIdx, "час самого Благородного");
   const six = SIX_HARMONY[anchorIdx];
-  if (!candidates.has(six)) candidates.set(six, "слияние с Благородным (六合)");
+  if (!candidates.has(six)) candidates.set(six, "слияние с Благородным");
   for (const g of SAN_HE_GROUPS) {
     if (g.includes(anchorIdx)) {
       for (const x of g) {
-        if (!candidates.has(x)) candidates.set(x, "союз с Благородным (三合)");
+        if (!candidates.has(x)) candidates.set(x, "союз с Благородным");
       }
     }
   }
   for (const g of SEASONAL_GROUPS) {
     if (g.includes(anchorIdx)) {
       for (const x of g) {
-        if (!candidates.has(x)) candidates.set(x, "сезон с Благородным (三會)");
+        if (!candidates.has(x)) candidates.set(x, "сезон с Благородным");
       }
     }
   }
