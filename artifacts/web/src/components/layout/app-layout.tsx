@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { userProfileAppearance } from "@/lib/clerk-appearance";
+import { ChatWidget } from "@/components/chat-widget";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -170,6 +171,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <div className="absolute top-0 left-0 w-full h-[500px] bg-[radial-gradient(ellipse_at_top_right,rgba(74,124,247,0.1),transparent_50%)] pointer-events-none"></div>
         {children}
       </main>
+
+      <ChatWidget />
     </div>
   );
 }

@@ -7,3 +7,4 @@
 - [Activations data pipeline](activations-pipeline.md) — monthly PDF → parse-activations script → activations.ts; pdftotext vertical date cell bleeds into titles/bodies, strip left column on body rows.
 - [Interactive world map](interactive-world-map.md) — travel map uses d3-geo + topojson + world-atlas (NOT react-simple-maps) to avoid React 19 peer conflicts; store countries by ISO alpha-2.
 - [Bazi computation](bazi-computation.md) — Four Pillars computed locally with `lunar-typescript` (NOT an external API); accurate solar-term/Lichun boundaries; must range-validate + try/catch.
+- [PWA service worker](pwa-service-worker.md) — web app is an installable PWA; SW must bypass `/api` & clerk and only cache static assets, or it leaks private/stale auth data.

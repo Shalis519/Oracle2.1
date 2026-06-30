@@ -10,7 +10,6 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ChatWidget } from "@/components/chat-widget";
 import { userProfileAppearance } from "@/lib/clerk-appearance";
 
 const HOUR_RANGES: Record<string, string> = {
@@ -69,7 +68,6 @@ export default function DashboardPage() {
   }
 
   return (
-    <>
     <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -272,7 +270,5 @@ export default function DashboardPage() {
         </Card>
       )}
     </div>
-    <ChatWidget />
-    </>
   );
 }

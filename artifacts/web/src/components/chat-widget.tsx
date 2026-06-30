@@ -6,7 +6,7 @@ import {
   type ChatMessage,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { MessageCircle, X, Send, Smile } from "lucide-react";
+import { MessageCircle, X, Send, Smile, Bell, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 const MAX_LENGTH = 4096;
+const MUTE_STORAGE_KEY = "aether-chat-sound-muted";
 
 const EMOJIS = [
   "😀", "😄", "😁", "😊", "😍", "😘", "😎", "🤩",
@@ -34,12 +35,26 @@ function codePointLength(text: string): number {
   return Array.from(text).length;
 }
 
-function formatTime(iso: string): string {
-  const d = new Date(iso);
-  return new Intl.DateTimeFormat("ru-RU", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(d);
+const relativeTimeFormat = new Intl.RelativeTimeFormat("ru-RU", {
+  numeric: "auto",
+  style: "short",
+});
+
+function formatRelativeTime(iso: string): string {
+  const then = new Date(iso).getTime();
+  const diffSeconds = Math.round((then - Date.now()) / 1000);
+  const abs = Math.abs(diffSeconds);
+
+  if (abs < 45) return "только что";
+  if (abs < 3600)
+    return relativeTimeFormat.format(Math.round(diffSeconds / 60), "minute");
+  if (abs < 86400)
+    return relativeTimeFormat.format(Math.round(diffSeconds / 3600), "hour");
+  if (abs < 2592000)
+    return relativeTimeFormat.format(Math.round(diffSeconds / 86400), "day");
+  if (abs < 31536000)
+    return relativeTimeFormat.format(Math.round(diffSeconds / 2592000), "month");
+  return relativeTimeFormat.format(Math.round(diffSeconds / 31536000), "year");
 }
 
 function initials(name: string): string {
@@ -49,46 +64,63 @@ function initials(name: string): string {
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
+let sharedAudioContext: AudioContext | null = null;
+
+function playNotificationSound() {
+  try {
+    const Ctx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+    if (!Ctx) return;
+    if (!sharedAudioContext) sharedAudioContext = new Ctx();
+    const ctx = sharedAudioContext;
+    if (ctx.state === "suspended") void ctx.resume();
+
+    const now = ctx.currentTime;
+    const notes = [880, 1174.66];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      const start = now + i * 0.12;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.18, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.4);
+    });
+  } catch {
+    // Audio is best-effort; ignore failures (e.g. autoplay restrictions).
+  }
+}
+
 function MessageRow({ message }: { message: ChatMessage }) {
   return (
-    <div
-      className={cn(
-        "flex gap-2 items-end",
-        message.mine ? "flex-row-reverse" : "flex-row",
-      )}
-    >
-      <Avatar className="w-7 h-7 shrink-0">
+    <div className="flex gap-3 py-1.5">
+      <Avatar className="w-9 h-9 shrink-0">
         {message.authorAvatar && (
           <AvatarImage src={message.authorAvatar} alt="" />
         )}
-        <AvatarFallback className="text-[10px] bg-muted">
+        <AvatarFallback className="text-xs bg-muted">
           {initials(message.authorName)}
         </AvatarFallback>
       </Avatar>
-      <div
-        className={cn(
-          "max-w-[78%] flex flex-col",
-          message.mine ? "items-end" : "items-start",
-        )}
-      >
-        <div className="flex items-baseline gap-2 mb-0.5 px-1">
-          <span className="text-xs font-medium text-muted-foreground truncate max-w-[140px]">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          <span className="text-[13px] font-medium text-foreground truncate max-w-[170px]">
             {message.mine ? "Вы" : message.authorName}
           </span>
-          <span className="text-[10px] text-muted-foreground/70 shrink-0">
-            {formatTime(message.createdAt)}
+          <span className="text-xs text-muted-foreground shrink-0">
+            {formatRelativeTime(message.createdAt)}
           </span>
         </div>
-        <div
-          className={cn(
-            "rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap break-words",
-            message.mine
-              ? "bg-primary text-primary-foreground rounded-br-sm"
-              : "bg-muted text-foreground rounded-bl-sm",
-          )}
-        >
+        <p className="text-sm text-foreground/90 whitespace-pre-wrap break-words leading-snug">
           {message.body}
-        </div>
+        </p>
       </div>
     </div>
   );
@@ -98,26 +130,96 @@ export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [emojiOpen, setEmojiOpen] = useState(false);
+  const [unread, setUnread] = useState(0);
+  const [muted, setMuted] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const openRef = useRef(open);
+  const mutedRef = useRef(muted);
+  // Highest message id already accounted for (seen or notified). null = not yet initialized.
+  const lastSeenIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    try {
+      setMuted(localStorage.getItem(MUTE_STORAGE_KEY) === "1");
+    } catch {
+      // localStorage may be unavailable; default to unmuted.
+    }
+  }, []);
+
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+
+  useEffect(() => {
+    mutedRef.current = muted;
+  }, [muted]);
 
   const { data: messages } = useListChatMessages({
     query: {
       queryKey: getListChatMessagesQueryKey(),
-      refetchInterval: open ? 5000 : false,
-      enabled: open,
+      refetchInterval: open ? 5000 : 20000,
     },
   });
 
-  const sendMessage = useSendChatMessage();
+  // Detect new messages from other users and raise notifications.
+  useEffect(() => {
+    if (!messages) return;
+    const maxId = messages.reduce((acc, m) => (m.id > acc ? m.id : acc), 0);
+
+    // First load: establish a baseline without notifying for the backlog.
+    if (lastSeenIdRef.current === null) {
+      lastSeenIdRef.current = maxId;
+      return;
+    }
+
+    if (openRef.current) {
+      lastSeenIdRef.current = maxId;
+      return;
+    }
+
+    const newFromOthers = messages.filter(
+      (m) => m.id > (lastSeenIdRef.current ?? 0) && !m.mine,
+    );
+    if (newFromOthers.length > 0) {
+      setUnread((c) => c + newFromOthers.length);
+      if (!mutedRef.current) playNotificationSound();
+    }
+    lastSeenIdRef.current = maxId;
+  }, [messages]);
 
   useEffect(() => {
     if (open && messages) {
       endRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, open]);
+
+  const openWidget = () => {
+    setOpen(true);
+    setUnread(0);
+    if (messages) {
+      lastSeenIdRef.current = messages.reduce(
+        (acc, m) => (m.id > acc ? m.id : acc),
+        0,
+      );
+    }
+  };
+
+  const toggleMute = () => {
+    setMuted((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(MUTE_STORAGE_KEY, next ? "1" : "0");
+      } catch {
+        // Ignore persistence failures.
+      }
+      return next;
+    });
+  };
+
+  const sendMessage = useSendChatMessage();
 
   const length = codePointLength(text);
   const overLimit = length > MAX_LENGTH;
@@ -175,12 +277,17 @@ export function ChatWidget() {
     return (
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={openWidget}
         aria-label="Открыть Болталку"
         className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3 shadow-xl shadow-primary/20 hover:bg-primary/90 transition-colors"
       >
         <MessageCircle className="w-5 h-5" />
         <span className="font-serif font-medium">Болталка</span>
+        {unread > 0 && (
+          <span className="absolute -top-1.5 -right-1.5 min-w-[1.25rem] h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-xs font-bold flex items-center justify-center shadow-md">
+            {unread > 99 ? "99+" : unread}
+          </span>
+        )}
       </button>
     );
   }
@@ -192,19 +299,39 @@ export function ChatWidget() {
           <MessageCircle className="w-5 h-5 text-primary" />
           <h2 className="font-serif font-bold text-lg">Болталка</h2>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => setOpen(false)}
-          aria-label="Закрыть"
-        >
-          <X className="w-4 h-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={toggleMute}
+            aria-label={
+              muted ? "Включить звук оповещений" : "Выключить звук оповещений"
+            }
+            title={
+              muted ? "Звук оповещений выключен" : "Звук оповещений включён"
+            }
+          >
+            {muted ? (
+              <BellOff className="w-4 h-4 text-muted-foreground" />
+            ) : (
+              <Bell className="w-4 h-4 text-primary" />
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setOpen(false)}
+            aria-label="Закрыть"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       <ScrollArea className="flex-1 px-3 py-3">
-        <div className="space-y-3">
+        <div className="space-y-1 divide-y divide-border/40">
           {messages && messages.length > 0 ? (
             messages.map((m) => <MessageRow key={m.id} message={m} />)
           ) : (
