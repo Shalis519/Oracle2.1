@@ -223,6 +223,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/FengShuiInfo"
 
+  /qimen:
+    get:
+      operationId: getQimen
+      tags: [systems]
+      summary: Get personal Qi Men Dun Jia walk structures for the coming days
+      responses:
+        "200":
+          description: Personal Qi Men structures
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QimenSummary"
+
   /cities/search:
     get:
       operationId: searchCities
@@ -1112,6 +1125,83 @@ components:
           anyOf:
             - $ref: "#/components/schemas/NobleHelperActivation"
             - type: "null"
+
+    QimenStructure:
+      type: object
+      required:
+        [
+          date,
+          dayGanZhi,
+          hourBranch,
+          hourLabel,
+          structure,
+          structureName,
+          goal,
+          direction,
+          dom,
+          wonder,
+          wonderName,
+          star,
+          starName,
+          door,
+          activation,
+          signs,
+          result,
+        ]
+      properties:
+        date:
+          type: string
+        dayGanZhi:
+          type: string
+        hourBranch:
+          type: integer
+        hourLabel:
+          type: string
+        structure:
+          type: string
+        structureName:
+          type: string
+        goal:
+          type: string
+        direction:
+          type: string
+        dom:
+          type: string
+        wonder:
+          type: string
+        wonderName:
+          type: string
+        star:
+          type: string
+        starName:
+          type: string
+        door:
+          type: string
+        activation:
+          type: string
+        signs:
+          type: array
+          items:
+            type: string
+        result:
+          type: string
+        note:
+          type: ["string", "null"]
+
+    QimenSummary:
+      type: object
+      required: [hasBirthDate, birthYearAnimal, windowDays, structures]
+      properties:
+        hasBirthDate:
+          type: boolean
+        birthYearAnimal:
+          type: ["string", "null"]
+        windowDays:
+          type: integer
+        structures:
+          type: array
+          items:
+            $ref: "#/components/schemas/QimenStructure"
 
     PromotionActivation:
       type: object

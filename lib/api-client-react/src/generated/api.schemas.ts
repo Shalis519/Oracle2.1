@@ -274,6 +274,36 @@ export interface BaziSummary {
   nobleHelperActivation?: NobleHelperActivation | null;
 }
 
+export interface QimenStructure {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  structure: string;
+  structureName: string;
+  goal: string;
+  direction: string;
+  dom: string;
+  wonder: string;
+  wonderName: string;
+  star: string;
+  starName: string;
+  door: string;
+  activation: string;
+  signs: string[];
+  result: string;
+  /** @nullable */
+  note?: string | null;
+}
+
+export interface QimenSummary {
+  hasBirthDate: boolean;
+  /** @nullable */
+  birthYearAnimal: string | null;
+  windowDays: number;
+  structures: QimenStructure[];
+}
+
 export interface FengShuiInfo {
   direction: string;
   starNumber: number;

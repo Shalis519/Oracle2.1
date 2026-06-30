@@ -56,6 +56,8 @@ export * from './personalMatrix';
 export * from './profile';
 export * from './profileInput';
 export * from './promotionActivation';
+export * from './qimenStructure';
+export * from './qimenSummary';
 export * from './relocation';
 export * from './searchCitiesParams';
 export * from './task';

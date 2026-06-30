@@ -51,6 +51,7 @@ import type {
   PersonalMatrix,
   Profile,
   ProfileInput,
+  QimenSummary,
   SearchCitiesParams,
   Task,
   TaskInput,
@@ -1059,6 +1060,83 @@ export function useGetFengShui<TData = Awaited<ReturnType<typeof getFengShui>>, 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetFengShuiQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetQimenUrl = () => {
+
+
+
+
+  return `/api/qimen`
+}
+
+/**
+ * @summary Get personal Qi Men Dun Jia walk structures for the coming days
+ */
+export const getQimen = async ( options?: RequestInit): Promise<QimenSummary> => {
+
+  return customFetch<QimenSummary>(getGetQimenUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetQimenQueryKey = () => {
+    return [
+    `/api/qimen`
+    ] as const;
+    }
+
+
+export const getGetQimenQueryOptions = <TData = Awaited<ReturnType<typeof getQimen>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getQimen>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetQimenQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getQimen>>> = ({ signal }) => getQimen({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getQimen>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetQimenQueryResult = NonNullable<Awaited<ReturnType<typeof getQimen>>>
+export type GetQimenQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get personal Qi Men Dun Jia walk structures for the coming days
+ */
+
+export function useGetQimen<TData = Awaited<ReturnType<typeof getQimen>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getQimen>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetQimenQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

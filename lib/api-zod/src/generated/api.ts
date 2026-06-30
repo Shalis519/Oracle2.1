@@ -579,6 +579,36 @@ export const GetFengShuiResponse = zod.object({
 
 
 /**
+ * @summary Get personal Qi Men Dun Jia walk structures for the coming days
+ */
+export const GetQimenResponse = zod.object({
+  "hasBirthDate": zod.boolean(),
+  "birthYearAnimal": zod.string().nullable(),
+  "windowDays": zod.number(),
+  "structures": zod.array(zod.object({
+  "date": zod.string(),
+  "dayGanZhi": zod.string(),
+  "hourBranch": zod.number(),
+  "hourLabel": zod.string(),
+  "structure": zod.string(),
+  "structureName": zod.string(),
+  "goal": zod.string(),
+  "direction": zod.string(),
+  "dom": zod.string(),
+  "wonder": zod.string(),
+  "wonderName": zod.string(),
+  "star": zod.string(),
+  "starName": zod.string(),
+  "door": zod.string(),
+  "activation": zod.string(),
+  "signs": zod.array(zod.string()),
+  "result": zod.string(),
+  "note": zod.string().nullish()
+}))
+})
+
+
+/**
  * @summary Search the offline world city database for the hour calculator
  */
 export const SearchCitiesQueryParams = zod.object({

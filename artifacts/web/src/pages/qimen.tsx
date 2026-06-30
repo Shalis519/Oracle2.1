@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Link } from "wouter";
+import { useGetQimen, getGetQimenQueryKey } from "@workspace/api-client-react";
+import type { QimenStructure } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,16 +12,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { Footprints, Compass, ScrollText, Target } from "lucide-react";
-
-interface QimenWalk {
-  date: string;
-  name: string;
-  goal: string;
-  direction: string;
-  hour: string;
-  intention: string;
-}
+import {
+  Footprints,
+  Compass,
+  ScrollText,
+  Target,
+  Eye,
+  Sparkles,
+  AlertCircle,
+} from "lucide-react";
 
 const WALK_RULES: string[] = [
   "Выходите точно в указанный двухчасовой интервал (час). Раньше или позже энергия уже другая.",
@@ -28,19 +30,18 @@ const WALK_RULES: string[] = [
   "Не совмещайте в одной прогулке цели, которые противоречат друг другу.",
 ];
 
-const SAMPLE_WALKS: QimenWalk[] = [
-  {
-    date: "3 июля",
-    name: "Нефритовая Леди",
-    goal: "знакомства, романтические встречи, приятная компания",
-    direction: "СЗ (северо-запад)",
-    hour: "час Петуха (17:00–19:00)",
-    intention:
-      "Обязательно озвучь своё намерение в данной теме. Будь активным.",
-  },
+const MONTHS_RU = [
+  "января", "февраля", "марта", "апреля", "мая", "июня",
+  "июля", "августа", "сентября", "октября", "ноября", "декабря",
 ];
 
-function WalkCard({ walk }: { walk: QimenWalk }) {
+function formatDate(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!m) return iso;
+  return `${Number(m[3])} ${MONTHS_RU[Number(m[2]) - 1]}`;
+}
+
+function StructureCard({ s }: { s: QimenStructure }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -52,10 +53,10 @@ function WalkCard({ walk }: { walk: QimenWalk }) {
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="font-serif text-lg flex items-center gap-2">
               <Footprints className="w-5 h-5 text-emerald-400" />
-              Структура «{walk.name}»
+              Структура «{s.structureName}»
             </CardTitle>
             <span className="shrink-0 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-300">
-              {walk.date}
+              {formatDate(s.date)}
             </span>
           </div>
         </CardHeader>
@@ -63,7 +64,7 @@ function WalkCard({ walk }: { walk: QimenWalk }) {
           <div className="flex items-start gap-2 text-sm">
             <Target className="w-4 h-4 mt-0.5 shrink-0 text-emerald-400/80" />
             <p className="leading-relaxed">
-              <span className="font-medium">Цель:</span> {walk.goal}.
+              <span className="font-medium">Цель:</span> {s.goal}.
             </p>
           </div>
           <div className="flex items-start gap-2 text-sm">
@@ -71,14 +72,40 @@ function WalkCard({ walk }: { walk: QimenWalk }) {
             <p className="leading-relaxed">
               Двигайся на{" "}
               <span className="font-semibold text-emerald-300">
-                {walk.direction}
+                {s.direction}
               </span>{" "}
-              в {walk.hour}.
+              ({s.dom}) в {s.hourLabel}.
             </p>
           </div>
-          <p className="text-sm italic text-muted-foreground border-l-2 border-emerald-500/50 pl-3 py-1">
-            {walk.intention}
+          <div className="flex items-start gap-2 text-sm">
+            <Sparkles className="w-4 h-4 mt-0.5 shrink-0 text-emerald-400/80" />
+            <p className="leading-relaxed">
+              <span className="font-medium">Активация:</span> {s.activation}.{" "}
+              <span className="text-muted-foreground">
+                {s.starName}, {s.wonderName}.
+              </span>
+            </p>
+          </div>
+
+          <div className="rounded-lg bg-emerald-500/5 border border-emerald-500/15 p-3 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-emerald-300/90">
+              <Eye className="w-3.5 h-3.5" />
+              Знаки
+            </div>
+            <ul className="list-disc list-outside space-y-1 pl-5 text-sm leading-relaxed">
+              {s.signs.map((sign, i) => (
+                <li key={i}>{sign}</li>
+              ))}
+            </ul>
+          </div>
+
+          <p className="text-sm leading-relaxed border-l-2 border-emerald-500/50 pl-3 py-1">
+            <span className="font-medium">Результат:</span> {s.result}
           </p>
+
+          {s.note ? (
+            <p className="text-xs italic text-muted-foreground">{s.note}</p>
+          ) : null}
         </CardContent>
       </Card>
     </motion.div>
@@ -87,7 +114,41 @@ function WalkCard({ walk }: { walk: QimenWalk }) {
 
 export default function QimenPage() {
   const [rulesOpen, setRulesOpen] = useState(false);
-  const walks = SAMPLE_WALKS;
+  const { data, isLoading } = useGetQimen({
+    query: { retry: false, queryKey: getGetQimenQueryKey() },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (data && !data.hasBirthDate) {
+    return (
+      <div className="p-4 md:p-6 max-w-3xl mx-auto">
+        <div className="flex flex-col items-center text-center space-y-4 mt-8">
+          <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
+            <AlertCircle className="w-8 h-8" />
+          </div>
+          <h1 className="text-3xl font-serif font-bold">Данные не заполнены</h1>
+          <p className="text-muted-foreground max-w-md">
+            Персональные структуры Ци Мэнь рассчитываются по дате вашего
+            рождения. Пожалуйста, заполните её в настройках профиля.
+          </p>
+          <Link href="/profile">
+            <Button size="lg" className="mt-2">
+              Перейти в профиль
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const structures = data?.structures ?? [];
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
@@ -103,7 +164,8 @@ export default function QimenPage() {
               Ци Мэнь Дунь Цзя
             </h1>
             <p className="text-sm text-muted-foreground">
-              Индивидуальные структуры по благоприятным направлениям и часам.
+              Индивидуальные структуры по благоприятным направлениям и часам
+              {data?.birthYearAnimal ? ` (год — ${data.birthYearAnimal})` : ""}.
             </p>
           </div>
           <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
@@ -130,21 +192,18 @@ export default function QimenPage() {
         </div>
       </motion.div>
 
-      {walks.length > 0 ? (
+      {structures.length > 0 ? (
         <div className="space-y-4">
-          <p className="text-xs text-muted-foreground">
-            Пример формата. Персональные структуры появятся здесь после
-            подключения расчётов.
-          </p>
-          {walks.map((walk, i) => (
-            <WalkCard key={i} walk={walk} />
+          {structures.map((s, i) => (
+            <StructureCard key={`${s.date}-${s.hourBranch}-${s.dom}-${i}`} s={s} />
           ))}
         </div>
       ) : (
         <Card className="bg-card/40 backdrop-blur-md">
           <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            Сейчас доступных структур нет. Загляните позже — структуры
-            появляются по благоприятным дням.
+            На ближайшие {data?.windowDays ?? 14} дней благоприятных структур не
+            найдено. Загляните позже — структуры появляются по благоприятным
+            дням и часам.
           </CardContent>
         </Card>
       )}

@@ -10,3 +10,4 @@
 - [Daily auto-reminder reconcile](notepad-auto-reconcile.md) — derived rows regenerated on GET need partial unique index + onConflictDoNothing for concurrency; PATCH text edits manual-only.
 - [Activation hour selection](activation-hour-selection.md) — 4 mingli exclusions (void/day-clash/month-break/natal-clash) via shared selectActivationHours; the Noble's own hour is the anchor and is ALWAYS preferred, bypassing exclusions.
 - [PWA service worker](pwa-service-worker.md) — web app is an installable PWA; SW must bypass `/api` & clerk and only cache static assets, or it leaks private/stale auth data.
+- [Qi Men 置闰 DST trap](qimen-zhirun-dst.md) — 符头/元 arithmetic must use integer civil day numbers, not ms diffs; DST drifts yuan boundaries; verify yuan flips on 甲/己 days.
