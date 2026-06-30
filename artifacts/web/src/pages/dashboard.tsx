@@ -162,16 +162,6 @@ export default function DashboardPage() {
                     <p key={i} className="leading-relaxed text-lg">{para}</p>
                   ))}
                 </div>
-                <div className="grid grid-cols-2 gap-4 mt-6">
-                  <div className="p-4 rounded-xl bg-background border border-border">
-                    <p className="text-sm text-muted-foreground mb-1">Аркан</p>
-                    <p className="font-bold font-serif text-xl">{forecast.arcanaName}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-background border border-border">
-                    <p className="text-sm text-muted-foreground mb-1">Элемент Бацзы</p>
-                    <p className="font-bold font-serif text-xl">{forecast.baziElement}</p>
-                  </div>
-                </div>
                 {forecast.warnings && forecast.warnings.length > 0 && (
                   <div className="mt-4 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
                     <h4 className="font-bold text-destructive mb-2 flex items-center gap-2">
