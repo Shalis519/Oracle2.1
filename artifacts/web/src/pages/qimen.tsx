@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useGetQimen, getGetQimenQueryKey } from "@workspace/api-client-react";
-import type { QimenStructure } from "@workspace/api-client-react";
+import type { QimenStructure, JiFuWish } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,8 @@ import {
   Eye,
   Sparkles,
   AlertCircle,
+  Info,
+  Clock,
 } from "lucide-react";
 
 const WALK_RULES: string[] = [
@@ -29,6 +31,9 @@ const WALK_RULES: string[] = [
   "Будьте активны и вовлечены: прогулка должна быть осознанной, а не формальной.",
   "Не совмещайте в одной прогулке цели, которые противоречат друг другу.",
 ];
+
+const JIFU_INFO =
+  "Дух Джи Фу помогает исполнять просьбы и желания. Сила взаимодействия, учитывает совпадение сектора по году, месяцу, дню и часу. Мах 4 балла.";
 
 const MONTHS_RU = [
   "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -112,8 +117,64 @@ function StructureCard({ s }: { s: QimenStructure }) {
   );
 }
 
+function JiFuWishCard({ w }: { w: JiFuWish }) {
+  const scales: string[] = ["час"];
+  if (w.matchDay) scales.push("день");
+  if (w.matchMonth) scales.push("месяц");
+  if (w.matchYear) scales.push("год");
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Card className="bg-card/40 backdrop-blur-md border-amber-400/30">
+        <CardContent className="py-4 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm leading-relaxed">
+              Джи Фу в час{" "}
+              <span className="font-semibold text-amber-200">{w.hourAnimalGen}</span> на{" "}
+              <span className="font-semibold text-amber-200">{w.directionLoc}</span>. Сила
+              взаимодействия с ним{" "}
+              <span className="font-semibold text-amber-200">{w.strength} балла</span>.
+            </p>
+            <span className="shrink-0 rounded-full bg-amber-400/15 px-3 py-1 text-xs font-medium text-amber-200">
+              {formatDate(w.date)}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-amber-300/70" />
+              {w.hourLabel}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Compass className="w-3.5 h-3.5 text-amber-300/70" />
+              {w.direction}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">Совпадение секторов:</span>
+            {scales.map((label) => (
+              <span
+                key={label}
+                className="rounded-full bg-amber-400/10 px-2 py-0.5 text-xs text-amber-200/90"
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 export default function QimenPage() {
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [jifuInfoOpen, setJifuInfoOpen] = useState(false);
   const { data, isLoading } = useGetQimen({
     query: { retry: false, queryKey: getGetQimenQueryKey() },
   });
@@ -126,32 +187,13 @@ export default function QimenPage() {
     );
   }
 
-  if (data && !data.hasBirthDate) {
-    return (
-      <div className="p-4 md:p-6 max-w-3xl mx-auto">
-        <div className="flex flex-col items-center text-center space-y-4 mt-8">
-          <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
-            <AlertCircle className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl font-serif font-bold">Данные не заполнены</h1>
-          <p className="text-muted-foreground max-w-md">
-            Персональные структуры Ци Мэнь рассчитываются по дате вашего
-            рождения. Пожалуйста, заполните её в настройках профиля.
-          </p>
-          <Link href="/profile">
-            <Button size="lg" className="mt-2">
-              Перейти в профиль
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
+  const hasBirthDate = data?.hasBirthDate ?? false;
   const structures = data?.structures ?? [];
+  const jiFuWishes = data?.jiFuWishes ?? [];
+  const windowDays = data?.windowDays ?? 14;
 
   return (
-    <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
+    <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -192,21 +234,91 @@ export default function QimenPage() {
         </div>
       </motion.div>
 
-      {structures.length > 0 ? (
-        <div className="space-y-4">
-          {structures.map((s, i) => (
-            <StructureCard key={`${s.date}-${s.hourBranch}-${s.dom}-${i}`} s={s} />
-          ))}
+      {/* Исполнение желаний с Джи Фу — универсально, без привязки к дате рождения */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-amber-300" />
+          <h2 className="text-xl font-serif font-semibold">
+            <Dialog open={jifuInfoOpen} onOpenChange={setJifuInfoOpen}>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-amber-300/60 underline-offset-4 hover:text-amber-200 transition-colors"
+                >
+                  Исполнение желаний с Джи Фу
+                  <Info className="w-4 h-4 text-amber-300/80" />
+                </button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg">
+                <DialogHeader>
+                  <DialogTitle className="font-serif flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-amber-300" />
+                    Исполнение желаний с Джи Фу
+                  </DialogTitle>
+                </DialogHeader>
+                <p className="text-sm leading-relaxed">{JIFU_INFO}</p>
+              </DialogContent>
+            </Dialog>
+          </h2>
         </div>
-      ) : (
-        <Card className="bg-card/40 backdrop-blur-md">
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            На ближайшие {data?.windowDays ?? 14} дней благоприятных структур не
-            найдено. Загляните позже — структуры появляются по благоприятным
-            дням и часам.
-          </CardContent>
-        </Card>
-      )}
+
+        {jiFuWishes.length > 0 ? (
+          <div className="space-y-3">
+            {jiFuWishes.map((w, i) => (
+              <JiFuWishCard key={`${w.date}-${w.hourBranch}-${i}`} w={w} />
+            ))}
+          </div>
+        ) : (
+          <Card className="bg-card/40 backdrop-blur-md">
+            <CardContent className="py-8 text-center text-sm text-muted-foreground">
+              На ближайшие {windowDays} дней сильных совпадений сектора Джи Фу не
+              найдено.
+            </CardContent>
+          </Card>
+        )}
+      </section>
+
+      {/* Персональные структуры «Три Генерала» — требуют дату рождения */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Footprints className="w-5 h-5 text-emerald-400" />
+          <h2 className="text-xl font-serif font-semibold">
+            Структуры «Три Генерала»
+          </h2>
+        </div>
+
+        {!hasBirthDate ? (
+          <Card className="bg-card/40 backdrop-blur-md">
+            <CardContent className="py-8 flex flex-col items-center text-center space-y-4">
+              <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
+                <AlertCircle className="w-7 h-7" />
+              </div>
+              <p className="text-muted-foreground max-w-md text-sm">
+                Персональные структуры рассчитываются по дате вашего рождения.
+                Пожалуйста, заполните её в настройках профиля.
+              </p>
+              <Link href="/profile">
+                <Button size="lg" className="mt-1">
+                  Перейти в профиль
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ) : structures.length > 0 ? (
+          <div className="space-y-4">
+            {structures.map((s, i) => (
+              <StructureCard key={`${s.date}-${s.hourBranch}-${s.dom}-${i}`} s={s} />
+            ))}
+          </div>
+        ) : (
+          <Card className="bg-card/40 backdrop-blur-md">
+            <CardContent className="py-10 text-center text-sm text-muted-foreground">
+              На ближайшие {windowDays} дней благоприятных структур не найдено.
+              Загляните позже — структуры появляются по благоприятным дням и часам.
+            </CardContent>
+          </Card>
+        )}
+      </section>
     </div>
   );
 }

@@ -1188,9 +1188,49 @@ components:
         note:
           type: ["string", "null"]
 
+    JiFuWish:
+      type: object
+      required:
+        [
+          date,
+          dayGanZhi,
+          hourBranch,
+          hourAnimalGen,
+          hourLabel,
+          direction,
+          directionLoc,
+          strength,
+          matchYear,
+          matchMonth,
+          matchDay,
+        ]
+      properties:
+        date:
+          type: string
+        dayGanZhi:
+          type: string
+        hourBranch:
+          type: integer
+        hourAnimalGen:
+          type: string
+        hourLabel:
+          type: string
+        direction:
+          type: string
+        directionLoc:
+          type: string
+        strength:
+          type: integer
+        matchYear:
+          type: boolean
+        matchMonth:
+          type: boolean
+        matchDay:
+          type: boolean
+
     QimenSummary:
       type: object
-      required: [hasBirthDate, birthYearAnimal, windowDays, structures]
+      required: [hasBirthDate, birthYearAnimal, windowDays, structures, jiFuWishes]
       properties:
         hasBirthDate:
           type: boolean
@@ -1202,6 +1242,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QimenStructure"
+        jiFuWishes:
+          type: array
+          items:
+            $ref: "#/components/schemas/JiFuWish"
 
     PromotionActivation:
       type: object

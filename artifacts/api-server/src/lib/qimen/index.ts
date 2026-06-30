@@ -4,6 +4,9 @@ import {
 } from "./constants";
 import { birthYearBranch, dayInfo } from "./calendar";
 import { detectThreeGenerals } from "./structures";
+import { computeJiFuWishes, type JiFuWish } from "./jifu";
+
+export type { JiFuWish } from "./jifu";
 
 const STRUCTURE_NAME = "Три Генерала";
 const STRUCTURE_GOAL = "Деньги, доход, материальное благополучие";
@@ -34,6 +37,7 @@ export interface QimenResult {
   birthYearAnimal: string | null;
   windowDays: number;
   structures: QimenStructure[];
+  jiFuWishes: JiFuWish[];
 }
 
 export interface ComputeOptions {
@@ -57,9 +61,12 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const hasBirthDate = !!opts.birthDate;
   const yearBranch = hasBirthDate ? birthYearBranch(opts.birthDate!, opts.birthTime) : -1;
 
+  // Джи Фу is universal (no personal/六冲 gate): compute for everyone.
+  const jiFuWishes = computeJiFuWishes(from, days);
+
   const structures: QimenStructure[] = [];
   if (!hasBirthDate || yearBranch < 0) {
-    return { hasBirthDate, birthYearAnimal: null, windowDays: days, structures };
+    return { hasBirthDate, birthYearAnimal: null, windowDays: days, structures, jiFuWishes };
   }
 
   const start = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
@@ -100,5 +107,6 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     birthYearAnimal: BRANCH_ANIMAL_RU[yearBranch],
     windowDays: days,
     structures,
+    jiFuWishes,
   };
 }

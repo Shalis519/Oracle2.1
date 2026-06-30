@@ -604,6 +604,19 @@ export const GetQimenResponse = zod.object({
   "signs": zod.array(zod.string()),
   "result": zod.string(),
   "note": zod.string().nullish()
+})),
+  "jiFuWishes": zod.array(zod.object({
+  "date": zod.string(),
+  "dayGanZhi": zod.string(),
+  "hourBranch": zod.number(),
+  "hourAnimalGen": zod.string(),
+  "hourLabel": zod.string(),
+  "direction": zod.string(),
+  "directionLoc": zod.string(),
+  "strength": zod.number(),
+  "matchYear": zod.boolean(),
+  "matchMonth": zod.boolean(),
+  "matchDay": zod.boolean()
 }))
 })
 

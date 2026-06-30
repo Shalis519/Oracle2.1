@@ -296,12 +296,27 @@ export interface QimenStructure {
   note?: string | null;
 }
 
+export interface JiFuWish {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourAnimalGen: string;
+  hourLabel: string;
+  direction: string;
+  directionLoc: string;
+  strength: number;
+  matchYear: boolean;
+  matchMonth: boolean;
+  matchDay: boolean;
+}
+
 export interface QimenSummary {
   hasBirthDate: boolean;
   /** @nullable */
   birthYearAnimal: string | null;
   windowDays: number;
   structures: QimenStructure[];
+  jiFuWishes: JiFuWish[];
 }
 
 export interface FengShuiInfo {

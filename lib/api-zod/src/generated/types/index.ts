@@ -34,6 +34,7 @@ export * from './fengShuiInfo';
 export * from './getNatalChart400';
 export * from './healthStatus';
 export * from './hourInterval';
+export * from './jiFuWish';
 export * from './jobChange';
 export * from './journal';
 export * from './journalInput';

@@ -5,6 +5,7 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { JiFuWish } from './jiFuWish';
 import type { QimenStructure } from './qimenStructure';
 
 export interface QimenSummary {
@@ -13,4 +14,5 @@ export interface QimenSummary {
   birthYearAnimal: string | null;
   windowDays: number;
   structures: QimenStructure[];
+  jiFuWishes: JiFuWish[];
 }

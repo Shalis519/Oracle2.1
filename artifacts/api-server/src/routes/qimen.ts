@@ -7,17 +7,8 @@ const router: IRouter = Router();
 
 router.get("/qimen", requireAuth, async (req, res): Promise<void> => {
   const user = req.localUser!;
-  if (!user.birthDate) {
-    res.json(
-      GetQimenResponse.parse({
-        hasBirthDate: false,
-        birthYearAnimal: null,
-        windowDays: 14,
-        structures: [],
-      }),
-    );
-    return;
-  }
+  // Джи Фу is universal and computed even without a birth date; the personal
+  // "Три Генерала" structures require one (handled inside the engine).
   const result = computeQimenStructures({
     birthDate: user.birthDate,
     birthTime: user.birthTime,
