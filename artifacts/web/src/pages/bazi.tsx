@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Compass, AlertCircle, Star, Sparkles } from "lucide-react";
+import { Compass, AlertCircle, Sparkles } from "lucide-react";
 import BaziHoursCalculator from "@/components/bazi-hours-calculator";
 
 export default function BaziPage() {
@@ -101,18 +101,6 @@ export default function BaziPage() {
           </div>
         </Card>
       </motion.div>
-
-      <Card className="bg-card/40 backdrop-blur-md border-primary/20">
-        <CardHeader className="pb-2">
-          <CardTitle className="font-serif text-lg">Господин дня: {bazi.dayMaster}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-medium">
-            Элемент: {bazi.dayElement}
-          </span>
-          <p className="text-sm leading-relaxed text-muted-foreground">{bazi.dayElementMeaning}</p>
-        </CardContent>
-      </Card>
 
       {promo && (
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -222,29 +210,6 @@ export default function BaziPage() {
           </Card>
         </motion.div>
       )}
-
-      <div>
-        <h2 className="text-lg font-serif font-bold mb-3 flex items-center gap-2">
-          <Star className="w-5 h-5 text-secondary" />
-          Символические звезды
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {bazi.stars.map((star, i) => (
-            <Card key={i} className="bg-card/40 backdrop-blur-md">
-              <CardHeader className="pb-1.5">
-                <CardTitle className="font-serif text-base text-secondary">{star.name}</CardTitle>
-                {star.sector && <span className="text-xs text-muted-foreground">Сектор: {star.sector}</span>}
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <p className="text-sm">{star.description}</p>
-                <p className="text-sm italic text-muted-foreground border-l-2 border-secondary/50 pl-3 py-1">
-                  {star.advice}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
 
       <BaziHoursCalculator />
     </div>
