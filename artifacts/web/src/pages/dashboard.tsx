@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { userProfileAppearance } from "@/lib/clerk-appearance";
+import { DailyNotepad } from "@/components/daily-notepad";
 
 const HOUR_RANGES: Record<string, string> = {
   "Крыса": "23:00–01:00",
@@ -97,6 +98,8 @@ export default function DashboardPage() {
         </div>
         <WeatherClock city={profile?.city} />
       </motion.div>
+
+      <DailyNotepad />
 
       {dashboard && !dashboard.profileComplete && (
         <Card className="bg-destructive/10 border-destructive/20">

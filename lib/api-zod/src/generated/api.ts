@@ -982,6 +982,66 @@ export const UpdateTaskResponse = zod.object({
 
 
 /**
+ * @summary Today's notepad items (auto reminders reconciled + personal notes)
+ */
+export const GetNotepadResponseItem = zod.object({
+  "id": zod.number(),
+  "date": zod.string(),
+  "source": zod.string(),
+  "text": zod.string(),
+  "done": zod.boolean()
+})
+export const GetNotepadResponse = zod.array(GetNotepadResponseItem)
+
+
+/**
+ * @summary Add a personal note
+ */
+export const CreateNotepadItemBody = zod.object({
+  "text": zod.string().optional()
+})
+
+export const CreateNotepadItemResponse = zod.object({
+  "id": zod.number(),
+  "date": zod.string(),
+  "source": zod.string(),
+  "text": zod.string(),
+  "done": zod.boolean()
+})
+
+
+/**
+ * @summary Toggle done or edit a note
+ */
+export const UpdateNotepadItemParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateNotepadItemBody = zod.object({
+  "done": zod.boolean().optional(),
+  "text": zod.string().optional()
+})
+
+export const UpdateNotepadItemResponse = zod.object({
+  "id": zod.number(),
+  "date": zod.string(),
+  "source": zod.string(),
+  "text": zod.string(),
+  "done": zod.boolean()
+})
+
+
+/**
+ * @summary Delete a personal note
+ */
+export const DeleteNotepadItemParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteNotepadItemResponse = zod.void()
+
+
+/**
  * @summary List travel markers
  */
 export const ListTravelsResponseItem = zod.object({

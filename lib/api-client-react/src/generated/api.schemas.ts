@@ -484,6 +484,23 @@ export interface TaskUpdate {
   isCompleted?: boolean;
 }
 
+export interface NotepadItem {
+  id: number;
+  date: string;
+  source: string;
+  text: string;
+  done: boolean;
+}
+
+export interface NotepadInput {
+  text?: string;
+}
+
+export interface NotepadUpdate {
+  done?: boolean;
+  text?: string;
+}
+
 export interface Travel {
   id: number;
   countryCode: string;

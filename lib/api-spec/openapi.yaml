@@ -544,6 +544,78 @@ paths:
               schema:
                 $ref: "#/components/schemas/Task"
 
+  /notepad/today:
+    get:
+      operationId: getNotepad
+      tags: [notepad]
+      summary: Today's notepad items (auto reminders reconciled + personal notes)
+      responses:
+        "200":
+          description: Notepad items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotepadItem"
+
+  /notepad:
+    post:
+      operationId: createNotepadItem
+      tags: [notepad]
+      summary: Add a personal note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotepadInput"
+      responses:
+        "201":
+          description: Created note
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotepadItem"
+
+  /notepad/{id}:
+    patch:
+      operationId: updateNotepadItem
+      tags: [notepad]
+      summary: Toggle done or edit a note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotepadUpdate"
+      responses:
+        "200":
+          description: Updated item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotepadItem"
+    delete:
+      operationId: deleteNotepadItem
+      tags: [notepad]
+      summary: Delete a personal note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
   /travels:
     get:
       operationId: listTravels
@@ -1492,6 +1564,35 @@ components:
           type: integer
         isCompleted:
           type: boolean
+
+    NotepadItem:
+      type: object
+      required: [id, date, source, text, done]
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+        source:
+          type: string
+        text:
+          type: string
+        done:
+          type: boolean
+
+    NotepadInput:
+      type: object
+      properties:
+        text:
+          type: string
+
+    NotepadUpdate:
+      type: object
+      properties:
+        done:
+          type: boolean
+        text:
+          type: string
 
     Travel:
       type: object

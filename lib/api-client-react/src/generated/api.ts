@@ -45,6 +45,9 @@ import type {
   JournalInput,
   ListTasksParams,
   NatalChart,
+  NotepadInput,
+  NotepadItem,
+  NotepadUpdate,
   PersonalMatrix,
   Profile,
   ProfileInput,
@@ -2398,6 +2401,294 @@ export const useUpdateTask = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getUpdateTaskMutationOptions(options));
+    }
+
+export const getGetNotepadUrl = () => {
+
+
+
+
+  return `/api/notepad/today`
+}
+
+/**
+ * @summary Today's notepad items (auto reminders reconciled + personal notes)
+ */
+export const getNotepad = async ( options?: RequestInit): Promise<NotepadItem[]> => {
+
+  return customFetch<NotepadItem[]>(getGetNotepadUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetNotepadQueryKey = () => {
+    return [
+    `/api/notepad/today`
+    ] as const;
+    }
+
+
+export const getGetNotepadQueryOptions = <TData = Awaited<ReturnType<typeof getNotepad>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getNotepad>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetNotepadQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNotepad>>> = ({ signal }) => getNotepad({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getNotepad>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetNotepadQueryResult = NonNullable<Awaited<ReturnType<typeof getNotepad>>>
+export type GetNotepadQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Today's notepad items (auto reminders reconciled + personal notes)
+ */
+
+export function useGetNotepad<TData = Awaited<ReturnType<typeof getNotepad>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getNotepad>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetNotepadQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateNotepadItemUrl = () => {
+
+
+
+
+  return `/api/notepad`
+}
+
+/**
+ * @summary Add a personal note
+ */
+export const createNotepadItem = async (notepadInput: NotepadInput, options?: RequestInit): Promise<NotepadItem> => {
+
+  return customFetch<NotepadItem>(getCreateNotepadItemUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(notepadInput)
+  }
+);}
+
+
+
+
+export const getCreateNotepadItemMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createNotepadItem>>, TError,{data: BodyType<NotepadInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createNotepadItem>>, TError,{data: BodyType<NotepadInput>}, TContext> => {
+
+const mutationKey = ['createNotepadItem'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createNotepadItem>>, {data: BodyType<NotepadInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createNotepadItem(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateNotepadItemMutationResult = NonNullable<Awaited<ReturnType<typeof createNotepadItem>>>
+    export type CreateNotepadItemMutationBody = BodyType<NotepadInput>
+    export type CreateNotepadItemMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Add a personal note
+ */
+export const useCreateNotepadItem = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createNotepadItem>>, TError,{data: BodyType<NotepadInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createNotepadItem>>,
+        TError,
+        {data: BodyType<NotepadInput>},
+        TContext
+      > => {
+      return useMutation(getCreateNotepadItemMutationOptions(options));
+    }
+
+export const getUpdateNotepadItemUrl = (id: number,) => {
+
+
+
+
+  return `/api/notepad/${id}`
+}
+
+/**
+ * @summary Toggle done or edit a note
+ */
+export const updateNotepadItem = async (id: number,
+    notepadUpdate: NotepadUpdate, options?: RequestInit): Promise<NotepadItem> => {
+
+  return customFetch<NotepadItem>(getUpdateNotepadItemUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(notepadUpdate)
+  }
+);}
+
+
+
+
+export const getUpdateNotepadItemMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateNotepadItem>>, TError,{id: number;data: BodyType<NotepadUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateNotepadItem>>, TError,{id: number;data: BodyType<NotepadUpdate>}, TContext> => {
+
+const mutationKey = ['updateNotepadItem'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateNotepadItem>>, {id: number;data: BodyType<NotepadUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateNotepadItem(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateNotepadItemMutationResult = NonNullable<Awaited<ReturnType<typeof updateNotepadItem>>>
+    export type UpdateNotepadItemMutationBody = BodyType<NotepadUpdate>
+    export type UpdateNotepadItemMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Toggle done or edit a note
+ */
+export const useUpdateNotepadItem = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateNotepadItem>>, TError,{id: number;data: BodyType<NotepadUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateNotepadItem>>,
+        TError,
+        {id: number;data: BodyType<NotepadUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateNotepadItemMutationOptions(options));
+    }
+
+export const getDeleteNotepadItemUrl = (id: number,) => {
+
+
+
+
+  return `/api/notepad/${id}`
+}
+
+/**
+ * @summary Delete a personal note
+ */
+export const deleteNotepadItem = async (id: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getDeleteNotepadItemUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteNotepadItemMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteNotepadItem>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteNotepadItem>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteNotepadItem'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteNotepadItem>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteNotepadItem(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteNotepadItemMutationResult = NonNullable<Awaited<ReturnType<typeof deleteNotepadItem>>>
+
+    export type DeleteNotepadItemMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Delete a personal note
+ */
+export const useDeleteNotepadItem = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteNotepadItem>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteNotepadItem>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteNotepadItemMutationOptions(options));
     }
 
 export const getListTravelsUrl = () => {

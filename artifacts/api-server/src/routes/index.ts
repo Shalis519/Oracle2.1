@@ -12,6 +12,7 @@ import travelRouter from "./travel";
 import chatRouter from "./chat";
 import journalRouter from "./journal";
 import astrologyRouter from "./astrology";
+import notepadRouter from "./notepad";
 
 const router: IRouter = Router();
 
@@ -28,5 +29,6 @@ router.use(travelRouter);
 router.use(chatRouter);
 router.use(journalRouter);
 router.use(astrologyRouter);
+router.use(notepadRouter);
 
 export default router;

@@ -142,3 +142,15 @@
     background: hsl(23 46% 69%);
   }
 }
+
+.notepad-lines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(2.25rem - 1px),
+    hsl(var(--border) / 0.6) calc(2.25rem - 1px),
+    hsl(var(--border) / 0.6) 2.25rem
+  );
+  background-origin: content-box;
+  background-clip: content-box;
+}
