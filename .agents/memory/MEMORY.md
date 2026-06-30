@@ -11,4 +11,5 @@
 - [Activation hour selection](activation-hour-selection.md) — 4 mingli exclusions (void/day-clash/month-break/natal-clash) via shared selectActivationHours; the Noble's own hour is the anchor and is ALWAYS preferred, bypassing exclusions.
 - [PWA service worker](pwa-service-worker.md) — web app is an installable PWA; SW must bypass `/api` & clerk and only cache static assets, or it leaks private/stale auth data.
 - [Qi Men 置闰 DST trap](qimen-zhirun-dst.md) — 符头/元 arithmetic must use integer civil day numbers, not ms diffs; DST drifts yuan boundaries; verify yuan flips on 甲/己 days.
+- [Forecast payload schema drift](forecast-payload-schema-drift.md) — new required fields on a schema shared by a live endpoint + persisted snapshot must be injected at serialize time, NOT read from stored payload (else every forecast 500s).
 - [Ji Fu four scales](jifu-scales.md) — Джи Фу wish strength = same-palace matches of year/month/day/hour 值符; HOUR/DAY def A, MONTH/YEAR def B 旬首仪; calibrated for 2026 阴-half only, re-validate beyond.

@@ -21,6 +21,7 @@ import {
 import { requireAuth } from "../lib/auth";
 import {
   computeDailyForecast,
+  computeSpendingDays,
   todayString,
   type DailyForecastResult,
 } from "../lib/oracle";
@@ -39,7 +40,11 @@ function serializeFeedback(fb: Feedback) {
   };
 }
 
-function buildForecast(row: Forecast, fb: Feedback | null) {
+function buildForecast(
+  row: Forecast,
+  fb: Feedback | null,
+  spendingDays: string[],
+) {
   const payload = row.payload as Pick<
     DailyForecastResult,
     "matrix" | "bazi" | "fengShui" | "conflicts" | "warnings"
@@ -66,7 +71,11 @@ function buildForecast(row: Forecast, fb: Feedback | null) {
     hasWarning: row.hasWarning,
     synthesisText: row.synthesisText,
     matrix: payload.matrix,
-    bazi: payload.bazi,
+    // `spendingDays` is date-relative and was added to the bazi schema after some
+    // forecasts were already persisted, so the caller computes it live (empty when
+    // no birth date) instead of trusting the stored payload. This keeps legacy and
+    // fresh rows valid against the current BaziSummary schema.
+    bazi: { ...payload.bazi, spendingDays },
     fengShui,
     conflicts: payload.conflicts ?? [],
     warnings: payload.warnings ?? [],
@@ -135,7 +144,12 @@ router.get("/forecast/today", requireAuth, async (req, res): Promise<void> => {
     .select()
     .from(feedbackTable)
     .where(eq(feedbackTable.forecastId, row.id));
-  res.json(GetTodayForecastResponse.parse(buildForecast(row, fb ?? null)));
+  const spendingDays = user.birthDate
+    ? computeSpendingDays(user.birthDate, user.birthTime, todayString(), 30)
+    : [];
+  res.json(
+    GetTodayForecastResponse.parse(buildForecast(row, fb ?? null, spendingDays)),
+  );
 });
 
 router.get("/forecast/history", requireAuth, async (req, res): Promise<void> => {
@@ -151,9 +165,15 @@ router.get("/forecast/history", requireAuth, async (req, res): Promise<void> => 
     .where(eq(feedbackTable.userId, req.localUser!.id));
   const fbByForecast = new Map(fbRows.map((f) => [f.forecastId, f]));
 
+  const user = req.localUser!;
+  const spendingDays = user.birthDate
+    ? computeSpendingDays(user.birthDate, user.birthTime, todayString(), 30)
+    : [];
   res.json(
     ListForecastsResponse.parse(
-      rows.map((r) => buildForecast(r, fbByForecast.get(r.id) ?? null)),
+      rows.map((r) =>
+        buildForecast(r, fbByForecast.get(r.id) ?? null, spendingDays),
+      ),
     ),
   );
 });
