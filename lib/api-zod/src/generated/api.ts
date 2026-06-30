@@ -263,6 +263,7 @@ export const GetTodayForecastResponse = zod.object({
   "advice": zod.string(),
   "sector": zod.string().nullish()
 })),
+  "spendingDays": zod.array(zod.string()),
   "promotionActivation": zod.union([zod.object({
   "animal": zod.string(),
   "direction": zod.string(),
@@ -387,6 +388,7 @@ export const ListForecastsResponseItem = zod.object({
   "advice": zod.string(),
   "sector": zod.string().nullish()
 })),
+  "spendingDays": zod.array(zod.string()),
   "promotionActivation": zod.union([zod.object({
   "animal": zod.string(),
   "direction": zod.string(),
@@ -512,6 +514,7 @@ export const GetBaziResponse = zod.object({
   "advice": zod.string(),
   "sector": zod.string().nullish()
 })),
+  "spendingDays": zod.array(zod.string()),
   "promotionActivation": zod.union([zod.object({
   "animal": zod.string(),
   "direction": zod.string(),

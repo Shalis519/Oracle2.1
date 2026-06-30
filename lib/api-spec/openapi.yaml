@@ -1083,7 +1083,8 @@ components:
 
     BaziSummary:
       type: object
-      required: [dayMaster, dayElement, dayElementMeaning, pillars, stars]
+      required:
+        [dayMaster, dayElement, dayElementMeaning, pillars, stars, spendingDays]
       properties:
         dayMaster:
           type: string
@@ -1099,6 +1100,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/BaziStar"
+        spendingDays:
+          type: array
+          items:
+            type: string
         promotionActivation:
           anyOf:
             - $ref: "#/components/schemas/PromotionActivation"

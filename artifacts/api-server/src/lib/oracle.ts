@@ -254,6 +254,103 @@ export function computeBazi(
 }
 
 /**
+ * Heavenly-stem index (0..9) of the day pillar for a calendar date. Computed at
+ * noon to stay clear of the late-zi-hour (晚子时) boundary, so the result is the
+ * pillar for the calendar day itself regardless of time-of-day convention.
+ */
+function dayStemIndexForDate(dateStr: string): number | null {
+  const d = parseDate(dateStr);
+  if (!d) return null;
+  if (d.month < 1 || d.month > 12 || d.day < 1 || d.day > 31) return null;
+  try {
+    const solar = Solar.fromYmdHms(d.year, d.month, d.day, 12, 0, 0);
+    const idx = GAN_CN.indexOf(solar.getLunar().getEightChar().getDayGan());
+    return idx < 0 ? null : idx;
+  } catch {
+    return null;
+  }
+}
+
+/** Day-master (日主) heavenly-stem index (0..9) from a birth date/time. */
+function dayMasterStemIndex(
+  birthDate: string,
+  birthTime: string | null,
+): number | null {
+  const d = parseDate(birthDate);
+  if (!d) return null;
+  if (d.month < 1 || d.month > 12 || d.day < 1 || d.day > 31) return null;
+  let hour = 12;
+  let minute = 0;
+  if (birthTime) {
+    const hm = /^(\d{1,2}):(\d{2})/.exec(birthTime);
+    if (hm) {
+      const h = Number(hm[1]);
+      const m = Number(hm[2]);
+      if (h >= 0 && h <= 23 && m >= 0 && m <= 59) {
+        hour = h;
+        minute = m;
+      }
+    }
+  }
+  try {
+    const solar = Solar.fromYmdHms(d.year, d.month, d.day, hour, minute, 0);
+    const idx = GAN_CN.indexOf(solar.getLunar().getEightChar().getDayGan());
+    return idx < 0 ? null : idx;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * "Robber of Wealth" (劫财) stem index for a given day-master. The robber shares
+ * the day-master's element but carries the opposite polarity (ян/инь). In the
+ * canonical stem order each element occupies an adjacent ян/инь pair
+ * (0-1 Дерево, 2-3 Огонь, ...), so flipping the lowest bit yields the robber.
+ */
+function robWealthStemIndex(dayStemIdx: number): number {
+  return dayStemIdx ^ 1;
+}
+
+/**
+ * "Дни трат" (Robber-of-Wealth days) within a window. A day is a spending day
+ * when its day-pillar heavenly stem equals the user's robber-of-wealth stem.
+ * Returns ISO yyyy-mm-dd dates in [fromDate, fromDate + days - 1].
+ */
+export function computeSpendingDays(
+  birthDate: string,
+  birthTime: string | null,
+  fromDate: string,
+  days = 30,
+): string[] {
+  const dm = dayMasterStemIndex(birthDate, birthTime);
+  if (dm === null) return [];
+  const robIdx = robWealthStemIndex(dm);
+  const start = parseDate(fromDate);
+  if (!start) return [];
+
+  const result: string[] = [];
+  const base = new Date(start.year, start.month - 1, start.day);
+  for (let i = 0; i < days; i++) {
+    const dt = new Date(base);
+    dt.setDate(dt.getDate() + i);
+    const iso = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+    if (dayStemIndexForDate(iso) === robIdx) result.push(iso);
+  }
+  return result;
+}
+
+/** Whether a specific calendar date is a robber-of-wealth (spending) day. */
+export function isSpendingDay(
+  birthDate: string,
+  birthTime: string | null,
+  date: string,
+): boolean {
+  const dm = dayMasterStemIndex(birthDate, birthTime);
+  if (dm === null) return false;
+  return dayStemIndexForDate(date) === robWealthStemIndex(dm);
+}
+
+/**
  * Feng Shui flying-star reading for a bed direction. Returns both the year's
  * flying star at that sector (from the 2026 annual chart) and the MONTHLY flying
  * star that visits the same sector in the current Bazi month, plus a single

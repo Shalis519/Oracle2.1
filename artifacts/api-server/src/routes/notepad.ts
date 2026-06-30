@@ -16,7 +16,7 @@ import {
   DeleteNotepadItemParams,
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
-import { todayString } from "../lib/oracle";
+import { todayString, isSpendingDay } from "../lib/oracle";
 import { getActivationsForDate } from "../lib/data/activations";
 import { daysUntilBirthday } from "../lib/dates";
 
@@ -37,6 +37,8 @@ type AutoItem = { source: string; refKey: string; text: string };
 async function buildAutoItems(
   userId: number,
   date: string,
+  birthDate: string | null,
+  birthTime: string | null,
 ): Promise<AutoItem[]> {
   const auto: AutoItem[] = [];
 
@@ -45,6 +47,14 @@ async function buildAutoItems(
       source: "activation",
       refKey: "activation",
       text: "Сделай активизацию, подробности во вкладке Бацзы",
+    });
+  }
+
+  if (birthDate && isSpendingDay(birthDate, birthTime, date)) {
+    auto.push({
+      source: "spending",
+      refKey: "spending",
+      text: "День трат: запланируйте добровольные траты, подробности во вкладке Бацзы",
     });
   }
 
@@ -69,8 +79,13 @@ async function buildAutoItems(
   return auto;
 }
 
-async function reconcileAutoItems(userId: number, date: string): Promise<void> {
-  const desired = await buildAutoItems(userId, date);
+async function reconcileAutoItems(
+  userId: number,
+  date: string,
+  birthDate: string | null,
+  birthTime: string | null,
+): Promise<void> {
+  const desired = await buildAutoItems(userId, date, birthDate, birthTime);
 
   const existing = await db
     .select()
@@ -79,7 +94,11 @@ async function reconcileAutoItems(userId: number, date: string): Promise<void> {
       and(
         eq(notepadItemsTable.userId, userId),
         eq(notepadItemsTable.date, date),
-        inArray(notepadItemsTable.source, ["activation", "birthday"]),
+        inArray(notepadItemsTable.source, [
+          "activation",
+          "birthday",
+          "spending",
+        ]),
       ),
     );
 
@@ -119,9 +138,10 @@ async function reconcileAutoItems(userId: number, date: string): Promise<void> {
 }
 
 router.get("/notepad/today", requireAuth, async (req, res): Promise<void> => {
-  const userId = req.localUser!.id;
+  const user = req.localUser!;
+  const userId = user.id;
   const date = todayString();
-  await reconcileAutoItems(userId, date);
+  await reconcileAutoItems(userId, date, user.birthDate, user.birthTime);
   const rows = await db
     .select()
     .from(notepadItemsTable)

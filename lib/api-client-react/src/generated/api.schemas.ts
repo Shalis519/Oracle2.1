@@ -269,6 +269,7 @@ export interface BaziSummary {
   dayElementMeaning: string;
   pillars: BaziPillar[];
   stars: BaziStar[];
+  spendingDays: string[];
   promotionActivation?: PromotionActivation | null;
   nobleHelperActivation?: NobleHelperActivation | null;
 }

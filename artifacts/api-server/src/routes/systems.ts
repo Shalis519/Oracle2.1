@@ -11,6 +11,8 @@ import {
   computeFengShui,
   computePromotionActivation,
   computeNobleHelperActivation,
+  computeSpendingDays,
+  todayString,
 } from "../lib/oracle";
 
 const router: IRouter = Router();
@@ -48,11 +50,18 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
     user.birthDate,
     user.birthTime,
   );
+  const spendingDays = computeSpendingDays(
+    user.birthDate,
+    user.birthTime,
+    todayString(),
+    30,
+  );
   res.json(
     GetBaziResponse.parse({
       ...result,
       promotionActivation,
       nobleHelperActivation,
+      spendingDays,
     }),
   );
 });
