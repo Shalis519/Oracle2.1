@@ -14,6 +14,9 @@ function serialize(user: {
   id: number;
   name: string;
   city: string | null;
+  cityLatitude: number | null;
+  cityLongitude: number | null;
+  cityTimezone: string | null;
   birthDate: string | null;
   birthTime: string | null;
   birthPlace: string | null;
@@ -30,6 +33,9 @@ function serialize(user: {
     id: user.id,
     name: user.name,
     city: user.city,
+    cityLatitude: user.cityLatitude,
+    cityLongitude: user.cityLongitude,
+    cityTimezone: user.cityTimezone,
     birthDate: user.birthDate,
     birthTime: user.birthTime,
     birthPlace: user.birthPlace,

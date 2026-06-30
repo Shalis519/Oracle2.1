@@ -743,6 +743,12 @@ components:
           type: string
         city:
           type: ["string", "null"]
+        cityLatitude:
+          type: ["number", "null"]
+        cityLongitude:
+          type: ["number", "null"]
+        cityTimezone:
+          type: ["string", "null"]
         birthDate:
           type: ["string", "null"]
         birthTime:
@@ -772,6 +778,12 @@ components:
         name:
           type: string
         city:
+          type: ["string", "null"]
+        cityLatitude:
+          type: ["number", "null"]
+        cityLongitude:
+          type: ["number", "null"]
+        cityTimezone:
           type: ["string", "null"]
         birthDate:
           type: ["string", "null"]

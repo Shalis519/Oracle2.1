@@ -12,6 +12,12 @@ export interface Profile {
   /** @nullable */
   city?: string | null;
   /** @nullable */
+  cityLatitude?: number | null;
+  /** @nullable */
+  cityLongitude?: number | null;
+  /** @nullable */
+  cityTimezone?: string | null;
+  /** @nullable */
   birthDate?: string | null;
   /** @nullable */
   birthTime?: string | null;

@@ -52,6 +52,9 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     name: "",
     city: "",
+    cityLatitude: null as number | null,
+    cityLongitude: null as number | null,
+    cityTimezone: null as string | null,
     birthDate: "",
     birthTime: "",
     birthPlace: "",
@@ -60,6 +63,10 @@ export default function ProfilePage() {
     birthTimezone: null as string | null,
     notificationsEnabled: false,
   });
+
+  const [birthCityOpen, setBirthCityOpen] = useState(false);
+  const [birthCityQuery, setBirthCityQuery] = useState("");
+  const [birthCityDebounced, setBirthCityDebounced] = useState("");
 
   const [cityOpen, setCityOpen] = useState(false);
   const [cityQuery, setCityQuery] = useState("");
@@ -70,6 +77,9 @@ export default function ProfilePage() {
       setFormData({
         name: profile.name || "",
         city: profile.city || "",
+        cityLatitude: profile.cityLatitude ?? null,
+        cityLongitude: profile.cityLongitude ?? null,
+        cityTimezone: profile.cityTimezone ?? null,
         birthDate: profile.birthDate ? profile.birthDate.split("T")[0] : "",
         birthTime: profile.birthTime || "",
         birthPlace: profile.birthPlace || "",
@@ -82,9 +92,24 @@ export default function ProfilePage() {
   }, [profile]);
 
   useEffect(() => {
+    const t = setTimeout(() => setBirthCityDebounced(birthCityQuery.trim()), 250);
+    return () => clearTimeout(t);
+  }, [birthCityQuery]);
+
+  useEffect(() => {
     const t = setTimeout(() => setCityDebounced(cityQuery.trim()), 250);
     return () => clearTimeout(t);
   }, [cityQuery]);
+
+  const { data: birthCities, isFetching: isFetchingBirth } = useSearchCities(
+    { q: birthCityDebounced },
+    {
+      query: {
+        enabled: birthCityDebounced.length >= 2,
+        queryKey: getSearchCitiesQueryKey({ q: birthCityDebounced }),
+      },
+    },
+  );
 
   const { data: cities, isFetching } = useSearchCities(
     { q: cityDebounced },
@@ -104,13 +129,24 @@ export default function ProfilePage() {
     setFormData((prev) => ({ ...prev, notificationsEnabled: checked }));
   };
 
-  const handleSelectCity = (c: City) => {
+  const handleSelectBirthCity = (c: City) => {
     setFormData((prev) => ({
       ...prev,
       birthPlace: `${c.name}, ${countryRu(c.country)}`,
       birthLatitude: c.lat,
       birthLongitude: c.lng,
       birthTimezone: c.timezone,
+    }));
+    setBirthCityOpen(false);
+  };
+
+  const handleSelectCity = (c: City) => {
+    setFormData((prev) => ({
+      ...prev,
+      city: `${c.name}, ${countryRu(c.country)}`,
+      cityLatitude: c.lat,
+      cityLongitude: c.lng,
+      cityTimezone: c.timezone,
     }));
     setCityOpen(false);
   };
@@ -122,6 +158,9 @@ export default function ProfilePage() {
         data: {
           ...formData,
           city: formData.city || null,
+          cityLatitude: formData.cityLatitude,
+          cityLongitude: formData.cityLongitude,
+          cityTimezone: formData.cityTimezone,
           birthDate: formData.birthDate || null,
           birthTime: formData.birthTime || null,
           birthPlace: formData.birthPlace || null,
@@ -152,6 +191,8 @@ export default function ProfilePage() {
 
   const hasCoords =
     formData.birthLatitude !== null && formData.birthLongitude !== null;
+  const hasCityCoords =
+    formData.cityLatitude !== null && formData.cityLongitude !== null;
 
   return (
     <div className="p-6 md:p-10 max-w-3xl mx-auto space-y-8">
@@ -183,7 +224,7 @@ export default function ProfilePage() {
               </div>
               <div className="space-y-2">
                 <Label>Место рождения</Label>
-                <Popover open={cityOpen} onOpenChange={setCityOpen}>
+                <Popover open={birthCityOpen} onOpenChange={setBirthCityOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       type="button"
@@ -196,6 +237,65 @@ export default function ProfilePage() {
                         <span className="truncate">{formData.birthPlace}</span>
                       ) : (
                         <span className="text-muted-foreground">Выберите город рождения</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0 w-[--radix-popover-trigger-width]">
+                    <Command shouldFilter={false}>
+                      <CommandInput
+                        placeholder="Поиск города..."
+                        value={birthCityQuery}
+                        onValueChange={setBirthCityQuery}
+                      />
+                      <CommandList>
+                        {birthCityDebounced.length < 2 ? (
+                          <CommandEmpty>Введите минимум две буквы.</CommandEmpty>
+                        ) : isFetchingBirth ? (
+                          <CommandEmpty>Поиск...</CommandEmpty>
+                        ) : !birthCities || birthCities.length === 0 ? (
+                          <CommandEmpty>Ничего не найдено.</CommandEmpty>
+                        ) : (
+                          <CommandGroup>
+                            {birthCities.map((c, i) => (
+                              <CommandItem
+                                key={`${c.name}-${c.lat}-${c.lng}-${i}`}
+                                value={`${c.name}-${i}`}
+                                onSelect={() => handleSelectBirthCity(c)}
+                              >
+                                <MapPin className="w-4 h-4 mr-2 text-muted-foreground shrink-0" />
+                                <span className="truncate">
+                                  {c.name}, {countryRu(c.country)}
+                                </span>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        )}
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                {hasCoords && (
+                  <p className="text-xs text-muted-foreground tabular-nums">
+                    {formData.birthLatitude!.toFixed(4)}, {formData.birthLongitude!.toFixed(4)}
+                    {formData.birthTimezone ? ` · ${formData.birthTimezone}` : ""}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Город проживания</Label>
+                <Popover open={cityOpen} onOpenChange={setCityOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-start font-normal"
+                    >
+                      <MapPin className="w-4 h-4 mr-2 text-muted-foreground shrink-0" />
+                      {formData.city ? (
+                        <span className="truncate">{formData.city}</span>
+                      ) : (
+                        <span className="text-muted-foreground">Выберите город проживания</span>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -233,16 +333,12 @@ export default function ProfilePage() {
                     </Command>
                   </PopoverContent>
                 </Popover>
-                {hasCoords && (
+                {hasCityCoords && (
                   <p className="text-xs text-muted-foreground tabular-nums">
-                    {formData.birthLatitude!.toFixed(4)}, {formData.birthLongitude!.toFixed(4)}
-                    {formData.birthTimezone ? ` · ${formData.birthTimezone}` : ""}
+                    {formData.cityLatitude!.toFixed(4)}, {formData.cityLongitude!.toFixed(4)}
+                    {formData.cityTimezone ? ` · ${formData.cityTimezone}` : ""}
                   </p>
                 )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="city">Город проживания</Label>
-                <Input id="city" name="city" placeholder="Например: Москва" value={formData.city} onChange={handleChange} />
               </div>
             </div>
 
