@@ -120,7 +120,7 @@ export default function BaziPage() {
         <p className="text-sm text-muted-foreground">Четыре столпа судьбы и энергетический потенциал.</p>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-wrap items-start gap-4">
         <Card className="bg-card/40 backdrop-blur-md overflow-hidden w-full max-w-[260px]">
           <div className="grid grid-cols-4 divide-x divide-border">
             {orderedPillars.map((pillar, i) => {
@@ -153,6 +153,76 @@ export default function BaziPage() {
             })}
           </div>
         </Card>
+
+        {peach && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="justify-start gap-2 border-rose-500/30 text-rose-300 hover:text-rose-200 hover:bg-rose-500/10"
+              >
+                <Flower2 className="w-5 h-5 text-rose-400" />
+                Цветок Персика
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="font-serif flex items-center gap-2">
+                  <Flower2 className="w-5 h-5 text-rose-400" />
+                  Цветок Персика
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Ветвь года:{" "}
+                  <span className="font-medium text-foreground">
+                    {peach.yearBranch.zh} {peach.yearBranch.ru}
+                  </span>
+                  {"  ·  "}
+                  Ветвь дня:{" "}
+                  <span className="font-medium text-foreground">
+                    {peach.dayBranch.zh} {peach.dayBranch.ru}
+                  </span>
+                </p>
+
+                <div className="space-y-1">
+                  {peach.overview.lines.map((l, i) => (
+                    <p key={i} className="text-sm leading-relaxed">
+                      {l}
+                    </p>
+                  ))}
+                  {peach.overview.bullets.length > 0 && (
+                    <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground pt-1">
+                      {peach.overview.bullets.map((b, i) => (
+                        <li key={i}>{b}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {peach.flowers.map((f, i) => (
+                  <div key={i} className="rounded-lg border border-rose-500/20 bg-rose-500/5 p-3 space-y-2">
+                    <p className="font-serif font-semibold text-rose-300">
+                      Цветок Персика{f.scopeLabel ? ` ${f.scopeLabel}` : ""} — {f.animal}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Сектор {f.sector} ({f.degrees})
+                    </p>
+                    <p className="text-sm leading-relaxed">{f.intro}</p>
+                    <p className="text-sm leading-relaxed">{f.body}</p>
+                    <p className="text-sm italic text-muted-foreground border-l-2 border-rose-500/50 pl-3 py-1">
+                      Тёмная сторона: {f.darkSide}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{f.keywords}</p>
+                    <p className="text-sm leading-relaxed">{f.magnetism}</p>
+                    <p className="text-sm leading-relaxed">{f.boostPeople}</p>
+                    <p className="text-sm italic text-muted-foreground">{f.note}</p>
+                  </div>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </motion.div>
 
       {promo && (
@@ -294,65 +364,6 @@ export default function BaziPage() {
 
       {peach && (
         <>
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Card className="bg-card/40 backdrop-blur-md border-rose-500/30">
-              <CardHeader className="pb-2">
-                <CardTitle className="font-serif text-lg flex items-center gap-2">
-                  <Flower2 className="w-5 h-5 text-rose-400" />
-                  Цветок Персика
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Ветвь года:{" "}
-                  <span className="font-medium text-foreground">
-                    {peach.yearBranch.zh} {peach.yearBranch.ru}
-                  </span>
-                  {"  ·  "}
-                  Ветвь дня:{" "}
-                  <span className="font-medium text-foreground">
-                    {peach.dayBranch.zh} {peach.dayBranch.ru}
-                  </span>
-                </p>
-
-                <div className="space-y-1">
-                  {peach.overview.lines.map((l, i) => (
-                    <p key={i} className="text-sm leading-relaxed">
-                      {l}
-                    </p>
-                  ))}
-                  {peach.overview.bullets.length > 0 && (
-                    <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground pt-1">
-                      {peach.overview.bullets.map((b, i) => (
-                        <li key={i}>{b}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-
-                {peach.flowers.map((f, i) => (
-                  <div key={i} className="rounded-lg border border-rose-500/20 bg-rose-500/5 p-3 space-y-2">
-                    <p className="font-serif font-semibold text-rose-300">
-                      Цветок Персика{f.scopeLabel ? ` ${f.scopeLabel}` : ""} — {f.animal}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Сектор {f.sector} ({f.degrees})
-                    </p>
-                    <p className="text-sm leading-relaxed">{f.intro}</p>
-                    <p className="text-sm leading-relaxed">{f.body}</p>
-                    <p className="text-sm italic text-muted-foreground border-l-2 border-rose-500/50 pl-3 py-1">
-                      Тёмная сторона: {f.darkSide}
-                    </p>
-                    <p className="text-xs text-muted-foreground">{f.keywords}</p>
-                    <p className="text-sm leading-relaxed">{f.magnetism}</p>
-                    <p className="text-sm leading-relaxed">{f.boostPeople}</p>
-                    <p className="text-sm italic text-muted-foreground">{f.note}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </motion.div>
-
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="bg-card/40 backdrop-blur-md border-rose-500/30">
               <CardHeader className="pb-2">
