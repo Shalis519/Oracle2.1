@@ -95,16 +95,6 @@ const GEN_PROCESS: string[] = [
 const JADE_INTRO =
   "Структура используется для поиска партнеров, улучшения отношений, проведения презентаций, праздников, свиданий, деловых встреч. То есть для любых ситуаций, когда вам нужно кому-то понравиться.";
 
-const JADE_VARIANTS: string[] = [
-  "Первый вариант (в первой строчке) — самый сильный.",
-  "Второй вариант используется без учёта Главных Врат.",
-  "Третий вариант на Земной тарелке не содержит Огонь Инь. Необходимо, чтобы там был вместо него какой-то позитивный элемент или Мистик.",
-  "Четвёртый вариант не содержит Огонь Инь на Небесной тарелке. Необходимо, чтобы там был какой-то позитивный элемент или Мистик.",
-];
-
-const JADE_NOTE =
-  "В зависимости от Школы, каждая из этих комбинаций будет являться Структурой «Нефритовая дева». Необходимо попробовать все, чтобы понять, какая вам максимально подходит.";
-
 const JADE_YELLOW_FIVE =
   "Секторы с годовой звездой «Жёлтая Пятёрка» (五黄) в Ци Мэнь не используются. В 2026 году Жёлтая Пятёрка находится на юге, поэтому структуры в южном секторе исключаются из расчёта.";
 
@@ -307,10 +297,6 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
             </span>
           </div>
 
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {m.variantText}
-          </p>
-
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="rounded-full bg-rose-400/10 px-2 py-0.5 text-xs text-rose-200/90">
               Небо: {m.heavenStemName}
@@ -321,6 +307,11 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
             <span className="rounded-full bg-rose-400/10 px-2 py-0.5 text-xs text-rose-200/90">
               {m.doorName}
             </span>
+            {m.variant === 1 ? (
+              <span className="rounded-full bg-rose-400/20 px-2 py-0.5 text-xs font-medium text-rose-100">
+                Самый сильный
+              </span>
+            ) : null}
             {m.isMainGate ? (
               <span className="rounded-full bg-rose-400/20 px-2 py-0.5 text-xs font-medium text-rose-100">
                 Главные Врата
@@ -520,12 +511,6 @@ export default function QimenPage() {
                 </DialogHeader>
                 <div className="space-y-3 text-sm leading-relaxed">
                   <p>{JADE_INTRO}</p>
-                  <ul className="list-disc list-outside space-y-1.5 pl-5">
-                    {JADE_VARIANTS.map((v, i) => (
-                      <li key={i}>{v}</li>
-                    ))}
-                  </ul>
-                  <p className="text-muted-foreground">{JADE_NOTE}</p>
                   <p className="text-muted-foreground">{JADE_YELLOW_FIVE}</p>
                 </div>
               </DialogContent>

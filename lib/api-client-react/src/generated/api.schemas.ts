@@ -406,7 +406,6 @@ export interface QimenJadeMaiden {
   hourBranch: number;
   hourLabel: string;
   variant: number;
-  variantText: string;
   direction: string;
   dir: string;
   dom: string;

@@ -699,7 +699,6 @@ export const GetQimenResponse = zod.object({
   "hourBranch": zod.number(),
   "hourLabel": zod.string(),
   "variant": zod.number(),
-  "variantText": zod.string(),
   "direction": zod.string(),
   "dir": zod.string(),
   "dom": zod.string(),

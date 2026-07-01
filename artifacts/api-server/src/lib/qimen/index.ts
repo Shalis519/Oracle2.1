@@ -5,7 +5,7 @@ import {
 import { birthYearBranch, dayInfo } from "./calendar";
 import { detectThreeGenerals, detectJadeMaiden, detectDoorMaiden } from "./structures";
 import { computeJiFuWishes, type JiFuWish } from "./jifu";
-import { DOOR_NAME_RU, JADE_MAIDEN_VARIANT_TEXT, STEM_NAME_RU } from "../../data/qimen/maidens";
+import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
 
 export type { JiFuWish } from "./jifu";
 
@@ -41,7 +41,6 @@ export interface QimenJadeMaiden {
   hourBranch: number;
   hourLabel: string;
   variant: number;
-  variantText: string;
   direction: string;
   dir: string;
   dom: string;
@@ -127,7 +126,6 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           hourBranch: h,
           hourLabel: hourLabel(h),
           variant: hit.variant,
-          variantText: JADE_MAIDEN_VARIANT_TEXT[hit.variant] ?? "",
           direction: PALACES[hit.palace].dirFull,
           dir: PALACES[hit.palace].dir,
           dom: PALACES[hit.palace].dom,
