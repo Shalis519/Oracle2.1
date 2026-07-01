@@ -210,6 +210,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/BaziSummary"
 
+  /peach-blossom:
+    get:
+      operationId: getPeachBlossom
+      tags: [systems]
+      summary: Get the user's Peach Blossom (桃花) reading and 30-day activation days
+      responses:
+        "200":
+          description: Peach Blossom summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PeachBlossomSummary"
+
   /fengshui:
     get:
       operationId: getFengShui
@@ -1125,6 +1138,199 @@ components:
           anyOf:
             - $ref: "#/components/schemas/NobleHelperActivation"
             - type: "null"
+
+    PeachBranchName:
+      type: object
+      required: [zh, ru]
+      properties:
+        zh:
+          type: string
+        ru:
+          type: string
+
+    PeachFlower:
+      type: object
+      required:
+        [
+          scope,
+          scopeLabel,
+          animal,
+          branchZh,
+          branchPinyin,
+          sector,
+          degrees,
+          intro,
+          body,
+          darkSide,
+          keywords,
+          magnetism,
+          boostPeople,
+          note,
+        ]
+      properties:
+        scope:
+          type: string
+          enum: [year, day]
+        scopeLabel:
+          type: string
+        animal:
+          type: string
+        branchZh:
+          type: string
+        branchPinyin:
+          type: string
+        sector:
+          type: string
+        degrees:
+          type: string
+        intro:
+          type: string
+        body:
+          type: string
+        darkSide:
+          type: string
+        keywords:
+          type: string
+        magnetism:
+          type: string
+        boostPeople:
+          type: string
+        note:
+          type: string
+
+    PeachOverview:
+      type: object
+      required: [lines, bullets]
+      properties:
+        lines:
+          type: array
+          items:
+            type: string
+        bullets:
+          type: array
+          items:
+            type: string
+
+    PeachPair:
+      type: object
+      required: [date, time]
+      properties:
+        date:
+          type: string
+        time:
+          type: string
+
+    PeachFavorableDay:
+      type: object
+      required: [scopeLabel, animal, branchZh, sector, degrees, pairs, note]
+      properties:
+        scopeLabel:
+          type: string
+        animal:
+          type: string
+        branchZh:
+          type: string
+        sector:
+          type: string
+        degrees:
+          type: string
+        pairs:
+          type: array
+          items:
+            $ref: "#/components/schemas/PeachPair"
+        note:
+          type: ["string", "null"]
+
+    PeachActivationMethod:
+      type: object
+      required: [title, body, extra, bullets]
+      properties:
+        title:
+          type: string
+        body:
+          type: ["string", "null"]
+        extra:
+          type: ["string", "null"]
+        bullets:
+          type: array
+          items:
+            type: string
+
+    PeachActivationBlock:
+      type: object
+      required: [title, bullets]
+      properties:
+        title:
+          type: string
+        bullets:
+          type: array
+          items:
+            type: string
+
+    PeachActivationWhenToStart:
+      type: object
+      required: [title, text]
+      properties:
+        title:
+          type: string
+        text:
+          type: string
+
+    PeachActivation:
+      type: object
+      required: [intro, methods, conditions, warnings, placement, whenToStart]
+      properties:
+        intro:
+          type: string
+        methods:
+          type: array
+          items:
+            $ref: "#/components/schemas/PeachActivationMethod"
+        conditions:
+          $ref: "#/components/schemas/PeachActivationBlock"
+        warnings:
+          $ref: "#/components/schemas/PeachActivationBlock"
+        placement:
+          $ref: "#/components/schemas/PeachActivationBlock"
+        whenToStart:
+          $ref: "#/components/schemas/PeachActivationWhenToStart"
+
+    PeachBlossomSummary:
+      type: object
+      required:
+        [
+          yearBranch,
+          dayBranch,
+          coincide,
+          flowers,
+          overview,
+          favorableDays,
+          favorableFooter,
+          activation,
+        ]
+      properties:
+        yearBranch:
+          $ref: "#/components/schemas/PeachBranchName"
+        dayBranch:
+          $ref: "#/components/schemas/PeachBranchName"
+        coincide:
+          type: boolean
+        flowers:
+          type: array
+          items:
+            $ref: "#/components/schemas/PeachFlower"
+        overview:
+          $ref: "#/components/schemas/PeachOverview"
+        favorableDays:
+          type: array
+          items:
+            $ref: "#/components/schemas/PeachFavorableDay"
+        favorableFooter:
+          type: array
+          items:
+            type: string
+        activation:
+          $ref: "#/components/schemas/PeachActivation"
 
     QimenStructure:
       type: object

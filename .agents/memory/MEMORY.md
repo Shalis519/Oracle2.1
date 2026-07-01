@@ -9,6 +9,7 @@
 - [Bazi computation](bazi-computation.md) — Four Pillars computed locally with `lunar-typescript` (NOT an external API); accurate solar-term/Lichun boundaries; must range-validate + try/catch.
 - [Daily auto-reminder reconcile](notepad-auto-reconcile.md) — derived rows regenerated on GET need partial unique index + onConflictDoNothing for concurrency; PATCH text edits manual-only.
 - [Activation hour selection](activation-hour-selection.md) — 4 mingli exclusions (void/day-clash/month-break/natal-clash) via shared selectActivationHours; the Noble's own hour is the anchor and is ALWAYS preferred, bypassing exclusions.
+- [Peach Blossom (桃花)](peach-blossom.md) — flowers from year+day branch; peach day/hour rule (own+六合/三合/方合 days; 天乙贵人 hours minus 旬空/六害/六冲) is DIFFERENT from Noble Helper — separate engine, separate endpoint.
 - [PWA service worker](pwa-service-worker.md) — web app is an installable PWA; SW must bypass `/api` & clerk and only cache static assets, or it leaks private/stale auth data.
 - [Qi Men 置闰 DST trap](qimen-zhirun-dst.md) — 符头/元 arithmetic must use integer civil day numbers, not ms diffs; DST drifts yuan boundaries; verify yuan flips on 甲/己 days.
 - [Forecast payload schema drift](forecast-payload-schema-drift.md) — new required fields on a schema shared by a live endpoint + persisted snapshot must be injected at serialize time, NOT read from stored payload (else every forecast 500s).

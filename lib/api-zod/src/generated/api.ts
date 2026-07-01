@@ -562,6 +562,80 @@ export const GetBaziResponse = zod.object({
 
 
 /**
+ * @summary Get the user's Peach Blossom (桃花) reading and 30-day activation days
+ */
+export const GetPeachBlossomResponse = zod.object({
+  "yearBranch": zod.object({
+  "zh": zod.string(),
+  "ru": zod.string()
+}),
+  "dayBranch": zod.object({
+  "zh": zod.string(),
+  "ru": zod.string()
+}),
+  "coincide": zod.boolean(),
+  "flowers": zod.array(zod.object({
+  "scope": zod.enum(['year', 'day']),
+  "scopeLabel": zod.string(),
+  "animal": zod.string(),
+  "branchZh": zod.string(),
+  "branchPinyin": zod.string(),
+  "sector": zod.string(),
+  "degrees": zod.string(),
+  "intro": zod.string(),
+  "body": zod.string(),
+  "darkSide": zod.string(),
+  "keywords": zod.string(),
+  "magnetism": zod.string(),
+  "boostPeople": zod.string(),
+  "note": zod.string()
+})),
+  "overview": zod.object({
+  "lines": zod.array(zod.string()),
+  "bullets": zod.array(zod.string())
+}),
+  "favorableDays": zod.array(zod.object({
+  "scopeLabel": zod.string(),
+  "animal": zod.string(),
+  "branchZh": zod.string(),
+  "sector": zod.string(),
+  "degrees": zod.string(),
+  "pairs": zod.array(zod.object({
+  "date": zod.string(),
+  "time": zod.string()
+})),
+  "note": zod.string().nullable()
+})),
+  "favorableFooter": zod.array(zod.string()),
+  "activation": zod.object({
+  "intro": zod.string(),
+  "methods": zod.array(zod.object({
+  "title": zod.string(),
+  "body": zod.string().nullable(),
+  "extra": zod.string().nullable(),
+  "bullets": zod.array(zod.string())
+})),
+  "conditions": zod.object({
+  "title": zod.string(),
+  "bullets": zod.array(zod.string())
+}),
+  "warnings": zod.object({
+  "title": zod.string(),
+  "bullets": zod.array(zod.string())
+}),
+  "placement": zod.object({
+  "title": zod.string(),
+  "bullets": zod.array(zod.string())
+}),
+  "whenToStart": zod.object({
+  "title": zod.string(),
+  "text": zod.string()
+})
+})
+})
+
+
+/**
  * @summary Get the flying star for the user's bed direction
  */
 export const GetFengShuiResponse = zod.object({

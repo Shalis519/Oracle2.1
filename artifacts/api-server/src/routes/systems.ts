@@ -3,6 +3,7 @@ import {
   GetMatrixResponse,
   GetBaziResponse,
   GetFengShuiResponse,
+  GetPeachBlossomResponse,
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
 import {
@@ -14,6 +15,7 @@ import {
   computeSpendingDays,
   todayString,
 } from "../lib/oracle";
+import { computePeachBlossom } from "../lib/peachBlossom";
 
 const router: IRouter = Router();
 
@@ -64,6 +66,20 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
       spendingDays,
     }),
   );
+});
+
+router.get("/peach-blossom", requireAuth, async (req, res): Promise<void> => {
+  const user = req.localUser!;
+  if (!user.birthDate) {
+    res.status(400).json({ error: "Заполните дату рождения в профиле." });
+    return;
+  }
+  const result = computePeachBlossom(user.birthDate, user.birthTime);
+  if (!result) {
+    res.status(400).json({ error: "Некорректная дата рождения." });
+    return;
+  }
+  res.json(GetPeachBlossomResponse.parse(result));
 });
 
 router.get("/fengshui", requireAuth, async (req, res): Promise<void> => {

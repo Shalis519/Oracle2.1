@@ -1,4 +1,9 @@
-import { useGetBazi, getGetBaziQueryKey } from "@workspace/api-client-react";
+import {
+  useGetBazi,
+  getGetBaziQueryKey,
+  useGetPeachBlossom,
+  getGetPeachBlossomQueryKey,
+} from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Compass, AlertCircle, Sparkles, Coins } from "lucide-react";
+import { Compass, AlertCircle, Sparkles, Coins, Flower2, CalendarHeart } from "lucide-react";
 import BaziHoursCalculator from "@/components/bazi-hours-calculator";
 
 const MONTHS_GENITIVE = [
@@ -48,6 +53,7 @@ function formatSpendingDays(dates: string[]): string {
 
 export default function BaziPage() {
   const { data: bazi, isLoading, error } = useGetBazi({ query: { retry: false, queryKey: getGetBaziQueryKey() } });
+  const { data: peach } = useGetPeachBlossom({ query: { retry: false, queryKey: getGetPeachBlossomQueryKey() } });
 
   if (isLoading) {
     return <div className="flex h-[50vh] items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
@@ -277,6 +283,168 @@ export default function BaziPage() {
             </CardContent>
           </Card>
         </motion.div>
+      )}
+
+      {peach && (
+        <>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <Card className="bg-card/40 backdrop-blur-md border-rose-500/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="font-serif text-lg flex items-center gap-2">
+                  <Flower2 className="w-5 h-5 text-rose-400" />
+                  Цветок Персика (桃花)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Ветвь года:{" "}
+                  <span className="font-medium text-foreground">
+                    {peach.yearBranch.zh} {peach.yearBranch.ru}
+                  </span>
+                  {"  ·  "}
+                  Ветвь дня:{" "}
+                  <span className="font-medium text-foreground">
+                    {peach.dayBranch.zh} {peach.dayBranch.ru}
+                  </span>
+                </p>
+
+                <div className="space-y-1">
+                  {peach.overview.lines.map((l, i) => (
+                    <p key={i} className="text-sm leading-relaxed">
+                      {l}
+                    </p>
+                  ))}
+                  {peach.overview.bullets.length > 0 && (
+                    <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground pt-1">
+                      {peach.overview.bullets.map((b, i) => (
+                        <li key={i}>{b}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {peach.flowers.map((f, i) => (
+                  <div key={i} className="rounded-lg border border-rose-500/20 bg-rose-500/5 p-3 space-y-2">
+                    <p className="font-serif font-semibold text-rose-300">
+                      Цветок Персика {f.scopeLabel} — {f.animal} ({f.branchZh})
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Сектор {f.sector} ({f.degrees})
+                    </p>
+                    <p className="text-sm leading-relaxed">{f.intro}</p>
+                    <p className="text-sm leading-relaxed">{f.body}</p>
+                    <p className="text-sm italic text-muted-foreground border-l-2 border-rose-500/50 pl-3 py-1">
+                      Тёмная сторона: {f.darkSide}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{f.keywords}</p>
+                    <p className="text-sm leading-relaxed">{f.magnetism}</p>
+                    <p className="text-sm leading-relaxed">{f.boostPeople}</p>
+                    <p className="text-sm italic text-muted-foreground">{f.note}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <Card className="bg-card/40 backdrop-blur-md border-rose-500/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="font-serif text-lg flex items-center gap-2">
+                  <CalendarHeart className="w-5 h-5 text-rose-400" />
+                  Благоприятные дни активизации
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {peach.favorableDays.map((fd, i) => (
+                  <div key={i} className="space-y-1.5">
+                    <p className="text-sm font-medium">
+                      Цветок Персика {fd.scopeLabel} — {fd.animal} ({fd.branchZh})
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Сектор {fd.sector} ({fd.degrees})
+                    </p>
+                    {fd.pairs.length > 0 ? (
+                      <ul className="space-y-0.5 text-sm text-muted-foreground">
+                        {fd.pairs.map((p, j) => (
+                          <li key={j}>
+                            {p.date}: {p.time}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">В ближайшие 30 дней подходящих дней нет.</p>
+                    )}
+                    {fd.note && (
+                      <p className="text-sm italic text-muted-foreground border-l-2 border-rose-500/50 pl-3 py-1">
+                        {fd.note}
+                      </p>
+                    )}
+                  </div>
+                ))}
+                <div className="space-y-1 pt-1">
+                  {peach.favorableFooter.map((line, i) => (
+                    <p key={i} className="text-xs text-muted-foreground">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <Card className="bg-card/40 backdrop-blur-md border-rose-500/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="font-serif text-lg flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-rose-400" />
+                  Активизация Цветка Персика
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm leading-relaxed">{peach.activation.intro}</p>
+
+                <div className="space-y-3">
+                  {peach.activation.methods.map((m, i) => (
+                    <div key={i} className="space-y-1">
+                      <p className="text-sm font-medium">{m.title}</p>
+                      {m.body && (
+                        <p className="text-sm leading-relaxed text-muted-foreground">{m.body}</p>
+                      )}
+                      {m.bullets.length > 0 && (
+                        <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                          {m.bullets.map((b, j) => (
+                            <li key={j}>{b}</li>
+                          ))}
+                        </ul>
+                      )}
+                      {m.extra && <p className="text-sm italic text-muted-foreground">{m.extra}</p>}
+                    </div>
+                  ))}
+                </div>
+
+                {[peach.activation.conditions, peach.activation.warnings, peach.activation.placement].map(
+                  (blk, i) => (
+                    <div key={i}>
+                      <p className="text-sm font-medium mb-1">{blk.title}</p>
+                      <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                        {blk.bullets.map((b, j) => (
+                          <li key={j}>{b}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ),
+                )}
+
+                <div>
+                  <p className="text-sm font-medium mb-1">{peach.activation.whenToStart.title}</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {peach.activation.whenToStart.text}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </>
       )}
 
       <BaziHoursCalculator />

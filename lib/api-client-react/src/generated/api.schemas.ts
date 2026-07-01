@@ -274,6 +274,96 @@ export interface BaziSummary {
   nobleHelperActivation?: NobleHelperActivation | null;
 }
 
+export interface PeachBranchName {
+  zh: string;
+  ru: string;
+}
+
+export type PeachFlowerScope = typeof PeachFlowerScope[keyof typeof PeachFlowerScope];
+
+
+export const PeachFlowerScope = {
+  year: 'year',
+  day: 'day',
+} as const;
+
+export interface PeachFlower {
+  scope: PeachFlowerScope;
+  scopeLabel: string;
+  animal: string;
+  branchZh: string;
+  branchPinyin: string;
+  sector: string;
+  degrees: string;
+  intro: string;
+  body: string;
+  darkSide: string;
+  keywords: string;
+  magnetism: string;
+  boostPeople: string;
+  note: string;
+}
+
+export interface PeachOverview {
+  lines: string[];
+  bullets: string[];
+}
+
+export interface PeachPair {
+  date: string;
+  time: string;
+}
+
+export interface PeachFavorableDay {
+  scopeLabel: string;
+  animal: string;
+  branchZh: string;
+  sector: string;
+  degrees: string;
+  pairs: PeachPair[];
+  /** @nullable */
+  note: string | null;
+}
+
+export interface PeachActivationMethod {
+  title: string;
+  /** @nullable */
+  body: string | null;
+  /** @nullable */
+  extra: string | null;
+  bullets: string[];
+}
+
+export interface PeachActivationBlock {
+  title: string;
+  bullets: string[];
+}
+
+export interface PeachActivationWhenToStart {
+  title: string;
+  text: string;
+}
+
+export interface PeachActivation {
+  intro: string;
+  methods: PeachActivationMethod[];
+  conditions: PeachActivationBlock;
+  warnings: PeachActivationBlock;
+  placement: PeachActivationBlock;
+  whenToStart: PeachActivationWhenToStart;
+}
+
+export interface PeachBlossomSummary {
+  yearBranch: PeachBranchName;
+  dayBranch: PeachBranchName;
+  coincide: boolean;
+  flowers: PeachFlower[];
+  overview: PeachOverview;
+  favorableDays: PeachFavorableDay[];
+  favorableFooter: string[];
+  activation: PeachActivation;
+}
+
 export interface QimenStructure {
   date: string;
   dayGanZhi: string;

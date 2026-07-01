@@ -48,6 +48,7 @@ import type {
   NotepadInput,
   NotepadItem,
   NotepadUpdate,
+  PeachBlossomSummary,
   PersonalMatrix,
   Profile,
   ProfileInput,
@@ -983,6 +984,83 @@ export function useGetBazi<TData = Awaited<ReturnType<typeof getBazi>>, TError =
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetBaziQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetPeachBlossomUrl = () => {
+
+
+
+
+  return `/api/peach-blossom`
+}
+
+/**
+ * @summary Get the user's Peach Blossom (桃花) reading and 30-day activation days
+ */
+export const getPeachBlossom = async ( options?: RequestInit): Promise<PeachBlossomSummary> => {
+
+  return customFetch<PeachBlossomSummary>(getGetPeachBlossomUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPeachBlossomQueryKey = () => {
+    return [
+    `/api/peach-blossom`
+    ] as const;
+    }
+
+
+export const getGetPeachBlossomQueryOptions = <TData = Awaited<ReturnType<typeof getPeachBlossom>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPeachBlossom>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPeachBlossomQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPeachBlossom>>> = ({ signal }) => getPeachBlossom({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPeachBlossom>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPeachBlossomQueryResult = NonNullable<Awaited<ReturnType<typeof getPeachBlossom>>>
+export type GetPeachBlossomQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get the user's Peach Blossom (桃花) reading and 30-day activation days
+ */
+
+export function useGetPeachBlossom<TData = Awaited<ReturnType<typeof getPeachBlossom>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPeachBlossom>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPeachBlossomQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

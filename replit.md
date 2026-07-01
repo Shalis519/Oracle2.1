@@ -26,7 +26,7 @@ A Russian-language esoteric self-knowledge web platform: daily synthesis forecas
 - Generated React Query hooks + types: `lib/api-client-react/src/generated/`
 - Generated Zod schemas: `lib/api-zod/src/generated/`
 - DB schema (source of truth): `lib/db/src/schema/*.ts` (users, forecasts, feedback, contacts, familyConnections, dreams, tasks, travels)
-- Backend domain logic: `artifacts/api-server/src/lib/oracle.ts` (Matrix/Bazi/FengShui/dreams/daily forecast), `lib/auth.ts` (Clerk JIT bridge), `lib/dates.ts`
+- Backend domain logic: `artifacts/api-server/src/lib/oracle.ts` (Matrix/Bazi/FengShui/dreams/daily forecast), `artifacts/api-server/src/lib/peachBlossom.ts` (Цветок Персика / 桃花), `lib/auth.ts` (Clerk JIT bridge), `lib/dates.ts`
 - Esoteric content data: `artifacts/api-server/src/data/` (arcana, bazi, fengshui, dreams)
 - API routes: `artifacts/api-server/src/routes/` (registered in `index.ts`)
 - Frontend pages: `artifacts/web/src/pages/`; theme tokens: `artifacts/web/src/index.css`; auth/router shell: `artifacts/web/src/App.tsx`
@@ -41,7 +41,7 @@ A Russian-language esoteric self-knowledge web platform: daily synthesis forecas
 
 ## Product
 
-Daily synthesis "Oracle of the Day" (Tarot arcana + Bazi element + Feng Shui stars + synthesis text + feedback), Matrix of Destiny (22 arcana), Bazi (four pillars / day master / symbolic stars), Feng Shui flying stars for 2026 by bed direction, dream journal with interpretation + keywords, habit/ritual tracker (water/steps/rituals by date), contacts with family tree and upcoming birthdays, and a travel map (visited / wishlist). Multi-user via Clerk auth. Tarot is a stub.
+Daily synthesis "Oracle of the Day" (Tarot arcana + Bazi element + Feng Shui stars + synthesis text + feedback), Matrix of Destiny (22 arcana), Bazi (four pillars / day master / symbolic stars / Цветок Персика peach-blossom flowers + 30-day activation days & hours), Feng Shui flying stars for 2026 by bed direction, dream journal with interpretation + keywords, habit/ritual tracker (water/steps/rituals by date), contacts with family tree and upcoming birthdays, and a travel map (visited / wishlist). Multi-user via Clerk auth. Tarot is a stub.
 
 ## User preferences
 
