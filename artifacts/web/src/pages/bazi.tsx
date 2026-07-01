@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Compass, AlertCircle, Sparkles, Coins, Flower2, CalendarHeart } from "lucide-react";
+import { Compass, AlertCircle, Sparkles, Coins, Flower2 } from "lucide-react";
 import BaziHoursCalculator from "@/components/bazi-hours-calculator";
 
 const MONTHS_GENITIVE = [
@@ -366,46 +366,7 @@ export default function BaziPage() {
         <>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="bg-card/40 backdrop-blur-md border-rose-500/30">
-              <CardHeader className="pb-2">
-                <CardTitle className="font-serif text-lg flex items-center gap-2">
-                  <CalendarHeart className="w-5 h-5 text-rose-400" />
-                  Благоприятные дни активизации
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {peach.favorableDays.map((fd, i) => (
-                  <div key={i} className="space-y-1.5">
-                    <p className="text-xs text-muted-foreground">
-                      Сектор {fd.sector} ({fd.degrees})
-                    </p>
-                    {fd.pairs.length > 0 ? (
-                      <ul className="space-y-0.5 text-sm text-muted-foreground">
-                        {fd.pairs.map((p, j) => (
-                          <li key={j}>
-                            {p.date}: {p.time}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">В ближайшие 7 дней подходящих дней нет.</p>
-                    )}
-                    {fd.note && (
-                      <p className="text-sm italic text-muted-foreground border-l-2 border-rose-500/50 pl-3 py-1">
-                        {fd.note}
-                      </p>
-                    )}
-                  </div>
-                ))}
-                {peach.favorableFooter.length > 0 && (
-                  <div className="space-y-1 pt-1">
-                    {peach.favorableFooter.map((line, i) => (
-                      <p key={i} className="text-xs text-muted-foreground">
-                        {line}
-                      </p>
-                    ))}
-                  </div>
-                )}
-
+              <CardContent className="space-y-4 pt-6">
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
@@ -467,6 +428,39 @@ export default function BaziPage() {
                     </div>
                   </DialogContent>
                 </Dialog>
+
+                {peach.favorableDays.map((fd, i) => (
+                  <div key={i} className="space-y-1.5">
+                    <p className="text-xs text-muted-foreground">
+                      Сектор {fd.sector} ({fd.degrees})
+                    </p>
+                    {fd.pairs.length > 0 ? (
+                      <ul className="space-y-0.5 text-sm text-muted-foreground">
+                        {fd.pairs.map((p, j) => (
+                          <li key={j}>
+                            {p.date}: {p.time}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">В ближайшие 7 дней подходящих дней нет.</p>
+                    )}
+                    {fd.note && (
+                      <p className="text-sm italic text-muted-foreground border-l-2 border-rose-500/50 pl-3 py-1">
+                        {fd.note}
+                      </p>
+                    )}
+                  </div>
+                ))}
+                {peach.favorableFooter.length > 0 && (
+                  <div className="space-y-1 pt-1">
+                    {peach.favorableFooter.map((line, i) => (
+                      <p key={i} className="text-xs text-muted-foreground">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </motion.div>
