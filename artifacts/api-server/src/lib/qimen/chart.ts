@@ -74,9 +74,14 @@ export function buildChart(date: Date, hourBranch: number): Chart {
   const iHour = pathIndex(pHour);
   const kStar = ((iHour - iFu) % 8 + 8) % 8;
 
-  // Doors advance from 值使 (pFu) by hour position; deities anchor on 值符 (pHour).
+  // 八门 rotation: in Yang the door plate advances forward by kStar (same as stars);
+  // in Yin it advances by (iFu + iHour) instead of (iHour - iFu), which is equivalent
+  // to rotating in the opposite direction from the 符头 anchor.
+  // Unified: doorShift = (iHour - iFu * dir) mod 8.
+  //   Yang (dir=+1): iHour - iFu = kStar  ✓
+  //   Yin  (dir=-1): iHour + iFu           ✓ (empirically verified against reference charts)
   const dir = yin ? -1 : 1;
-  const doorShift = ((xun.pos * dir) % 8 + 8) % 8;
+  const doorShift = ((iHour - iFu * dir) % 8 + 8) % 8;
 
   const cells: Record<number, PalaceCell> = {};
   for (let i = 0; i < 8; i++) {
