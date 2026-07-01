@@ -95,9 +95,6 @@ const GEN_PROCESS: string[] = [
 const JADE_INTRO =
   "Структура используется для поиска партнеров, улучшения отношений, проведения презентаций, праздников, свиданий, деловых встреч. То есть для любых ситуаций, когда вам нужно кому-то понравиться.";
 
-const JADE_YELLOW_FIVE =
-  "Секторы с годовой звездой «Жёлтая Пятёрка» (五黄) в Ци Мэнь не используются. В 2026 году Жёлтая Пятёрка находится на юге, поэтому структуры в южном секторе исключаются из расчёта.";
-
 const DOOR_INTRO =
   "Используется для поиска отношений, любви, свиданий, улучшения отношений, для концентрации внимания в учёбе.";
 
@@ -506,7 +503,6 @@ export default function QimenPage() {
                 </DialogHeader>
                 <div className="space-y-3 text-sm leading-relaxed">
                   <p>{JADE_INTRO}</p>
-                  <p className="text-muted-foreground">{JADE_YELLOW_FIVE}</p>
                 </div>
               </DialogContent>
             </Dialog>
