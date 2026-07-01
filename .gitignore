@@ -47,3 +47,11 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Local archives / exports (never commit large binaries to GitHub)
+*.zip
+
+# Environment files (never commit real secrets)
+.env
+.env.local
+.env.*.local
