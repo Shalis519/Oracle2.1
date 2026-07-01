@@ -7,6 +7,13 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -393,56 +400,67 @@ export default function BaziPage() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Card className="bg-card/40 backdrop-blur-md border-rose-500/30">
-              <CardHeader className="pb-2">
-                <CardTitle className="font-serif text-lg flex items-center gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-2 border-rose-500/30 text-rose-300 hover:text-rose-200 hover:bg-rose-500/10"
+                >
                   <Sparkles className="w-5 h-5 text-rose-400" />
-                  Активизация Цветка Персика
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm leading-relaxed">{peach.activation.intro}</p>
+                  Активизация Цветок Персика
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="font-serif flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-rose-400" />
+                    Активизация Цветок Персика
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p className="text-sm leading-relaxed">{peach.activation.intro}</p>
 
-                <div className="space-y-3">
-                  {peach.activation.methods.map((m, i) => (
-                    <div key={i} className="space-y-1">
-                      <p className="text-sm font-medium">{m.title}</p>
-                      {m.body && (
-                        <p className="text-sm leading-relaxed text-muted-foreground">{m.body}</p>
-                      )}
-                      {m.bullets.length > 0 && (
+                  <div className="space-y-3">
+                    {peach.activation.methods.map((m, i) => (
+                      <div key={i} className="space-y-1">
+                        <p className="text-sm font-medium">{m.title}</p>
+                        {m.body && (
+                          <p className="text-sm leading-relaxed text-muted-foreground">{m.body}</p>
+                        )}
+                        {m.bullets.length > 0 && (
+                          <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                            {m.bullets.map((b, j) => (
+                              <li key={j}>{b}</li>
+                            ))}
+                          </ul>
+                        )}
+                        {m.extra && <p className="text-sm italic text-muted-foreground">{m.extra}</p>}
+                      </div>
+                    ))}
+                  </div>
+
+                  {[peach.activation.conditions, peach.activation.warnings, peach.activation.placement].map(
+                    (blk, i) => (
+                      <div key={i}>
+                        <p className="text-sm font-medium mb-1">{blk.title}</p>
                         <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
-                          {m.bullets.map((b, j) => (
+                          {blk.bullets.map((b, j) => (
                             <li key={j}>{b}</li>
                           ))}
                         </ul>
-                      )}
-                      {m.extra && <p className="text-sm italic text-muted-foreground">{m.extra}</p>}
-                    </div>
-                  ))}
-                </div>
+                      </div>
+                    ),
+                  )}
 
-                {[peach.activation.conditions, peach.activation.warnings, peach.activation.placement].map(
-                  (blk, i) => (
-                    <div key={i}>
-                      <p className="text-sm font-medium mb-1">{blk.title}</p>
-                      <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
-                        {blk.bullets.map((b, j) => (
-                          <li key={j}>{b}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ),
-                )}
-
-                <div>
-                  <p className="text-sm font-medium mb-1">{peach.activation.whenToStart.title}</p>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {peach.activation.whenToStart.text}
-                  </p>
+                  <div>
+                    <p className="text-sm font-medium mb-1">{peach.activation.whenToStart.title}</p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {peach.activation.whenToStart.text}
+                    </p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              </DialogContent>
+            </Dialog>
           </motion.div>
         </>
       )}
