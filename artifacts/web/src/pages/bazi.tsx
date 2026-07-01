@@ -299,7 +299,7 @@ export default function BaziPage() {
               <CardHeader className="pb-2">
                 <CardTitle className="font-serif text-lg flex items-center gap-2">
                   <Flower2 className="w-5 h-5 text-rose-400" />
-                  Цветок Персика (桃花)
+                  Цветок Персика
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -333,7 +333,7 @@ export default function BaziPage() {
                 {peach.flowers.map((f, i) => (
                   <div key={i} className="rounded-lg border border-rose-500/20 bg-rose-500/5 p-3 space-y-2">
                     <p className="font-serif font-semibold text-rose-300">
-                      Цветок Персика {f.scopeLabel} — {f.animal} ({f.branchZh})
+                      Цветок Персика{f.scopeLabel ? ` ${f.scopeLabel}` : ""} — {f.animal}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Сектор {f.sector} ({f.degrees})
@@ -365,7 +365,7 @@ export default function BaziPage() {
                 {peach.favorableDays.map((fd, i) => (
                   <div key={i} className="space-y-1.5">
                     <p className="text-sm font-medium">
-                      Цветок Персика {fd.scopeLabel} — {fd.animal} ({fd.branchZh})
+                      Цветок Персика{fd.scopeLabel ? ` ${fd.scopeLabel}` : ""} — {fd.animal}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Сектор {fd.sector} ({fd.degrees})

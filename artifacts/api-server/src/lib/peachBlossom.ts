@@ -439,7 +439,9 @@ export function computePeachBlossom(
   const coincide = yearAnimal === dayAnimal;
   const natalBranchIdxs = [yearBranchIdx, dayBranchIdx];
 
-  const flowers: PeachFlower[] = [makeFlower("year", "года", yearAnimal, YEAR_NOTE)];
+  const flowers: PeachFlower[] = [
+    makeFlower("year", coincide ? "" : "года", yearAnimal, YEAR_NOTE),
+  ];
   if (!coincide) {
     flowers.push(makeFlower("day", "дня", dayAnimal, DAY_NOTE));
   }
@@ -452,7 +454,7 @@ export function computePeachBlossom(
   if (coincide) {
     const meta = PEACH_ANIMAL_META[yearAnimal];
     favorableDays.push({
-      scopeLabel: "года и дня",
+      scopeLabel: "",
       animal: yearAnimal,
       branchZh: meta.branchZh,
       sector: meta.sector,
