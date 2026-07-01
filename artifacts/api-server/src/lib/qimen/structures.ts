@@ -1,9 +1,10 @@
 // Structure detection over an hourly chart. First structure: "Три Генерала".
 import { controls, PALACES, STEM_ELEMENT, STEMS } from "./constants";
-import { buildChart, DOOR_ELEMENT, STAR_ELEMENT } from "./chart";
+import { buildChart, DOOR_ELEMENT, STAR_ELEMENT, mainGateStar } from "./chart";
 import {
   GENERALS_ACTIVATION, GENERALS_STAR_NAME, THREE_GENERALS_TABLE, WONDER_NAME,
 } from "../../data/qimen/threeGenerals";
+import { DOOR_MAIDEN_TABLE } from "../../data/qimen/maidens";
 
 const WONDERS = ["乙", "丙", "丁"] as const;
 const QUALIFY_STARS = new Set(["天辅", "天心", "天任"]);
@@ -78,6 +79,93 @@ export function detectThreeGenerals(date: Date, hourBranch: number): GeneralsHit
     });
   }
   return hits;
+}
+
+// --- "Нефритовая Дева" (玉女守门) -------------------------------------------
+// Universal (hour-chart only). Signal stem 丁 (Огонь Инь); Мистики = 乙丙丁.
+// Variants (per structure palace p): H = heaven plate, E = earth plate,
+//   1: H=丁 & E=丁 & door = Главные Врата (самый сильный)
+//   2: H=丁 & E=丁 (без учёта Главных Врат)
+//   3: H=丁 & E∈{乙,丙} & door = Главные Врата
+//   4: H∈{乙,丙} & E=丁 & door = Главные Врата
+export interface JadeMaidenHit {
+  palace: number;
+  variant: number;
+  heavenStem: string;
+  earthStem: string;
+  door: string;
+  isMainGate: boolean;
+}
+
+export function detectJadeMaiden(date: Date, hourBranch: number): JadeMaidenHit[] {
+  const chart = buildChart(date, hourBranch);
+  const main = mainGateStar(chart);
+  const hits: JadeMaidenHit[] = [];
+  for (let p = 1; p <= 9; p++) {
+    if (p === 5) continue; // center has no direction
+    const c = chart.cells[p];
+    const h = c.heavenStem;
+    const e = c.earthStem;
+    const isMain = main.gate !== "" && c.door === main.gate;
+    let variant = 0;
+    if (h === "丁" && e === "丁") variant = isMain ? 1 : 2;
+    else if (h === "丁" && (e === "乙" || e === "丙") && isMain) variant = 3;
+    else if ((h === "乙" || h === "丙") && e === "丁" && isMain) variant = 4;
+    if (!variant) continue;
+    hits.push({ palace: p, variant, heavenStem: h, earthStem: e, door: c.door, isMainGate: isMain });
+  }
+  return hits;
+}
+
+// --- "Девушка, открывающая дверь" ------------------------------------------
+// Keyed off the hour stem -> target heaven-plate stem; the palace carrying that
+// stem on the heaven plate is the sector. Kept meaningful by requiring good
+// врата (休/生/开) и отсутствие дубляжа (разные элементы неба и земли).
+const GOOD_DOORS = new Set(["休门", "生门", "开门"]);
+
+export interface DoorMaidenHit {
+  palace: number;
+  hourStem: string;
+  targetStem: string;
+  heavenStem: string;
+  earthStem: string;
+  door: string;
+  goodDoor: boolean;
+  noDuplication: boolean;
+}
+
+export function detectDoorMaiden(date: Date, hourBranch: number): DoorMaidenHit[] {
+  const chart = buildChart(date, hourBranch);
+  const hourStemCh = STEMS[chart.hourStem];
+  const target = DOOR_MAIDEN_TABLE[hourStemCh];
+  if (!target) return [];
+  let p = -1;
+  for (let q = 1; q <= 9; q++) {
+    if (chart.cells[q].heavenStem === target) {
+      p = q;
+      break;
+    }
+  }
+  if (p < 0) return [];
+  const lodged = p === 5 ? 2 : p; // 寄宫: center lodges with 坤2 — evaluate its operators there
+  const c = chart.cells[lodged];
+  const goodDoor = GOOD_DOORS.has(c.door);
+  const heavenEl = STEM_ELEMENT[STEMS.indexOf(c.heavenStem as (typeof STEMS)[number])];
+  const earthEl = STEM_ELEMENT[STEMS.indexOf(c.earthStem as (typeof STEMS)[number])];
+  const noDuplication = heavenEl !== earthEl;
+  if (!goodDoor || !noDuplication) return [];
+  return [
+    {
+      palace: lodged,
+      hourStem: hourStemCh,
+      targetStem: target,
+      heavenStem: c.heavenStem,
+      earthStem: c.earthStem,
+      door: c.door,
+      goodDoor,
+      noDuplication,
+    },
+  ];
 }
 
 export { STEMS, STEM_ELEMENT };

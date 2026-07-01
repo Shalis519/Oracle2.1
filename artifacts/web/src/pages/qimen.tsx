@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useGetQimen, getGetQimenQueryKey } from "@workspace/api-client-react";
-import type { QimenStructure, JiFuWish } from "@workspace/api-client-react";
+import type {
+  QimenStructure,
+  JiFuWish,
+  QimenJadeMaiden,
+  QimenDoorMaiden,
+} from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +25,8 @@ import {
   Sparkles,
   AlertCircle,
   Info,
+  Heart,
+  DoorOpen,
 } from "lucide-react";
 
 const WALK_RULES: string[] = [
@@ -84,6 +91,37 @@ const GEN_PROCESS: string[] = [
   "Найдите нужный сектор в доме",
   "Поставьте активатор в этом секторе в указанную двухчасовку минимум на 1,5 часа.",
 ];
+
+const JADE_INTRO =
+  "Структура используется для поиска партнеров, улучшения отношений, проведения презентаций, праздников, свиданий, деловых встреч. То есть для любых ситуаций, когда вам нужно кому-то понравиться.";
+
+const JADE_VARIANTS: string[] = [
+  "Первый вариант (в первой строчке) — самый сильный.",
+  "Второй вариант используется без учёта Главных Врат.",
+  "Третий вариант на Земной тарелке не содержит Огонь Инь. Необходимо, чтобы там был вместо него какой-то позитивный элемент или Мистик.",
+  "Четвёртый вариант не содержит Огонь Инь на Небесной тарелке. Необходимо, чтобы там был какой-то позитивный элемент или Мистик.",
+];
+
+const JADE_NOTE =
+  "В зависимости от Школы, каждая из этих комбинаций будет являться Структурой «Нефритовая дева». Необходимо попробовать все, чтобы понять, какая вам максимально подходит.";
+
+const DOOR_INTRO =
+  "Используется для поиска отношений, любви, свиданий, улучшения отношений, для концентрации внимания в учёбе.";
+
+const DOOR_METHOD_LEAD =
+  "Чтобы найти данную Структуру, необходимо обратиться к таблице:";
+
+const DOOR_METHOD: string[] = [
+  "Находим в таблице нужный нам Час.",
+  "Смотрим, какой НС из второго столбика будет создавать Структуру в этот Час.",
+  "Находим в Карте Дворец с данным НС на Небесной тарелке.",
+];
+
+const DOOR_METHOD_RESULT =
+  "В этом секторе и будет находиться Девушка, открывающая дверь.";
+
+const DOOR_NOTE =
+  "Хотя данная структура считается самодостаточной, лучше всё же учитывать и остальные операторы Дворца. Полезно, чтобы вместе со структурой были хорошие Врата и не было дубляжа, когда в НС на небесной и на земной тарелке одинаковый элемент.";
 
 function pluralDays(n: number): string {
   const mod10 = n % 10;
@@ -246,9 +284,94 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
   );
 }
 
+function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Card className="bg-card/40 backdrop-blur-md border-rose-400/30">
+        <CardContent className="py-4 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm leading-relaxed">
+              Сектор{" "}
+              <span className="font-semibold text-rose-200">{m.direction}</span>{" "}
+              в <span className="font-semibold text-rose-200">{m.hourLabel}</span>.
+            </p>
+            <span className="shrink-0 rounded-full bg-rose-400/15 px-3 py-1 text-xs font-medium text-rose-200">
+              {formatDate(m.date)}
+            </span>
+          </div>
+
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {m.variantText}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-rose-400/10 px-2 py-0.5 text-xs text-rose-200/90">
+              Небо: {m.heavenStemName}
+            </span>
+            <span className="rounded-full bg-rose-400/10 px-2 py-0.5 text-xs text-rose-200/90">
+              Земля: {m.earthStemName}
+            </span>
+            <span className="rounded-full bg-rose-400/10 px-2 py-0.5 text-xs text-rose-200/90">
+              {m.doorName}
+            </span>
+            {m.isMainGate ? (
+              <span className="rounded-full bg-rose-400/20 px-2 py-0.5 text-xs font-medium text-rose-100">
+                Главные Врата
+              </span>
+            ) : null}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
+function DoorMaidenCard({ m }: { m: QimenDoorMaiden }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Card className="bg-card/40 backdrop-blur-md border-sky-400/30">
+        <CardContent className="py-4 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm leading-relaxed">
+              Сектор{" "}
+              <span className="font-semibold text-sky-200">{m.direction}</span>{" "}
+              в <span className="font-semibold text-sky-200">{m.hourLabel}</span>.
+            </p>
+            <span className="shrink-0 rounded-full bg-sky-400/15 px-3 py-1 text-xs font-medium text-sky-200">
+              {formatDate(m.date)}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-sky-400/10 px-2 py-0.5 text-xs text-sky-200/90">
+              Час: {m.hourStemName}
+            </span>
+            <span className="rounded-full bg-sky-400/10 px-2 py-0.5 text-xs text-sky-200/90">
+              НС: {m.targetStemName}
+            </span>
+            <span className="rounded-full bg-sky-400/10 px-2 py-0.5 text-xs text-sky-200/90">
+              {m.doorName}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 export default function QimenPage() {
   const [rulesOpen, setRulesOpen] = useState(false);
   const [jifuInfoOpen, setJifuInfoOpen] = useState(false);
+  const [jadeInfoOpen, setJadeInfoOpen] = useState(false);
+  const [doorInfoOpen, setDoorInfoOpen] = useState(false);
   const [genInfoOpen, setGenInfoOpen] = useState(false);
   const { data, isLoading } = useGetQimen({
     query: { retry: false, queryKey: getGetQimenQueryKey() },
@@ -265,7 +388,10 @@ export default function QimenPage() {
   const hasBirthDate = data?.hasBirthDate ?? false;
   const structures = data?.structures ?? [];
   const jiFuWishes = data?.jiFuWishes ?? [];
+  const jadeMaidens = data?.jadeMaidens ?? [];
+  const doorMaidens = data?.doorMaidens ?? [];
   const windowDays = data?.windowDays ?? 14;
+  const maidenWindowDays = data?.maidenWindowDays ?? 7;
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-8">
@@ -362,6 +488,118 @@ export default function QimenPage() {
           <Card className="bg-card/40 backdrop-blur-md">
             <CardContent className="py-8 text-center text-sm text-muted-foreground">
               На сегодня сильных совпадений сектора Джи Фу не найдено.
+            </CardContent>
+          </Card>
+        )}
+      </section>
+
+      {/* Нефритовая Дева — универсально, без привязки к дате рождения */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Heart className="w-5 h-5 text-rose-300" />
+          <h2 className="text-xl font-serif font-semibold">
+            <Dialog open={jadeInfoOpen} onOpenChange={setJadeInfoOpen}>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-rose-300/60 underline-offset-4 hover:text-rose-200 transition-colors"
+                >
+                  Нефритовая Дева
+                  <Info className="w-4 h-4 text-rose-300/80" />
+                </button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="font-serif flex items-center gap-2">
+                    <Heart className="w-5 h-5 text-rose-300" />
+                    Нефритовая Дева
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 text-sm leading-relaxed">
+                  <p>{JADE_INTRO}</p>
+                  <ul className="list-disc list-outside space-y-1.5 pl-5">
+                    {JADE_VARIANTS.map((v, i) => (
+                      <li key={i}>{v}</li>
+                    ))}
+                  </ul>
+                  <p className="text-muted-foreground">{JADE_NOTE}</p>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </h2>
+        </div>
+
+        {jadeMaidens.length > 0 ? (
+          <div className="space-y-3">
+            {jadeMaidens.map((m, i) => (
+              <JadeMaidenCard
+                key={`${m.date}-${m.hourBranch}-${m.dom}-${i}`}
+                m={m}
+              />
+            ))}
+          </div>
+        ) : (
+          <Card className="bg-card/40 backdrop-blur-md">
+            <CardContent className="py-8 text-center text-sm text-muted-foreground">
+              На ближайшие {maidenWindowDays} {pluralDays(maidenWindowDays)}{" "}
+              структур «Нефритовая Дева» не найдено.
+            </CardContent>
+          </Card>
+        )}
+      </section>
+
+      {/* Девушка, открывающая дверь — универсально, без привязки к дате рождения */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <DoorOpen className="w-5 h-5 text-sky-300" />
+          <h2 className="text-xl font-serif font-semibold">
+            <Dialog open={doorInfoOpen} onOpenChange={setDoorInfoOpen}>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-sky-300/60 underline-offset-4 hover:text-sky-200 transition-colors"
+                >
+                  Девушка, открывающая дверь
+                  <Info className="w-4 h-4 text-sky-300/80" />
+                </button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="font-serif flex items-center gap-2">
+                    <DoorOpen className="w-5 h-5 text-sky-300" />
+                    Девушка, открывающая (охраняющая) дверь
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 text-sm leading-relaxed">
+                  <p>{DOOR_INTRO}</p>
+                  <p>{DOOR_METHOD_LEAD}</p>
+                  <ol className="list-decimal list-outside space-y-1.5 pl-5">
+                    {DOOR_METHOD.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ol>
+                  <p className="font-medium text-sky-200">{DOOR_METHOD_RESULT}</p>
+                  <p className="text-muted-foreground">{DOOR_NOTE}</p>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </h2>
+        </div>
+
+        {doorMaidens.length > 0 ? (
+          <div className="space-y-3">
+            {doorMaidens.map((m, i) => (
+              <DoorMaidenCard
+                key={`${m.date}-${m.hourBranch}-${m.dom}-${i}`}
+                m={m}
+              />
+            ))}
+          </div>
+        ) : (
+          <Card className="bg-card/40 backdrop-blur-md">
+            <CardContent className="py-8 text-center text-sm text-muted-foreground">
+              На ближайшие {maidenWindowDays} {pluralDays(maidenWindowDays)}{" "}
+              структур «Девушка, открывающая дверь» не найдено.
             </CardContent>
           </Card>
         )}

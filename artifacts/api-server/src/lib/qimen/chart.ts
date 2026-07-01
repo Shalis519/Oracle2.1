@@ -119,4 +119,28 @@ export function buildChart(date: Date, hourBranch: number): Chart {
   };
 }
 
+/**
+ * Главные Врата / Главная звезда for an hour chart (метод literaqimen.ru):
+ * 1) find the hour stem on the earth plate -> palace A (= 时干宫 = zhiFuPalace;
+ *    already handles 甲 hiding via 旬首仪);
+ * 2) read the stem standing above it (heaven plate at A) -> stem X;
+ * 3) find X on the earth plate -> palace B (X is never 甲, so always found);
+ * 4) the gate/star whose HOME palace is B are the Main Gate / Main Star.
+ */
+export function mainGateStar(chart: Chart): { gate: string; star: string; palace: number } {
+  const a = chart.zhiFuPalace;
+  const x = chart.cells[a]?.heavenStem;
+  let b = -1;
+  for (let p = 1; p <= 9; p++) {
+    if (chart.cells[p]?.earthStem === x) {
+      b = p;
+      break;
+    }
+  }
+  const home = b === 5 ? 2 : b; // 寄宫: center lodges with 坤2
+  const gate = DOORS.find((d) => d.palace === home)?.name ?? "";
+  const star = STARS.find((s) => s.palace === home)?.name ?? "";
+  return { gate, star, palace: home };
+}
+
 export { STAR_ELEMENT, DOOR_ELEMENT, PALACES };

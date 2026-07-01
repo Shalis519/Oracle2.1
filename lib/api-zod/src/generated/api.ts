@@ -659,6 +659,7 @@ export const GetQimenResponse = zod.object({
   "hasBirthDate": zod.boolean(),
   "birthYearAnimal": zod.string().nullable(),
   "windowDays": zod.number(),
+  "maidenWindowDays": zod.number(),
   "structures": zod.array(zod.object({
   "date": zod.string(),
   "dayGanZhi": zod.string(),
@@ -691,6 +692,43 @@ export const GetQimenResponse = zod.object({
   "matchYear": zod.boolean(),
   "matchMonth": zod.boolean(),
   "matchDay": zod.boolean()
+})),
+  "jadeMaidens": zod.array(zod.object({
+  "date": zod.string(),
+  "dayGanZhi": zod.string(),
+  "hourBranch": zod.number(),
+  "hourLabel": zod.string(),
+  "variant": zod.number(),
+  "variantText": zod.string(),
+  "direction": zod.string(),
+  "dir": zod.string(),
+  "dom": zod.string(),
+  "heavenStem": zod.string(),
+  "heavenStemName": zod.string(),
+  "earthStem": zod.string(),
+  "earthStemName": zod.string(),
+  "door": zod.string(),
+  "doorName": zod.string(),
+  "isMainGate": zod.boolean()
+})),
+  "doorMaidens": zod.array(zod.object({
+  "date": zod.string(),
+  "dayGanZhi": zod.string(),
+  "hourBranch": zod.number(),
+  "hourLabel": zod.string(),
+  "hourStem": zod.string(),
+  "hourStemName": zod.string(),
+  "targetStem": zod.string(),
+  "targetStemName": zod.string(),
+  "direction": zod.string(),
+  "dir": zod.string(),
+  "dom": zod.string(),
+  "heavenStem": zod.string(),
+  "earthStem": zod.string(),
+  "door": zod.string(),
+  "doorName": zod.string(),
+  "goodDoor": zod.boolean(),
+  "noDuplication": zod.boolean()
 }))
 })
 

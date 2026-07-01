@@ -1434,15 +1434,140 @@ components:
         matchDay:
           type: boolean
 
+    QimenJadeMaiden:
+      type: object
+      required:
+        [
+          date,
+          dayGanZhi,
+          hourBranch,
+          hourLabel,
+          variant,
+          variantText,
+          direction,
+          dir,
+          dom,
+          heavenStem,
+          heavenStemName,
+          earthStem,
+          earthStemName,
+          door,
+          doorName,
+          isMainGate,
+        ]
+      properties:
+        date:
+          type: string
+        dayGanZhi:
+          type: string
+        hourBranch:
+          type: integer
+        hourLabel:
+          type: string
+        variant:
+          type: integer
+        variantText:
+          type: string
+        direction:
+          type: string
+        dir:
+          type: string
+        dom:
+          type: string
+        heavenStem:
+          type: string
+        heavenStemName:
+          type: string
+        earthStem:
+          type: string
+        earthStemName:
+          type: string
+        door:
+          type: string
+        doorName:
+          type: string
+        isMainGate:
+          type: boolean
+
+    QimenDoorMaiden:
+      type: object
+      required:
+        [
+          date,
+          dayGanZhi,
+          hourBranch,
+          hourLabel,
+          hourStem,
+          hourStemName,
+          targetStem,
+          targetStemName,
+          direction,
+          dir,
+          dom,
+          heavenStem,
+          earthStem,
+          door,
+          doorName,
+          goodDoor,
+          noDuplication,
+        ]
+      properties:
+        date:
+          type: string
+        dayGanZhi:
+          type: string
+        hourBranch:
+          type: integer
+        hourLabel:
+          type: string
+        hourStem:
+          type: string
+        hourStemName:
+          type: string
+        targetStem:
+          type: string
+        targetStemName:
+          type: string
+        direction:
+          type: string
+        dir:
+          type: string
+        dom:
+          type: string
+        heavenStem:
+          type: string
+        earthStem:
+          type: string
+        door:
+          type: string
+        doorName:
+          type: string
+        goodDoor:
+          type: boolean
+        noDuplication:
+          type: boolean
+
     QimenSummary:
       type: object
-      required: [hasBirthDate, birthYearAnimal, windowDays, structures, jiFuWishes]
+      required:
+        [
+          hasBirthDate,
+          birthYearAnimal,
+          windowDays,
+          maidenWindowDays,
+          structures,
+          jiFuWishes,
+          jadeMaidens,
+          doorMaidens,
+        ]
       properties:
         hasBirthDate:
           type: boolean
         birthYearAnimal:
           type: ["string", "null"]
         windowDays:
+          type: integer
+        maidenWindowDays:
           type: integer
         structures:
           type: array
@@ -1452,6 +1577,14 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/JiFuWish"
+        jadeMaidens:
+          type: array
+          items:
+            $ref: "#/components/schemas/QimenJadeMaiden"
+        doorMaidens:
+          type: array
+          items:
+            $ref: "#/components/schemas/QimenDoorMaiden"
 
     PromotionActivation:
       type: object
