@@ -5,6 +5,7 @@ import {
   GENERALS_ACTIVATION, GENERALS_STAR_NAME, THREE_GENERALS_TABLE, WONDER_NAME,
 } from "../../data/qimen/threeGenerals";
 import { DOOR_MAIDEN_TABLE } from "../../data/qimen/maidens";
+import { ENEMY, MYSTICS } from "../../data/qimen/stems";
 
 const WONDERS = ["乙", "丙", "丁"] as const;
 const QUALIFY_STARS = new Set(["天辅", "天心", "天任"]);
@@ -107,10 +108,13 @@ export function detectJadeMaiden(date: Date, hourBranch: number): JadeMaidenHit[
     const h = c.heavenStem;
     const e = c.earthStem;
     const isMain = main.gate !== "" && c.door === main.gate;
+    // "Позитивный элемент или Мистик" в паре с 丁 = второй Мистик (乙/丙): они же
+    // и поддерживающие Огонь стихии (Дерево рождает Огонь, Огонь усиливает Огонь).
+    const otherMystic = (x: string) => MYSTICS.has(x) && x !== "丁";
     let variant = 0;
     if (h === "丁" && e === "丁") variant = isMain ? 1 : 2;
-    else if (h === "丁" && (e === "乙" || e === "丙") && isMain) variant = 3;
-    else if ((h === "乙" || h === "丙") && e === "丁" && isMain) variant = 4;
+    else if (h === "丁" && otherMystic(e) && isMain) variant = 3;
+    else if (otherMystic(h) && e === "丁" && isMain) variant = 4;
     if (!variant) continue;
     hits.push({ palace: p, variant, heavenStem: h, earthStem: e, door: c.door, isMainGate: isMain });
   }
@@ -153,7 +157,10 @@ export function detectDoorMaiden(date: Date, hourBranch: number): DoorMaidenHit[
   const heavenEl = STEM_ELEMENT[STEMS.indexOf(c.heavenStem as (typeof STEMS)[number])];
   const earthEl = STEM_ELEMENT[STEMS.indexOf(c.earthStem as (typeof STEMS)[number])];
   const noDuplication = heavenEl !== earthEl;
-  if (!goodDoor || !noDuplication) return [];
+  // Враг 庚 портит благоприятную структуру отношений: взаимодействия с ним
+  // почти всегда неблагоприятны (учитываем остальные операторы Дворца).
+  const noEnemy = c.heavenStem !== ENEMY && c.earthStem !== ENEMY;
+  if (!goodDoor || !noDuplication || !noEnemy) return [];
   return [
     {
       palace: lodged,

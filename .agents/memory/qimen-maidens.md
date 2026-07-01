@@ -17,3 +17,8 @@ Two universal Qi Men structures — no birth date, no 六冲 filter — scanned 
 
 **Why:** first pass evaluated `cells[p]` then remapped only in the returned object, so center-target hours produced zero results (~13% of door-maiden hits were missing).
 **How to apply:** compute `lodged = p===5 ? 2 : p` and use `cells[lodged]` for every operator read and the reported palace. Same convention as `adjust()` and `mainGateStar` home-palace mapping in chart.ts.
+
+**Stem semantics (canonical, `data/qimen/stems.ts`):** three role groups — Главнокомандующий 甲 (hides behind 旬首仪, never on plates), Три Мистика 乙丙丁 (positive stems), Инструменты 戊己庚辛壬癸. 庚 is the enemy ("взаимодействия почти всегда неблагоприятны"). `STEM_INFO` is the single source of truth; `MYSTICS`/`COMMANDER`/`ENEMY` are DERIVED from it (role filter / isEnemy flag) — don't hardcode duplicate sets.
+- Jade V3/V4 "позитивный элемент или Мистик" slot = the *other* Mystic (乙/丙), which are also the Fire-supportive elements — expressed as `MYSTICS.has(x) && x!=='丁'`.
+- Favorable-relationship detectors exclude 庚 on EITHER plate: Door Maiden adds `noEnemy` (dropped ~4/23 hits that sat with 庚 on the earth plate); Three Generals already had the same guard. Jade Maiden needs no 庚 guard — its slots are structurally 丁/乙/丙 only.
+**Why:** article fengi.ru/school/qmdz/415 + the source PDF's "учитывать остальные операторы Дворца" note both point to keeping the enemy stem out of a benevolent structure.
