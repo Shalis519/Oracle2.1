@@ -9,7 +9,10 @@ import { ENEMY, MYSTICS } from "../../data/qimen/stems";
 
 const WONDERS = ["乙", "丙", "丁"] as const;
 const QUALIFY_STARS = new Set(["天辅", "天心", "天任"]);
-const QUALIFY_DOORS = new Set(["休门", "生门", "开门"]);
+// Допустимые Врата: три благоприятных (休 Отдых, 生 Жизнь, 开 Открытие) плюс
+// нейтральные 杜 (Преграда/тайник) и 景 (Пейзаж/сцена). Исключены неблагоприятные
+// 死 (Смерть), 惊 (Испуг/шок) и 伤 (Вред).
+const QUALIFY_DOORS = new Set(["休门", "生门", "开门", "杜门", "景门"]);
 
 // 墓 (tomb) palace per wonder.
 const TOMB: Record<string, number> = { 乙: 6, 丙: 6, 丁: 8 };
