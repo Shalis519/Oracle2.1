@@ -51,6 +51,7 @@ export default function DashboardPage() {
   
   const [accuracy, setAccuracy] = useState("good");
   const [comment, setComment] = useState("");
+  const [editingFeedback, setEditingFeedback] = useState(false);
 
   const handleFeedback = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +61,7 @@ export default function DashboardPage() {
       {
         onSuccess: () => {
           toast({ title: "Отзыв сохранен" });
+          setEditingFeedback(false);
           queryClient.invalidateQueries({ queryKey: getGetTodayForecastQueryKey() });
         }
       }
@@ -184,10 +186,28 @@ export default function DashboardPage() {
                 <CardDescription>Насколько точным оказался прогноз?</CardDescription>
               </CardHeader>
               <CardContent>
-                {forecast.feedback ? (
-                  <div className="flex items-center gap-2 text-success">
-                    <CheckCircle className="w-5 h-5" />
-                    <span>Отзыв сохранен. Спасибо!</span>
+                {forecast.feedback && !editingFeedback ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-success">
+                      <CheckCircle className="w-5 h-5" />
+                      <span>Отзыв сохранен. Спасибо!</span>
+                    </div>
+                    {forecast.feedback.comment && (
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                        {forecast.feedback.comment}
+                      </p>
+                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setAccuracy(forecast.feedback!.accuracy);
+                        setComment(forecast.feedback!.comment ?? "");
+                        setEditingFeedback(true);
+                      }}
+                    >
+                      Дополнить или изменить
+                    </Button>
                   </div>
                 ) : (
                   <form onSubmit={handleFeedback} className="space-y-4">
@@ -208,7 +228,20 @@ export default function DashboardPage() {
                       <label className="text-sm font-medium">Заметки (необязательно)</label>
                       <Textarea value={comment} onChange={e => setComment(e.target.value)} placeholder="Что именно откликнулось?" />
                     </div>
-                    <Button type="submit" disabled={submitFeedback.isPending}>Отправить</Button>
+                    <div className="flex items-center gap-2">
+                      <Button type="submit" disabled={submitFeedback.isPending}>
+                        {forecast.feedback ? "Сохранить изменения" : "Отправить"}
+                      </Button>
+                      {forecast.feedback && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => setEditingFeedback(false)}
+                        >
+                          Отмена
+                        </Button>
+                      )}
+                    </div>
                   </form>
                 )}
               </CardContent>
