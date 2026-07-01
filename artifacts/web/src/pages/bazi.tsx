@@ -375,9 +375,6 @@ export default function BaziPage() {
               <CardContent className="space-y-4">
                 {peach.favorableDays.map((fd, i) => (
                   <div key={i} className="space-y-1.5">
-                    <p className="text-sm font-medium">
-                      Цветок Персика{fd.scopeLabel ? ` ${fd.scopeLabel}` : ""} — {fd.animal}
-                    </p>
                     <p className="text-xs text-muted-foreground">
                       Сектор {fd.sector} ({fd.degrees})
                     </p>
@@ -390,7 +387,7 @@ export default function BaziPage() {
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-sm text-muted-foreground">В ближайшие 30 дней подходящих дней нет.</p>
+                      <p className="text-sm text-muted-foreground">В ближайшие 7 дней подходящих дней нет.</p>
                     )}
                     {fd.note && (
                       <p className="text-sm italic text-muted-foreground border-l-2 border-rose-500/50 pl-3 py-1">
@@ -399,79 +396,79 @@ export default function BaziPage() {
                     )}
                   </div>
                 ))}
-                <div className="space-y-1 pt-1">
-                  {peach.favorableFooter.map((line, i) => (
-                    <p key={i} className="text-xs text-muted-foreground">
-                      {line}
-                    </p>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2 border-rose-500/30 text-rose-300 hover:text-rose-200 hover:bg-rose-500/10"
-                >
-                  <Sparkles className="w-5 h-5 text-rose-400" />
-                  Активизация Цветок Персика
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="font-serif flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-rose-400" />
-                    Активизация Цветок Персика
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <p className="text-sm leading-relaxed">{peach.activation.intro}</p>
-
-                  <div className="space-y-3">
-                    {peach.activation.methods.map((m, i) => (
-                      <div key={i} className="space-y-1">
-                        <p className="text-sm font-medium">{m.title}</p>
-                        {m.body && (
-                          <p className="text-sm leading-relaxed text-muted-foreground">{m.body}</p>
-                        )}
-                        {m.bullets.length > 0 && (
-                          <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
-                            {m.bullets.map((b, j) => (
-                              <li key={j}>{b}</li>
-                            ))}
-                          </ul>
-                        )}
-                        {m.extra && <p className="text-sm italic text-muted-foreground">{m.extra}</p>}
-                      </div>
+                {peach.favorableFooter.length > 0 && (
+                  <div className="space-y-1 pt-1">
+                    {peach.favorableFooter.map((line, i) => (
+                      <p key={i} className="text-xs text-muted-foreground">
+                        {line}
+                      </p>
                     ))}
                   </div>
+                )}
 
-                  {[peach.activation.conditions, peach.activation.warnings, peach.activation.placement].map(
-                    (blk, i) => (
-                      <div key={i}>
-                        <p className="text-sm font-medium mb-1">{blk.title}</p>
-                        <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
-                          {blk.bullets.map((b, j) => (
-                            <li key={j}>{b}</li>
-                          ))}
-                        </ul>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start gap-2 border-rose-500/30 text-rose-300 hover:text-rose-200 hover:bg-rose-500/10"
+                    >
+                      <Sparkles className="w-5 h-5 text-rose-400" />
+                      Активизация Цветок Персика
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle className="font-serif flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-rose-400" />
+                        Активизация Цветок Персика
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <p className="text-sm leading-relaxed">{peach.activation.intro}</p>
+
+                      <div className="space-y-3">
+                        {peach.activation.methods.map((m, i) => (
+                          <div key={i} className="space-y-1">
+                            <p className="text-sm font-medium">{m.title}</p>
+                            {m.body && (
+                              <p className="text-sm leading-relaxed text-muted-foreground">{m.body}</p>
+                            )}
+                            {m.bullets.length > 0 && (
+                              <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                                {m.bullets.map((b, j) => (
+                                  <li key={j}>{b}</li>
+                                ))}
+                              </ul>
+                            )}
+                            {m.extra && <p className="text-sm italic text-muted-foreground">{m.extra}</p>}
+                          </div>
+                        ))}
                       </div>
-                    ),
-                  )}
 
-                  <div>
-                    <p className="text-sm font-medium mb-1">{peach.activation.whenToStart.title}</p>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {peach.activation.whenToStart.text}
-                    </p>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+                      {[peach.activation.conditions, peach.activation.warnings, peach.activation.placement].map(
+                        (blk, i) => (
+                          <div key={i}>
+                            <p className="text-sm font-medium mb-1">{blk.title}</p>
+                            <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                              {blk.bullets.map((b, j) => (
+                                <li key={j}>{b}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        ),
+                      )}
+
+                      <div>
+                        <p className="text-sm font-medium mb-1">{peach.activation.whenToStart.title}</p>
+                        <p className="text-sm leading-relaxed text-muted-foreground">
+                          {peach.activation.whenToStart.text}
+                        </p>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </CardContent>
+            </Card>
           </motion.div>
         </>
       )}

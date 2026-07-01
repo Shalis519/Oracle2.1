@@ -261,7 +261,7 @@ function buildDayHourPairs(
   animal: PeachAnimal,
   natalBranchIdxs: number[],
   today: Date,
-  daysAhead = 30,
+  daysAhead = 7,
 ): PeachPair[] {
   const pbIdx = PEACH_ANIMAL_BRANCH_IDX[animal];
   const validDays = validDayBranches(pbIdx, natalBranchIdxs);
