@@ -223,6 +223,32 @@ export default function BaziPage() {
             </DialogContent>
           </Dialog>
         )}
+
+        {bazi.spendingDays.length > 0 && (
+          <Card className="bg-card/40 backdrop-blur-md border-amber-500/30 w-full max-w-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Coins className="w-5 h-5 text-amber-500" />
+                Грабитель богатства
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-relaxed">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="font-semibold underline decoration-dotted underline-offset-4 cursor-help">
+                      Дни трат
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-sm leading-relaxed">
+                    Запланируйте «добровольные траты»: оплатите счета, совершайте покупки, займитесь благотворительностью, делайте подарки. Это «подкармливает» денежную энергию.
+                  </TooltipContent>
+                </Tooltip>
+                : {formatSpendingDays(bazi.spendingDays)}.
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </motion.div>
 
       {promo && (
@@ -329,34 +355,6 @@ export default function BaziPage() {
                   {noble.caution}
                 </p>
               )}
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
-      {bazi.spendingDays.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <Card className="bg-card/40 backdrop-blur-md border-amber-500/30">
-            <CardHeader className="pb-2">
-              <CardTitle className="font-serif text-lg flex items-center gap-2">
-                <Coins className="w-5 h-5 text-amber-500" />
-                Грабитель богатства
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm leading-relaxed">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="font-semibold underline decoration-dotted underline-offset-4 cursor-help">
-                      Дни трат
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-sm leading-relaxed">
-                    Запланируйте «добровольные траты»: оплатите счета, совершайте покупки, займитесь благотворительностью, делайте подарки. Это «подкармливает» денежную энергию.
-                  </TooltipContent>
-                </Tooltip>
-                : {formatSpendingDays(bazi.spendingDays)}.
-              </p>
             </CardContent>
           </Card>
         </motion.div>
