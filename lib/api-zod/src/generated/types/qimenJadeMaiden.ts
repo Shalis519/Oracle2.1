@@ -11,7 +11,6 @@ export interface QimenJadeMaiden {
   dayGanZhi: string;
   hourBranch: number;
   hourLabel: string;
-  variant: number;
   direction: string;
   dir: string;
   dom: string;

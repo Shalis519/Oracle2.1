@@ -1442,7 +1442,6 @@ components:
           dayGanZhi,
           hourBranch,
           hourLabel,
-          variant,
           direction,
           dir,
           dom,
@@ -1463,8 +1462,6 @@ components:
           type: integer
         hourLabel:
           type: string
-        variant:
-          type: integer
         direction:
           type: string
         dir:

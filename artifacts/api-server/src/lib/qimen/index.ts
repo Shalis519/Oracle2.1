@@ -40,7 +40,6 @@ export interface QimenJadeMaiden {
   dayGanZhi: string;
   hourBranch: number;
   hourLabel: string;
-  variant: number;
   direction: string;
   dir: string;
   dom: string;
@@ -125,7 +124,6 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           dayGanZhi: dayGz,
           hourBranch: h,
           hourLabel: hourLabel(h),
-          variant: hit.variant,
           direction: PALACES[hit.palace].dirFull,
           dir: PALACES[hit.palace].dir,
           dom: PALACES[hit.palace].dom,

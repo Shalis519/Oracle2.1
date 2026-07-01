@@ -698,7 +698,6 @@ export const GetQimenResponse = zod.object({
   "dayGanZhi": zod.string(),
   "hourBranch": zod.number(),
   "hourLabel": zod.string(),
-  "variant": zod.number(),
   "direction": zod.string(),
   "dir": zod.string(),
   "dom": zod.string(),

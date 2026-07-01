@@ -307,11 +307,6 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
             <span className="rounded-full bg-rose-400/10 px-2 py-0.5 text-xs text-rose-200/90">
               {m.doorName}
             </span>
-            {m.variant === 1 ? (
-              <span className="rounded-full bg-rose-400/20 px-2 py-0.5 text-xs font-medium text-rose-100">
-                Самый сильный
-              </span>
-            ) : null}
             {m.isMainGate ? (
               <span className="rounded-full bg-rose-400/20 px-2 py-0.5 text-xs font-medium text-rose-100">
                 Главные Врата
