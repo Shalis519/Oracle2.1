@@ -10,7 +10,6 @@ import {
   differentOverview,
   FAVORABLE_YEAR_NOTE,
   FAVORABLE_DAY_NOTE,
-  FAVORABLE_SAME_NOTE,
   FAVORABLE_FOOTER,
   ACTIVATION_INTRO,
   ACTIVATION_METHODS,
@@ -460,7 +459,7 @@ export function computePeachBlossom(
       sector: meta.sector,
       degrees: meta.degrees,
       pairs: buildDayHourPairs(yearAnimal, natalBranchIdxs, today),
-      note: FAVORABLE_SAME_NOTE,
+      note: null,
     });
   } else {
     const yMeta = PEACH_ANIMAL_META[yearAnimal];
