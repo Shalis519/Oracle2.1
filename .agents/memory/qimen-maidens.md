@@ -22,3 +22,5 @@ Two universal Qi Men structures — no birth date, no 六冲 filter — scanned 
 - Jade V3/V4 "позитивный элемент или Мистик" slot = the *other* Mystic (乙/丙), which are also the Fire-supportive elements — expressed as `MYSTICS.has(x) && x!=='丁'`.
 - Favorable-relationship detectors exclude 庚 on EITHER plate: Door Maiden adds `noEnemy` (dropped ~4/23 hits that sat with 庚 on the earth plate); Three Generals already had the same guard. Jade Maiden needs no 庚 guard — its slots are structurally 丁/乙/丙 only.
 **Why:** article fengi.ru/school/qmdz/415 + the source PDF's "учитывать остальные операторы Дворца" note both point to keeping the enemy stem out of a benevolent structure.
+
+**Annual 五黄 exclusion:** a sector carrying the annual Yellow-Five (五黄) is unusable in Qi Men. Нефритовая Дева drops any hit whose palace holds star 5 — resolved via `getFlyingStar(dir)` from `lib/data/fengshui` (the 2026 annual chart puts 五黄 in the South / palace 9). Palace→direction: capitalize the first letter of `PALACES[p].dirFull` (lowercase "юго-запад" → fengshui key "Юго-запад"). Currently applied to Нефритовая Дева ONLY (per user scope); Три Генерала / Девушка do not yet carry this guard.

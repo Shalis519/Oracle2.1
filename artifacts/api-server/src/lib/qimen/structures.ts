@@ -6,6 +6,7 @@ import {
 } from "../../data/qimen/threeGenerals";
 import { DOOR_MAIDEN_TABLE } from "../../data/qimen/maidens";
 import { ENEMY, MYSTICS } from "../../data/qimen/stems";
+import { getFlyingStar } from "../data/fengshui";
 
 const WONDERS = ["乙", "丙", "丁"] as const;
 const QUALIFY_STARS = new Set(["天辅", "天心", "天任"]);
@@ -101,6 +102,14 @@ export interface JadeMaidenHit {
   isMainGate: boolean;
 }
 
+// Годовая летящая звезда сектора === 5 (五黄 «Жёлтая Пятёрка»): в Ци Мэнь такой
+// сектор не используется. Направление берётся из годовой карты (2026 — юг).
+function annualYellowFive(palace: number): boolean {
+  const dirFull = PALACES[palace].dirFull;
+  const dir = dirFull.charAt(0).toUpperCase() + dirFull.slice(1);
+  return getFlyingStar(dir).starNumber === 5;
+}
+
 export function detectJadeMaiden(date: Date, hourBranch: number): JadeMaidenHit[] {
   const chart = buildChart(date, hourBranch);
   const main = mainGateStar(chart);
@@ -119,6 +128,9 @@ export function detectJadeMaiden(date: Date, hourBranch: number): JadeMaidenHit[
     else if (h === "丁" && otherMystic(e) && isMain) variant = 3;
     else if (otherMystic(h) && e === "丁" && isMain) variant = 4;
     if (!variant) continue;
+    // 五黄: сектор с годовой звездой «Жёлтая Пятёрка» в Ци Мэнь не используется
+    // (в 2026 году — юг); такие структуры исключаем.
+    if (annualYellowFive(p)) continue;
     hits.push({ palace: p, variant, heavenStem: h, earthStem: e, door: c.door, isMainGate: isMain });
   }
   return hits;
