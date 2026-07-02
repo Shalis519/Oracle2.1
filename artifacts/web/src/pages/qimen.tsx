@@ -479,8 +479,8 @@ export default function QimenPage() {
         )}
       </section>
 
-      {/* Нефритовая Дева — универсально, без привязки к дате рождения */}
-      <section className="space-y-4">
+      {/* Нефритовая Дева — отключено */}
+      {false && <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Heart className="w-5 h-5 text-rose-300" />
           <h2 className="text-xl font-serif font-semibold">
@@ -526,10 +526,10 @@ export default function QimenPage() {
             </CardContent>
           </Card>
         )}
-      </section>
+      </section>}
 
-      {/* Девушка, открывающая дверь — универсально, без привязки к дате рождения */}
-      <section className="space-y-4">
+      {/* Девушка, открывающая дверь — отключено */}
+      {false && <section className="space-y-4">
         <div className="flex items-center gap-2">
           <DoorOpen className="w-5 h-5 text-sky-300" />
           <h2 className="text-xl font-serif font-semibold">
@@ -583,7 +583,7 @@ export default function QimenPage() {
             </CardContent>
           </Card>
         )}
-      </section>
+      </section>}
 
       {/* Персональные структуры «Три Генерала» — требуют дату рождения */}
       <section className="space-y-4">
