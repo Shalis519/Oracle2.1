@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { useGetQimen, getGetQimenQueryKey } from "@workspace/api-client-react";
+import { useGetQimen, getGetQimenQueryKey, useGetTodayActivations, getGetTodayActivationsQueryKey } from "@workspace/api-client-react";
 import type {
   QimenStructure,
   JiFuWish,
   QimenJadeMaiden,
   QimenDoorMaiden,
 } from "@workspace/api-client-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,7 +27,23 @@ import {
   Info,
   Heart,
   DoorOpen,
+  Flame,
 } from "lucide-react";
+
+const HOUR_RANGES: Record<string, string> = {
+  "Крыса": "23:00–01:00",
+  "Бык": "01:00–03:00",
+  "Тигр": "03:00–05:00",
+  "Кролик": "05:00–07:00",
+  "Дракон": "07:00–09:00",
+  "Змея": "09:00–11:00",
+  "Лошадь": "11:00–13:00",
+  "Коза": "13:00–15:00",
+  "Обезьяна": "15:00–17:00",
+  "Петух": "17:00–19:00",
+  "Собака": "19:00–21:00",
+  "Свинья": "21:00–23:00",
+};
 
 const WALK_RULES: string[] = [
   "Выходите точно в указанный двухчасовой интервал (час). Раньше или позже энергия уже другая.",
@@ -362,6 +378,9 @@ export default function QimenPage() {
   const { data, isLoading } = useGetQimen({
     query: { retry: false, queryKey: getGetQimenQueryKey() },
   });
+  const { data: activations } = useGetTodayActivations({
+    query: { queryKey: getGetTodayActivationsQueryKey() },
+  });
 
   if (isLoading) {
     return (
@@ -419,6 +438,40 @@ export default function QimenPage() {
           </Dialog>
         </div>
       </motion.div>
+
+      {activations && activations.items.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+          <Card className="bg-card/40 backdrop-blur-md shadow-lg border-secondary/30">
+            <CardHeader>
+              <CardTitle className="font-serif text-2xl flex items-center gap-2 text-secondary">
+                <Flame className="w-6 h-6" />
+                Активации дня
+              </CardTitle>
+              <CardDescription>Энергетические события сегодняшнего дня и часы их активации.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {activations.items.map((item, idx) => (
+                <div key={idx} className="rounded-xl border border-border bg-background/60 p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-3">
+                    <h3 className="font-serif font-bold text-lg text-primary">{item.title}</h3>
+                    <span className="text-sm text-muted-foreground shrink-0">
+                      Час {item.hour}{HOUR_RANGES[item.hour] ? ` · ${HOUR_RANGES[item.hour]}` : ""}
+                    </span>
+                  </div>
+                  {item.audience && (
+                    <p className="text-sm text-muted-foreground italic mb-3">{item.audience}</p>
+                  )}
+                  <div className="space-y-2">
+                    {item.paragraphs.map((p, i) => (
+                      <p key={i} className="leading-relaxed text-sm">{p}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Исполнение желаний с Джи Фу — универсально, без привязки к дате рождения */}
       <section className="space-y-4">

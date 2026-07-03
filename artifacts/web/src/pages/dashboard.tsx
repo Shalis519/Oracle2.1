@@ -1,4 +1,4 @@
-import { useGetDashboard, useGetTodayForecast, useSubmitFeedback, useGetProfile, useGetTodayActivations, useListUpcomingBirthdays, getGetTodayActivationsQueryKey, getGetTodayForecastQueryKey } from "@workspace/api-client-react";
+import { useGetDashboard, useGetTodayForecast, useSubmitFeedback, useGetProfile, useListUpcomingBirthdays, getGetTodayForecastQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser, useClerk } from "@clerk/react";
 import { WeatherClock } from "@/components/weather-clock";
@@ -13,25 +13,9 @@ import { useToast } from "@/hooks/use-toast";
 import { userProfileAppearance } from "@/lib/clerk-appearance";
 import { DailyNotepad } from "@/components/daily-notepad";
 
-const HOUR_RANGES: Record<string, string> = {
-  "Крыса": "23:00–01:00",
-  "Бык": "01:00–03:00",
-  "Тигр": "03:00–05:00",
-  "Кролик": "05:00–07:00",
-  "Дракон": "07:00–09:00",
-  "Змея": "09:00–11:00",
-  "Лошадь": "11:00–13:00",
-  "Коза": "13:00–15:00",
-  "Обезьяна": "15:00–17:00",
-  "Петух": "17:00–19:00",
-  "Собака": "19:00–21:00",
-  "Свинья": "21:00–23:00",
-};
-
 export default function DashboardPage() {
   const { data: dashboard, isLoading: dashboardLoading } = useGetDashboard();
   const { data: forecast, isLoading: forecastLoading } = useGetTodayForecast();
-  const { data: activations } = useGetTodayActivations({ query: { queryKey: getGetTodayActivationsQueryKey() } });
   const { data: birthdays } = useListUpcomingBirthdays();
   const todayBirthdays = birthdays?.filter((b) => b.daysUntil === 0) ?? [];
   const { data: profile } = useGetProfile();
@@ -115,40 +99,6 @@ export default function DashboardPage() {
             <p className="text-sm">Заполните дату, время и место рождения в настройках, чтобы Оракул смог рассчитать ваши энергии.</p>
           </CardContent>
         </Card>
-      )}
-
-      {activations && activations.items.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-          <Card className="bg-card/40 backdrop-blur-md shadow-lg border-secondary/30">
-            <CardHeader>
-              <CardTitle className="font-serif text-2xl flex items-center gap-2 text-secondary">
-                <Flame className="w-6 h-6" />
-                Активации дня
-              </CardTitle>
-              <CardDescription>Энергетические события сегодняшнего дня и часы их активации.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {activations.items.map((item, idx) => (
-                <div key={idx} className="rounded-xl border border-border bg-background/60 p-5">
-                  <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-3">
-                    <h3 className="font-serif font-bold text-lg text-primary">{item.title}</h3>
-                    <span className="text-sm text-muted-foreground shrink-0">
-                      Час {item.hour}{HOUR_RANGES[item.hour] ? ` · ${HOUR_RANGES[item.hour]}` : ""}
-                    </span>
-                  </div>
-                  {item.audience && (
-                    <p className="text-sm text-muted-foreground italic mb-3">{item.audience}</p>
-                  )}
-                  <div className="space-y-2">
-                    {item.paragraphs.map((p, i) => (
-                      <p key={i} className="leading-relaxed text-sm">{p}</p>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </motion.div>
       )}
 
       {forecast ? (
