@@ -439,40 +439,6 @@ export default function QimenPage() {
         </div>
       </motion.div>
 
-      {activations && activations.items.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-          <Card className="bg-card/40 backdrop-blur-md shadow-lg border-secondary/30">
-            <CardHeader>
-              <CardTitle className="font-serif text-2xl flex items-center gap-2 text-secondary">
-                <Flame className="w-6 h-6" />
-                Активации дня
-              </CardTitle>
-              <CardDescription>Энергетические события сегодняшнего дня и часы их активации.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {activations.items.map((item, idx) => (
-                <div key={idx} className="rounded-xl border border-border bg-background/60 p-5">
-                  <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-3">
-                    <h3 className="font-serif font-bold text-lg text-primary">{item.title}</h3>
-                    <span className="text-sm text-muted-foreground shrink-0">
-                      Час {item.hour}{HOUR_RANGES[item.hour] ? ` · ${HOUR_RANGES[item.hour]}` : ""}
-                    </span>
-                  </div>
-                  {item.audience && (
-                    <p className="text-sm text-muted-foreground italic mb-3">{item.audience}</p>
-                  )}
-                  <div className="space-y-2">
-                    {item.paragraphs.map((p, i) => (
-                      <p key={i} className="leading-relaxed text-sm">{p}</p>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
       {/* Исполнение желаний с Джи Фу — универсально, без привязки к дате рождения */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
@@ -708,6 +674,40 @@ export default function QimenPage() {
           </Card>
         )}
       </section>
+
+      {activations && activations.items.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+          <Card className="bg-card/40 backdrop-blur-md shadow-lg border-secondary/30">
+            <CardHeader>
+              <CardTitle className="font-serif text-2xl flex items-center gap-2 text-secondary">
+                <Flame className="w-6 h-6" />
+                Общие активизации дня
+              </CardTitle>
+              <CardDescription>Энергетические события сегодняшнего дня и часы их активации.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {activations.items.map((item, idx) => (
+                <div key={idx} className="rounded-xl border border-border bg-background/60 p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-3">
+                    <h3 className="font-serif font-bold text-lg text-primary">{item.title}</h3>
+                    <span className="text-sm text-muted-foreground shrink-0">
+                      Час {item.hour}{HOUR_RANGES[item.hour] ? ` · ${HOUR_RANGES[item.hour]}` : ""}
+                    </span>
+                  </div>
+                  {item.audience && (
+                    <p className="text-sm text-muted-foreground italic mb-3">{item.audience}</p>
+                  )}
+                  <div className="space-y-2">
+                    {item.paragraphs.map((p, i) => (
+                      <p key={i} className="leading-relaxed text-sm">{p}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
     </div>
   );
 }
