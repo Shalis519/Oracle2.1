@@ -1257,7 +1257,10 @@ function transitQualities(t: import("./astrology").TransitAspect): string {
   if (meaning.length === 0) {
     return `~${signDesc}~ в сфере ${houseDesc}`;
   }
-  return meaning.join(". ") + ".";
+  const capitalized = meaning.map(
+    (s) => s.charAt(0).toUpperCase() + s.slice(1),
+  );
+  return capitalized.join(". ") + ".";
 }
 
 function buildTransitSentences(
