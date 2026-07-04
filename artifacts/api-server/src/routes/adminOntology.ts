@@ -585,6 +585,7 @@ router.patch("/admin/ontology/entity-relations/:id", requireAuth, requireAdmin, 
   const updates: Partial<typeof ontologyEntityRelationsTable.$inferInsert> = {};
   if (typeof body.relationType === "string") updates.relationType = body.relationType;
   if (typeof body.description === "string") updates.description = body.description;
+  if (body.description === null) updates.description = null;
   if (typeof body.weight === "number") updates.weight = body.weight;
 
   const [row] = await db

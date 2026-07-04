@@ -540,7 +540,7 @@ function AddRelationForm({
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Связать с..." />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="popper" side="bottom" sideOffset={4} className="max-h-60 overflow-y-auto z-[100]">
           {available.map((e) => (
             <SelectItem key={e.id} value={String(e.id)}>{e.symbol ? `${e.symbol} ` : ""}{e.name}</SelectItem>
           ))}
@@ -556,6 +556,65 @@ function AddRelationForm({
       }} disabled={!toId || !relationType.trim()}>
         <Plus className="w-4 h-4 mr-1" />Связать
       </Button>
+    </div>
+  );
+}
+
+/* ─── Relation Row (inline edit) ─── */
+
+function RelationRow({
+  relation,
+  direction,
+  isAdmin,
+  onSave,
+  onDelete,
+}: {
+  relation: EntityRelation;
+  direction: "from" | "to";
+  isAdmin: boolean;
+  onSave: (id: number, relationType: string, description: string, weight: number) => void;
+  onDelete: (id: number) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [type, setType] = useState(relation.relationType);
+  const [desc, setDesc] = useState(relation.description ?? "");
+  const [w, setW] = useState(String(relation.weight));
+
+  if (editing) {
+    return (
+      <div className="flex flex-wrap gap-2 items-end p-3 rounded-lg border border-border bg-card/50">
+        <Badge variant={direction === "from" ? "secondary" : "outline"}>{direction === "from" ? "\u2192" : "\u2190"}</Badge>
+        <Input value={type} onChange={(e) => setType(e.target.value)} placeholder="Тип связи" className="w-[140px] h-8" />
+        <Input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Описание" className="w-[200px] h-8" />
+        <Input value={w} onChange={(e) => setW(e.target.value)} type="number" step="0.1" className="w-20 h-8" />
+        <Button size="sm" variant="ghost" onClick={() => { onSave(relation.id, type, desc, parseFloat(w) || 1.0); setEditing(false); }}>
+          <Save className="w-4 h-4" />
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>
+          <X className="w-4 h-4" />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-card/50">
+      <div className="flex items-center gap-3">
+        <Badge variant={direction === "from" ? "secondary" : "outline"}>{relation.relationType}</Badge>
+        <span className="text-sm">{direction === "from" ? "\u2192" : "\u2190"} {relation.toEntity?.symbol || relation.fromEntity?.symbol || ""} {direction === "from" ? relation.toEntity?.name : relation.fromEntity?.name}</span>
+        {relation.description && <span className="text-sm text-muted-foreground">{relation.description}</span>}
+        <span className="text-xs text-muted-foreground">вес {relation.weight}</span>
+      </div>
+      {isAdmin && (
+        <div className="flex gap-1">
+          <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => onDelete(relation.id)}>
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -799,6 +858,20 @@ export default function AdminStudioPage() {
     }
     toast({ title: "Связь добавлена" });
     loadDetail(detailEntity.id);
+  };
+
+  const handleUpdateRelation = async (id: number, relationType: string, description: string, weight: number) => {
+    const res = await apiFetch(`/admin/ontology/entity-relations/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ relationType, description: description || null, weight }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      toast({ title: "Ошибка", description: err.error, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Связь обновлена" });
+    if (detailEntity) loadDetail(detailEntity.id);
   };
 
   const handleDeleteRelation = async (id: number) => {
@@ -1121,34 +1194,24 @@ export default function AdminStudioPage() {
                     <p className="text-sm text-muted-foreground">Нет связей с другими сущностями.</p>
                   )}
                   {detailRelations.from.map((r) => (
-                    <div key={r.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card/50">
-                      <div className="flex items-center gap-3">
-                        <Badge variant="secondary">{r.relationType}</Badge>
-                        <span className="text-sm">→ {r.toEntity?.symbol || ""} {r.toEntity?.name}</span>
-                        {r.description && <span className="text-sm text-muted-foreground">{r.description}</span>}
-                        <span className="text-xs text-muted-foreground">вес {r.weight}</span>
-                      </div>
-                      {isAdmin && (
-                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteRelation(r.id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
+                    <RelationRow
+                      key={r.id}
+                      relation={r}
+                      direction="from"
+                      isAdmin={isAdmin}
+                      onSave={(id, type, desc, w) => handleUpdateRelation(id, type, desc, w)}
+                      onDelete={handleDeleteRelation}
+                    />
                   ))}
                   {detailRelations.to.map((r) => (
-                    <div key={`to-${r.id}`} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card/50">
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline">{r.relationType}</Badge>
-                        <span className="text-sm">← {r.fromEntity?.symbol || ""} {r.fromEntity?.name}</span>
-                        {r.description && <span className="text-sm text-muted-foreground">{r.description}</span>}
-                        <span className="text-xs text-muted-foreground">вес {r.weight}</span>
-                      </div>
-                      {isAdmin && (
-                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteRelation(r.id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
+                    <RelationRow
+                      key={`to-${r.id}`}
+                      relation={r}
+                      direction="to"
+                      isAdmin={isAdmin}
+                      onSave={(id, type, desc, w) => handleUpdateRelation(id, type, desc, w)}
+                      onDelete={handleDeleteRelation}
+                    />
                   ))}
                   {isAdmin && <AddRelationForm entities={entities} excludeEntityId={detailEntity?.id ?? 0} onAdd={handleAddRelation} />}
                 </div>
