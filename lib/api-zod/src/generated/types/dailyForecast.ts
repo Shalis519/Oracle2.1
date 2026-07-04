@@ -6,21 +6,18 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { ArcanaDetail } from './arcanaDetail';
-import type { BaziSummary } from './baziSummary';
+import type { DailyForecastTransitsItem } from './dailyForecastTransitsItem';
 import type { Feedback } from './feedback';
-import type { FengShuiInfo } from './fengShuiInfo';
 
 export interface DailyForecast {
   id: number;
   date: string;
   arcanaNumber: number;
   arcanaName: string;
-  baziElement: string;
   hasWarning: boolean;
   synthesisText: string;
   matrix: ArcanaDetail;
-  bazi: BaziSummary;
-  fengShui?: FengShuiInfo | null;
+  transits?: DailyForecastTransitsItem[];
   conflicts: string[];
   warnings: string[];
   feedback?: Feedback | null;

@@ -1008,15 +1008,22 @@ export function interpretDream(text: string): DreamResult {
   return { interpretation, keywords };
 }
 
+export interface TransitSummary {
+  transitBody: string;
+  natalBody: string;
+  type: string;
+  orb: number;
+  house: number | null;
+  durationDays: number;
+}
+
 export interface DailyForecastResult {
   arcanaNumber: number;
   arcanaName: string;
-  baziElement: string;
   hasWarning: boolean;
   synthesisText: string;
   matrix: ArcanaData;
-  bazi: BaziResult;
-  fengShui: FengShuiResult | null;
+  transits: TransitSummary[];
   conflicts: string[];
   warnings: string[];
 }
@@ -1029,18 +1036,105 @@ export function computeArcanaOfDay(birthDate: string, today: string): number {
   return reduceToArcana(b.day + b.month + t.day + t.month);
 }
 
-const ELEMENT_DAY_ENERGY: Record<string, string> = {
-  Дерево: "день роста и новых начинаний — действуйте мягко, но настойчиво",
-  Огонь: "день вдохновения и общения — делитесь теплом и идеями",
-  Земля: "день стабильности и заботы — наведите порядок и укрепите основы",
-  Металл: "день ясности и дисциплины — завершайте дела и принимайте решения",
-  Вода: "день интуиции и гибкости — прислушивайтесь к себе и течению",
-};
+function transitToDurationText(days: number, body: string): string {
+  if (days <= 2) return `в ближайшие ${days} дня`;
+  if (days <= 7) return `эту неделю`;
+  if (days <= 14) return `в ближайшие несколько недель`;
+  return `продлительный период`;
+}
 
+function houseToLifeArea(house: number): string {
+  const areas = [
+    "самоощущение и личность",          // 1
+    "денежные вопросы и ценности",            // 2
+    "общение и повседневная жизнь",       // 3
+    "семья и эмоциональная опора",         // 4
+    "творчество и любовь",                     // 5
+    "работа и здоровье",                      // 6
+    "отношения и партнёрство",             // 7
+    "трансформации и общие ресурсы",       // 8
+    "путешествия и обучение",               // 9
+    "карьера и общественный статус",          // 10
+    "друзья и желания",                          // 11
+    "тайны и внутренний мир",                // 12
+  ];
+  return areas[house - 1] ?? `сфера дома ${house}`;
+}
+
+function aspectNameRu(type: string): string {
+  switch (type.toLowerCase()) {
+    case "conjunction": return "соединение";
+    case "trine": return "тригон";
+    case "sextile": return "секстиль";
+    case "square": return "квадрат";
+    case "opposition": return "оппозиция";
+    default: return type;
+  }
+}
+
+function buildTransitSentences(
+  transits: import("./astrology").TransitAspect[],
+): string[] {
+  const out: string[] = [];
+  for (const t of transits) {
+    const duration = transitToDurationText(t.durationDays, t.transitBody);
+    const area = t.house ? houseToLifeArea(t.house) : "вашей жизни";
+    let tone: string;
+    switch (t.typeKey) {
+      case "conjunction":
+        tone = `энергия концентрируется в ${area}`;
+        break;
+      case "trine":
+        tone = `естественный поток помогает в ${area}`;
+        break;
+      case "sextile":
+        tone = `появляется шанс в ${area}`;
+        break;
+      case "square":
+        tone = `напряжение требует внимания к ${area}`;
+        break;
+      case "opposition":
+        tone = `внутренний баланс испытывается через ${area}`;
+        break;
+      default:
+        tone = `влияние на ${area}`;
+    }
+    out.push(
+      `${t.transitBody} в аспекте ${aspectNameRu(t.typeKey)} с ${t.natalBody.toLowerCase()} — ${tone} (${duration}).`,
+    );
+  }
+  return out;
+}
+
+function buildArcanaSentences(arcana: ArcanaData): string[] {
+  const out: string[] = [];
+  out.push(arcana.essence);
+  if (arcana.pros.length > 0) {
+    out.push(`Поддержите себя: ${arcana.affirmation}`);
+  }
+  return out;
+}
+
+export function buildSynthesisText(
+  arcana: ArcanaData,
+  transits: import("./astrology").TransitAspect[],
+): string {
+  const arcanaParts = buildArcanaSentences(arcana);
+  const transitParts = buildTransitSentences(transits);
+
+  // Merge into a single flowing paragraph
+  const allParts = [...arcanaParts, ...transitParts];
+  if (allParts.length === 0) return "Сегодня особенных астрологических событий не прогнозируется.";
+
+  // Join with single spaces, clean up
+  return allParts.join(" ").replace(/\s+/g, " ").trim();
+}
+
+/** New computeDailyForecast: uses natal chart + transits + arcana. */
 export function computeDailyForecast(
   birthDate: string,
-  birthTime: string | null,
-  bedDirection: string | null,
+  natalChart: import("./astrology").NatalChart | null,
+  transits: import("./astrology").TransitResult | null,
   today: string,
 ): DailyForecastResult | null {
   const matrixOk = parseDate(birthDate);
@@ -1048,55 +1142,51 @@ export function computeDailyForecast(
 
   const arcanaNum = computeArcanaOfDay(birthDate, today);
   const arcana = getArcana(arcanaNum);
-  const bazi = computeBazi(birthDate, birthTime);
-  if (!bazi) return null;
 
-  const fengShui = bedDirection ? computeFengShui(bedDirection) : null;
+  const transitAspects = transits?.aspects ?? [];
 
   const conflicts: string[] = [];
   const warnings: string[] = [];
 
-  // Synthesis: detect tension between arcana tone and feng shui star.
-  if (fengShui?.isUnfavorable) {
-    warnings.push(
-      `Фэн-шуй: ваше спальное направление (${fengShui.direction}) под влиянием неблагоприятной звезды «${fengShui.starName}». ${fengShui.recommendation}`,
+  // Detect challenging transits
+  const hardTransits = transitAspects.filter(
+    (t) => t.typeKey === "square" || t.typeKey === "opposition",
+  );
+  if (hardTransits.length > 0) {
+    const names = hardTransits.map((t) => `${t.transitBody} — ${t.natalBody}`).join(", ");
+    conflicts.push(
+      `Сегодня активны тяжёлые транзиты: ${names}. Не торопите события, дайте себе время на рефлексию.`
     );
   }
 
+  // Detect negative arcana days
   const negativeArcana = [13, 15, 16, 18].includes(arcanaNum);
-  if (negativeArcana && fengShui?.isUnfavorable) {
+  if (negativeArcana) {
     conflicts.push(
-      "Сегодня энергия Аркана дня и фэн-шуй спальни усиливают друг друга в сторону перемен и испытаний. Будьте особенно бережны к себе и не принимайте резких решений.",
-    );
-  } else if (negativeArcana) {
-    conflicts.push(
-      "Аркан дня несёт энергию трансформации. Используйте её осознанно: отпускайте старое, но не торопите события.",
+      "Аркан дня несёт энергию трансформации. Используйте её осознанно: отпускайте старое, но не торопите события."
     );
   }
 
   const hasWarning = warnings.length > 0 || conflicts.length > 0;
 
-  const elementEnergy =
-    ELEMENT_DAY_ENERGY[bazi.dayElement] ?? "день внутреннего баланса";
+  const synthesisText = buildSynthesisText(arcana, transitAspects);
 
-  const synthesisText = [
-    `Сегодня вами управляет Аркан «${arcana.name}» (№${arcana.number}). ${arcana.essence}`,
-    `По системе Бацзы ваша стихия дня — ${bazi.dayElement}: это ${elementEnergy}.`,
-    fengShui
-      ? `Фэн-шуй спального направления (${fengShui.direction}): ${fengShui.influence}`
-      : `Укажите направление кровати в профиле, чтобы добавить к прогнозу анализ фэн-шуй.`,
-    `Совет дня: ${arcana.affirmation} Поддержите себя напитком «${arcana.cocktail}» и аффирмацией.`,
-  ].join("\n\n");
+  const transitSummary: TransitSummary[] = transitAspects.map((t) => ({
+    transitBody: t.transitBody,
+    natalBody: t.natalBody,
+    type: t.type,
+    orb: t.orb,
+    house: t.house,
+    durationDays: t.durationDays,
+  }));
 
   return {
     arcanaNumber: arcana.number,
     arcanaName: arcana.name,
-    baziElement: bazi.dayElement,
     hasWarning,
     synthesisText,
     matrix: arcana,
-    bazi,
-    fengShui,
+    transits: transitSummary,
     conflicts,
     warnings,
   };

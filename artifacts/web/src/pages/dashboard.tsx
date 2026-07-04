@@ -117,6 +117,18 @@ export default function DashboardPage() {
                     <p key={i} className="leading-relaxed text-lg">{para}</p>
                   ))}
                 </div>
+                {forecast.transits && forecast.transits.length > 0 && (
+                  <div className="mt-4 p-4 rounded-xl bg-primary/5 border border-primary/10">
+                    <h4 className="font-semibold text-primary mb-2">Ключевые транзиты сегодня</h4>
+                    <ul className="list-disc list-inside text-sm text-muted-foreground pl-4 space-y-1">
+                      {forecast.transits.slice(0, 4).map((t, i) => (
+                        <li key={i}>
+                          {t.transitBody} → {t.natalBody} ({t.type}, орб {t.orb?.toFixed(1)}°)
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 {forecast.warnings && forecast.warnings.length > 0 && (
                   <div className="mt-4 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
                     <h4 className="font-bold text-destructive mb-2 flex items-center gap-2">

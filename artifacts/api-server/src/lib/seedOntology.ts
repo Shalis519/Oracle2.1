@@ -7,6 +7,7 @@ import {
   ontologyEntityRelationsTable,
 } from "@workspace/db";
 import { logger } from "./logger";
+import { ARCANA } from "./data/arcana";
 
 export async function seedOntology() {
   console.log("Seeding ontology...");
@@ -105,9 +106,64 @@ export async function seedOntology() {
     ...aspectDefs.map((d) => ({ ...d, system: "astrology" as const, type: "aspect" as const })),
   ];
 
+  // Арканы Матрицы Судьбы (22 штук)
+  const arcanaThemeMap: Record<string, string[]> = {
+    "Маг": ["Свобода", "Творчество", "Лидерство"],
+    "Жрица": ["Духовность", "Учёба", "Семья"],
+    "Императрица": ["Креативность", "Любовь", "Здоровье"],
+    "Император": ["Карьера", "Статус", "Деньги"],
+    "Иерофант": ["Учёба", "Духовность", "Семья"],
+    "Влюблённые": ["Любовь", "Общение", "Свобода"],
+    "Колесница": ["Карьера", "Путешествия", "Борьба"],
+    "Сила": ["Здоровье", "Семья", "Творчество"],
+    "Отшельник": ["Духовность", "Учёба", "Здоровье"],
+    "Колесо Фортуны": ["Удача", "Деньги", "Путешествия"],
+    "Справедливость": ["Общение", "Карьера", "Свобода"],
+    "Повешенный": ["Духовность", "Здоровье", "Семья"],
+    "Смерть": ["Трансформация", "Борьба", "Здоровье"],
+    "Умеренность": ["Здоровье", "Любовь", "Духовность"],
+    "Дьявол": ["Деньги", "Борьба", "Творчество"],
+    "Башня": ["Борьба", "Карьера", "Здоровье"],
+    "Звезда": ["Духовность", "Творчество", "Любовь"],
+    "Луна (Аркан)": ["Семья", "Духовность", "Творчество"],
+    "Солнце (Аркан)": ["Свобода", "Лидерство", "Здоровье"],
+    "Суд": ["Здоровье", "Общение", "Духовность"],
+    "Мир": ["Путешествия", "Любовь", "Свобода"],
+    "Шут": ["Свобода", "Творчество", "Путешествия"],
+  };
+
+  const arcanaDefs = ARCANA.map((a) => {
+    const themes = arcanaThemeMap[a.name] ?? ["Духовность"];
+    return {
+      name: a.name,
+      code: `arcana_${a.number}`,
+      symbol: String(a.number),
+      system: "matrix" as const,
+      type: "arcana" as const,
+      lifeThemes: themes,
+      keyMeaningsArr: [a.name, a.essence.slice(0, 60)],
+      positiveQualities: a.pros,
+      shadowQualities: a.cons,
+      positiveEmotions: [a.affirmation, ...a.pros.slice(0, 2)],
+      negativeEmotions: a.cons,
+      strengthsArr: a.pros,
+      weaknessesArr: a.cons,
+      archetypes: [a.name, ...a.pros.slice(0, 2)],
+      keyMeanings: a.essence,
+      psychologicalManifestations: a.energyChannels,
+      emotions: `${a.pros.join(", ")} / ${a.cons.join(", ")}`,
+      strengths: a.pros.join(", "),
+      weaknesses: a.cons.join(", "),
+      recommendations: a.affirmation,
+      warnings: a.health,
+    };
+  });
+
+  const allEntities = [...allAstrologyEntities, ...arcanaDefs];
+
   const entityRows = await db
     .insert(ontologyEntitiesTable)
-    .values(allAstrologyEntities.map((d) => ({
+    .values(allEntities.map((d) => ({
       name: d.name,
       code: d.code,
       system: d.system,
@@ -120,7 +176,7 @@ export async function seedOntology() {
   const entityMap = new Map(entityRows.map((e) => [e.code, e]));
 
   // Профили с JSONB массивами
-  const profileInserts = allAstrologyEntities
+  const profileInserts = allEntities
     .map((d) => {
       const e = entityMap.get(d.code);
       if (!e) return null;
@@ -217,6 +273,14 @@ export async function seedOntology() {
   addLink("trine", "love", 0.8, "positive");
   addLink("opposition", "struggle", 0.7, "neutral");
 
+  // Арканы
+  for (const a of arcanaDefs) {
+    const themes = a.lifeThemes;
+    for (const t of themes.slice(0, 3)) {
+      addLink(a.code, t.toLowerCase(), 0.8, "positive");
+    }
+  }
+
   if (entityThemeLinks.length > 0) {
     await db
       .insert(ontologyEntityThemesTable)
@@ -266,8 +330,10 @@ export async function seedOntology() {
   }
 
   logger.info(
-    "Seeded: %d entities, %d themes, %d profiles, %d entity-theme links, %d entity relations",
+    "Seeded: %d entities (%d astrology + %d arcana), %d themes, %d profiles, %d entity-theme links, %d entity relations",
     entityRows.length,
+    allAstrologyEntities.length,
+    arcanaDefs.length,
     themeRows.length,
     profileInserts.length,
     entityThemeLinks.length,

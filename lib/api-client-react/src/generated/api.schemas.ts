@@ -474,6 +474,15 @@ export interface PersonalMatrix {
   points: MatrixPoint[];
 }
 
+export type DailyForecastTransitsItem = {
+  transitBody?: string;
+  natalBody?: string;
+  type?: string;
+  orb?: number;
+  house?: number;
+  durationDays?: number;
+};
+
 export interface Feedback {
   id: number;
   forecastId: number;
@@ -489,12 +498,10 @@ export interface DailyForecast {
   date: string;
   arcanaNumber: number;
   arcanaName: string;
-  baziElement: string;
   hasWarning: boolean;
   synthesisText: string;
   matrix: ArcanaDetail;
-  bazi: BaziSummary;
-  fengShui?: FengShuiInfo | null;
+  transits?: DailyForecastTransitsItem[];
   conflicts: string[];
   warnings: string[];
   feedback?: Feedback | null;
@@ -721,8 +728,6 @@ export interface Dashboard {
   arcanaNumber?: number | null;
   /** @nullable */
   arcanaName?: string | null;
-  /** @nullable */
-  baziElement?: string | null;
   hasWarning?: boolean;
   /** @nullable */
   affirmation?: string | null;
@@ -810,6 +815,12 @@ export interface NatalChart {
   aspects: NatalAspect[];
   meta: NatalChartMeta;
 }
+
+export type ComputeNatalChart200Chart = { [key: string]: unknown };
+
+export type ComputeNatalChart200 = {
+  chart?: ComputeNatalChart200Chart;
+};
 
 export type SearchCitiesParams = {
 q: string;

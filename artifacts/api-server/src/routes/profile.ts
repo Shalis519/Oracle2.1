@@ -7,6 +7,7 @@ import {
   UpdateProfileResponse,
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
+import { computeNatalChart, type NatalChartInput, type NatalChart } from "../lib/astrology";
 
 const router: IRouter = Router();
 
@@ -26,6 +27,7 @@ function serialize(user: {
   photoPath: string | null;
   bedDirection: string | null;
   avatarType: string | null;
+  natalChart: unknown | null;
   notificationsEnabled: boolean;
   role: string;
   createdAt: Date;
@@ -46,6 +48,7 @@ function serialize(user: {
     photoPath: user.photoPath,
     bedDirection: user.bedDirection,
     avatarType: user.avatarType,
+    natalChart: user.natalChart,
     notificationsEnabled: user.notificationsEnabled,
     role: user.role,
     createdAt: user.createdAt.toISOString(),
@@ -83,6 +86,43 @@ router.post("/profile/make-admin", requireAuth, async (req, res): Promise<void> 
     .where(eq(usersTable.id, req.localUser!.id))
     .returning();
   res.json(serialize(updated));
+});
+
+function parseBirthTime(time: string | null): { hour: number; minute: number } {
+  if (!time) return { hour: 12, minute: 0 };
+  const [h, m] = time.split(":").map(Number);
+  return { hour: Number.isFinite(h) ? h : 12, minute: Number.isFinite(m) ? m : 0 };
+}
+
+router.post("/profile/natal-chart", requireAuth, async (req, res): Promise<void> => {
+  const user = req.localUser!;
+  if (!user.birthDate || user.birthLatitude == null || user.birthLongitude == null) {
+    res.status(400).json({ error: "Заполните дату рождения и место рождения в профиле." });
+    return;
+  }
+  const [y, m, d] = user.birthDate.split("-").map(Number);
+  const { hour, minute } = parseBirthTime(user.birthTime);
+  const input: NatalChartInput = {
+    year: y,
+    month: m,
+    day: d,
+    hour,
+    minute,
+    latitude: user.birthLatitude,
+    longitude: user.birthLongitude,
+    timezone: user.birthTimezone,
+  };
+  try {
+    const chart: NatalChart = computeNatalChart(input);
+    const [updated] = await db
+      .update(usersTable)
+      .set({ natalChart: chart as any })
+      .where(eq(usersTable.id, user.id))
+      .returning();
+    res.json({ chart: updated.natalChart });
+  } catch (e) {
+    res.status(500).json({ error: "Не удалось рассчитать натальную карту." });
+  }
 });
 
 export default router;

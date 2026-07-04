@@ -75,6 +75,22 @@ paths:
               schema:
                 $ref: "#/components/schemas/Profile"
 
+  /profile/natal-chart:
+    post:
+      operationId: computeNatalChart
+      tags: [profile]
+      summary: Compute and save natal chart from profile birth data
+      responses:
+        "200":
+          description: Natal chart saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chart:
+                    type: object
+
   /journal:
     get:
       operationId: getJournal
@@ -1741,7 +1757,7 @@ components:
 
     DailyForecast:
       type: object
-      required: [id, date, arcanaNumber, arcanaName, baziElement, hasWarning, synthesisText, matrix, bazi, conflicts, warnings]
+      required: [id, date, arcanaNumber, arcanaName, hasWarning, synthesisText, matrix, conflicts, warnings]
       properties:
         id:
           type: integer
@@ -1751,20 +1767,29 @@ components:
           type: integer
         arcanaName:
           type: string
-        baziElement:
-          type: string
         hasWarning:
           type: boolean
         synthesisText:
           type: string
         matrix:
           $ref: "#/components/schemas/ArcanaDetail"
-        bazi:
-          $ref: "#/components/schemas/BaziSummary"
-        fengShui:
-          oneOf:
-            - $ref: "#/components/schemas/FengShuiInfo"
-            - type: "null"
+        transits:
+          type: array
+          items:
+            type: object
+            properties:
+              transitBody:
+                type: string
+              natalBody:
+                type: string
+              type:
+                type: string
+              orb:
+                type: number
+              house:
+                type: integer
+              durationDays:
+                type: integer
         conflicts:
           type: array
           items:
@@ -2134,8 +2159,6 @@ components:
         arcanaNumber:
           type: ["integer", "null"]
         arcanaName:
-          type: ["string", "null"]
-        baziElement:
           type: ["string", "null"]
         hasWarning:
           type: boolean

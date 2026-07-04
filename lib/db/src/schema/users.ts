@@ -6,6 +6,7 @@ import {
   date,
   timestamp,
   doublePrecision,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
@@ -27,6 +28,7 @@ export const usersTable = pgTable("users", {
   photoPath: text("photo_path"),
   bedDirection: text("bed_direction"),
   avatarType: text("avatar_type"),
+  natalChart: jsonb("natal_chart"),
   notificationsEnabled: boolean("notifications_enabled").notNull().default(true),
   role: text("role").notNull().default("user"),
   createdAt: timestamp("created_at", { withTimezone: true })

@@ -37,7 +37,6 @@ export const GetProfileResponse = zod.object({
   "bedDirection": zod.string().nullish(),
   "avatarType": zod.string().nullish(),
   "notificationsEnabled": zod.boolean(),
-  "role": zod.string(),
   "createdAt": zod.string()
 })
 
@@ -81,6 +80,16 @@ export const UpdateProfileResponse = zod.object({
   "avatarType": zod.string().nullish(),
   "notificationsEnabled": zod.boolean(),
   "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Compute and save natal chart from profile birth data
+ */
+export const ComputeNatalChartResponse = zod.object({
+  "chart": zod.object({
+
+}).passthrough().optional()
 })
 
 
@@ -204,7 +213,6 @@ export const GetDashboardResponse = zod.object({
   "profileComplete": zod.boolean(),
   "arcanaNumber": zod.number().nullish(),
   "arcanaName": zod.string().nullish(),
-  "baziElement": zod.string().nullish(),
   "hasWarning": zod.boolean().optional(),
   "affirmation": zod.string().nullish(),
   "upcomingBirthdaysCount": zod.number(),
@@ -231,7 +239,6 @@ export const GetTodayForecastResponse = zod.object({
   "date": zod.string(),
   "arcanaNumber": zod.number(),
   "arcanaName": zod.string(),
-  "baziElement": zod.string(),
   "hasWarning": zod.boolean(),
   "synthesisText": zod.string(),
   "matrix": zod.object({
@@ -248,79 +255,14 @@ export const GetTodayForecastResponse = zod.object({
   "energyChannels": zod.string(),
   "nutrition": zod.string()
 }),
-  "bazi": zod.object({
-  "dayMaster": zod.string(),
-  "dayElement": zod.string(),
-  "dayElementMeaning": zod.string(),
-  "pillars": zod.array(zod.object({
-  "name": zod.string(),
-  "heavenlyStem": zod.string(),
-  "earthlyBranch": zod.string(),
-  "element": zod.string()
-})),
-  "stars": zod.array(zod.object({
-  "name": zod.string(),
-  "description": zod.string(),
-  "advice": zod.string(),
-  "sector": zod.string().nullish()
-})),
-  "spendingDays": zod.array(zod.string()),
-  "promotionActivation": zod.union([zod.object({
-  "animal": zod.string(),
-  "direction": zod.string(),
-  "degrees": zod.string().nullable(),
-  "periodStart": zod.string(),
-  "periodEnd": zod.string(),
-  "helps": zod.array(zod.string()),
-  "recommendation": zod.string(),
-  "hours": zod.array(zod.object({
-  "animal": zod.string(),
-  "period": zod.string(),
-  "preferred": zod.boolean(),
-  "reason": zod.string()
-})),
-  "avoidHours": zod.array(zod.object({
-  "animal": zod.string(),
-  "period": zod.string(),
-  "reason": zod.string()
-})),
-  "nobleDate": zod.string().nullable()
-}),zod.null()]).optional(),
-  "nobleHelperActivation": zod.union([zod.object({
-  "goal": zod.string(),
-  "taichi": zod.string(),
-  "animal": zod.string(),
-  "sector": zod.string(),
-  "degrees": zod.string(),
-  "hours": zod.array(zod.object({
-  "animal": zod.string(),
-  "period": zod.string(),
-  "preferred": zod.boolean(),
-  "reason": zod.string()
-})),
-  "avoidHours": zod.array(zod.object({
-  "animal": zod.string(),
-  "period": zod.string(),
-  "reason": zod.string()
-})),
-  "instruction": zod.string(),
-  "caution": zod.string().nullable(),
-  "date": zod.string(),
-  "daysUntil": zod.number()
-}),zod.null()]).optional()
-}),
-  "fengShui": zod.union([zod.object({
-  "direction": zod.string(),
-  "starNumber": zod.number(),
-  "starName": zod.string(),
-  "influence": zod.string(),
-  "isUnfavorable": zod.boolean(),
-  "monthlyStarNumber": zod.number(),
-  "monthlyStarName": zod.string(),
-  "monthlyInfluence": zod.string(),
-  "monthlyIsUnfavorable": zod.boolean(),
-  "recommendation": zod.string()
-}),zod.null()]).optional(),
+  "transits": zod.array(zod.object({
+  "transitBody": zod.string().optional(),
+  "natalBody": zod.string().optional(),
+  "type": zod.string().optional(),
+  "orb": zod.number().optional(),
+  "house": zod.number().optional(),
+  "durationDays": zod.number().optional()
+})).optional(),
   "conflicts": zod.array(zod.string()),
   "warnings": zod.array(zod.string()),
   "feedback": zod.union([zod.object({
@@ -356,7 +298,6 @@ export const ListForecastsResponseItem = zod.object({
   "date": zod.string(),
   "arcanaNumber": zod.number(),
   "arcanaName": zod.string(),
-  "baziElement": zod.string(),
   "hasWarning": zod.boolean(),
   "synthesisText": zod.string(),
   "matrix": zod.object({
@@ -373,79 +314,14 @@ export const ListForecastsResponseItem = zod.object({
   "energyChannels": zod.string(),
   "nutrition": zod.string()
 }),
-  "bazi": zod.object({
-  "dayMaster": zod.string(),
-  "dayElement": zod.string(),
-  "dayElementMeaning": zod.string(),
-  "pillars": zod.array(zod.object({
-  "name": zod.string(),
-  "heavenlyStem": zod.string(),
-  "earthlyBranch": zod.string(),
-  "element": zod.string()
-})),
-  "stars": zod.array(zod.object({
-  "name": zod.string(),
-  "description": zod.string(),
-  "advice": zod.string(),
-  "sector": zod.string().nullish()
-})),
-  "spendingDays": zod.array(zod.string()),
-  "promotionActivation": zod.union([zod.object({
-  "animal": zod.string(),
-  "direction": zod.string(),
-  "degrees": zod.string().nullable(),
-  "periodStart": zod.string(),
-  "periodEnd": zod.string(),
-  "helps": zod.array(zod.string()),
-  "recommendation": zod.string(),
-  "hours": zod.array(zod.object({
-  "animal": zod.string(),
-  "period": zod.string(),
-  "preferred": zod.boolean(),
-  "reason": zod.string()
-})),
-  "avoidHours": zod.array(zod.object({
-  "animal": zod.string(),
-  "period": zod.string(),
-  "reason": zod.string()
-})),
-  "nobleDate": zod.string().nullable()
-}),zod.null()]).optional(),
-  "nobleHelperActivation": zod.union([zod.object({
-  "goal": zod.string(),
-  "taichi": zod.string(),
-  "animal": zod.string(),
-  "sector": zod.string(),
-  "degrees": zod.string(),
-  "hours": zod.array(zod.object({
-  "animal": zod.string(),
-  "period": zod.string(),
-  "preferred": zod.boolean(),
-  "reason": zod.string()
-})),
-  "avoidHours": zod.array(zod.object({
-  "animal": zod.string(),
-  "period": zod.string(),
-  "reason": zod.string()
-})),
-  "instruction": zod.string(),
-  "caution": zod.string().nullable(),
-  "date": zod.string(),
-  "daysUntil": zod.number()
-}),zod.null()]).optional()
-}),
-  "fengShui": zod.union([zod.object({
-  "direction": zod.string(),
-  "starNumber": zod.number(),
-  "starName": zod.string(),
-  "influence": zod.string(),
-  "isUnfavorable": zod.boolean(),
-  "monthlyStarNumber": zod.number(),
-  "monthlyStarName": zod.string(),
-  "monthlyInfluence": zod.string(),
-  "monthlyIsUnfavorable": zod.boolean(),
-  "recommendation": zod.string()
-}),zod.null()]).optional(),
+  "transits": zod.array(zod.object({
+  "transitBody": zod.string().optional(),
+  "natalBody": zod.string().optional(),
+  "type": zod.string().optional(),
+  "orb": zod.number().optional(),
+  "house": zod.number().optional(),
+  "durationDays": zod.number().optional()
+})).optional(),
   "conflicts": zod.array(zod.string()),
   "warnings": zod.array(zod.string()),
   "feedback": zod.union([zod.object({

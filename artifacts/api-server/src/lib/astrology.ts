@@ -241,6 +241,39 @@ export interface NatalAspect {
   orb: number;
 }
 
+export interface TransitBody {
+  key: string;
+  name: string;
+  symbol: string;
+  sign: string;
+  signKey: string;
+  signSymbol: string;
+  longitude: number;
+  degreeInSign: string;
+  house: number | null;
+  retrograde: boolean;
+  speed: string; // "fast" | "slow"
+}
+
+export interface TransitAspect {
+  transitBody: string;
+  transitBodySymbol: string;
+  natalBody: string;
+  natalBodySymbol: string;
+  type: string;
+  typeKey: string;
+  typeSymbol: string;
+  orb: number;
+  house: number | null; // natal house of the natal body
+  durationDays: number; // estimated duration of transit influence
+}
+
+export interface TransitResult {
+  date: string;
+  transitBodies: TransitBody[];
+  aspects: TransitAspect[];
+}
+
 export interface NatalChart {
   bodies: NatalBody[];
   angles: NatalAngle[];
@@ -348,7 +381,7 @@ const CLASSICAL_ORB: Record<string, number> = {
 const DEFAULT_ORB = 4;
 const moiety = (key: string) => (CLASSICAL_ORB[key] ?? DEFAULT_ORB) / 2;
 
-const MAJOR_ASPECTS: { key: string; angle: number }[] = [
+export const MAJOR_ASPECTS: { key: string; angle: number }[] = [
   { key: "conjunction", angle: 0 },
   { key: "sextile", angle: 60 },
   { key: "square", angle: 90 },
@@ -469,5 +502,140 @@ export function computeNatalChart(input: NatalChartInput): NatalChart {
       longitude: input.longitude,
       houseSystem: "Плацидус",
     },
+  };
+}
+
+/** Bodies we track for transits (no Chiron, nodes, Lilith for daily forecast). */
+const TRANSIT_BODIES = [
+  "sun", "moon", "mercury", "venus", "mars",
+  "jupiter", "saturn", "uranus", "neptune", "pluto",
+];
+
+/** Slow planets stay in aspect longer. */
+const PLANET_SPEED: Record<string, number> = {
+  sun: 1,
+  moon: 2,
+  mercury: 2,
+  venus: 2,
+  mars: 2,
+  jupiter: 7,
+  saturn: 14,
+  uranus: 30,
+  neptune: 30,
+  pluto: 30,
+};
+
+function getHouseForLongitude(longitude: number, houses: NatalHouse[]): number {
+  let bestHouse = 1;
+  let bestDist = Infinity;
+  for (const h of houses) {
+    const hStart = h.longitude;
+    const hEnd = (h.longitude + 30) % 360; // rough; Placidus houses vary
+    let dist = (longitude - hStart + 360) % 360;
+    if (dist < bestDist) {
+      bestDist = dist;
+      bestHouse = h.number;
+    }
+  }
+  return bestHouse;
+}
+
+/** Compute transit positions for a given date and compare against natal chart. */
+export function computeTransits(
+  natalChart: NatalChart,
+  dateStr: string,
+  latitude: number,
+  longitude: number,
+  timezone?: string | null,
+): TransitResult | null {
+  const m = /^\d{4}-(\d{2})-(\d{2})$/.exec(dateStr);
+  if (!m) return null;
+
+  const year = Number(dateStr.slice(0, 4));
+  const month = Number(m[1]);
+  const day = Number(m[2]);
+
+  const origin = new Origin({
+    year,
+    month: month - 1,
+    date: day,
+    hour: 12,
+    minute: 0,
+    latitude,
+    longitude,
+  });
+
+  const horoscope = new Horoscope({
+    origin,
+    houseSystem: "placidus",
+    zodiac: "tropical",
+    language: "en",
+  });
+
+  const allBodies = [
+    ...horoscope.CelestialBodies.all,
+    ...horoscope.CelestialPoints.all,
+  ];
+  const byKey = new Map(allBodies.map((b) => [b.key, b]));
+
+  const transitBodies: TransitBody[] = TRANSIT_BODIES.filter((k) => byKey.has(k)).map((k) => {
+    const b = byKey.get(k)!;
+    return {
+      key: b.key,
+      name: BODY_RU[b.key] ?? b.label,
+      symbol: BODY_SYMBOL[b.key] ?? "",
+      sign: SIGN_RU[b.Sign.key] ?? b.Sign.label,
+      signKey: b.Sign.key,
+      signSymbol: SIGN_SYMBOL[b.Sign.key] ?? "",
+      longitude: Number(b.ChartPosition.Ecliptic.DecimalDegrees.toFixed(4)),
+      degreeInSign: degreeWithinSign(b.ChartPosition),
+      house: b.House?.id ?? null,
+      retrograde: Boolean(b.isRetrograde),
+      speed: (PLANET_SPEED[b.key] ?? 2) > 5 ? "slow" : "fast",
+    };
+  });
+
+  const natalByKey = new Map(natalChart.bodies.map((b) => [b.key, b]));
+
+  const aspects: TransitAspect[] = [];
+  for (const t of transitBodies) {
+    for (const natalBody of natalChart.bodies) {
+      if (t.key === natalBody.key) continue;
+      const natalKey = natalBody.key;
+      let sep = Math.abs(t.longitude - natalBody.longitude) % 360;
+      if (sep > 180) sep = 360 - sep;
+      const allowed = moiety(t.key) + moiety(natalKey);
+      let best: { key: string; diff: number } | null = null;
+      for (const asp of MAJOR_ASPECTS) {
+        const diff = Math.abs(sep - asp.angle);
+        if (diff <= allowed && (best === null || diff < best.diff)) {
+          best = { key: asp.key, diff };
+        }
+      }
+      if (best) {
+        const info = ASPECT_RU[best.key] ?? { label: best.key, symbol: "" };
+        aspects.push({
+          transitBody: t.name,
+          transitBodySymbol: t.symbol,
+          natalBody: natalBody.name,
+          natalBodySymbol: natalBody.symbol,
+          type: info.label,
+          typeKey: best.key,
+          typeSymbol: info.symbol,
+          orb: Number(best.diff.toFixed(2)),
+          house: natalBody.house,
+          durationDays: PLANET_SPEED[t.key] ?? 2,
+        });
+      }
+    }
+  }
+
+  // Tightest aspects first; limit to top 5 for prose synthesis
+  aspects.sort((a, z) => a.orb - z.orb);
+
+  return {
+    date: dateStr,
+    transitBodies,
+    aspects: aspects.slice(0, 5),
   };
 }

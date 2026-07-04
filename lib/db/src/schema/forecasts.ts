@@ -17,7 +17,7 @@ export const forecastsTable = pgTable("daily_forecasts", {
   date: date("date", { mode: "string" }).notNull(),
   arcanaNumber: integer("arcana_number").notNull(),
   arcanaName: text("arcana_name").notNull(),
-  baziElement: text("bazi_element").notNull(),
+  baziElement: text("bazi_element"),
   hasWarning: boolean("has_warning").notNull().default(false),
   synthesisText: text("synthesis_text").notNull(),
   payload: jsonb("payload").notNull(),

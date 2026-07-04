@@ -7,8 +7,7 @@ import {
   dreamsTable,
   contactsTable,
   tasksTable,
-  type Forecast,
-  type Feedback,
+  usersTable,
 } from "@workspace/db";
 import {
   GetTodayForecastResponse,
@@ -25,11 +24,12 @@ import {
   todayString,
   type DailyForecastResult,
 } from "../lib/oracle";
+import { computeTransits, computeNatalChart, type NatalChart, type NatalChartInput } from "../lib/astrology";
 import { daysUntilBirthday } from "../lib/dates";
 
 const router: IRouter = Router();
 
-function serializeFeedback(fb: Feedback) {
+function serializeFeedback(fb: { id: number; forecastId: number; date: string; accuracy: string; comment: string | null; createdAt: Date }) {
   return {
     id: fb.id,
     forecastId: fb.forecastId,
@@ -41,42 +41,22 @@ function serializeFeedback(fb: Feedback) {
 }
 
 function buildForecast(
-  row: Forecast,
-  fb: Feedback | null,
-  spendingDays: string[],
+  row: typeof forecastsTable.$inferSelect,
+  fb: { id: number; forecastId: number; date: string; accuracy: string; comment: string | null; createdAt: Date } | null,
 ) {
   const payload = row.payload as Pick<
     DailyForecastResult,
-    "matrix" | "bazi" | "fengShui" | "conflicts" | "warnings"
+    "matrix" | "transits" | "conflicts" | "warnings"
   >;
-  // Legacy forecasts were stored before the monthly flying star existed; backfill
-  // the monthly fields from the annual star so the response still validates.
-  const rawFengShui = payload.fengShui ?? null;
-  const fengShui = rawFengShui
-    ? {
-        ...rawFengShui,
-        monthlyStarNumber: rawFengShui.monthlyStarNumber ?? rawFengShui.starNumber,
-        monthlyStarName: rawFengShui.monthlyStarName ?? rawFengShui.starName,
-        monthlyInfluence: rawFengShui.monthlyInfluence ?? rawFengShui.influence,
-        monthlyIsUnfavorable:
-          rawFengShui.monthlyIsUnfavorable ?? rawFengShui.isUnfavorable,
-      }
-    : null;
   return {
     id: row.id,
     date: row.date,
     arcanaNumber: row.arcanaNumber,
     arcanaName: row.arcanaName,
-    baziElement: row.baziElement,
     hasWarning: row.hasWarning,
     synthesisText: row.synthesisText,
     matrix: payload.matrix,
-    // `spendingDays` is date-relative and was added to the bazi schema after some
-    // forecasts were already persisted, so the caller computes it live (empty when
-    // no birth date) instead of trusting the stored payload. This keeps legacy and
-    // fresh rows valid against the current BaziSummary schema.
-    bazi: { ...payload.bazi, spendingDays },
-    fengShui,
+    transits: payload.transits ?? [],
     conflicts: payload.conflicts ?? [],
     warnings: payload.warnings ?? [],
     feedback: fb ? serializeFeedback(fb) : null,
@@ -87,8 +67,11 @@ async function getOrComputeToday(
   userId: number,
   birthDate: string | null,
   birthTime: string | null,
-  bedDirection: string | null,
-): Promise<Forecast | null> {
+  natalChartJson: unknown | null,
+  birthLatitude: number | null,
+  birthLongitude: number | null,
+  birthTimezone: string | null,
+): Promise<typeof forecastsTable.$inferSelect | null> {
   const date = todayString();
   const [existing] = await db
     .select()
@@ -96,8 +79,43 @@ async function getOrComputeToday(
     .where(and(eq(forecastsTable.userId, userId), eq(forecastsTable.date, date)));
   if (existing) return existing;
 
-  if (!birthDate) return null;
-  const result = computeDailyForecast(birthDate, birthTime, bedDirection, date);
+  if (!birthDate || birthLatitude == null || birthLongitude == null) return null;
+
+  // Use cached natal chart or compute live from birth data
+  let natalChart: NatalChart | null = null;
+  if (natalChartJson) {
+    try {
+      const parsed = natalChartJson as { bodies?: unknown[] };
+      if (parsed && Array.isArray(parsed.bodies) && parsed.bodies.length > 0) {
+        natalChart = natalChartJson as NatalChart;
+      }
+    } catch {
+      natalChart = null;
+    }
+  }
+  if (!natalChart) {
+    const [y, m, d] = birthDate.split("-").map(Number);
+    const [h, min] = birthTime ? birthTime.split(":").map(Number) : [12, 0];
+    const input: NatalChartInput = {
+      year: y, month: m, day: d,
+      hour: Number.isFinite(h) ? h : 12,
+      minute: Number.isFinite(min) ? min : 0,
+      latitude: birthLatitude,
+      longitude: birthLongitude,
+      timezone: birthTimezone,
+    };
+    try {
+      natalChart = computeNatalChart(input);
+    } catch {
+      natalChart = null;
+    }
+  }
+
+  const transits = natalChart
+    ? computeTransits(natalChart, date, birthLatitude, birthLongitude, birthTimezone)
+    : null;
+
+  const result = computeDailyForecast(birthDate, natalChart, transits, date);
   if (!result) return null;
 
   const [created] = await db
@@ -107,13 +125,12 @@ async function getOrComputeToday(
       date,
       arcanaNumber: result.arcanaNumber,
       arcanaName: result.arcanaName,
-      baziElement: result.baziElement,
+      baziElement: null,
       hasWarning: result.hasWarning,
       synthesisText: result.synthesisText,
       payload: {
         matrix: result.matrix,
-        bazi: result.bazi,
-        fengShui: result.fengShui,
+        transits: result.transits,
         conflicts: result.conflicts,
         warnings: result.warnings,
       },
@@ -124,17 +141,20 @@ async function getOrComputeToday(
 
 router.get("/forecast/today", requireAuth, async (req, res): Promise<void> => {
   const user = req.localUser!;
-  if (!user.birthDate) {
+  if (!user.birthDate || user.birthLatitude == null || user.birthLongitude == null) {
     res
       .status(400)
-      .json({ error: "Заполните дату рождения в профиле, чтобы получить прогноз." });
+      .json({ error: "Заполните дату рождения и место рождения в профиле, чтобы получить прогноз." });
     return;
   }
   const row = await getOrComputeToday(
     user.id,
     user.birthDate,
     user.birthTime,
-    user.bedDirection,
+    user.natalChart ?? null,
+    user.birthLatitude,
+    user.birthLongitude,
+    user.birthTimezone,
   );
   if (!row) {
     res.status(400).json({ error: "Не удалось рассчитать прогноз." });
@@ -144,11 +164,8 @@ router.get("/forecast/today", requireAuth, async (req, res): Promise<void> => {
     .select()
     .from(feedbackTable)
     .where(eq(feedbackTable.forecastId, row.id));
-  const spendingDays = user.birthDate
-    ? computeSpendingDays(user.birthDate, user.birthTime, todayString(), 30)
-    : [];
   res.json(
-    GetTodayForecastResponse.parse(buildForecast(row, fb ?? null, spendingDays)),
+    GetTodayForecastResponse.parse(buildForecast(row, fb ?? null)),
   );
 });
 
@@ -165,14 +182,10 @@ router.get("/forecast/history", requireAuth, async (req, res): Promise<void> => 
     .where(eq(feedbackTable.userId, req.localUser!.id));
   const fbByForecast = new Map(fbRows.map((f) => [f.forecastId, f]));
 
-  const user = req.localUser!;
-  const spendingDays = user.birthDate
-    ? computeSpendingDays(user.birthDate, user.birthTime, todayString(), 30)
-    : [];
   res.json(
     ListForecastsResponse.parse(
       rows.map((r) =>
-        buildForecast(r, fbByForecast.get(r.id) ?? null, spendingDays),
+        buildForecast(r, fbByForecast.get(r.id) ?? null),
       ),
     ),
   );
@@ -212,7 +225,7 @@ router.post(
       .from(feedbackTable)
       .where(eq(feedbackTable.forecastId, forecast.id));
 
-    let row: Feedback;
+    let row: typeof feedbackTable.$inferSelect;
     if (existing) {
       [row] = await db
         .update(feedbackTable)
@@ -239,11 +252,10 @@ router.post(
 router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
   const user = req.localUser!;
   const date = todayString();
-  const profileComplete = !!user.birthDate;
+  const profileComplete = !!user.birthDate && user.birthLatitude != null && user.birthLongitude != null;
 
   let arcanaNumber: number | null = null;
   let arcanaName: string | null = null;
-  let baziElement: string | null = null;
   let hasWarning = false;
   let affirmation: string | null = null;
 
@@ -252,13 +264,15 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
       user.id,
       user.birthDate,
       user.birthTime,
-      user.bedDirection,
+      user.natalChart ?? null,
+      user.birthLatitude,
+      user.birthLongitude,
+      user.birthTimezone,
     );
     if (row) {
       const payload = row.payload as Pick<DailyForecastResult, "matrix">;
       arcanaNumber = row.arcanaNumber;
       arcanaName = row.arcanaName;
-      baziElement = row.baziElement;
       hasWarning = row.hasWarning;
       affirmation = payload.matrix?.affirmation ?? null;
     }
@@ -295,7 +309,6 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
       profileComplete,
       arcanaNumber,
       arcanaName,
-      baziElement,
       hasWarning,
       affirmation,
       upcomingBirthdaysCount,

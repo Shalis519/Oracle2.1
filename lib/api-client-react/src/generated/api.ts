@@ -26,6 +26,7 @@ import type {
   ChatMessage,
   ChatMessageInput,
   City,
+  ComputeNatalChart200,
   Contact,
   ContactInput,
   ContactUpdate,
@@ -314,6 +315,76 @@ export const useUpdateProfile = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getUpdateProfileMutationOptions(options));
+    }
+
+export const getComputeNatalChartUrl = () => {
+
+
+
+
+  return `/api/profile/natal-chart`
+}
+
+/**
+ * @summary Compute and save natal chart from profile birth data
+ */
+export const computeNatalChart = async ( options?: RequestInit): Promise<ComputeNatalChart200> => {
+
+  return customFetch<ComputeNatalChart200>(getComputeNatalChartUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getComputeNatalChartMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof computeNatalChart>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof computeNatalChart>>, TError,void, TContext> => {
+
+const mutationKey = ['computeNatalChart'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof computeNatalChart>>, void> = () => {
+
+
+          return  computeNatalChart(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ComputeNatalChartMutationResult = NonNullable<Awaited<ReturnType<typeof computeNatalChart>>>
+
+    export type ComputeNatalChartMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Compute and save natal chart from profile birth data
+ */
+export const useComputeNatalChart = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof computeNatalChart>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof computeNatalChart>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getComputeNatalChartMutationOptions(options));
     }
 
 export const getGetJournalUrl = () => {

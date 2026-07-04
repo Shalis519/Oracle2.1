@@ -13,8 +13,6 @@ export interface Dashboard {
   arcanaNumber?: number | null;
   /** @nullable */
   arcanaName?: string | null;
-  /** @nullable */
-  baziElement?: string | null;
   hasWarning?: boolean;
   /** @nullable */
   affirmation?: string | null;

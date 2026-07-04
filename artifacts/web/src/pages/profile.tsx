@@ -4,6 +4,7 @@ import {
   getGetProfileQueryKey,
   useSearchCities,
   getSearchCitiesQueryKey,
+  useComputeNatalChart,
   type City,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -48,6 +49,7 @@ export default function ProfilePage() {
   const updateProfile = useUpdateProfile();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const computeNatalChart = useComputeNatalChart();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -279,6 +281,28 @@ export default function ProfilePage() {
                     {formData.birthLatitude!.toFixed(4)}, {formData.birthLongitude!.toFixed(4)}
                     {formData.birthTimezone ? ` · ${formData.birthTimezone}` : ""}
                   </p>
+                )}
+                {hasCoords && formData.birthDate && formData.birthTime && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    className="mt-1"
+                    disabled={computeNatalChart.isPending}
+                    onClick={() =>
+                      computeNatalChart.mutate(undefined, {
+                        onSuccess: () => {
+                          toast({ title: "Натальная карта рассчитана" });
+                          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+                        },
+                        onError: () => {
+                          toast({ title: "Ошибка расчета", variant: "destructive" });
+                        },
+                      })
+                    }
+                  >
+                    {computeNatalChart.isPending ? "Расчет..." : "Рассчитать натальную карту"}
+                  </Button>
                 )}
               </div>
               <div className="space-y-2">
