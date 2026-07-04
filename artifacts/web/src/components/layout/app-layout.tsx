@@ -17,7 +17,8 @@ import {
   X,
   User,
   BookHeart,
-  Sparkles
+  Sparkles,
+  BrainCircuit
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     { href: "/contacts", label: "Контакты", icon: Users },
     { href: "/habits", label: "Трекер привычек", icon: ListTodo },
     { href: "/travel", label: "Карта путешествий", icon: MapIcon },
+    { href: "/admin/studio", label: "Oracle Studio", icon: BrainCircuit },
   ];
 
   const NavLinks = () => (

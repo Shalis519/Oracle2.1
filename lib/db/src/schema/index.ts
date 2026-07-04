@@ -9,3 +9,4 @@ export * from "./travels";
 export * from "./messages";
 export * from "./lifeJournal";
 export * from "./notepad";
+export * from "./ontology";

@@ -55,3 +55,19 @@ export async function requireAuth(
   req.localUser = await getOrCreateUser(clerkUserId);
   next();
 }
+
+export async function requireAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  if (!req.localUser) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  if (req.localUser.role !== "admin") {
+    res.status(403).json({ error: "Forbidden" });
+    return;
+  }
+  next();
+}

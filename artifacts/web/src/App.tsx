@@ -23,6 +23,7 @@ import TravelPage from "./pages/travel";
 import TarotPage from "./pages/tarot";
 import JournalPage from "./pages/journal";
 import PrivacyPage from "./pages/privacy";
+import AdminStudioPage from "./pages/admin-studio";
 import NotFound from "./pages/not-found";
 import AppLayout from "./components/layout/app-layout";
 
@@ -217,6 +218,7 @@ function ClerkProviderWithRoutes() {
             <Route path="/contacts" component={() => <ProtectedRoute component={ContactsPage} />} />
             <Route path="/dreams" component={() => <ProtectedRoute component={DreamsPage} />} />
             <Route path="/journal" component={() => <ProtectedRoute component={JournalPage} />} />
+            <Route path="/admin/studio" component={() => <ProtectedRoute component={AdminStudioPage} />} />
             <Route path="/habits" component={() => <ProtectedRoute component={HabitsPage} />} />
             <Route path="/travel" component={() => <ProtectedRoute component={TravelPage} />} />
             <Route path="/tarot" component={() => <ProtectedRoute component={TarotPage} />} />

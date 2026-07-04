@@ -28,6 +28,7 @@ export const usersTable = pgTable("users", {
   bedDirection: text("bed_direction"),
   avatarType: text("avatar_type"),
   notificationsEnabled: boolean("notifications_enabled").notNull().default(true),
+  role: text("role").notNull().default("user"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
