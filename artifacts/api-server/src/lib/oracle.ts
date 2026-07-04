@@ -1110,6 +1110,26 @@ function bodyInstrumental(name: string): string {
   return map[name.toLowerCase()] ?? name;
 }
 
+/** Dative case for body names after "противостоит" etc. */
+function bodyDative(name: string): string {
+  const map: Record<string, string> = {
+    "северный узел": "Северному узлу",
+    "южный узел": "Южному узлу",
+    "хирон": "Хирону",
+    "плутон": "Плутону",
+    "нептун": "Нептуну",
+    "уран": "Урану",
+    "сатурн": "Сатурну",
+    "юпитер": "Юпитеру",
+    "марс": "Марсу",
+    "венера": "Венере",
+    "меркурий": "Меркурию",
+    "луна": "Луне",
+    "солнце": "Солнцу",
+  };
+  return map[name.toLowerCase()] ?? name;
+}
+
 const SIGN_PREPOSITIONAL: Record<string, string> = {
   "Овен": "Овне",
   "Телец": "Тельце",
@@ -1268,7 +1288,18 @@ function buildTransitSentences(
         break;
     }
 
-    const head = `${transitPrefix}${retroTag}${t.transitBody} в ${signPrep} ${connector} ${bodyInstrumental(t.natalBody.toLowerCase())}${natalLoc}`;
+    const natalGender = bodyGender(t.natalBody);
+    const natalAdjInst = natalGender === "жен" ? "натальной " : "натальным ";
+    const natalAdjDat  = natalGender === "жен" ? "натальной " : "натальному ";
+
+    let natalPhrase: string;
+    if (t.typeKey === "opposition") {
+      natalPhrase = `${natalAdjDat}${bodyDative(t.natalBody.toLowerCase())}`;
+    } else {
+      natalPhrase = `${natalAdjInst}${bodyInstrumental(t.natalBody.toLowerCase())}`;
+    }
+
+    const head = `${transitPrefix}${retroTag}${t.transitBody} в ${signPrep} ${connector} ${natalPhrase}${natalLoc}`;
     const body = transitQualities(t);
     const duration = transitToDurationText(t.durationDays, t.transitBody);
 
