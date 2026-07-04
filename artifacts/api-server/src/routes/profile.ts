@@ -80,6 +80,12 @@ router.post("/profile/make-admin", requireAuth, async (req, res): Promise<void> 
     res.status(409).json({ error: "Already admin" });
     return;
   }
+  const body = req.body as Record<string, unknown>;
+  const secret = typeof body.secret === "string" ? body.secret : "";
+  if (secret !== process.env.ADMIN_SECRET) {
+    res.status(403).json({ error: "Invalid secret code" });
+    return;
+  }
   const [updated] = await db
     .update(usersTable)
     .set({ role: "admin" })

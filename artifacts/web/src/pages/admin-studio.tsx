@@ -843,21 +843,46 @@ export default function AdminStudioPage() {
             </Button>
           )}
           {!isAdmin && (
-            <Button variant="outline" onClick={async () => {
-              const res = await apiFetch("/profile/make-admin", { method: "POST" });
-              if (!res.ok) {
-                const err = await res.json().catch(() => ({ error: "Ошибка" }));
-                toast({ title: "Ошибка", description: err.error, variant: "destructive" });
-                return;
-              }
-              const data = await res.json();
-              setIsAdmin(data.role === "admin");
-              try { localStorage.setItem("aether_is_admin", String(data.role === "admin")); } catch {}
-              toast({ title: "Роль обновлена", description: "Теперь у вас доступ к редактированию онтологии." });
-            }}>
-              <Sparkles className="w-4 h-4 mr-2" />
-              Стать администратором
-            </Button>
+            <div className="flex items-center gap-2">
+              <Input
+                type="password"
+                placeholder="Код админа"
+                className="w-40 h-9"
+                id="admin-secret-input"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const btn = document.getElementById("admin-secret-btn") as HTMLButtonElement | null;
+                    btn?.click();
+                  }
+                }}
+              />
+              <Button
+                id="admin-secret-btn"
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  const input = document.getElementById("admin-secret-input") as HTMLInputElement | null;
+                  const secret = input?.value?.trim() ?? "";
+                  if (!secret) {
+                    toast({ title: "Введите код", variant: "destructive" });
+                    return;
+                  }
+                  const res = await apiFetch("/profile/make-admin", { method: "POST", body: JSON.stringify({ secret }) });
+                  if (!res.ok) {
+                    const err = await res.json().catch(() => ({ error: "Ошибка" }));
+                    toast({ title: "Ошибка", description: err.error, variant: "destructive" });
+                    return;
+                  }
+                  const data = await res.json();
+                  setIsAdmin(data.role === "admin");
+                  try { localStorage.setItem("aether_is_admin", String(data.role === "admin")); } catch {}
+                  toast({ title: "Роль обновлена", description: "Теперь у вас доступ к редактированию онтологии." });
+                }}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Стать администратором
+              </Button>
+            </div>
           )}
           <Link href="/dashboard">
             <Button variant="outline">
