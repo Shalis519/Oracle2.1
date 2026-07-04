@@ -1110,6 +1110,21 @@ function bodyInstrumental(name: string): string {
   return map[name.toLowerCase()] ?? name;
 }
 
+const SIGN_PREPOSITIONAL: Record<string, string> = {
+  "Овен": "Овне",
+  "Телец": "Тельце",
+  "Близнецы": "Близнецах",
+  "Рак": "Раке",
+  "Лев": "Льве",
+  "Дева": "Деве",
+  "Весы": "Весах",
+  "Скорпион": "Скорпионе",
+  "Стрелец": "Стрельце",
+  "Козерог": "Козероге",
+  "Водолей": "Водолее",
+  "Рыбы": "Рыбах",
+};
+
 const SIGN_MEANING: Record<string, string> = {
   "Овен": "порывам инициативе и смелости",
   "Телец": "практичности и устойчивости",
@@ -1226,14 +1241,19 @@ function buildTransitSentences(
 
   const out: string[] = [];
 
+  const FEMININE_BODIES = new Set(["луна", "венера"]);
+  const bodyGender = (name: string) => FEMININE_BODIES.has(name.toLowerCase()) ? "жен" : "солнце" === name.toLowerCase() ? "сред" : "муж";
+
   for (const t of transits) {
-    const retroTag = t.transitRetrograde ? "Ретроградный " : "";
-    const transitLoc = t.transitHouse
-      ? ` по ${t.transitHouse} дому`
-      : "";
+    const gender = bodyGender(t.transitBody);
+    const transitPrefix = gender === "жен" ? "Транзитная " : gender === "сред" ? "Транзитное " : "Транзитный ";
+    const retroPrefix = gender === "жен" ? "Ретроградная " : gender === "сред" ? "Ретроградное " : "Ретроградный ";
+    const retroTag = t.transitRetrograde ? retroPrefix : "";
     const natalLoc = t.natalHouse
       ? ` в ${t.natalHouse} доме`
       : "";
+
+    const signPrep = SIGN_PREPOSITIONAL[t.transitSign] ?? t.transitSign;
 
     let connector: string;
     switch (t.typeKey) {
@@ -1244,11 +1264,11 @@ function buildTransitSentences(
         connector = `противостоит`;
         break;
       default:
-        connector = aspectPrepRu(t.typeKey);
+        connector = `${aspectPrepRu(t.typeKey)} с`;
         break;
     }
 
-    const head = `${retroTag}${t.transitBody} в ${t.transitSign}${transitLoc} ${connector} ${bodyInstrumental(t.natalBody.toLowerCase())}${natalLoc}`;
+    const head = `${transitPrefix}${retroTag}${t.transitBody} в ${signPrep} ${connector} ${bodyInstrumental(t.natalBody.toLowerCase())}${natalLoc}`;
     const body = transitQualities(t);
     const duration = transitToDurationText(t.durationDays, t.transitBody);
 
@@ -1269,12 +1289,16 @@ export function buildSynthesisText(
   const arcanaParts = buildArcanaSentences(arcana);
   const transitParts = buildTransitSentences(transits);
 
-  // Merge into a single flowing paragraph
-  const allParts = [...arcanaParts, ...transitParts];
-  if (allParts.length === 0) return "Сегодня особенных астрологических событий не прогнозируется.";
+  if (arcanaParts.length === 0 && transitParts.length === 0) {
+    return "Сегодня особенных астрологических событий не прогнозируется.";
+  }
 
-  // Join with single spaces, clean up
-  return allParts.join(" ").replace(/\s+/g, " ").trim();
+  // Arcana essence as its own paragraph, each transit as a new paragraph
+  const paragraphs: string[] = [...arcanaParts];
+  for (const t of transitParts) {
+    paragraphs.push(t);
+  }
+  return paragraphs.join("\n\n").trim();
 }
 
 /** New computeDailyForecast: uses natal chart + transits + arcana. */
