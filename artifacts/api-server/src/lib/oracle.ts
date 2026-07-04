@@ -1130,6 +1130,12 @@ function bodyDative(name: string): string {
   return map[name.toLowerCase()] ?? name;
 }
 
+/** Предлог «в» / «во» для предложного падежа знака (во Льве, в Раке). */
+function inSignPrep(sign: string): string {
+  if (sign.toLowerCase().startsWith("ль")) return `во ${sign}`;
+  return `в ${sign}`;
+}
+
 const SIGN_PREPOSITIONAL: Record<string, string> = {
   "Овен": "Овне",
   "Телец": "Тельце",
@@ -1275,6 +1281,7 @@ function buildTransitSentences(
       : "";
 
     const signPrep = SIGN_PREPOSITIONAL[t.transitSign] ?? t.transitSign;
+    const inSign = inSignPrep(signPrep);
 
     let connector: string;
     switch (t.typeKey) {
@@ -1300,7 +1307,7 @@ function buildTransitSentences(
       natalPhrase = `${natalAdjInst}${bodyInstrumental(t.natalBody.toLowerCase())}`;
     }
 
-    const head = `${transitPrefix}${retroTag}${t.transitBody} в ${signPrep} ${connector} ${natalPhrase}${natalLoc}`;
+    const head = `${transitPrefix}${retroTag}${t.transitBody} ${inSign} ${connector} ${natalPhrase}${natalLoc}`;
     const body = transitQualities(t);
     const duration = transitToDurationText(t.durationDays, t.transitBody);
 

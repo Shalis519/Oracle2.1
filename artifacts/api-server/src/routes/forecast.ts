@@ -63,7 +63,7 @@ function buildForecast(
   };
 }
 
-const CURRENT_FORECAST_VERSION = 7;
+const CURRENT_FORECAST_VERSION = 8;
 
 async function getOrComputeToday(
   userId: number,
