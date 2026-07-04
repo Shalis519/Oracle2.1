@@ -141,6 +141,7 @@ async function getOrComputeToday(
       baziElement: null,
       hasWarning: result.hasWarning,
       synthesisText: result.synthesisText,
+      version: CURRENT_FORECAST_VERSION,
       payload: {
         matrix: result.matrix,
         transits: result.transits,
