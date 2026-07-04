@@ -1104,6 +1104,115 @@ function bodyInstrumental(name: string): string {
   return map[name.toLowerCase()] ?? name;
 }
 
+const SIGN_MEANING: Record<string, string> = {
+  "Овен": "порывам инициативе и смелости",
+  "Телец": "практичности и устойчивости",
+  "Близнецы": "гибкости и коммуникативности",
+  "Рак": "эмоциональной чувствительности и заботе",
+  "Лев": "творческой самореализации и желанию быть в центре",
+  "Дева": "аналитичности и вниманию к деталям",
+  "Весы": "гармонии и умению видеть обе стороны",
+  "Скорпион": "глубине и трансформации",
+  "Стрелец": "расширению горизонтов и поиску смысла",
+  "Козерог": "дисциплине и ответственности",
+  "Водолей": "оригинальности и непредсказуемости",
+  "Рыбы": "интуиции и эмпатии",
+};
+
+const HOUSE_ACTION: Record<number, string> = {
+  1: "самовыражения и личной позиции",
+  2: "денежных ресурсов и ценностей",
+  3: "общения, родственников и повседневной жизни",
+  4: "семьи, дома и эмоциональной опоры",
+  5: "творчества, романтики и детей",
+  6: "работы, здоровья и сервиса",
+  7: "партнёрства и открытого взаимодействия",
+  8: "трансформаций и общих ресурсов",
+  9: "путешествий, обучения и философии",
+  10: "карьеры и общественного статуса",
+  11: "друзей, желаний и будущего",
+  12: "тайн и внутреннего мира",
+};
+
+/** Return a transit-quality verb based on body + sign + house + aspect. */
+function transitQualities(t: import("./astrology").TransitAspect): string {
+  const sign = t.transitSign;
+  const house = t.transitHouse;
+  const natalSign = t.natalSign;
+  const natalHouse = t.natalHouse;
+  const retro = t.transitRetrograde;
+
+  const signDesc = SIGN_MEANING[sign] ?? `астральной энергии`;
+  const houseDesc = house ? HOUSE_ACTION[house] ?? `сфере ${house}` : "жизни";
+  const natalHouseDesc = natalHouse ? HOUSE_ACTION[natalHouse] ?? `сфере ${natalHouse}` : "жизни";
+
+  const body = t.transitBody.toLowerCase();
+
+  // Core meaning maps: what each planet does in a sign+house
+  const meaning: string[] = [];
+
+  // Retrograde nuance
+  if (retro) {
+    if (body === "меркурий") {
+      meaning.push(`неожиданно придётся вернуться к недоделанным вопросам`);
+    } else if (body === "марс") {
+      meaning.push(`агрессия останет без результата`);
+    } else if (body === "венера") {
+      meaning.push(`прежние отношения возвращаются в память`);
+    } else {
+      meaning.push(`процесс требует пересмотра`);
+    }
+  }
+
+  // Sign-specific qualities
+  if (sign === "Рак" && body === "меркурий") {
+    meaning.push(`мышление становится чувствительным и эмоциональным`);
+  } else if (sign === "Овен") {
+    if (body === "меркурий") meaning.push(`быстрые решения и прямые идеи`);
+    if (body === "марс") meaning.push(`порыв энергии для действий`);
+  } else if (sign === "Телец") {
+    if (body === "венера") meaning.push(`желание комфорта и стабильности`);
+  }
+
+  // House-specific actions
+  if (house === 1) {
+    meaning.push(`окружающие видят вас изменившимся`);
+  } else if (house === 3) {
+    meaning.push(`общение становится особенно активным`);
+  } else if (house === 5) {
+    if (body === "меркурий") meaning.push(`творческие идеи потекут напролом`);
+    if (body === "венера") meaning.push(`романтика и дети окажутся в фокусе`);
+  }
+
+  // Natal house — where the effect lands
+  if (natalHouse === 5) {
+    meaning.push(`творчество и приятные эмоции затронут этот поток`);
+  } else if (natalHouse === 7) {
+    meaning.push(`отношения и переговоры требуют особого внимания`);
+  }
+
+  // Aspect flavor
+  switch (t.typeKey) {
+    case "trine":
+      if (!retro) meaning.push(`всё получится легко и естественно`);
+      break;
+    case "square":
+      meaning.push(`потребуется осознанного усилия`);
+      break;
+    case "opposition":
+      meaning.push(`баланс между желанием и действительностью`);
+      break;
+    case "sextile":
+      meaning.push(`под рукой окажется удобный шанс`);
+      break;
+  }
+
+  if (meaning.length === 0) {
+    return `~${signDesc}~ в сфере ${houseDesc}`;
+  }
+  return meaning.join(". ") + ".";
+}
+
 function buildTransitSentences(
   transits: import("./astrology").TransitAspect[],
 ): string[] {
@@ -1111,67 +1220,33 @@ function buildTransitSentences(
 
   const out: string[] = [];
 
-  // Group by duration band (same rough period)
-  const groups: Map<string, typeof transits> = new Map();
   for (const t of transits) {
-    const band = t.durationDays <= 2 ? "short" : t.durationDays <= 7 ? "week" : "long";
-    const list = groups.get(band) ?? [];
-    list.push(t);
-    groups.set(band, list);
-  }
+    const retroTag = t.transitRetrograde ? "Ретроградный " : "";
+    const transitLoc = t.transitHouse
+      ? ` по ${t.transitHouse} дому`
+      : "";
+    const natalLoc = t.natalHouse
+      ? ` в ${t.natalHouse} доме`
+      : "";
 
-  for (const [, items] of groups) {
-    if (items.length === 0) continue;
-
-    const phrases = items.map((t) => {
-      const aspectPhrase = aspectPrepRu(t.typeKey);
-      const natalObj = bodyInstrumental(t.natalBody.toLowerCase());
-      const area = t.house ? houseToLifeArea(t.house) : "вашей жизни";
-      let verb: string;
-      switch (t.typeKey) {
-        case "conjunction":
-          verb = `концентрирует энергию в ${area}`;
-          break;
-        case "trine":
-          verb = `открывает естественный поток в ${area}`;
-          break;
-        case "sextile":
-          verb = `даёт шанс в ${area}`;
-          break;
-        case "square":
-          verb = `создаёт напряжение в ${area}`;
-          break;
-        case "opposition":
-          verb = `проверяет баланс в ${area}`;
-          break;
-        default:
-          verb = `влияет на ${area}`;
-      }
-      // Special phrasing for conjunction: "Солнце в соединении с Марсом"
-      if (t.typeKey === "conjunction") {
-        return `${t.transitBody} ${aspectPhrase} ${natalObj} ${verb}`;
-      }
-      // Opposition: "Луна противостоит Северному узлу"
-      if (t.typeKey === "opposition") {
-        return `${t.transitBody} противостоит ${natalObj} — ${verb}`;
-      }
-      return `${t.transitBody} ${aspectPhrase} ${natalObj} ${verb}`;
-    });
-
-    if (phrases.length === 1) {
-      out.push(phrases[0] + ".");
-    } else {
-      const last = phrases.pop()!;
-      out.push(phrases.join("— ") + ` а также ${last}.`);
+    let connector: string;
+    switch (t.typeKey) {
+      case "conjunction":
+        connector = `в соединении с`;
+        break;
+      case "opposition":
+        connector = `противостоит`;
+        break;
+      default:
+        connector = aspectPrepRu(t.typeKey);
+        break;
     }
-  }
 
-  // Add duration summary once at the end
-  const durations = [...new Set(transits.map((t) => transitToDurationText(t.durationDays, t.transitBody)))];
-  if (durations.length === 1) {
-    out[out.length - 1] = out[out.length - 1].replace(/\.$/, ` ${durations[0]}.`);
-  } else if (durations.length <= 3) {
-    out.push(`Эти влияния актуальны ${durations.join("а также ")}.`);
+    const head = `${retroTag}${t.transitBody} в ${t.transitSign}${transitLoc} ${connector} ${bodyInstrumental(t.natalBody.toLowerCase())}${natalLoc}`;
+    const body = transitQualities(t);
+    const duration = transitToDurationText(t.durationDays, t.transitBody);
+
+    out.push(`${head} — ${body} ${duration}.`);
   }
 
   return out;
@@ -1242,7 +1317,7 @@ export function computeDailyForecast(
     natalBody: t.natalBody,
     type: t.type,
     orb: t.orb,
-    house: t.house,
+    house: t.natalHouse,
     durationDays: t.durationDays,
   }));
 

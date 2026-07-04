@@ -258,14 +258,20 @@ export interface TransitBody {
 export interface TransitAspect {
   transitBody: string;
   transitBodySymbol: string;
+  transitSign: string;        // sign of transit body today
+  transitSignSymbol: string;
+  transitHouse: number | null; // house this transit body occupies today
+  transitRetrograde: boolean;
   natalBody: string;
   natalBodySymbol: string;
+  natalSign: string;         // sign of natal body
+  natalSignSymbol: string;
+  natalHouse: number | null; // already existed; rename for clarity
   type: string;
   typeKey: string;
   typeSymbol: string;
   orb: number;
-  house: number | null; // natal house of the natal body
-  durationDays: number; // estimated duration of transit influence
+  durationDays: number;
 }
 
 export interface TransitResult {
@@ -617,13 +623,19 @@ export function computeTransits(
         aspects.push({
           transitBody: t.name,
           transitBodySymbol: t.symbol,
+          transitSign: t.sign,
+          transitSignSymbol: t.signSymbol,
+          transitHouse: t.house,
+          transitRetrograde: t.retrograde,
           natalBody: natalBody.name,
           natalBodySymbol: natalBody.symbol,
+          natalSign: natalBody.sign,
+          natalSignSymbol: natalBody.signSymbol,
+          natalHouse: natalBody.house,
           type: info.label,
           typeKey: best.key,
           typeSymbol: info.symbol,
           orb: Number(best.diff.toFixed(2)),
-          house: natalBody.house,
           durationDays: PLANET_SPEED[t.key] ?? 2,
         });
       }

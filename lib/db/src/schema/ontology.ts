@@ -81,6 +81,14 @@ export const ontologyEntityProfilesTable = pgTable(
     strengthsArr: jsonb("strengths_arr").$type<string[]>().notNull().default([]),
     weaknessesArr: jsonb("weaknesses_arr").$type<string[]>().notNull().default([]),
     archetypes: jsonb("archetypes").$type<string[]>().notNull().default([]),
+    professions: jsonb("professions").$type<string[]>().notNull().default([]),
+    objects: jsonb("objects").$type<string[]>().notNull().default([]),
+    colors: jsonb("colors").$type<string[]>().notNull().default([]),
+    numbers: jsonb("numbers").$type<string[]>().notNull().default([]),
+    days: jsonb("days").$type<string[]>().notNull().default([]),
+    animals: jsonb("animals").$type<string[]>().notNull().default([]),
+    places: jsonb("places").$type<string[]>().notNull().default([]),
+    materials: jsonb("materials").$type<string[]>().notNull().default([]),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

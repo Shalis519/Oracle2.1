@@ -85,6 +85,14 @@ interface Profile {
   strengthsArr?: string[];
   weaknessesArr?: string[];
   archetypes?: string[];
+  professions?: string[];
+  objects?: string[];
+  colors?: string[];
+  numbers?: string[];
+  days?: string[];
+  animals?: string[];
+  places?: string[];
+  materials?: string[];
 }
 
 const API = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api`;
@@ -282,6 +290,14 @@ function ProfileForm({
     strengthsArr: profile?.strengthsArr ?? [],
     weaknessesArr: profile?.weaknessesArr ?? [],
     archetypes: profile?.archetypes ?? [],
+    professions: profile?.professions ?? [],
+    objects: profile?.objects ?? [],
+    colors: profile?.colors ?? [],
+    numbers: profile?.numbers ?? [],
+    days: profile?.days ?? [],
+    animals: profile?.animals ?? [],
+    places: profile?.places ?? [],
+    materials: profile?.materials ?? [],
   });
 
   const { toast } = useToast();
@@ -305,6 +321,14 @@ function ProfileForm({
       strengthsArr: profile?.strengthsArr ?? [],
       weaknessesArr: profile?.weaknessesArr ?? [],
       archetypes: profile?.archetypes ?? [],
+      professions: profile?.professions ?? [],
+      objects: profile?.objects ?? [],
+      colors: profile?.colors ?? [],
+      numbers: profile?.numbers ?? [],
+      days: profile?.days ?? [],
+      animals: profile?.animals ?? [],
+      places: profile?.places ?? [],
+      materials: profile?.materials ?? [],
     };
     setTextValues(init);
     setArrValues(nextArr);
@@ -369,6 +393,14 @@ function ProfileForm({
         <ChipListEditor label="Силы" items={arrValues.strengthsArr} onChange={(v) => handleArrChange("strengthsArr", v)} />
         <ChipListEditor label="Слабости" items={arrValues.weaknessesArr} onChange={(v) => handleArrChange("weaknessesArr", v)} />
         <ChipListEditor label="Архетипы" items={arrValues.archetypes} onChange={(v) => handleArrChange("archetypes", v)} />
+        <ChipListEditor label="Профессии" items={arrValues.professions} onChange={(v) => handleArrChange("professions", v)} />
+        <ChipListEditor label="Предметы" items={arrValues.objects} onChange={(v) => handleArrChange("objects", v)} />
+        <ChipListEditor label="Цвета" items={arrValues.colors} onChange={(v) => handleArrChange("colors", v)} />
+        <ChipListEditor label="Числа" items={arrValues.numbers} onChange={(v) => handleArrChange("numbers", v)} />
+        <ChipListEditor label="Дни недели" items={arrValues.days} onChange={(v) => handleArrChange("days", v)} />
+        <ChipListEditor label="Животные" items={arrValues.animals} onChange={(v) => handleArrChange("animals", v)} />
+        <ChipListEditor label="Места" items={arrValues.places} onChange={(v) => handleArrChange("places", v)} />
+        <ChipListEditor label="Материалы" items={arrValues.materials} onChange={(v) => handleArrChange("materials", v)} />
       </div>
 
       <div className="space-y-4">
