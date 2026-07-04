@@ -214,7 +214,6 @@ export const GetDashboardResponse = zod.object({
   "arcanaNumber": zod.number().nullish(),
   "arcanaName": zod.string().nullish(),
   "hasWarning": zod.boolean().optional(),
-  "affirmation": zod.string().nullish(),
   "upcomingBirthdaysCount": zod.number(),
   "waterProgress": zod.number(),
   "waterTarget": zod.number(),

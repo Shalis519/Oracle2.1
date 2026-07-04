@@ -138,7 +138,6 @@ async function getOrComputeToday(
       date,
       arcanaNumber: result.arcanaNumber,
       arcanaName: result.arcanaName,
-      baziElement: null,
       hasWarning: result.hasWarning,
       synthesisText: result.synthesisText,
       version: CURRENT_FORECAST_VERSION,
@@ -271,7 +270,6 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
   let arcanaNumber: number | null = null;
   let arcanaName: string | null = null;
   let hasWarning = false;
-  let affirmation: string | null = null;
 
   if (profileComplete) {
     const row = await getOrComputeToday(
@@ -284,11 +282,9 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
       user.birthTimezone,
     );
     if (row) {
-      const payload = row.payload as Pick<DailyForecastResult, "matrix">;
       arcanaNumber = row.arcanaNumber;
       arcanaName = row.arcanaName;
       hasWarning = row.hasWarning;
-      affirmation = payload.matrix?.affirmation ?? null;
     }
   }
 
@@ -324,7 +320,6 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
       arcanaNumber,
       arcanaName,
       hasWarning,
-      affirmation,
       upcomingBirthdaysCount,
       waterProgress: water?.actualValue ?? 0,
       waterTarget: water?.targetValue ?? 8,
