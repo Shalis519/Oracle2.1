@@ -6,6 +6,7 @@ import {
   ontologyThemesTable,
   ontologyEntityThemesTable,
   ontologyEntityProfilesTable,
+  ontologyEntityRelationsTable,
   type OntologyEntity,
   type OntologyTheme,
   type OntologyEntityTheme,
@@ -60,6 +61,15 @@ function serializeProfile(p: OntologyEntityProfile) {
     weaknesses: p.weaknesses,
     recommendations: p.recommendations,
     warnings: p.warnings,
+    lifeThemes: p.lifeThemes,
+    keyMeaningsArr: p.keyMeaningsArr,
+    positiveQualities: p.positiveQualities,
+    shadowQualities: p.shadowQualities,
+    positiveEmotions: p.positiveEmotions,
+    negativeEmotions: p.negativeEmotions,
+    strengthsArr: p.strengthsArr,
+    weaknessesArr: p.weaknessesArr,
+    archetypes: p.archetypes,
     createdAt: p.createdAt.toISOString(),
     updatedAt: p.updatedAt.toISOString(),
   };
@@ -246,6 +256,23 @@ router.put("/admin/ontology/entities/:id/profile", requireAuth, requireAdmin, as
   for (const f of textFields) {
     if (typeof body[f] === "string") updates[f] = body[f];
     if (body[f] === null) updates[f] = null;
+  }
+  const arrFields = [
+    "lifeThemes",
+    "keyMeaningsArr",
+    "positiveQualities",
+    "shadowQualities",
+    "positiveEmotions",
+    "negativeEmotions",
+    "strengthsArr",
+    "weaknessesArr",
+    "archetypes",
+  ] as const;
+  for (const f of arrFields) {
+    if (Array.isArray(body[f])) {
+      const arr = (body[f] as unknown[]).filter((x) => typeof x === "string") as string[];
+      updates[f] = arr;
+    }
   }
 
   const [existing] = await db
@@ -447,6 +474,131 @@ router.delete("/admin/ontology/entity-themes/:id", requireAuth, requireAdmin, as
     .where(eq(ontologyEntityThemesTable.id, id));
   if (result.rowCount === 0) {
     res.status(404).json({ error: "Link not found" });
+    return;
+  }
+  res.json({ success: true });
+});
+
+/* ─── Entity Relations ─── */
+
+router.get("/admin/ontology/entities/:id/relations", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  if (!id) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+  const [entity] = await db
+    .select()
+    .from(ontologyEntitiesTable)
+    .where(eq(ontologyEntitiesTable.id, id));
+  if (!entity) {
+    res.status(404).json({ error: "Entity not found" });
+    return;
+  }
+  const fromRels = await db
+    .select()
+    .from(ontologyEntityRelationsTable)
+    .where(eq(ontologyEntityRelationsTable.fromEntityId, id));
+  const toRels = await db
+    .select()
+    .from(ontologyEntityRelationsTable)
+    .where(eq(ontologyEntityRelationsTable.toEntityId, id));
+  const allIds = [...fromRels.map((r) => r.toEntityId), ...toRels.map((r) => r.fromEntityId)];
+  const related = allIds.length
+    ? await db
+        .select()
+        .from(ontologyEntitiesTable)
+        .where(inArray(ontologyEntitiesTable.id, [...new Set(allIds)]))
+    : [];
+  const entityMap = new Map(related.map((e: OntologyEntity) => [e.id, e]));
+  res.json({
+    from: fromRels.map((r) => ({
+      id: r.id,
+      relationType: r.relationType,
+      description: r.description,
+      weight: r.weight,
+      toEntity: entityMap.get(r.toEntityId) ? serializeEntity(entityMap.get(r.toEntityId)!) : null,
+    })),
+    to: toRels.map((r) => ({
+      id: r.id,
+      relationType: r.relationType,
+      description: r.description,
+      weight: r.weight,
+      fromEntity: entityMap.get(r.fromEntityId) ? serializeEntity(entityMap.get(r.fromEntityId)!) : null,
+    })),
+  });
+});
+
+router.post("/admin/ontology/entity-relations", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const body = req.body as Record<string, unknown>;
+  if (
+    typeof body.fromEntityId !== "number" ||
+    typeof body.toEntityId !== "number" ||
+    typeof body.relationType !== "string"
+  ) {
+    res.status(400).json({ error: "Missing fromEntityId, toEntityId, or relationType" });
+    return;
+  }
+  try {
+    const [row] = await db
+      .insert(ontologyEntityRelationsTable)
+      .values({
+        fromEntityId: body.fromEntityId,
+        toEntityId: body.toEntityId,
+        relationType: body.relationType,
+        description: typeof body.description === "string" ? body.description : null,
+        weight: typeof body.weight === "number" ? body.weight : 1.0,
+      })
+      .returning();
+    res.status(201).json(row);
+  } catch (e: any) {
+    if (e.message?.includes("unique constraint")) {
+      res.status(409).json({ error: "This relation already exists" });
+      return;
+    }
+    if (e.message?.includes("foreign key constraint")) {
+      res.status(400).json({ error: "Invalid entity reference" });
+      return;
+    }
+    throw e;
+  }
+});
+
+router.patch("/admin/ontology/entity-relations/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  if (!id) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+  const body = req.body as Record<string, unknown>;
+  const updates: Partial<typeof ontologyEntityRelationsTable.$inferInsert> = {};
+  if (typeof body.relationType === "string") updates.relationType = body.relationType;
+  if (typeof body.description === "string") updates.description = body.description;
+  if (typeof body.weight === "number") updates.weight = body.weight;
+
+  const [row] = await db
+    .update(ontologyEntityRelationsTable)
+    .set({ ...updates, updatedAt: new Date() })
+    .where(eq(ontologyEntityRelationsTable.id, id))
+    .returning();
+  if (!row) {
+    res.status(404).json({ error: "Relation not found" });
+    return;
+  }
+  res.json(row);
+});
+
+router.delete("/admin/ontology/entity-relations/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  if (!id) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+  const result = await db
+    .delete(ontologyEntityRelationsTable)
+    .where(eq(ontologyEntityRelationsTable.id, id));
+  if (result.rowCount === 0) {
+    res.status(404).json({ error: "Relation not found" });
     return;
   }
   res.json({ success: true });

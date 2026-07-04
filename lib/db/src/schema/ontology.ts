@@ -6,6 +6,7 @@ import {
   real,
   timestamp,
   uniqueIndex,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
@@ -71,6 +72,15 @@ export const ontologyEntityProfilesTable = pgTable(
     weaknesses: text("weaknesses"),
     recommendations: text("recommendations"),
     warnings: text("warnings"),
+    lifeThemes: jsonb("life_themes").$type<string[]>().notNull().default([]),
+    keyMeaningsArr: jsonb("key_meanings_arr").$type<string[]>().notNull().default([]),
+    positiveQualities: jsonb("positive_qualities").$type<string[]>().notNull().default([]),
+    shadowQualities: jsonb("shadow_qualities").$type<string[]>().notNull().default([]),
+    positiveEmotions: jsonb("positive_emotions").$type<string[]>().notNull().default([]),
+    negativeEmotions: jsonb("negative_emotions").$type<string[]>().notNull().default([]),
+    strengthsArr: jsonb("strengths_arr").$type<string[]>().notNull().default([]),
+    weaknessesArr: jsonb("weaknesses_arr").$type<string[]>().notNull().default([]),
+    archetypes: jsonb("archetypes").$type<string[]>().notNull().default([]),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -78,6 +88,35 @@ export const ontologyEntityProfilesTable = pgTable(
       .notNull()
       .defaultNow(),
   },
+);
+
+export const ontologyEntityRelationsTable = pgTable(
+  "ontology_entity_relations",
+  {
+    id: serial("id").primaryKey(),
+    fromEntityId: integer("from_entity_id")
+      .notNull()
+      .references(() => ontologyEntitiesTable.id, { onDelete: "cascade" }),
+    toEntityId: integer("to_entity_id")
+      .notNull()
+      .references(() => ontologyEntitiesTable.id, { onDelete: "cascade" }),
+    relationType: text("relation_type").notNull(),
+    description: text("description"),
+    weight: real("weight").notNull().default(1.0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("entity_relation_unique").on(
+      table.fromEntityId,
+      table.toEntityId,
+      table.relationType,
+    ),
+  ],
 );
 
 export const insertOntologyEntitySchema = createInsertSchema(
