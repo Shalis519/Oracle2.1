@@ -1064,7 +1064,7 @@ function houseToLifeArea(house: number): string {
 function aspectNameRu(type: string): string {
   switch (type.toLowerCase()) {
     case "conjunction": return "соединение";
-    case "trine": return "тригон";
+    case "trine": return "тргон";
     case "sextile": return "секстиль";
     case "square": return "квадрат";
     case "opposition": return "оппозиция";
@@ -1072,47 +1072,113 @@ function aspectNameRu(type: string): string {
   }
 }
 
+/** Prepositional case for aspect names: "в тргоне", "в квадрате" etc. */
+function aspectPrepRu(type: string): string {
+  switch (type.toLowerCase()) {
+    case "conjunction": return "в соединении";
+    case "trine": return "в тргоне";
+    case "sextile": return "в секстиле";
+    case "square": return "в квадрате";
+    case "opposition": return "в оппозиции";
+    default: return type;
+  }
+}
+
+/** Instrumental case for body names when used as object. */
+function bodyInstrumental(name: string): string {
+  const map: Record<string, string> = {
+    "северный узел": "Северным узлом",
+    "южный узел": "Южным узлом",
+    "хирон": "Хироном",
+    "плутон": "Плутоном",
+    "нептун": "Нептуном",
+    "уран": "Ураном",
+    "сатурн": "Сатурном",
+    "юпитер": "Юпитером",
+    "марс": "Марсом",
+    "венера": "Венерой",
+    "меркурий": "Меркурием",
+    "луна": "Луной",
+    "солнце": "Солнцем",
+  };
+  return map[name.toLowerCase()] ?? name;
+}
+
 function buildTransitSentences(
   transits: import("./astrology").TransitAspect[],
 ): string[] {
+  if (transits.length === 0) return [];
+
   const out: string[] = [];
+
+  // Group by duration band (same rough period)
+  const groups: Map<string, typeof transits> = new Map();
   for (const t of transits) {
-    const duration = transitToDurationText(t.durationDays, t.transitBody);
-    const area = t.house ? houseToLifeArea(t.house) : "вашей жизни";
-    let tone: string;
-    switch (t.typeKey) {
-      case "conjunction":
-        tone = `энергия концентрируется в ${area}`;
-        break;
-      case "trine":
-        tone = `естественный поток помогает в ${area}`;
-        break;
-      case "sextile":
-        tone = `появляется шанс в ${area}`;
-        break;
-      case "square":
-        tone = `напряжение требует внимания к ${area}`;
-        break;
-      case "opposition":
-        tone = `внутренний баланс испытывается через ${area}`;
-        break;
-      default:
-        tone = `влияние на ${area}`;
-    }
-    out.push(
-      `${t.transitBody} в аспекте ${aspectNameRu(t.typeKey)} с ${t.natalBody.toLowerCase()} — ${tone} (${duration}).`,
-    );
+    const band = t.durationDays <= 2 ? "short" : t.durationDays <= 7 ? "week" : "long";
+    const list = groups.get(band) ?? [];
+    list.push(t);
+    groups.set(band, list);
   }
+
+  for (const [, items] of groups) {
+    if (items.length === 0) continue;
+
+    const phrases = items.map((t) => {
+      const aspectPhrase = aspectPrepRu(t.typeKey);
+      const natalObj = bodyInstrumental(t.natalBody.toLowerCase());
+      const area = t.house ? houseToLifeArea(t.house) : "вашей жизни";
+      let verb: string;
+      switch (t.typeKey) {
+        case "conjunction":
+          verb = `концентрирует энергию в ${area}`;
+          break;
+        case "trine":
+          verb = `открывает естественный поток в ${area}`;
+          break;
+        case "sextile":
+          verb = `даёт шанс в ${area}`;
+          break;
+        case "square":
+          verb = `создаёт напряжение в ${area}`;
+          break;
+        case "opposition":
+          verb = `проверяет баланс в ${area}`;
+          break;
+        default:
+          verb = `влияет на ${area}`;
+      }
+      // Special phrasing for conjunction: "Солнце в соединении с Марсом"
+      if (t.typeKey === "conjunction") {
+        return `${t.transitBody} ${aspectPhrase} ${natalObj} ${verb}`;
+      }
+      // Opposition: "Луна противостоит Северному узлу"
+      if (t.typeKey === "opposition") {
+        return `${t.transitBody} противостоит ${natalObj} — ${verb}`;
+      }
+      return `${t.transitBody} ${aspectPhrase} ${natalObj} ${verb}`;
+    });
+
+    if (phrases.length === 1) {
+      out.push(phrases[0] + ".");
+    } else {
+      const last = phrases.pop()!;
+      out.push(phrases.join("— ") + ` а также ${last}.`);
+    }
+  }
+
+  // Add duration summary once at the end
+  const durations = [...new Set(transits.map((t) => transitToDurationText(t.durationDays, t.transitBody)))];
+  if (durations.length === 1) {
+    out[out.length - 1] = out[out.length - 1].replace(/\.$/, ` ${durations[0]}.`);
+  } else if (durations.length <= 3) {
+    out.push(`Эти влияния актуальны ${durations.join("а также ")}.`);
+  }
+
   return out;
 }
 
 function buildArcanaSentences(arcana: ArcanaData): string[] {
-  const out: string[] = [];
-  out.push(arcana.essence);
-  if (arcana.pros.length > 0) {
-    out.push(`Поддержите себя: ${arcana.affirmation}`);
-  }
-  return out;
+  return [arcana.essence];
 }
 
 export function buildSynthesisText(
