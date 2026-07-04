@@ -63,6 +63,8 @@ function buildForecast(
   };
 }
 
+const CURRENT_FORECAST_VERSION = 2;
+
 async function getOrComputeToday(
   userId: number,
   birthDate: string | null,
@@ -77,7 +79,18 @@ async function getOrComputeToday(
     .select()
     .from(forecastsTable)
     .where(and(eq(forecastsTable.userId, userId), eq(forecastsTable.date, date)));
-  if (existing) return existing;
+
+  // Invalidate stale forecasts (older format without transits, etc.)
+  if (existing && (existing.version ?? 1) >= CURRENT_FORECAST_VERSION) {
+    return existing;
+  }
+
+  // Delete stale forecast so it gets regenerated
+  if (existing) {
+    await db
+      .delete(forecastsTable)
+      .where(and(eq(forecastsTable.userId, userId), eq(forecastsTable.date, date)));
+  }
 
   if (!birthDate || birthLatitude == null || birthLongitude == null) return null;
 

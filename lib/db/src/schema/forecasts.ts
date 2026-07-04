@@ -21,6 +21,7 @@ export const forecastsTable = pgTable("daily_forecasts", {
   hasWarning: boolean("has_warning").notNull().default(false),
   synthesisText: text("synthesis_text").notNull(),
   payload: jsonb("payload").notNull(),
+  version: integer("version").notNull().default(1),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
