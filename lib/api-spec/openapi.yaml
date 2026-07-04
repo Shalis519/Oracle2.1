@@ -849,7 +849,7 @@ components:
 
     Profile:
       type: object
-      required: [id, name, notificationsEnabled, createdAt]
+      required: [id, name, notificationsEnabled, role, createdAt]
       properties:
         id:
           type: integer
@@ -883,6 +883,8 @@ components:
           type: ["string", "null"]
         notificationsEnabled:
           type: boolean
+        role:
+          type: string
         createdAt:
           type: string
 

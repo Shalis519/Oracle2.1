@@ -586,8 +586,8 @@ export default function AdminStudioPage() {
       return false;
     }
   })();
-  const [isAdmin, setIsAdmin] = useState(cachedAdmin);
-  const [adminCheckLoading, setAdminCheckLoading] = useState(!cachedAdmin);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminCheckLoading, setAdminCheckLoading] = useState(true);
   const [reseedLoading, setReseedLoading] = useState(false);
 
   useEffect(() => {

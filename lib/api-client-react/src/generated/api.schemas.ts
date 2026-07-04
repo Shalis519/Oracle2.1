@@ -72,6 +72,7 @@ export interface Profile {
   /** @nullable */
   avatarType?: string | null;
   notificationsEnabled: boolean;
+  role: string;
   createdAt: string;
 }
 

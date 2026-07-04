@@ -37,6 +37,7 @@ export const GetProfileResponse = zod.object({
   "bedDirection": zod.string().nullish(),
   "avatarType": zod.string().nullish(),
   "notificationsEnabled": zod.boolean(),
+  "role": zod.string(),
   "createdAt": zod.string()
 })
 
@@ -79,6 +80,7 @@ export const UpdateProfileResponse = zod.object({
   "bedDirection": zod.string().nullish(),
   "avatarType": zod.string().nullish(),
   "notificationsEnabled": zod.boolean(),
+  "role": zod.string(),
   "createdAt": zod.string()
 })
 
