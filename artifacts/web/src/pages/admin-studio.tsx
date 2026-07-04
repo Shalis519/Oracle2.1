@@ -844,46 +844,84 @@ export default function AdminStudioPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <AnimatePresence>
-              {entities.map((e) => (
-                <motion.div key={e.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}>
-                  <Card className="cursor-pointer hover:border-primary/40 transition-colors group">
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg font-serif flex items-center gap-2">
-                          {e.symbol ? <span className="text-xl">{e.symbol}</span> : <Sparkles className="w-5 h-5 text-primary" />}
-                          {e.name}
-                        </CardTitle>
-                        {isAdmin && (
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button variant="ghost" size="icon" onClick={(ev) => { ev.stopPropagation(); setEditingEntity(e); }}>
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(ev) => { ev.stopPropagation(); handleDeleteEntity(e.id); }}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        )}
+          {(() => {
+            const typeOrder = ["planet", "sign", "house", "aspect"] as const;
+            const typeLabels: Record<string, string> = {
+              planet: "Планеты",
+              sign: "Знаки зодиака",
+              house: "Дома",
+              aspect: "Аспекты",
+            };
+            const q = search.trim().toLowerCase();
+            const filtered = q
+              ? entities.filter((e) =>
+                  e.name.toLowerCase().includes(q) ||
+                  e.code.toLowerCase().includes(q) ||
+                  e.type.toLowerCase().includes(q)
+                )
+              : entities;
+            const byType = new Map<string, Entity[]>();
+            for (const t of typeOrder) byType.set(t, []);
+            for (const e of filtered) {
+              const arr = byType.get(e.type) ?? [];
+              arr.push(e);
+              byType.set(e.type, arr);
+            }
+            return (
+              <div className="space-y-8">
+                {typeOrder.map((type) => {
+                  const list = byType.get(type) ?? [];
+                  if (list.length === 0) return null;
+                  return (
+                    <div key={type}>
+                      <h3 className="text-lg font-serif font-semibold mb-3 flex items-center gap-2">
+                        <Badge variant="secondary">{typeLabels[type] ?? type}</Badge>
+                        <span className="text-sm font-normal text-muted-foreground">({list.length})</span>
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <AnimatePresence>
+                          {list.map((e) => (
+                            <motion.div key={e.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}>
+                              <Card className="cursor-pointer hover:border-primary/40 transition-colors group">
+                                <CardHeader className="pb-2">
+                                  <div className="flex items-center justify-between">
+                                    <CardTitle className="text-lg font-serif flex items-center gap-2">
+                                      {e.symbol ? <span className="text-xl">{e.symbol}</span> : <Sparkles className="w-5 h-5 text-primary" />}
+                                      {e.name}
+                                    </CardTitle>
+                                    {isAdmin && (
+                                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Button variant="ghost" size="icon" onClick={(ev) => { ev.stopPropagation(); setEditingEntity(e); }}>
+                                          <Pencil className="w-4 h-4" />
+                                        </Button>
+                                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(ev) => { ev.stopPropagation(); handleDeleteEntity(e.id); }}>
+                                          <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                      </div>
+                                    )}
+                                  </div>
+                                </CardHeader>
+                                <CardContent onClick={() => loadDetail(e.id)}>
+                                  <div className="flex flex-wrap gap-2 text-xs">
+                                    <Badge variant="outline">{e.type}</Badge>
+                                    <Badge variant="outline" className="font-mono">{e.code}</Badge>
+                                  </div>
+                                  <p className="text-xs text-muted-foreground mt-2">Кликните для профиля и связей</p>
+                                </CardContent>
+                              </Card>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
                       </div>
-                    </CardHeader>
-                    <CardContent onClick={() => loadDetail(e.id)}>
-                      <div className="flex flex-wrap gap-2 text-xs">
-                        <Badge variant="secondary">{e.system}</Badge>
-                        <Badge variant="outline">{e.type}</Badge>
-                        <Badge variant="outline" className="font-mono">{e.code}</Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-2">Кликните для редактирования профиля</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-
-          {entities.length === 0 && !loading && (
-            <div className="text-center py-20 text-muted-foreground">Нет сущностей. Создайте первую.</div>
-          )}
+                    </div>
+                  );
+                })}
+                {filtered.length === 0 && !loading && (
+                  <div className="text-center py-20 text-muted-foreground">Ничего не найдено.</div>
+                )}
+              </div>
+            );
+          })()}
         </TabsContent>
 
         <TabsContent value="themes" className="space-y-6">
