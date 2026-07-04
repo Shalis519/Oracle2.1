@@ -1268,7 +1268,8 @@ function buildTransitSentences(
     const gender = bodyGender(t.transitBody);
     const transitPrefix = gender === "жен" ? "Транзитная " : gender === "сред" ? "Транзитное " : "Транзитный ";
     const retroPrefix = gender === "жен" ? "Ретроградная " : gender === "сред" ? "Ретроградное " : "Ретроградный ";
-    const retroTag = t.transitRetrograde ? retroPrefix : "";
+    const neverRetro = new Set(["солнце", "луна", "северный узел", "южный узел"]);
+    const retroTag = t.transitRetrograde && !neverRetro.has(t.transitBody.toLowerCase()) ? retroPrefix : "";
     const natalLoc = t.natalHouse
       ? ` в ${t.natalHouse} доме`
       : "";
