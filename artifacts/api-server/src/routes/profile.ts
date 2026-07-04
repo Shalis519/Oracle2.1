@@ -76,8 +76,9 @@ router.put("/profile", requireAuth, async (req, res): Promise<void> => {
 });
 
 router.post("/profile/make-admin", requireAuth, async (req, res): Promise<void> => {
-  if (req.localUser!.role === "admin") {
-    res.status(409).json({ error: "Already admin" });
+  const user = req.localUser!;
+  if (user.role === "admin") {
+    res.json(serialize(user));
     return;
   }
   const body = req.body as Record<string, unknown>;
@@ -89,7 +90,7 @@ router.post("/profile/make-admin", requireAuth, async (req, res): Promise<void> 
   const [updated] = await db
     .update(usersTable)
     .set({ role: "admin" })
-    .where(eq(usersTable.id, req.localUser!.id))
+    .where(eq(usersTable.id, user.id))
     .returning();
   res.json(serialize(updated));
 });
