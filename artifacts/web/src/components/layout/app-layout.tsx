@@ -20,7 +20,7 @@ import {
   Sparkles,
   BrainCircuit
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -36,6 +36,15 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const { signOut, openUserProfile } = useClerk();
   const { user } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    fetch(`${base}/api/profile`, { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setIsAdmin(data?.role === "admin"))
+      .catch(() => setIsAdmin(false));
+  }, []);
 
   const navItems = [
     { href: "/dashboard", label: "Оракул дня", icon: LayoutDashboard },
@@ -50,7 +59,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     { href: "/contacts", label: "Контакты", icon: Users },
     { href: "/habits", label: "Трекер привычек", icon: ListTodo },
     { href: "/travel", label: "Карта путешествий", icon: MapIcon },
-    { href: "/admin/studio", label: "Oracle Studio", icon: BrainCircuit },
+    ...(isAdmin ? [{ href: "/admin/studio", label: "Oracle Studio", icon: BrainCircuit }] : []),
   ];
 
   const NavLinks = () => (
