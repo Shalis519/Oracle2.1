@@ -72,4 +72,17 @@ router.put("/profile", requireAuth, async (req, res): Promise<void> => {
   res.json(UpdateProfileResponse.parse(serialize(updated)));
 });
 
+router.post("/profile/make-admin", requireAuth, async (req, res): Promise<void> => {
+  if (req.localUser!.role === "admin") {
+    res.status(409).json({ error: "Already admin" });
+    return;
+  }
+  const [updated] = await db
+    .update(usersTable)
+    .set({ role: "admin" })
+    .where(eq(usersTable.id, req.localUser!.id))
+    .returning();
+  res.json(serialize(updated));
+});
+
 export default router;

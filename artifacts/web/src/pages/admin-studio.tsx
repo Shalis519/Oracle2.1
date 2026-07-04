@@ -463,9 +463,25 @@ export default function AdminStudioPage() {
       <div className="p-10 max-w-xl mx-auto text-center space-y-4">
         <h1 className="text-2xl font-serif">Доступ ограничен</h1>
         <p className="text-muted-foreground">Эта страница доступна только администраторам.</p>
-        <Link href="/dashboard">
-          <Button>Вернуться на главную</Button>
-        </Link>
+        <div className="flex gap-3 justify-center">
+          <Button
+            variant="outline"
+            onClick={async () => {
+              const res = await apiFetch("/profile/make-admin", { method: "POST" });
+              if (res.ok) {
+                setIsAdmin(true);
+                toast({ title: "Вы теперь администратор" });
+              } else {
+                toast({ title: "Не удалось", variant: "destructive" });
+              }
+            }}
+          >
+            Стать администратором
+          </Button>
+          <Link href="/dashboard">
+            <Button variant="ghost">Вернуться на главную</Button>
+          </Link>
+        </div>
       </div>
     );
   }
