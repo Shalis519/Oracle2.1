@@ -34,6 +34,7 @@ export * from './familyConnectionInput';
 export * from './feedback';
 export * from './feedbackInput';
 export * from './fengShuiInfo';
+export * from './forecastMatrix';
 export * from './getNatalChart400';
 export * from './healthStatus';
 export * from './hourInterval';

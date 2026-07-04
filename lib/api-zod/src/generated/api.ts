@@ -243,16 +243,7 @@ export const GetTodayForecastResponse = zod.object({
   "matrix": zod.object({
   "number": zod.number(),
   "name": zod.string(),
-  "essence": zod.string(),
-  "pros": zod.array(zod.string()),
-  "cons": zod.array(zod.string()),
-  "herbs": zod.array(zod.string()),
-  "oils": zod.array(zod.string()),
-  "cocktail": zod.string(),
-  "affirmation": zod.string(),
-  "health": zod.string(),
-  "energyChannels": zod.string(),
-  "nutrition": zod.string()
+  "essence": zod.string()
 }),
   "transits": zod.array(zod.object({
   "transitBody": zod.string().optional(),
@@ -302,16 +293,7 @@ export const ListForecastsResponseItem = zod.object({
   "matrix": zod.object({
   "number": zod.number(),
   "name": zod.string(),
-  "essence": zod.string(),
-  "pros": zod.array(zod.string()),
-  "cons": zod.array(zod.string()),
-  "herbs": zod.array(zod.string()),
-  "oils": zod.array(zod.string()),
-  "cocktail": zod.string(),
-  "affirmation": zod.string(),
-  "health": zod.string(),
-  "energyChannels": zod.string(),
-  "nutrition": zod.string()
+  "essence": zod.string()
 }),
   "transits": zod.array(zod.object({
   "transitBody": zod.string().optional(),

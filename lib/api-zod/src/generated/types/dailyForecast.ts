@@ -5,9 +5,9 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
-import type { ArcanaDetail } from './arcanaDetail';
 import type { DailyForecastTransitsItem } from './dailyForecastTransitsItem';
 import type { Feedback } from './feedback';
+import type { ForecastMatrix } from './forecastMatrix';
 
 export interface DailyForecast {
   id: number;
@@ -16,7 +16,7 @@ export interface DailyForecast {
   arcanaName: string;
   hasWarning: boolean;
   synthesisText: string;
-  matrix: ArcanaDetail;
+  matrix: ForecastMatrix;
   transits?: DailyForecastTransitsItem[];
   conflicts: string[];
   warnings: string[];

@@ -14,8 +14,6 @@ export interface Dashboard {
   /** @nullable */
   arcanaName?: string | null;
   hasWarning?: boolean;
-  /** @nullable */
-  affirmation?: string | null;
   upcomingBirthdaysCount: number;
   waterProgress: number;
   waterTarget: number;

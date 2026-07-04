@@ -1095,6 +1095,17 @@ components:
         nutrition:
           type: string
 
+    ForecastMatrix:
+      type: object
+      required: [number, name, essence]
+      properties:
+        number:
+          type: integer
+        name:
+          type: string
+        essence:
+          type: string
+
     BaziPillar:
       type: object
       required: [name, heavenlyStem, earthlyBranch, element]
@@ -1770,7 +1781,7 @@ components:
         synthesisText:
           type: string
         matrix:
-          $ref: "#/components/schemas/ArcanaDetail"
+          $ref: "#/components/schemas/ForecastMatrix"
         transits:
           type: array
           items:

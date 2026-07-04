@@ -1017,12 +1017,18 @@ export interface TransitSummary {
   durationDays: number;
 }
 
+export interface ForecastMatrix {
+  number: number;
+  name: string;
+  essence: string;
+}
+
 export interface DailyForecastResult {
   arcanaNumber: number;
   arcanaName: string;
   hasWarning: boolean;
   synthesisText: string;
-  matrix: ArcanaData;
+  matrix: ForecastMatrix;
   transits: TransitSummary[];
   conflicts: string[];
   warnings: string[];
@@ -1064,7 +1070,7 @@ function houseToLifeArea(house: number): string {
 function aspectNameRu(type: string): string {
   switch (type.toLowerCase()) {
     case "conjunction": return "соединение";
-    case "trine": return "тргон";
+    case "trine": return "тригон";
     case "sextile": return "секстиль";
     case "square": return "квадрат";
     case "opposition": return "оппозиция";
@@ -1072,11 +1078,11 @@ function aspectNameRu(type: string): string {
   }
 }
 
-/** Prepositional case for aspect names: "в тргоне", "в квадрате" etc. */
+/** Prepositional case for aspect names: "в тригоне", "в квадрате" etc. */
 function aspectPrepRu(type: string): string {
   switch (type.toLowerCase()) {
     case "conjunction": return "в соединении";
-    case "trine": return "в тргоне";
+    case "trine": return "в тригоне";
     case "sextile": return "в секстиле";
     case "square": return "в квадрате";
     case "opposition": return "в оппозиции";
@@ -1326,7 +1332,7 @@ export function computeDailyForecast(
     arcanaName: arcana.name,
     hasWarning,
     synthesisText,
-    matrix: arcana,
+    matrix: { number: arcana.number, name: arcana.name, essence: arcana.essence },
     transits: transitSummary,
     conflicts,
     warnings,

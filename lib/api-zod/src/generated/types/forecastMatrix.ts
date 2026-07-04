@@ -6,16 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface ArcanaDetail {
+export interface ForecastMatrix {
   number: number;
   name: string;
   essence: string;
-  pros: string[];
-  cons: string[];
-  herbs: string[];
-  oils: string[];
-  cocktail: string;
-  health: string;
-  energyChannels: string;
-  nutrition: string;
 }

@@ -199,10 +199,15 @@ export interface ArcanaDetail {
   herbs: string[];
   oils: string[];
   cocktail: string;
-  affirmation: string;
   health: string;
   energyChannels: string;
   nutrition: string;
+}
+
+export interface ForecastMatrix {
+  number: number;
+  name: string;
+  essence: string;
 }
 
 export interface BaziPillar {
@@ -500,7 +505,7 @@ export interface DailyForecast {
   arcanaName: string;
   hasWarning: boolean;
   synthesisText: string;
-  matrix: ArcanaDetail;
+  matrix: ForecastMatrix;
   transits?: DailyForecastTransitsItem[];
   conflicts: string[];
   warnings: string[];
@@ -729,8 +734,6 @@ export interface Dashboard {
   /** @nullable */
   arcanaName?: string | null;
   hasWarning?: boolean;
-  /** @nullable */
-  affirmation?: string | null;
   upcomingBirthdaysCount: number;
   waterProgress: number;
   waterTarget: number;
