@@ -845,12 +845,13 @@ export default function AdminStudioPage() {
           </div>
 
           {(() => {
-            const typeOrder = ["planet", "sign", "house", "aspect"] as const;
+            const typeOrder = ["planet", "sign", "house", "aspect", "arcana"] as const;
             const typeLabels: Record<string, string> = {
               planet: "Планеты",
               sign: "Знаки зодиака",
               house: "Дома",
               aspect: "Аспекты",
+              arcana: "Арканы",
             };
             const q = search.trim().toLowerCase();
             const filtered = q
