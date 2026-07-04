@@ -13,7 +13,8 @@ declare global {
   }
 }
 
-/** JIT-provision a local user row keyed by the Clerk user id. */
+/** JIT-provision a local user row keyed by the Clerk user id.
+ *  If no admin exists in the system, the first user becomes admin. */
 export async function getOrCreateUser(clerkUserId: string): Promise<User> {
   const [existing] = await db
     .select()
@@ -21,9 +22,16 @@ export async function getOrCreateUser(clerkUserId: string): Promise<User> {
     .where(eq(usersTable.clerkUserId, clerkUserId));
   if (existing) return existing;
 
+  const [anyAdmin] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.role, "admin"))
+    .limit(1);
+  const role = anyAdmin ? "user" : "admin";
+
   const [created] = await db
     .insert(usersTable)
-    .values({ clerkUserId })
+    .values({ clerkUserId, role })
     .onConflictDoNothing({ target: usersTable.clerkUserId })
     .returning();
 

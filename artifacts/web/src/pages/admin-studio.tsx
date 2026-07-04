@@ -295,12 +295,14 @@ export default function AdminStudioPage() {
   const [detailProfile, setDetailProfile] = useState<Profile | null>(null);
   const [detailLinks, setDetailLinks] = useState<EntityThemeLink[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const isAdmin =
-    user?.emailAddresses?.some(
-      (e) => e.emailAddress?.endsWith("@replit.dev") ||
-            e.emailAddress === "admin@aether-oracle.ru"
-    ) ?? false;
+  useEffect(() => {
+    apiFetch("/profile")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setIsAdmin(data?.role === "admin"))
+      .catch(() => setIsAdmin(false));
+  }, []);
 
   const loadEntities = useCallback(async () => {
     const res = await apiFetch(`/admin/ontology/entities?search=${encodeURIComponent(search)}`);

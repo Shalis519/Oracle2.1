@@ -27,6 +27,7 @@ function serialize(user: {
   bedDirection: string | null;
   avatarType: string | null;
   notificationsEnabled: boolean;
+  role: string;
   createdAt: Date;
 }) {
   return {
@@ -46,6 +47,7 @@ function serialize(user: {
     bedDirection: user.bedDirection,
     avatarType: user.avatarType,
     notificationsEnabled: user.notificationsEnabled,
+    role: user.role,
     createdAt: user.createdAt.toISOString(),
   };
 }
