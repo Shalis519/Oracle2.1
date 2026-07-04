@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { seedOntology } from "./lib/seedOntology";
 
 const rawPort = process.env["PORT"];
 
@@ -14,6 +15,11 @@ const port = Number(rawPort);
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
+
+// Auto-seed ontology data on startup if tables are empty
+seedOntology().catch((err) => {
+  logger.error({ err }, "Ontology seed failed");
+});
 
 app.listen(port, (err) => {
   if (err) {

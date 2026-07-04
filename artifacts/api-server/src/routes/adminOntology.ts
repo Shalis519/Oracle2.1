@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq, or, inArray, ilike } from "drizzle-orm";
 import {
   db,
+  pool,
   ontologyEntitiesTable,
   ontologyThemesTable,
   ontologyEntityThemesTable,
@@ -13,6 +14,8 @@ import {
   type OntologyEntityProfile,
 } from "@workspace/db";
 import { requireAuth, requireAdmin } from "../lib/auth";
+import { seedOntology } from "../lib/seedOntology";
+import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
@@ -77,7 +80,7 @@ function serializeProfile(p: OntologyEntityProfile) {
 
 /* ─── Entities ─── */
 
-router.get("/admin/ontology/entities", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities", requireAuth, async (req, res): Promise<void> => {
   const search = typeof req.query.search === "string" ? req.query.search : "";
   const rows = await db
     .select()
@@ -94,7 +97,7 @@ router.get("/admin/ontology/entities", requireAuth, requireAdmin, async (req, re
   res.json({ entities: rows.map(serializeEntity) });
 });
 
-router.get("/admin/ontology/entities/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities/:id", requireAuth, async (req, res): Promise<void> => {
   const id = Number(req.params.id);
   if (!id) {
     res.status(400).json({ error: "Invalid id" });
@@ -218,7 +221,7 @@ router.delete("/admin/ontology/entities/:id", requireAuth, requireAdmin, async (
 
 /* ─── Entity Profile ─── */
 
-router.get("/admin/ontology/entities/:id/profile", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities/:id/profile", requireAuth, async (req, res): Promise<void> => {
   const id = Number(req.params.id);
   if (!id) {
     res.status(400).json({ error: "Invalid id" });
@@ -304,7 +307,7 @@ router.put("/admin/ontology/entities/:id/profile", requireAuth, requireAdmin, as
 
 /* ─── Themes ─── */
 
-router.get("/admin/ontology/themes", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
+router.get("/admin/ontology/themes", requireAuth, async (_req, res): Promise<void> => {
   const rows = await db
     .select()
     .from(ontologyThemesTable)
@@ -383,7 +386,7 @@ router.delete("/admin/ontology/themes/:id", requireAuth, requireAdmin, async (re
 
 /* ─── Entity-Theme Links ─── */
 
-router.get("/admin/ontology/entities/:id/themes", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities/:id/themes", requireAuth, async (req, res): Promise<void> => {
   const id = Number(req.params.id);
   if (!id) {
     res.status(400).json({ error: "Invalid id" });
@@ -481,7 +484,7 @@ router.delete("/admin/ontology/entity-themes/:id", requireAuth, requireAdmin, as
 
 /* ─── Entity Relations ─── */
 
-router.get("/admin/ontology/entities/:id/relations", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities/:id/relations", requireAuth, async (req, res): Promise<void> => {
   const id = Number(req.params.id);
   if (!id) {
     res.status(400).json({ error: "Invalid id" });
@@ -602,6 +605,40 @@ router.delete("/admin/ontology/entity-relations/:id", requireAuth, requireAdmin,
     return;
   }
   res.json({ success: true });
+});
+
+/* ─── Reseed ─── */
+
+router.post("/admin/ontology/reseed", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query("SELECT pg_advisory_lock(424242)");
+
+    await client.query("DELETE FROM ontology_entity_relations");
+    await client.query("DELETE FROM ontology_entity_themes");
+    await client.query("DELETE FROM ontology_entity_profiles");
+    await client.query("DELETE FROM ontology_entities");
+    await client.query("DELETE FROM ontology_themes");
+
+    // NOTE: seedOntology() uses the shared db instance, which may be separate from
+    // our transaction. We commit the wipe first, then seed (simpler than rewriting seedOntology).
+    await client.query("COMMIT");
+    await client.query("SELECT pg_advisory_unlock(424242)");
+
+    await seedOntology();
+
+    res.json({ success: true, message: "Ontology reseeded" });
+    return;
+  } catch (err: unknown) {
+    await client.query("ROLLBACK").catch(() => {});
+    await client.query("SELECT pg_advisory_unlock(424242)").catch(() => {});
+    logger.error(err, "Reseed failed");
+    res.status(500).json({ error: "Reseed failed" });
+    return;
+  } finally {
+    client.release();
+  }
 });
 
 export default router;

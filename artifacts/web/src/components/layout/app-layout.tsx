@@ -59,7 +59,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     { href: "/contacts", label: "Контакты", icon: Users },
     { href: "/habits", label: "Трекер привычек", icon: ListTodo },
     { href: "/travel", label: "Карта путешествий", icon: MapIcon },
-    ...(isAdmin ? [{ href: "/admin/studio", label: "Oracle Studio", icon: BrainCircuit }] : []),
+    { href: "/admin/studio", label: "Oracle Studio", icon: BrainCircuit },
   ];
 
   const NavLinks = () => (

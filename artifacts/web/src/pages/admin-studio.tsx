@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useUser } from "@clerk/react";
+import { useAuth } from "@clerk/react";
 import { Link } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ import {
   Sparkles,
   Link2,
   XCircle,
+  RefreshCw,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -530,7 +531,7 @@ function AddRelationForm({
 /* ─── Main Page ─── */
 
 export default function AdminStudioPage() {
-  const { user } = useUser();
+  const { isLoaded, isSignedIn } = useAuth();
   const { toast } = useToast();
 
   const [tab, setTab] = useState("entities");
@@ -546,14 +547,38 @@ export default function AdminStudioPage() {
   const [detailLinks, setDetailLinks] = useState<EntityThemeLink[]>([]);
   const [detailRelations, setDetailRelations] = useState<{ from: EntityRelation[]; to: EntityRelation[] }>({ from: [], to: [] });
   const [loading, setLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const cachedAdmin = (() => {
+    try {
+      return localStorage.getItem("aether_is_admin") === "true";
+    } catch {
+      return false;
+    }
+  })();
+  const [isAdmin, setIsAdmin] = useState(cachedAdmin);
+  const [adminCheckLoading, setAdminCheckLoading] = useState(!cachedAdmin);
+  const [reseedLoading, setReseedLoading] = useState(false);
 
   useEffect(() => {
+    if (!isLoaded) return;
+    if (!isSignedIn) {
+      setIsAdmin(false);
+      try { localStorage.setItem("aether_is_admin", "false"); } catch {}
+      setAdminCheckLoading(false);
+      return;
+    }
     apiFetch("/profile")
       .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setIsAdmin(data?.role === "admin"))
-      .catch(() => setIsAdmin(false));
-  }, []);
+      .then((data) => {
+        const admin = data?.role === "admin";
+        setIsAdmin(admin);
+        try { localStorage.setItem("aether_is_admin", String(admin)); } catch {}
+      })
+      .catch(() => {
+        setIsAdmin(false);
+        try { localStorage.setItem("aether_is_admin", "false"); } catch {}
+      })
+      .finally(() => setAdminCheckLoading(false));
+  }, [isLoaded, isSignedIn]);
 
   const loadEntities = useCallback(async () => {
     setLoading(true);
@@ -598,10 +623,9 @@ export default function AdminStudioPage() {
   }, []);
 
   useEffect(() => {
-    if (!isAdmin) return;
     loadEntities();
     loadThemes();
-  }, [isAdmin, loadEntities, loadThemes]);
+  }, [loadEntities, loadThemes]);
 
   const handleCreateEntity = async (values: Record<string, unknown>) => {
     const res = await apiFetch("/admin/ontology/entities", { method: "POST", body: JSON.stringify(values) });
@@ -638,6 +662,27 @@ export default function AdminStudioPage() {
     }
     toast({ title: "Удалено" });
     loadEntities();
+  };
+
+  const handleReseed = async () => {
+    if (!confirm("Все данные онтологии будут удалены и заново сидированы. Продолжить?")) return;
+    setReseedLoading(true);
+    try {
+      const res = await apiFetch("/admin/ontology/reseed", { method: "POST" });
+      if (!res.ok) {
+        const err = await res.json();
+        toast({ title: "Ошибка", description: err.error, variant: "destructive" });
+        return;
+      }
+      toast({ title: "Онтология пересидирована" });
+      loadEntities();
+      loadThemes();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Сетевая ошибка";
+      toast({ title: "Ошибка", description: msg, variant: "destructive" });
+    } finally {
+      setReseedLoading(false);
+    }
   };
 
   const handleCreateTheme = async (values: Record<string, unknown>) => {
@@ -740,28 +785,10 @@ export default function AdminStudioPage() {
     if (detailEntity) loadDetail(detailEntity.id);
   };
 
-  if (!isAdmin) {
+  if (adminCheckLoading) {
     return (
-      <div className="p-10 max-w-xl mx-auto text-center space-y-4">
-        <h1 className="text-2xl font-serif">Доступ ограничен</h1>
-        <p className="text-muted-foreground">Эта страница доступна только администраторам.</p>
-        <div className="flex gap-3 justify-center">
-          <Button
-            variant="outline"
-            onClick={async () => {
-              const res = await apiFetch("/profile/make-admin", { method: "POST" });
-              if (res.ok) {
-                setIsAdmin(true);
-                toast({ title: "Вы теперь администратор" });
-              } else {
-                toast({ title: "Не удалось", variant: "destructive" });
-              }
-            }}
-          >
-            Стать администратором
-          </Button>
-          <Link href="/dashboard"><Button variant="ghost">Вернуться на главную</Button></Link>
-        </div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
@@ -776,12 +803,20 @@ export default function AdminStudioPage() {
           </h1>
           <p className="text-muted-foreground">Редактор семантической онтологии</p>
         </div>
-        <Link href="/dashboard">
-          <Button variant="outline">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Назад
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          {isAdmin && (
+            <Button variant="outline" onClick={handleReseed} disabled={reseedLoading}>
+              <RefreshCw className={`w-4 h-4 mr-2 ${reseedLoading ? "animate-spin" : ""}`} />
+              {reseedLoading ? "Сидинг..." : "Reseed"}
+            </Button>
+          )}
+          <Link href="/dashboard">
+            <Button variant="outline">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Назад
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
@@ -796,15 +831,17 @@ export default function AdminStudioPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Поиск сущностей..." className="pl-9" />
             </div>
-            <Dialog open={showEntityForm} onOpenChange={setShowEntityForm}>
-              <DialogTrigger asChild>
-                <Button><Plus className="w-4 h-4 mr-2" />Сущность</Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-lg">
-                <DialogHeader><DialogTitle>Новая сущность</DialogTitle></DialogHeader>
-                <EntityForm onSave={handleCreateEntity} onCancel={() => setShowEntityForm(false)} />
-              </DialogContent>
-            </Dialog>
+            {isAdmin && (
+              <Dialog open={showEntityForm} onOpenChange={setShowEntityForm}>
+                <DialogTrigger asChild>
+                  <Button><Plus className="w-4 h-4 mr-2" />Сущность</Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-lg">
+                  <DialogHeader><DialogTitle>Новая сущность</DialogTitle></DialogHeader>
+                  <EntityForm onSave={handleCreateEntity} onCancel={() => setShowEntityForm(false)} />
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -818,14 +855,16 @@ export default function AdminStudioPage() {
                           {e.symbol ? <span className="text-xl">{e.symbol}</span> : <Sparkles className="w-5 h-5 text-primary" />}
                           {e.name}
                         </CardTitle>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button variant="ghost" size="icon" onClick={(ev) => { ev.stopPropagation(); setEditingEntity(e); }}>
-                            <Pencil className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(ev) => { ev.stopPropagation(); handleDeleteEntity(e.id); }}>
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
+                        {isAdmin && (
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button variant="ghost" size="icon" onClick={(ev) => { ev.stopPropagation(); setEditingEntity(e); }}>
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(ev) => { ev.stopPropagation(); handleDeleteEntity(e.id); }}>
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </CardHeader>
                     <CardContent onClick={() => loadDetail(e.id)}>
@@ -849,15 +888,17 @@ export default function AdminStudioPage() {
 
         <TabsContent value="themes" className="space-y-6">
           <div className="flex justify-end">
-            <Dialog open={showThemeForm} onOpenChange={setShowThemeForm}>
-              <DialogTrigger asChild>
-                <Button><Plus className="w-4 h-4 mr-2" />Тема</Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-lg">
-                <DialogHeader><DialogTitle>Новая тема</DialogTitle></DialogHeader>
-                <ThemeForm onSave={handleCreateTheme} onCancel={() => setShowThemeForm(false)} />
-              </DialogContent>
-            </Dialog>
+            {isAdmin && (
+              <Dialog open={showThemeForm} onOpenChange={setShowThemeForm}>
+                <DialogTrigger asChild>
+                  <Button><Plus className="w-4 h-4 mr-2" />Тема</Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-lg">
+                  <DialogHeader><DialogTitle>Новая тема</DialogTitle></DialogHeader>
+                  <ThemeForm onSave={handleCreateTheme} onCancel={() => setShowThemeForm(false)} />
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -868,14 +909,16 @@ export default function AdminStudioPage() {
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg font-serif">{t.name}</CardTitle>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button variant="ghost" size="icon" onClick={() => setEditingTheme(t)}>
-                            <Pencil className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDeleteTheme(t.id)}>
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
+                        {isAdmin && (
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button variant="ghost" size="icon" onClick={() => setEditingTheme(t)}>
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDeleteTheme(t.id)}>
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </CardHeader>
                     <CardContent>
@@ -941,13 +984,15 @@ export default function AdminStudioPage() {
                         <Badge>{link.theme?.name}</Badge>
                         <span className="text-sm text-muted-foreground">вес: {link.weight}, полярность: {link.polarity}</span>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteLink(link.id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      {isAdmin && (
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteLink(link.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
                   ))}
                   {detailLinks.length === 0 && <p className="text-sm text-muted-foreground">Нет связанных тем. Добавьте ниже.</p>}
-                  <AddLinkForm themes={themes} existingThemeIds={detailLinks.map((l) => l.themeId)} onAdd={handleAddLink} />
+                  {isAdmin && <AddLinkForm themes={themes} existingThemeIds={detailLinks.map((l) => l.themeId)} onAdd={handleAddLink} />}
                 </div>
               </div>
 
@@ -968,9 +1013,11 @@ export default function AdminStudioPage() {
                         {r.description && <span className="text-sm text-muted-foreground">{r.description}</span>}
                         <span className="text-xs text-muted-foreground">вес {r.weight}</span>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteRelation(r.id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      {isAdmin && (
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteRelation(r.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
                   ))}
                   {detailRelations.to.map((r) => (
@@ -981,12 +1028,14 @@ export default function AdminStudioPage() {
                         {r.description && <span className="text-sm text-muted-foreground">{r.description}</span>}
                         <span className="text-xs text-muted-foreground">вес {r.weight}</span>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteRelation(r.id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      {isAdmin && (
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteRelation(r.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
                   ))}
-                  <AddRelationForm entities={entities} excludeEntityId={detailEntity?.id ?? 0} onAdd={handleAddRelation} />
+                  {isAdmin && <AddRelationForm entities={entities} excludeEntityId={detailEntity?.id ?? 0} onAdd={handleAddRelation} />}
                 </div>
               </div>
             </div>

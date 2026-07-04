@@ -6,8 +6,9 @@ import {
   ontologyEntityProfilesTable,
   ontologyEntityRelationsTable,
 } from "@workspace/db";
+import { logger } from "./logger";
 
-async function seed() {
+export async function seedOntology() {
   console.log("Seeding ontology...");
 
   // ─── Жизненные темы ───
@@ -264,23 +265,14 @@ async function seed() {
       .onConflictDoNothing();
   }
 
-  console.log(
-    "Seeded:",
+  logger.info(
+    "Seeded: %d entities, %d themes, %d profiles, %d entity-theme links, %d entity relations",
     entityRows.length,
-    "entities,",
     themeRows.length,
-    "themes,",
     profileInserts.length,
-    "profiles,",
     entityThemeLinks.length,
-    "entity-theme links,",
     relationInserts.length,
-    "entity relations",
   );
-  process.exit(0);
 }
 
-seed().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// NOTE: CLI entry point removed — seedOntology() is invoked explicitly from index.ts
