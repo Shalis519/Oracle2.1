@@ -1065,18 +1065,19 @@ export default function AdminStudioPage() {
       </Dialog>
 
       <Dialog open={!!detailEntity} onOpenChange={(v) => !v && setDetailEntity(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="font-serif text-2xl flex items-center gap-2">
-              {detailEntity?.symbol ? <span className="text-2xl">{detailEntity.symbol}</span> : <Sparkles className="w-6 h-6 text-primary" />}
-              {detailEntity?.name}
-              <Badge variant="secondary">{detailEntity?.system}</Badge>
-              <Badge variant="outline">{detailEntity?.type}</Badge>
-            </DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-4xl h-[90vh] p-0 !grid !grid-cols-1">
+          <div className="flex flex-col h-full overflow-hidden">
+            <DialogHeader className="px-6 pt-6 pb-2 shrink-0">
+              <DialogTitle className="font-serif text-2xl flex items-center gap-2">
+                {detailEntity?.symbol ? <span className="text-2xl">{detailEntity.symbol}</span> : <Sparkles className="w-6 h-6 text-primary" />}
+                {detailEntity?.name}
+                <Badge variant="secondary">{detailEntity?.system}</Badge>
+                <Badge variant="outline">{detailEntity?.type}</Badge>
+              </DialogTitle>
+            </DialogHeader>
 
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-8">
+            <ScrollArea className="flex-1 px-6 pb-6">
+              <div className="space-y-8">
               <div>
                 <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
                   <BrainCircuit className="w-5 h-5 text-primary" />
@@ -1153,6 +1154,7 @@ export default function AdminStudioPage() {
               </div>
             </div>
           </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
