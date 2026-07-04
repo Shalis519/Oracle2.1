@@ -579,13 +579,6 @@ export default function AdminStudioPage() {
   const [detailLinks, setDetailLinks] = useState<EntityThemeLink[]>([]);
   const [detailRelations, setDetailRelations] = useState<{ from: EntityRelation[]; to: EntityRelation[] }>({ from: [], to: [] });
   const [loading, setLoading] = useState(false);
-  const cachedAdmin = (() => {
-    try {
-      return localStorage.getItem("aether_is_admin") === "true";
-    } catch {
-      return false;
-    }
-  })();
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminCheckLoading, setAdminCheckLoading] = useState(true);
   const [reseedLoading, setReseedLoading] = useState(false);
@@ -825,6 +818,57 @@ export default function AdminStudioPage() {
     );
   }
 
+  const [secretCode, setSecretCode] = useState("");
+  const [gateError, setGateError] = useState("");
+  const [gateLoading, setGateLoading] = useState(false);
+
+  if (!isAdmin) {
+    return (
+      <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
+        <div className="bg-background border shadow-lg rounded-lg p-6 w-full max-w-sm space-y-4">
+          <h2 className="text-lg font-serif font-semibold text-center">Доступ к Oracle Studio</h2>
+          <Input
+            type="password"
+            placeholder="Код админа"
+            value={secretCode}
+            onChange={(e) => setSecretCode(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") document.getElementById("gate-btn")?.click(); }}
+            disabled={gateLoading}
+          />
+          {gateError && <p className="text-sm text-destructive">{gateError}</p>}
+          <Button
+            id="gate-btn"
+            className="w-full"
+            disabled={!secretCode.trim() || gateLoading}
+            onClick={async () => {
+              setGateError("");
+              setGateLoading(true);
+              const res = await apiFetch("/profile/make-admin", {
+                method: "POST",
+                body: JSON.stringify({ secret: secretCode.trim() }),
+              });
+              setGateLoading(false);
+              if (!res.ok) {
+                const err = await res.json().catch(() => ({ error: "Ошибка" }));
+                setGateError(err.error || "Неверный код");
+                return;
+              }
+              const data = await res.json();
+              if (data.role === "admin") {
+                setIsAdmin(true);
+                try { localStorage.setItem("aether_is_admin", "true"); } catch {}
+              } else {
+                setGateError("Неверный код");
+              }
+            }}
+          >
+            {gateLoading ? "Проверка..." : "Войти"}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -841,48 +885,6 @@ export default function AdminStudioPage() {
               <RefreshCw className={`w-4 h-4 mr-2 ${reseedLoading ? "animate-spin" : ""}`} />
               {reseedLoading ? "Сидинг..." : "Reseed"}
             </Button>
-          )}
-          {!isAdmin && (
-            <div className="flex items-center gap-2">
-              <Input
-                type="password"
-                placeholder="Код админа"
-                className="w-40 h-9"
-                id="admin-secret-input"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    const btn = document.getElementById("admin-secret-btn") as HTMLButtonElement | null;
-                    btn?.click();
-                  }
-                }}
-              />
-              <Button
-                id="admin-secret-btn"
-                variant="outline"
-                size="sm"
-                onClick={async () => {
-                  const input = document.getElementById("admin-secret-input") as HTMLInputElement | null;
-                  const secret = input?.value?.trim() ?? "";
-                  if (!secret) {
-                    toast({ title: "Введите код", variant: "destructive" });
-                    return;
-                  }
-                  const res = await apiFetch("/profile/make-admin", { method: "POST", body: JSON.stringify({ secret }) });
-                  if (!res.ok) {
-                    const err = await res.json().catch(() => ({ error: "Ошибка" }));
-                    toast({ title: "Ошибка", description: err.error, variant: "destructive" });
-                    return;
-                  }
-                  const data = await res.json();
-                  setIsAdmin(data.role === "admin");
-                  try { localStorage.setItem("aether_is_admin", String(data.role === "admin")); } catch {}
-                  toast({ title: "Роль обновлена", description: "Теперь у вас доступ к редактированию онтологии." });
-                }}
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                Стать администратором
-              </Button>
-            </div>
           )}
           <Link href="/dashboard">
             <Button variant="outline">
