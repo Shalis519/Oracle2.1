@@ -582,6 +582,9 @@ export default function AdminStudioPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminCheckLoading, setAdminCheckLoading] = useState(true);
   const [reseedLoading, setReseedLoading] = useState(false);
+  const [secretCode, setSecretCode] = useState("");
+  const [gateError, setGateError] = useState("");
+  const [gateLoading, setGateLoading] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -817,10 +820,6 @@ export default function AdminStudioPage() {
       </div>
     );
   }
-
-  const [secretCode, setSecretCode] = useState("");
-  const [gateError, setGateError] = useState("");
-  const [gateLoading, setGateLoading] = useState(false);
 
   if (!isAdmin) {
     return (
