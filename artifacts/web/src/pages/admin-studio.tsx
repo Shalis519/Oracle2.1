@@ -91,6 +91,7 @@ const API = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api`;
 function apiFetch(path: string, opts?: RequestInit) {
   return fetch(`${API}${path}`, {
     ...opts,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(opts?.headers ?? {}),
@@ -555,15 +556,32 @@ export default function AdminStudioPage() {
   }, []);
 
   const loadEntities = useCallback(async () => {
-    const res = await apiFetch(`/admin/ontology/entities?search=${encodeURIComponent(search)}`);
-    const data = await res.json();
-    setEntities(data.entities ?? []);
+    setLoading(true);
+    try {
+      const res = await apiFetch(`/admin/ontology/entities?search=${encodeURIComponent(search)}`);
+      if (!res.ok) {
+        setEntities([]);
+        return;
+      }
+      const data = await res.json();
+      setEntities(data.entities ?? []);
+    } finally {
+      setLoading(false);
+    }
   }, [search]);
 
   const loadThemes = useCallback(async () => {
-    const res = await apiFetch("/admin/ontology/themes");
-    const data = await res.json();
-    setThemes(data.themes ?? []);
+    try {
+      const res = await apiFetch("/admin/ontology/themes");
+      if (!res.ok) {
+        setThemes([]);
+        return;
+      }
+      const data = await res.json();
+      setThemes(data.themes ?? []);
+    } catch {
+      setThemes([]);
+    }
   }, []);
 
   const loadDetail = useCallback(async (id: number) => {
@@ -580,9 +598,10 @@ export default function AdminStudioPage() {
   }, []);
 
   useEffect(() => {
+    if (!isAdmin) return;
     loadEntities();
     loadThemes();
-  }, [loadEntities, loadThemes]);
+  }, [isAdmin, loadEntities, loadThemes]);
 
   const handleCreateEntity = async (values: Record<string, unknown>) => {
     const res = await apiFetch("/admin/ontology/entities", { method: "POST", body: JSON.stringify(values) });
