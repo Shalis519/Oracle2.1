@@ -16,6 +16,7 @@ import {
 import { parseWeight, clampWeight } from "@workspace/db/weights";
 import { requireAuth, requireAdmin } from "../lib/auth";
 import { seedOntology } from "../lib/seedOntology";
+import { refreshOntology } from "../lib/semanticEngine";
 import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
@@ -170,6 +171,7 @@ router.post("/admin/ontology/entities", requireAuth, requireAdmin, async (req, r
         symbol: typeof body.symbol === "string" ? body.symbol : null,
       })
       .returning();
+    await refreshOntology().catch(() => {});
     res.status(201).json(serializeEntity(row));
   } catch (e: any) {
     if (e.message?.includes("unique constraint")) {
@@ -203,6 +205,7 @@ router.put("/admin/ontology/entities/:id", requireAuth, requireAdmin, async (req
     res.status(404).json({ error: "Entity not found" });
     return;
   }
+  await refreshOntology().catch(() => {});
   res.json(serializeEntity(row));
 });
 
@@ -225,6 +228,7 @@ router.delete("/admin/ontology/entities/:id", requireAuth, requireAdmin, async (
     res.status(404).json({ error: "Entity not found" });
     return;
   }
+  await refreshOntology().catch(() => {});
   res.json({ success: true });
 });
 
@@ -311,6 +315,7 @@ router.put("/admin/ontology/entities/:id/profile", requireAuth, requireAdmin, as
       .values(insertVals)
       .returning();
   }
+  await refreshOntology().catch(() => {});
   res.json(serializeProfile(row));
 });
 
@@ -339,6 +344,7 @@ router.post("/admin/ontology/themes", requireAuth, requireAdmin, async (req, res
         description: typeof body.description === "string" ? body.description : null,
       })
       .returning();
+      await refreshOntology().catch(() => {});
     res.status(201).json(serializeTheme(row));
   } catch (e: any) {
     if (e.message?.includes("unique constraint")) {
@@ -371,6 +377,7 @@ router.put("/admin/ontology/themes/:id", requireAuth, requireAdmin, async (req, 
     res.status(404).json({ error: "Theme not found" });
     return;
   }
+  await refreshOntology().catch(() => {});
   res.json(serializeTheme(row));
 });
 
@@ -390,6 +397,7 @@ router.delete("/admin/ontology/themes/:id", requireAuth, requireAdmin, async (re
     res.status(404).json({ error: "Theme not found" });
     return;
   }
+  await refreshOntology().catch(() => {});
   res.json({ success: true });
 });
 
@@ -442,6 +450,7 @@ router.post("/admin/ontology/entity-themes", requireAuth, requireAdmin, async (r
         polarity: typeof body.polarity === "string" ? body.polarity : "neutral",
       })
       .returning();
+    await refreshOntology().catch(() => {});
     res.status(201).json(serializeEntityTheme(row));
   } catch (e: any) {
     if (e.message?.includes("unique constraint")) {
@@ -473,6 +482,7 @@ router.patch("/admin/ontology/entity-themes/:id", requireAuth, requireAdmin, asy
     res.status(404).json({ error: "Link not found" });
     return;
   }
+  await refreshOntology().catch(() => {});
   res.json(serializeEntityTheme(row));
 });
 
@@ -489,6 +499,7 @@ router.delete("/admin/ontology/entity-themes/:id", requireAuth, requireAdmin, as
     res.status(404).json({ error: "Link not found" });
     return;
   }
+  await refreshOntology().catch(() => {});
   res.json({ success: true });
 });
 
@@ -566,6 +577,7 @@ router.post("/admin/ontology/entity-relations", requireAuth, requireAdmin, async
       .insert(ontologyEntityRelationsTable)
       .values(values)
       .returning();
+    await refreshOntology().catch(() => {});
     res.status(201).json(row);
   } catch (e: any) {
     if (e.message?.includes("unique constraint")) {
@@ -607,6 +619,7 @@ router.patch("/admin/ontology/entity-relations/:id", requireAuth, requireAdmin, 
     res.status(404).json({ error: "Relation not found" });
     return;
   }
+  await refreshOntology().catch(() => {});
   res.json(row);
 });
 
@@ -623,6 +636,7 @@ router.delete("/admin/ontology/entity-relations/:id", requireAuth, requireAdmin,
     res.status(404).json({ error: "Relation not found" });
     return;
   }
+  await refreshOntology().catch(() => {});
   res.json({ success: true });
 });
 
@@ -646,6 +660,7 @@ router.post("/admin/ontology/reseed", requireAuth, requireAdmin, async (_req, re
     await client.query("SELECT pg_advisory_unlock(424242)");
 
     await seedOntology();
+    await refreshOntology().catch(() => {});
 
     res.json({ success: true, message: "Ontology reseeded" });
     return;
