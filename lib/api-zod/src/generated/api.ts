@@ -36,6 +36,7 @@ export const GetProfileResponse = zod.object({
   "photoPath": zod.string().nullish(),
   "bedDirection": zod.string().nullish(),
   "avatarType": zod.string().nullish(),
+  "gender": zod.enum(['мужчина', 'женщина']).nullish().describe('Пол пользователя (мужчина или женщина)'),
   "notificationsEnabled": zod.boolean(),
   "role": zod.string(),
   "createdAt": zod.string()
@@ -60,6 +61,7 @@ export const UpdateProfileBody = zod.object({
   "photoPath": zod.string().nullish(),
   "bedDirection": zod.string().nullish(),
   "avatarType": zod.string().nullish(),
+  "gender": zod.enum(['мужчина', 'женщина']).nullish().describe('Пол пользователя (мужчина или женщина)'),
   "notificationsEnabled": zod.boolean().optional()
 })
 
@@ -79,6 +81,7 @@ export const UpdateProfileResponse = zod.object({
   "photoPath": zod.string().nullish(),
   "bedDirection": zod.string().nullish(),
   "avatarType": zod.string().nullish(),
+  "gender": zod.enum(['мужчина', 'женщина']).nullish().describe('Пол пользователя (мужчина или женщина)'),
   "notificationsEnabled": zod.boolean(),
   "role": zod.string(),
   "createdAt": zod.string()

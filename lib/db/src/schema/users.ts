@@ -28,6 +28,7 @@ export const usersTable = pgTable("users", {
   photoPath: text("photo_path"),
   bedDirection: text("bed_direction"),
   avatarType: text("avatar_type"),
+  gender: text("gender"),
   natalChart: jsonb("natal_chart"),
   notificationsEnabled: boolean("notifications_enabled").notNull().default(true),
   role: text("role").notNull().default("user"),

@@ -881,6 +881,10 @@ components:
           type: ["string", "null"]
         avatarType:
           type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+          enum: ["мужчина", "женщина"]
+          description: Пол пользователя (мужчина или женщина)
         notificationsEnabled:
           type: boolean
         role:
@@ -919,6 +923,10 @@ components:
           type: ["string", "null"]
         avatarType:
           type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+          enum: ["мужчина", "женщина"]
+          description: Пол пользователя (мужчина или женщина)
         notificationsEnabled:
           type: boolean
 

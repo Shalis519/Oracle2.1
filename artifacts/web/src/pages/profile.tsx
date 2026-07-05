@@ -30,6 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { MapPin } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const regionNames =
   typeof Intl !== "undefined" && "DisplayNames" in Intl
@@ -63,6 +64,7 @@ export default function ProfilePage() {
     birthLatitude: null as number | null,
     birthLongitude: null as number | null,
     birthTimezone: null as string | null,
+    gender: null as string | null,
     notificationsEnabled: false,
   });
 
@@ -88,6 +90,7 @@ export default function ProfilePage() {
         birthLatitude: profile.birthLatitude ?? null,
         birthLongitude: profile.birthLongitude ?? null,
         birthTimezone: profile.birthTimezone ?? null,
+        gender: profile.gender ?? null,
         notificationsEnabled: profile.notificationsEnabled || false,
       });
     }
@@ -131,6 +134,10 @@ export default function ProfilePage() {
     setFormData((prev) => ({ ...prev, notificationsEnabled: checked }));
   };
 
+  const handleGenderChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, gender: value === prev.gender ? null : value }));
+  };
+
   const handleSelectBirthCity = (c: City) => {
     setFormData((prev) => ({
       ...prev,
@@ -169,6 +176,7 @@ export default function ProfilePage() {
           birthLatitude: formData.birthLatitude,
           birthLongitude: formData.birthLongitude,
           birthTimezone: formData.birthTimezone,
+          gender: formData.gender as "мужчина" | "женщина" | null | undefined,
         },
       },
       {
@@ -223,6 +231,23 @@ export default function ProfilePage() {
                 <Label htmlFor="birthTime">Время рождения</Label>
                 <Input id="birthTime" name="birthTime" type="time" value={formData.birthTime} onChange={handleChange} />
                 <p className="text-xs text-muted-foreground">Чем точнее время, тем точнее асцендент и дома.</p>
+              </div>
+              <div className="space-y-2">
+                <Label>Пол</Label>
+                <RadioGroup
+                  value={formData.gender ?? ""}
+                  onValueChange={handleGenderChange}
+                  className="flex gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="мужчина" id="gender-male" />
+                    <Label htmlFor="gender-male">Мужчина</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="женщина" id="gender-female" />
+                    <Label htmlFor="gender-female">Женщина</Label>
+                  </div>
+                </RadioGroup>
               </div>
               <div className="space-y-2">
                 <Label>Место рождения</Label>

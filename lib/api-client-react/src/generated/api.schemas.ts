@@ -42,6 +42,18 @@ export interface BaziHoursResult {
   combined: HourInterval[];
 }
 
+/**
+ * Пол пользователя (мужчина или женщина)
+ * @nullable
+ */
+export type ProfileGender = typeof ProfileGender[keyof typeof ProfileGender] | null;
+
+
+export const ProfileGender = {
+  мужчина: 'мужчина',
+  женщина: 'женщина',
+} as const;
+
 export interface Profile {
   id: number;
   name: string;
@@ -71,10 +83,27 @@ export interface Profile {
   bedDirection?: string | null;
   /** @nullable */
   avatarType?: string | null;
+  /**
+     * Пол пользователя (мужчина или женщина)
+     * @nullable
+     */
+  gender?: ProfileGender;
   notificationsEnabled: boolean;
   role: string;
   createdAt: string;
 }
+
+/**
+ * Пол пользователя (мужчина или женщина)
+ * @nullable
+ */
+export type ProfileInputGender = typeof ProfileInputGender[keyof typeof ProfileInputGender] | null;
+
+
+export const ProfileInputGender = {
+  мужчина: 'мужчина',
+  женщина: 'женщина',
+} as const;
 
 export interface ProfileInput {
   name?: string;
@@ -104,6 +133,11 @@ export interface ProfileInput {
   bedDirection?: string | null;
   /** @nullable */
   avatarType?: string | null;
+  /**
+     * Пол пользователя (мужчина или женщина)
+     * @nullable
+     */
+  gender?: ProfileInputGender;
   notificationsEnabled?: boolean;
 }
 

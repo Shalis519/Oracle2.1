@@ -27,6 +27,7 @@ function serialize(user: {
   photoPath: string | null;
   bedDirection: string | null;
   avatarType: string | null;
+  gender: string | null;
   natalChart: unknown | null;
   notificationsEnabled: boolean;
   role: string;
@@ -48,6 +49,7 @@ function serialize(user: {
     photoPath: user.photoPath,
     bedDirection: user.bedDirection,
     avatarType: user.avatarType,
+    gender: user.gender,
     natalChart: user.natalChart,
     notificationsEnabled: user.notificationsEnabled,
     role: user.role,

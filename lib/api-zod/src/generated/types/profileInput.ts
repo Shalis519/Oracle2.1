@@ -5,6 +5,7 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ProfileInputGender } from './profileInputGender';
 
 export interface ProfileInput {
   name?: string;
@@ -34,5 +35,10 @@ export interface ProfileInput {
   bedDirection?: string | null;
   /** @nullable */
   avatarType?: string | null;
+  /**
+     * Пол пользователя (мужчина или женщина)
+     * @nullable
+     */
+  gender?: ProfileInputGender;
   notificationsEnabled?: boolean;
 }
