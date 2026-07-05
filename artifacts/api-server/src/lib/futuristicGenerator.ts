@@ -312,7 +312,6 @@ export class FuturisticGenerator {
 
     parts.push(`Идея, которая придёт ${opportunityDesc} (пик аспекта: ${peakDate}), — это не случайность.`);
     parts.push(pickRandom(futurePhrases));
-    parts.push(`Если Вы её проигнорируете, мир не рухнет.`);
     parts.push(`Но если запишете и начнёте делать — ${futurePeriod} Вы не узнаете свою жизнь.`);
     parts.push("");
 
