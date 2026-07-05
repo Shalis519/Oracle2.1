@@ -38,6 +38,7 @@ export interface TransitDuration {
   text: string;
   urgency: "срочно" | "скоро" | "в ближайшее время" | "постепенно" | "длительно";
   peakDate: Date;
+  phase: "building" | "peak" | "unfolding";
 }
 
 export function calculateTransitDuration(
@@ -80,7 +81,25 @@ export function calculateTransitDuration(
   const halfDurationMs = (totalDays / 2) * 24 * 60 * 60 * 1000;
   peakDate.setTime(peakDate.getTime() + halfDurationMs);
 
-  return { duration, unit, text, urgency, peakDate };
+  // Фаза транзита: подход к пику, пик, или расход
+  // Расстояние до пика: если orb > 0 и планета движется к аспекту — building
+  // Если orb мал и пик скоро — peak
+  // Если orb мал но peak уже прошёл — unfolding
+  const nowMs = currentDate.getTime();
+  const peakMs = peakDate.getTime();
+  const timeToPeakMs = peakMs - nowMs;
+  const orbThreshold = 0.05; // порог "пика"
+
+  let phase: TransitDuration["phase"];
+  if (Math.abs(orbDegrees) <= orbThreshold) {
+    phase = "peak";
+  } else if (timeToPeakMs > 0) {
+    phase = "building";
+  } else {
+    phase = "unfolding";
+  }
+
+  return { duration, unit, text, urgency, peakDate, phase };
 }
 
 function getDayPart(hours: number): string {
@@ -525,8 +544,8 @@ export class FuturisticGenerator {
     const parts: string[] = [];
     const primaryTheme = themes.primary;
     const secondaryTheme = themes.secondary;
-    const durationText = durationData.text;
     const dayPart = getDayPart(durationData.peakDate.getHours());
+    const phase = durationData.phase;
     const futurePeriod = this.getFuturePeriod(context);
 
     // --- 1. Открытие: конкретное, без абстракций ---
@@ -538,8 +557,14 @@ export class FuturisticGenerator {
     ];
     parts.push(pickRandom(openers));
 
-    // Конкретная временная привязка: когда идея придёт
-    parts.push(`Важный момент ${dayPart} — не пропустите.`);
+    // Временная привязка адаптирована под фазу
+    if (phase === "peak") {
+      parts.push(`Пик транзита ${dayPart} — это главный момент.`);
+    } else if (phase === "building") {
+      parts.push(`Энергия усиливается, пик ${dayPart}.`);
+    } else {
+      parts.push(`Транзит уже отошёл, но его влияние ещё актуально ${dayPart}.`);
+    }
 
     if (themes.all.length > 2) {
       const others = themes.all.slice(1, 4).filter((t) => t !== primaryTheme);
@@ -599,23 +624,31 @@ export class FuturisticGenerator {
     ];
     parts.push(pickRandom(timePhrases));
 
-    // --- 5. Тональность аспекта + таймер ---
+    // --- 5. Тональность аспекта + фаза транзита ---
     if (themes.aspectPolarity === "negative") {
-      if (durationData.urgency === "срочно") {
-        parts.push("Действуйте прямо сейчас! Время на исходе.");
-      } else if (durationData.urgency === "скоро") {
-        parts.push("Время идёт, не откладывайте на завтра.");
+      if (phase === "peak") {
+        parts.push("Это пик транзита. Действуйте прямо сейчас — не откладывайте.");
+      } else if (phase === "building") {
+        parts.push("Транзит набирает силу. Примите решение, пока энергия ещё есть.");
       } else {
-        parts.push("Требуется внимание, но у Вас есть время продумать.");
+        parts.push("Транзит спадает, но его влияние ещё актуально. Подумайте, что усвоили.");
       }
     } else if (themes.aspectPolarity === "positive") {
-      if (durationData.urgency === "срочно") {
-        parts.push(`У Вас есть ${durationText}, и всё складывается быстро. Не торопитесь.`);
+      if (phase === "peak") {
+        parts.push("Это пик транзита! Энергия на полной. Действуйте смело.");
+      } else if (phase === "building") {
+        parts.push("Эта энергия нарастает. Сейчас — лучшее время для старта.");
       } else {
-        parts.push(`У Вас есть ${durationText}. Всё складывается в Вашу пользу. Действуйте, когда будет удобно.`);
+        parts.push("Транзит уже перестаёт, но его подарки ещё с Вами. Закрепите результат.");
       }
     } else {
-      parts.push(`У Вас есть ${durationText}, чтобы обдумать решение.`);
+      if (phase === "peak") {
+        parts.push("Транзит в пике. Сейчас важны все решения.");
+      } else if (phase === "building") {
+        parts.push("Энергия теснится, но ещё не достигла пика. Есть время на подготовку.");
+      } else {
+        parts.push("Транзит уходит, но он оставил след. Подумайте, что означает для Вас.");
+      }
     }
 
     // --- 6. Мотивация ---
