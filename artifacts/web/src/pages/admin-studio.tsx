@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +29,8 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { ONTOLOGY_WEIGHTS, WEIGHT_LEVELS, getWeightLabel } from "@workspace/db/weights";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Entity {
@@ -469,6 +472,38 @@ function ThemeForm({
   );
 }
 
+/* ─── Weight Slider ─── */
+
+function WeightSlider({
+  value,
+  onChange,
+  className,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  className?: string;
+}) {
+  return (
+    <div className={cn("w-[200px] space-y-1", className)}>
+      <Slider
+        value={[value]}
+        onValueChange={(v) => onChange(v[0] ?? ONTOLOGY_WEIGHTS.DEFAULT)}
+        min={ONTOLOGY_WEIGHTS.MIN}
+        max={ONTOLOGY_WEIGHTS.MAX}
+        step={ONTOLOGY_WEIGHTS.STEP}
+      />
+      <div className="flex justify-between text-xs text-muted-foreground">
+        {WEIGHT_LEVELS.map((l) => (
+          <span key={l.value}>{l.value}</span>
+        ))}
+      </div>
+      <div className="text-xs text-center font-medium">
+        {value.toFixed(1)} — {getWeightLabel(value)}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Add Link Form ─── */
 
 function AddLinkForm({
@@ -482,13 +517,13 @@ function AddLinkForm({
 }) {
   const available = themes.filter((t) => !existingThemeIds.includes(t.id));
   const [themeId, setThemeId] = useState<number | "">("");
-  const [weight, setWeight] = useState("1.0");
+  const [weight, setWeight] = useState<number>(ONTOLOGY_WEIGHTS.DEFAULT);
   const [polarity, setPolarity] = useState("neutral");
 
   if (available.length === 0) return <p className="text-sm text-muted-foreground">Все темы уже привязаны.</p>;
 
   return (
-    <div className="flex flex-wrap gap-2 items-end">
+    <div className="flex flex-wrap gap-3 items-end">
       <Select value={themeId ? String(themeId) : ""} onValueChange={(v) => setThemeId(Number(v))}>
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Выберите тему" />
@@ -499,7 +534,7 @@ function AddLinkForm({
           ))}
         </SelectContent>
       </Select>
-      <Input value={weight} onChange={(e) => setWeight(e.target.value)} type="number" step="0.5" min="0" max="3" className="w-24" />
+      <WeightSlider value={weight} onChange={setWeight} />
       <Select value={polarity} onValueChange={setPolarity}>
         <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
         <SelectContent>
@@ -508,7 +543,7 @@ function AddLinkForm({
           <SelectItem value="negative">негативная</SelectItem>
         </SelectContent>
       </Select>
-      <Button onClick={() => { if (!themeId) return; const pw = parseFloat(weight); onAdd(themeId, Number.isFinite(pw) ? pw : 1.0, polarity); setThemeId(""); }} disabled={!themeId}>
+      <Button onClick={() => { if (!themeId) return; onAdd(themeId, weight, polarity); setThemeId(""); setWeight(ONTOLOGY_WEIGHTS.DEFAULT); }} disabled={!themeId}>
         <Plus className="w-4 h-4 mr-1" />Добавить
       </Button>
     </div>
@@ -530,12 +565,12 @@ function AddRelationForm({
   const [toId, setToId] = useState<number | "">("");
   const [relationType, setRelationType] = useState("");
   const [description, setDescription] = useState("");
-  const [weight, setWeight] = useState("1.0");
+  const [weight, setWeight] = useState<number>(ONTOLOGY_WEIGHTS.DEFAULT);
 
   if (available.length === 0) return <p className="text-sm text-muted-foreground">Нет доступных сущностей.</p>;
 
   return (
-    <div className="flex flex-wrap gap-2 items-end">
+    <div className="flex flex-wrap gap-3 items-end">
       <Select value={toId ? String(toId) : ""} onValueChange={(v) => setToId(Number(v))}>
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Связать с..." />
@@ -548,11 +583,11 @@ function AddRelationForm({
       </Select>
       <Input value={relationType} onChange={(e) => setRelationType(e.target.value)} placeholder="Тип связи" className="w-[160px]" />
       <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Описание" className="w-[200px]" />
-      <Input value={weight} onChange={(e) => setWeight(e.target.value)} type="number" step="0.5" min="0" max="3" className="w-20" />
+      <WeightSlider value={weight} onChange={setWeight} />
       <Button onClick={() => {
         if (!toId || !relationType.trim()) return;
-        const pw = parseFloat(weight); onAdd(toId, relationType.trim(), description.trim(), Number.isFinite(pw) ? pw : 1.0);
-        setToId(""); setRelationType(""); setDescription(""); setWeight("1.0");
+        onAdd(toId, relationType.trim(), description.trim(), weight);
+        setToId(""); setRelationType(""); setDescription(""); setWeight(ONTOLOGY_WEIGHTS.DEFAULT);
       }} disabled={!toId || !relationType.trim()}>
         <Plus className="w-4 h-4 mr-1" />Связать
       </Button>
@@ -578,7 +613,7 @@ function RelationRow({
   const [editing, setEditing] = useState(false);
   const [type, setType] = useState(relation.relationType);
   const [desc, setDesc] = useState(relation.description ?? "");
-  const [w, setW] = useState(String(relation.weight));
+  const [w, setW] = useState(relation.weight);
 
   if (editing) {
     return (
@@ -586,8 +621,8 @@ function RelationRow({
         <Badge variant={direction === "from" ? "secondary" : "outline"}>{direction === "from" ? "\u2192" : "\u2190"}</Badge>
         <Input value={type} onChange={(e) => setType(e.target.value)} placeholder="Тип связи" className="w-[140px] h-8" />
         <Input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Описание" className="w-[200px] h-8" />
-        <Input value={w} onChange={(e) => setW(e.target.value)} type="number" step="0.1" className="w-20 h-8" />
-        <Button size="sm" variant="ghost" onClick={() => { onSave(relation.id, type, desc, parseFloat(w) || 1.0); setEditing(false); }}>
+        <WeightSlider value={w} onChange={setW} className="w-[160px]" />
+        <Button size="sm" variant="ghost" onClick={() => { onSave(relation.id, type, desc, w); setEditing(false); }}>
           <Save className="w-4 h-4" />
         </Button>
         <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>

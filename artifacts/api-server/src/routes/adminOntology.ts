@@ -13,6 +13,7 @@ import {
   type OntologyEntityTheme,
   type OntologyEntityProfile,
 } from "@workspace/db";
+import { parseWeight, clampWeight } from "@workspace/db/weights";
 import { requireAuth, requireAdmin } from "../lib/auth";
 import { seedOntology } from "../lib/seedOntology";
 import { logger } from "../lib/logger";
@@ -437,7 +438,7 @@ router.post("/admin/ontology/entity-themes", requireAuth, requireAdmin, async (r
       .values({
         entityId: body.entityId,
         themeId: body.themeId,
-        weight: typeof body.weight === "number" ? body.weight : 1.0,
+        weight: clampWeight(parseWeight(body.weight)),
         polarity: typeof body.polarity === "string" ? body.polarity : "neutral",
       })
       .returning();
@@ -459,7 +460,8 @@ router.patch("/admin/ontology/entity-themes/:id", requireAuth, requireAdmin, asy
   }
   const body = req.body as Record<string, unknown>;
   const updates: Partial<typeof ontologyEntityThemesTable.$inferInsert> = {};
-  if (typeof body.weight === "number") updates.weight = body.weight;
+  const pw = clampWeight(parseWeight(body.weight));
+  if (Number.isFinite(pw)) updates.weight = pw;
   if (typeof body.polarity === "string") updates.polarity = body.polarity;
 
   const [row] = await db
@@ -558,7 +560,7 @@ router.post("/admin/ontology/entity-relations", requireAuth, requireAdmin, async
         toEntityId: body.toEntityId,
         relationType: body.relationType,
         description: typeof body.description === "string" ? body.description : null,
-        weight: typeof body.weight === "number" ? body.weight : 1.0,
+        weight: clampWeight(parseWeight(body.weight)),
       })
       .returning();
     res.status(201).json(row);
@@ -586,7 +588,8 @@ router.patch("/admin/ontology/entity-relations/:id", requireAuth, requireAdmin, 
   if (typeof body.relationType === "string") updates.relationType = body.relationType;
   if (typeof body.description === "string") updates.description = body.description;
   if (body.description === null) updates.description = null;
-  if (typeof body.weight === "number") updates.weight = body.weight;
+  const pw = clampWeight(parseWeight(body.weight));
+  if (Number.isFinite(pw)) updates.weight = pw;
 
   const [row] = await db
     .update(ontologyEntityRelationsTable)
