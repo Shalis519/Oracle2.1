@@ -80,16 +80,9 @@ async function getOrComputeToday(
     .from(forecastsTable)
     .where(and(eq(forecastsTable.userId, userId), eq(forecastsTable.date, date)));
 
-  // Invalidate stale forecasts (older format without transits, etc.)
+  // If forecast is fresh enough, return it as-is (preserves feedback links)
   if (existing && (existing.version ?? 1) >= CURRENT_FORECAST_VERSION) {
     return existing;
-  }
-
-  // Delete stale forecast so it gets regenerated
-  if (existing) {
-    await db
-      .delete(forecastsTable)
-      .where(and(eq(forecastsTable.userId, userId), eq(forecastsTable.date, date)));
   }
 
   if (!birthDate || birthLatitude == null || birthLongitude == null) return null;
@@ -131,6 +124,30 @@ async function getOrComputeToday(
   const result = await computeDailyForecast(birthDate, natalChart, transits, date);
   if (!result) return null;
 
+  const payload = {
+    matrix: result.matrix,
+    transits: result.transits,
+    conflicts: result.conflicts,
+    warnings: result.warnings,
+  };
+
+  if (existing) {
+    // UPDATE in-place so feedback.forecastId stays valid
+    const [updated] = await db
+      .update(forecastsTable)
+      .set({
+        arcanaNumber: result.arcanaNumber,
+        arcanaName: result.arcanaName,
+        hasWarning: result.hasWarning,
+        synthesisText: result.synthesisText,
+        version: CURRENT_FORECAST_VERSION,
+        payload,
+      })
+      .where(and(eq(forecastsTable.userId, userId), eq(forecastsTable.date, date)))
+      .returning();
+    return updated;
+  }
+
   const [created] = await db
     .insert(forecastsTable)
     .values({
@@ -141,12 +158,7 @@ async function getOrComputeToday(
       hasWarning: result.hasWarning,
       synthesisText: result.synthesisText,
       version: CURRENT_FORECAST_VERSION,
-      payload: {
-        matrix: result.matrix,
-        transits: result.transits,
-        conflicts: result.conflicts,
-        warnings: result.warnings,
-      },
+      payload,
     })
     .returning();
   return created;
