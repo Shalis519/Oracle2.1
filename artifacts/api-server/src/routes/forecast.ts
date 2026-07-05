@@ -63,7 +63,7 @@ function buildForecast(
   };
 }
 
-const CURRENT_FORECAST_VERSION = 20;
+const CURRENT_FORECAST_VERSION = 21;
 
 async function getOrComputeToday(
   userId: number,
@@ -189,9 +189,13 @@ router.get("/forecast/today", requireAuth, async (req, res): Promise<void> => {
     .select()
     .from(feedbackTable)
     .where(eq(feedbackTable.forecastId, row.id));
-  res.json(
-    GetTodayForecastResponse.parse(buildForecast(row, fb ?? null)),
-  );
+  res
+    .set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+    .set("Pragma", "no-cache")
+    .set("Expires", "0")
+    .json(
+      GetTodayForecastResponse.parse(buildForecast(row, fb ?? null)),
+    );
 });
 
 router.get("/forecast/history", requireAuth, async (req, res): Promise<void> => {

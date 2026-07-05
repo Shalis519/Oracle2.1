@@ -576,12 +576,14 @@ export class FuturisticGenerator {
       parts.push(corePhrase);
     }
 
-    // --- 2. Вступление: стиль мышления от знака (если есть) ---
+    // --- 2. Вступление: ключевые качества знака (из keyMeanings, без склонения) ---
     let signIntro: string | null = null;
-    if (signProfile?.positiveQualities && signProfile.positiveQualities.length > 0) {
-      const qualities = signProfile.positiveQualities.slice(0, 2).join(" и ");
+    if (signProfile?.keyMeanings) {
       const signPreposition = inSignPrep(context.sign);
-      signIntro = `${context.planet} ${signPreposition} придаёт этому ${qualities.toLowerCase()} оттенок.`;
+      signIntro = `${context.planet} ${signPreposition}: ${signProfile.keyMeanings.toLowerCase()}.`;
+    } else if (signProfile?.positiveQualities && signProfile.positiveQualities.length > 0) {
+      const qualities = signProfile.positiveQualities.slice(0, 2).join(" и ");
+      signIntro = `${context.planet} в ${context.sign}: качества — ${qualities.toLowerCase()}.`;
     }
     if (signIntro) {
       parts.push(signIntro);
@@ -598,11 +600,13 @@ export class FuturisticGenerator {
       parts.push(housePhrase);
     }
 
-    // --- 3b. Уточнение знака натальной планеты (если есть) ---
+    // --- 3b. Уточнение знака натальной планеты (из keyMeanings, без склонения) ---
     let aspectSignPhrase: string | null = null;
-    if (aspectSignProfile?.positiveQualities && aspectSignProfile.positiveQualities.length > 0) {
+    if (aspectSignProfile?.keyMeanings) {
+      aspectSignPhrase = `${context.aspectPlanet} в ${context.aspectSign}: ${aspectSignProfile.keyMeanings.toLowerCase()}.`;
+    } else if (aspectSignProfile?.positiveQualities && aspectSignProfile.positiveQualities.length > 0) {
       const aspectQualities = aspectSignProfile.positiveQualities.slice(0, 2).join(" и ");
-      aspectSignPhrase = `${context.aspectPlanet} в ${context.aspectSign} добавляет ${aspectQualities.toLowerCase()} ноту.`;
+      aspectSignPhrase = `${context.aspectPlanet} в ${context.aspectSign}: качества — ${aspectQualities.toLowerCase()}.`;
     }
     if (aspectSignPhrase) {
       parts.push(aspectSignPhrase);
