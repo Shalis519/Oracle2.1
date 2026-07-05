@@ -1,0 +1,683 @@
+ЭТАП 2: База данных (добавить новые поля)
+Задача 2.1: Добавить поле futuristic в ontology_entity_relations
+sql
+-- Проверить существование
+SELECT column_name 
+FROM information_schema.columns 
+WHERE table_name = 'ontology_entity_relations' 
+AND column_name = 'futuristic';
+
+-- Если нет - добавить
+ALTER TABLE ontology_entity_relations 
+ADD COLUMN futuristic JSONB DEFAULT '{}';
+Задача 2.2: Добавить поле keywords в ontology_entity_relations
+sql
+-- Проверить существование
+SELECT column_name 
+FROM information_schema.columns 
+WHERE table_name = 'ontology_entity_relations' 
+AND column_name = 'keywords';
+
+-- Если нет - добавить
+ALTER TABLE ontology_entity_relations 
+ADD COLUMN keywords TEXT[] DEFAULT '{}';
+ЭТАП 3: Файл lib/transit-duration.ts
+Задача 3.1: Проверить существование файла
+Если файл существует:
+
+Отредактировать существующий файл
+
+Если файла нет:
+
+Создать файл
+
+Код:
+
+typescript
+// lib/transit-duration.ts
+
+export interface TransitDuration {
+  duration: number;
+  unit: 'hours' | 'days' | 'weeks' | 'months';
+  text: string;
+  urgency: 'срочно' | 'скоро' | 'в ближайшее время' | 'постепенно' | 'длительно';
+  peakDate: Date;
+}
+
+export function calculateTransitDuration(
+  planet: string,
+  orb: number,
+  currentDate: Date = new Date()
+): TransitDuration {
+  const speeds: Record<string, number> = {
+    'Луна': 13.0,
+    'Меркурий': 1.2,
+    'Венера': 1.0,
+    'Марс': 0.7,
+    'Юпитер': 0.08,
+    'Сатурн': 0.03,
+    'Уран': 0.01,
+    'Нептун': 0.006,
+    'Плутон': 0.002
+  };
+  
+  const speed = speeds[planet] || 0.5;
+  const orbDegrees = Math.abs(orb);
+  const totalDays = (orbDegrees * 2) / speed;
+  
+  let duration: number;
+  let unit: 'hours' | 'days' | 'weeks' | 'months';
+  let text: string;
+  let urgency: 'срочно' | 'скоро' | 'в ближайшее время' | 'постепенно' | 'длительно';
+  
+  if (totalDays < 1) {
+    duration = Math.round(totalDays * 24);
+    unit = 'hours';
+    text = `в ближайшие ${duration} ${declension(duration, ['час', 'часа', 'часов'])}`;
+    urgency = 'срочно';
+  } else if (totalDays < 7) {
+    duration = Math.round(totalDays);
+    unit = 'days';
+    text = `в ближайшие ${duration} ${declension(duration, ['день', 'дня', 'дней'])}`;
+    urgency = 'скоро';
+  } else if (totalDays < 30) {
+    duration = Math.round(totalDays / 7);
+    unit = 'weeks';
+    text = `в ближайшие ${duration} ${declension(duration, ['неделю', 'недели', 'недель'])}`;
+    urgency = 'в ближайшее время';
+  } else {
+    duration = Math.round(totalDays / 30);
+    unit = 'months';
+    text = `в течение ${duration} ${declension(duration, ['месяца', 'месяцев', 'месяцев'])}`;
+    urgency = 'постепенно';
+  }
+  
+  const peakDate = new Date(currentDate);
+  peakDate.setDate(peakDate.getDate() + Math.round(totalDays / 2));
+  
+  return { duration, unit, text, urgency, peakDate };
+}
+
+function declension(count: number, forms: [string, string, string]): string {
+  const n = Math.abs(count) % 100;
+  const n1 = n % 10;
+  if (n > 10 && n < 20) return forms[2];
+  if (n1 > 1 && n1 < 5) return forms[1];
+  if (n1 === 1) return forms[0];
+  return forms[2];
+}
+Задача 3.2: Заменить старые вызовы в коде
+Найти все вызовы старой функции и заменить:
+
+typescript
+// БЫЛО:
+const duration = getTransitDuration(planet, orb);
+
+// СТАЛО:
+const duration = calculateTransitDuration(planet, orb).text;
+ЭТАП 4: Файл lib/ontological-engine/semantic-engine.ts
+Задача 4.1: Проверить существование файла
+Если файл существует:
+
+Отредактировать — добавить новые методы в КОНЕЦ класса
+
+Если файла нет:
+
+Создать файл
+
+Код:
+
+typescript
+// lib/ontological-engine/semantic-engine.ts
+
+import { db } from '../db';
+import { 
+  ontologyEntities, 
+  ontologyThemes, 
+  ontologyEntityThemes,
+  ontologyEntityProfiles,
+  ontologyEntityRelations
+} from '../db/schema';
+
+export class SemanticEngine {
+  private static instance: SemanticEngine;
+  private cache: Map<string, any> = new Map();
+  
+  static getInstance(): SemanticEngine {
+    if (!SemanticEngine.instance) {
+      SemanticEngine.instance = new SemanticEngine();
+    }
+    return SemanticEngine.instance;
+  }
+  
+  async loadAll(): Promise<void> {
+    console.log('🔄 Loading ontology...');
+    
+    try {
+      const [entities, themes, entityThemes, profiles, relations] = await Promise.all([
+        db.select().from(ontologyEntities),
+        db.select().from(ontologyThemes),
+        db.select().from(ontologyEntityThemes),
+        db.select().from(ontologyEntityProfiles),
+        db.select().from(ontologyEntityRelations)
+      ]);
+      
+      const entityMap = new Map();
+      
+      entities.forEach(entity => {
+        const entityProfile = profiles.find(p => p.entityId === entity.id);
+        const entityThemesList = entityThemes
+          .filter(et => et.entityId === entity.id)
+          .map(et => {
+            const theme = themes.find(t => t.id === et.themeId);
+            return {
+              themeId: et.themeId,
+              themeName: theme?.name || 'unknown',
+              weight: et.weight || 1.0,
+              polarity: et.polarity || 'neutral',
+              contextRules: et.contextRules || {}
+            };
+          });
+        
+        const entityRelations = relations
+          .filter(r => r.sourceId === entity.id)
+          .map(r => {
+            const target = entities.find(e => e.id === r.targetId);
+            return {
+              targetId: r.targetId,
+              targetName: target?.name || 'unknown',
+              type: r.type || 'connection',
+              description: r.description || '',
+              weight: r.weight || 1.0,
+              futuristic: r.futuristic || {},
+              keywords: r.keywords || []
+            };
+          });
+        
+        entityMap.set(entity.name, {
+          id: entity.id,
+          name: entity.name,
+          description: entity.description || '',
+          themes: entityThemesList,
+          profile: entityProfile,
+          relations: entityRelations
+        });
+      });
+      
+      this.cache.set('entityMap', entityMap);
+      console.log(`✅ Ontology loaded: ${entities.length} entities`);
+      
+    } catch (error) {
+      console.error('❌ Failed to load ontology:', error);
+      throw error;
+    }
+  }
+  
+  // ===== СУЩЕСТВУЮЩИЕ МЕТОДЫ (если есть - НЕ ТРОГАТЬ) =====
+  // Если файл новый - создаем все методы
+  
+  getEntity(name: string): any | null {
+    const entityMap = this.cache.get('entityMap');
+    return entityMap?.get(name) || null;
+  }
+  
+  getThemes(name: string): any[] {
+    const entity = this.getEntity(name);
+    return entity?.themes || [];
+  }
+  
+  // ===== НОВЫЕ МЕТОДЫ (добавляем в КОНЕЦ класса) =====
+  
+  getRelations(name: string): any[] {
+    const entity = this.getEntity(name);
+    return entity?.relations || [];
+  }
+  
+  findRelation(source: string, target: string): any | null {
+    const relations = this.getRelations(source);
+    return relations.find(r => r.targetName === target) || null;
+  }
+  
+  hasEntity(name: string): boolean {
+    return !!this.getEntity(name);
+  }
+  
+  async refresh(): Promise<void> {
+    await this.loadAll();
+  }
+}
+
+export const semanticEngine = SemanticEngine.getInstance();
+ЭТАП 5: Файл lib/ontological-engine/futuristic-generator.ts
+Задача 5.1: Проверить существование файла
+Если файл существует:
+
+Отредактировать
+
+Если файла нет:
+
+Создать
+
+Код:
+
+typescript
+// lib/ontological-engine/futuristic-generator.ts
+
+import { semanticEngine } from './semantic-engine';
+import { calculateTransitDuration } from '../transit-duration';
+
+export interface TransitContext {
+  planet: string;
+  sign: string;
+  house: number;
+  aspect: string;
+  aspectPlanet?: string;
+  orb: number;
+  currentDate: Date;
+}
+
+export class FuturisticGenerator {
+  
+  generate(context: TransitContext): string | null {
+    try {
+      const planetProfile = semanticEngine.getEntity(context.planet);
+      if (!planetProfile) {
+        console.warn(`Entity "${context.planet}" not found`);
+        return null;
+      }
+      
+      const themes = planetProfile.themes;
+      if (themes.length === 0) {
+        console.warn(`No themes for "${context.planet}"`);
+        return null;
+      }
+      
+      const relation = context.aspectPlanet 
+        ? semanticEngine.findRelation(context.planet, context.aspectPlanet)
+        : null;
+      
+      const durationData = calculateTransitDuration(
+        context.planet,
+        context.orb,
+        context.currentDate
+      );
+      
+      return this.buildText(themes, relation, durationData, context);
+      
+    } catch (error) {
+      console.error('Error generating forecast:', error);
+      return null;
+    }
+  }
+  
+  private buildText(
+    themes: any[],
+    relation: any | null,
+    durationData: any,
+    context: TransitContext
+  ): string {
+    const parts: string[] = [];
+    
+    // 1. Бифуркация
+    const primaryTheme = themes[0]?.themeName || 'важные вопросы';
+    const secondaryTheme = themes[1]?.themeName || 'перемены';
+    
+    parts.push(`Сейчас ты стоишь на развилке между "${primaryTheme}" и "${secondaryTheme}".`);
+    
+    if (relation) {
+      const archetype = relation.futuristic?.archetype || relation.description || 'энергия';
+      const oldPattern = relation.futuristic?.bifurcation?.oldPattern || 'старый шаблон';
+      const newPossibility = relation.futuristic?.bifurcation?.newPossibility || 'новая возможность';
+      
+      parts.push(`${archetype} подсвечивает твой старый шаблон "${oldPattern}",`);
+      parts.push(`а ${context.aspectPlanet} открывает путь к "${newPossibility}".`);
+    } else {
+      parts.push(`Твой выбор определит, как ${primaryTheme} трансформируется в ${secondaryTheme}.`);
+    }
+    
+    parts.push(`У тебя есть ${durationData.text}, чтобы выбрать новую ветку реальности.`);
+    parts.push('');
+    
+    // 2. Окно возможностей
+    const opportunityDesc = relation?.futuristic?.opportunity?.description || 
+                           `в моменте, когда ${primaryTheme} встретится с ${secondaryTheme}`;
+    
+    const peakDate = durationData.peakDate.toLocaleDateString('ru-RU', {
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    parts.push(`Идея, которая придет ${opportunityDesc} (запомни это время: ${peakDate}), — это не про сегодня.`);
+    parts.push(`Это про твой ${this.getFuturePeriod(context)}.`);
+    parts.push(`Если ты её проигнорируешь, мир не рухнет.`);
+    parts.push(`Но если запишешь и начнешь делать — через ${durationData.text} ты не узнаешь свою жизнь.`);
+    parts.push('');
+    
+    // 3. Таймер
+    const action = relation?.futuristic?.timer?.action || `сделать выбор в пользу ${primaryTheme}`;
+    
+    parts.push(`У тебя есть ${durationData.text}, чтобы ${action}.`);
+    
+    if (durationData.urgency === 'срочно') {
+      parts.push('Действуй прямо сейчас! Время на исходе.');
+    } else if (durationData.urgency === 'скоро') {
+      parts.push('Время идет, не откладывай на завтра.');
+    } else {
+      parts.push('У тебя есть время обдумать решение.');
+    }
+    
+    parts.push('После этого окно захлопнется.');
+    parts.push('Не потому что возможности исчезнут, а потому что ты войдешь в другой сценарий,');
+    parts.push('где этот выбор уже неактуален.');
+    parts.push('');
+    
+    // 4. Вопрос-маяк
+    const beacon = relation?.futuristic?.beacon?.question || 
+                   'Что бы ты делал, если бы знал, что не можешь провалиться?';
+    parts.push(beacon);
+    
+    return parts.join('\n');
+  }
+  
+  private getFuturePeriod(context: TransitContext): string {
+    // TODO: Рассчитать следующую аналогичную дату аспекта
+    // Пока используем заглушку
+    if (!context.aspectPlanet) return 'будущее';
+    
+    const periods: Record<string, string> = {
+      'Уран': 'март 2027 года',
+      'Сатурн': 'через 2 года',
+      'Юпитер': 'следующий год',
+      'Меркурий': 'через 3 недели',
+      'Венера': 'через 2 месяца',
+      'Марс': 'через месяц'
+    };
+    
+    return periods[context.aspectPlanet] || 'ближайшее будущее';
+  }
+}
+
+export const futuristicGenerator = new FuturisticGenerator();
+ЭТАП 6: Файл lib/oracle.ts (УДАЛИТЬ СТАРЫЙ КОД)
+Задача 6.1: Удалить хардкоженные данные
+typescript
+// УДАЛИТЬ из lib/oracle.ts:
+
+// ❌ SIGN_MEANING
+// ❌ HOUSE_ACTION
+// ❌ TRANSIT_QUALITIES
+// ❌ buildSynthesisText (старую версию)
+// ❌ generateLegacyForecast
+// ❌ любые другие хардкоженные константы
+Задача 6.2: Добавить импорты
+typescript
+// В НАЧАЛО файла добавить:
+
+import { semanticEngine } from './ontological-engine/semantic-engine';
+import { futuristicGenerator } from './ontological-engine/futuristic-generator';
+Задача 6.3: Переписать computeDailyForecast
+typescript
+// lib/oracle.ts
+
+export async function computeDailyForecast(
+  birthDate: Date,
+  natalChart: any,
+  transits: TransitAspect[],
+  date: Date
+): Promise<DailyForecast> {
+  
+  // ===== ТОЛЬКО ОНТОЛОГИЯ =====
+  try {
+    // Проверяем наличие онтологии
+    await semanticEngine.loadAll();
+    
+    // Берем сильные транзиты
+    const topTransits = transits
+      .filter(t => Math.abs(t.orb) < 3)
+      .sort((a, b) => Math.abs(a.orb) - Math.abs(b.orb))
+      .slice(0, 3);
+    
+    if (topTransits.length === 0) {
+      throw new Error('Нет сильных транзитов для прогноза');
+    }
+    
+    const forecasts: string[] = [];
+    
+    for (const transit of topTransits) {
+      const context = {
+        planet: transit.planet,
+        sign: transit.sign,
+        house: transit.house,
+        aspect: transit.aspect,
+        aspectPlanet: transit.aspectPlanet,
+        orb: transit.orb,
+        currentDate: date
+      };
+      
+      const forecast = futuristicGenerator.generate(context);
+      if (forecast) {
+        forecasts.push(forecast);
+      }
+    }
+    
+    if (forecasts.length === 0) {
+      throw new Error('Не удалось сгенерировать прогноз из онтологии');
+    }
+    
+    console.log('✅ Forecast generated from ontology');
+    
+    return {
+      synthesisText: forecasts.join('\n\n---\n\n'),
+      transits: transits.map(t => ({
+        ...t,
+        description: t.description || ''
+      })),
+      arcana: getArcanaOfDay(date),
+      conflicts: [],
+      warnings: [],
+      generatedBy: 'ontology'
+    };
+    
+  } catch (error) {
+    console.error('❌ Ontology forecast failed:', error);
+    throw new Error('Нет данных в онтологии для генерации прогноза');
+  }
+}
+ЭТАП 7: Файл lib/seedOntology.ts
+Задача 7.1: Добавить футурологические данные
+Найти место, где создаются связи, и дополнить:
+
+typescript
+// lib/seedOntology.ts
+
+// Пример:
+await db.insert(ontologyEntityRelations).values({
+  sourceId: venusId,
+  targetId: uranusId,
+  type: 'квадратура',
+  description: 'свободные отношения, революционер в любви',
+  weight: 1.0,
+  keywords: ['свобода', 'революция', 'любовь', 'отношения'], // НОВОЕ
+  futuristic: { // НОВОЕ
+    archetype: 'Революционерка любви',
+    bifurcation: {
+      oldPattern: 'старый шаблон в любви',
+      newPossibility: 'свободное самовыражение',
+      comfort: 'привычный круг общения',
+      freedom: 'новые знакомства'
+    },
+    opportunity: {
+      description: 'в момент неожиданного вдохновения'
+    },
+    timer: {
+      action: 'сказать "да" тому, что пугает'
+    },
+    beacon: {
+      question: 'Что бы ты делал, если бы знал, что не можешь провалиться?'
+    }
+  }
+});
+ЭТАП 8: Файл index.ts или app.ts
+Задача 8.1: Добавить загрузку онтологии при старте
+typescript
+// index.ts или app.ts
+
+import { semanticEngine } from './lib/ontological-engine/semantic-engine';
+
+async function startServer() {
+  // Загружаем онтологию при старте
+  try {
+    console.log('🔄 Loading ontology...');
+    await semanticEngine.loadAll();
+    console.log('✅ Ontology loaded');
+  } catch (error) {
+    console.warn('⚠️ Ontology not available');
+    // Сервер продолжает работу без онтологии
+  }
+  
+  // ... существующий код запуска
+}
+ЭТАП 9: Файл frontend/pages/admin-studio.tsx
+Задача 9.1: Добавить поля для футурологических данных
+Найти форму создания связи и добавить секцию:
+
+tsx
+<Accordion type="single" collapsible>
+  <AccordionItem value="futuristic">
+    <AccordionTrigger>
+      <span className="text-sm font-medium">Футурологические данные (опционально)</span>
+    </AccordionTrigger>
+    <AccordionContent className="space-y-3">
+      <div>
+        <Label>Архетип</Label>
+        <Input 
+          placeholder="Например: Революционерка любви"
+          value={futuristic.archetype || ''}
+          onChange={(e) => setFuturistic({...futuristic, archetype: e.target.value})}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label>Старый паттерн</Label>
+          <Input 
+            placeholder="старый шаблон"
+            value={futuristic.bifurcation?.oldPattern || ''}
+            onChange={(e) => setFuturistic({
+              ...futuristic, 
+              bifurcation: {...futuristic.bifurcation, oldPattern: e.target.value}
+            })}
+          />
+        </div>
+        <div>
+          <Label>Новая возможность</Label>
+          <Input 
+            placeholder="новая возможность"
+            value={futuristic.bifurcation?.newPossibility || ''}
+            onChange={(e) => setFuturistic({
+              ...futuristic, 
+              bifurcation: {...futuristic.bifurcation, newPossibility: e.target.value}
+            })}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label>Комфорт</Label>
+          <Input 
+            placeholder="привычное"
+            value={futuristic.bifurcation?.comfort || ''}
+            onChange={(e) => setFuturistic({
+              ...futuristic, 
+              bifurcation: {...futuristic.bifurcation, comfort: e.target.value}
+            })}
+          />
+        </div>
+        <div>
+          <Label>Свобода</Label>
+          <Input 
+            placeholder="свободное"
+            value={futuristic.bifurcation?.freedom || ''}
+            onChange={(e) => setFuturistic({
+              ...futuristic, 
+              bifurcation: {...futuristic.bifurcation, freedom: e.target.value}
+            })}
+          />
+        </div>
+      </div>
+      <div>
+        <Label>Описание возможностей</Label>
+        <Input 
+          placeholder="в момент неожиданного вдохновения"
+          value={futuristic.opportunity?.description || ''}
+          onChange={(e) => setFuturistic({
+            ...futuristic, 
+            opportunity: {...futuristic.opportunity, description: e.target.value}
+          })}
+        />
+      </div>
+      <div>
+        <Label>Действие для таймера</Label>
+        <Input 
+          placeholder="сказать 'да' тому, что пугает"
+          value={futuristic.timer?.action || ''}
+          onChange={(e) => setFuturistic({
+            ...futuristic, 
+            timer: {...futuristic.timer, action: e.target.value}
+          })}
+        />
+      </div>
+      <div>
+        <Label>Вопрос-маяк</Label>
+        <Textarea 
+          placeholder="Что бы ты делал, если бы знал, что не можешь провалиться?"
+          value={futuristic.beacon?.question || ''}
+          onChange={(e) => setFuturistic({
+            ...futuristic, 
+            beacon: {...futuristic.beacon, question: e.target.value}
+          })}
+        />
+      </div>
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+ЭТАП 10: Документация для администратора
+Задача 10.1: Создать файл docs/ADMIN_WEIGHTS_GUIDE.md
+markdown
+# Руководство по весам в Oracle Studio
+
+## Единая шкала весов
+
+**Все веса в Oracle Studio от 0.0 до 3.0**
+
+| Вес | Уровень | Что значит |
+|-----|---------|------------|
+| 0.0 | нет | Тема не используется |
+| 0.5 | слабая | Второстепенное упоминание |
+| 1.0 | базовая | Стандартная тема |
+| 1.5 | сильная | Важная тема |
+| 2.0 | очень сильная | Ключевая тема |
+| 2.5 | критическая | Главная тема сущности |
+| 3.0 | максимальная | Максимальная важность |
+
+## Как использовать
+
+1. **Вес 1.0** — ставьте по умолчанию для всех тем
+2. **Вес 1.5–2.0** — для самых важных тем сущности
+3. **Вес 0.5** — для второстепенных тем
+4. **Вес 0.0** — если тема не подходит
+
+## Пример
+
+**Сущность: Венера**
+- Любовь → 2.0 (ключевая тема)
+- Красота → 1.5 (важная тема)
+- Гармония → 1.0 (базовая тема)
+- Карьера → 0.5 (второстепенная)
+
+## Важно
+
+- Не ставьте вес выше 3.0
+- Не ставьте вес ниже 0.0
+- Вес влияет на порядок тем в прогнозе
