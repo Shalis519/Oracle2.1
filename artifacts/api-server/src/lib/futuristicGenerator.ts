@@ -8,14 +8,22 @@ import {
 } from "./semanticEngine";
 
 export interface TransitContext {
-  planet: string;
-  sign: string;
-  house: number;
-  aspect: string;
-  aspectPlanet?: string;
+  planet: string;           // транзитная планета (например, "Меркурий")
+  sign: string;             // знак транзитной планеты
+  house: number;            // дом транзитной планеты
+  aspect: string;           // тип аспекта
+  aspectPlanet?: string;     // натальная планета (например, "Уран")
+  aspectSign?: string;      // знак натальной планеты
+  aspectHouse?: number;      // дом натальной планеты
   orb: number;
   currentDate: Date;
   motivationPhrase?: string;
+}
+
+/** Предлог «в» / «во» для предложного падежа знака (во Льве, в Раке). */
+function inSignPrep(sign: string): string {
+  if (sign.toLowerCase().startsWith("ль")) return `во ${sign}`;
+  return `в ${sign}`;
 }
 
 /** Astrological daily motion in degrees/day (approximate mean values). */
@@ -309,7 +317,7 @@ function resolveThemes(
 ): { primary: string; secondary: string; tertiary: string; all: string[]; aspectModifier: number; aspectPolarity: "positive" | "negative" | "neutral" } | null {
   const planetThemes = getEntityThemes(planet);
   const signThemes = getEntityThemes(sign);
-  const houseThemes = getEntityThemes(String(house));
+  const houseThemes = getEntityThemes(`Дом ${house}`);
 
   if (planetThemes.length === 0) {
     return null;
@@ -544,42 +552,74 @@ export class FuturisticGenerator {
     const parts: string[] = [];
     const primaryTheme = themes.primary;
     const secondaryTheme = themes.secondary;
-    const dayPart = getDayPart(durationData.peakDate.getHours());
     const phase = durationData.phase;
     const futurePeriod = this.getFuturePeriod(context);
 
-    // --- 1. Открытие: конкретное, без абстракций ---
-    const openers = [
-      `Сегодняшний день открывает возможности в сфере ${declineTheme(primaryTheme, "genitive").toLowerCase()}.`,
-      `${primaryTheme} выходит на первый план — обратите на это внимание.`,
-      `Энергия сегодня направлена на ${declineTheme(primaryTheme, "accusative").toLowerCase()}.`,
-      `День благоприятен для ${declineTheme(primaryTheme, "genitive").toLowerCase()}.`,
-    ];
-    parts.push(pickRandom(openers));
+    // --- Профили знаков и домов ---
+    const signProfile = context.sign ? getEntity(context.sign)?.profile ?? null : null;
+    const houseProfile = context.house ? getEntity(`Дом ${context.house}`)?.profile ?? null : null;
+    const aspectSignProfile = context.aspectSign ? getEntity(context.aspectSign)?.profile ?? null : null;
+    const aspectHouseProfile = context.aspectHouse ? getEntity(`Дом ${context.aspectHouse}`)?.profile ?? null : null;
 
-    // Временная привязка адаптирована под фазу
-    if (phase === "peak") {
-      parts.push(`Пик транзита ${dayPart} — это главный момент.`);
-    } else if (phase === "building") {
-      parts.push(`Энергия усиливается, пик ${dayPart}.`);
-    } else {
-      parts.push(`Транзит уже отошёл, но его влияние ещё актуально ${dayPart}.`);
+    // --- 1. Вступление: стиль мышления от знака (если есть) ---
+    let signIntro: string | null = null;
+    if (signProfile?.positiveQualities && signProfile.positiveQualities.length > 0) {
+      const qualities = signProfile.positiveQualities.slice(0, 2).join(" и ");
+      const signPreposition = inSignPrep(context.sign);
+      signIntro = `${context.planet} ${signPreposition} придаёт этому ${qualities.toLowerCase()} оттенок.`;
+    }
+    if (signIntro) {
+      parts.push(signIntro);
     }
 
-    if (themes.all.length > 2) {
-      const others = themes.all.slice(1, 4).filter((t) => t !== primaryTheme);
-      if (others.length > 0) {
-        const otherThemes = others.slice(0, 2).join(" и ");
-        const contextPhrases = [
-          `Рядом с этим — ${otherThemes.toLowerCase()}.`,
-          `Также важны: ${otherThemes.toLowerCase()}.`,
-          `В тени основной темы — ${otherThemes.toLowerCase()}.`,
-        ];
-        parts.push(pickRandom(contextPhrases));
-      }
+    // --- 2. Суть: описание связи планет (если есть) ---
+    let corePhrase: string | null = null;
+    if (relation?.description) {
+      corePhrase = relation.description;
+    } else if (primaryTheme) {
+      const openers = [
+        `Сегодняшний день открывает возможности в сфере ${declineTheme(primaryTheme, "genitive").toLowerCase()}.`,
+        `${primaryTheme} выходит на первый план.`,
+      ];
+      corePhrase = pickRandom(openers);
+    }
+    if (corePhrase) {
+      parts.push(corePhrase);
     }
 
-    // --- 2. Эмоциональный слой из профиля ---
+    // --- 3. Уточнение домов (если есть данные) ---
+    let housePhrase: string | null = null;
+    if (houseProfile?.keyMeanings) {
+      housePhrase = `Дом ${context.house} добавляет контекст: ${houseProfile.keyMeanings.toLowerCase()}.`;
+    } else if (houseProfile?.lifeThemes && houseProfile.lifeThemes.length > 0) {
+      housePhrase = `Дом ${context.house} активирует тему: ${houseProfile.lifeThemes[0].toLowerCase()}.`;
+    }
+    if (housePhrase) {
+      parts.push(housePhrase);
+    }
+
+    // --- 3b. Уточнение знака натальной планеты (если есть) ---
+    let aspectSignPhrase: string | null = null;
+    if (aspectSignProfile?.positiveQualities && aspectSignProfile.positiveQualities.length > 0) {
+      const aspectQualities = aspectSignProfile.positiveQualities.slice(0, 2).join(" и ");
+      aspectSignPhrase = `${context.aspectPlanet} в ${context.aspectSign} добавляет ${aspectQualities.toLowerCase()} ноту.`;
+    }
+    if (aspectSignPhrase) {
+      parts.push(aspectSignPhrase);
+    }
+
+    // --- 3c. Уточнение дома натальной планеты (если есть) ---
+    let aspectHousePhrase: string | null = null;
+    if (aspectHouseProfile?.keyMeanings) {
+      aspectHousePhrase = `Дом ${context.aspectHouse} натальной карты добавляет: ${aspectHouseProfile.keyMeanings.toLowerCase()}.`;
+    } else if (aspectHouseProfile?.lifeThemes && aspectHouseProfile.lifeThemes.length > 0) {
+      aspectHousePhrase = `Дом ${context.aspectHouse} натальной карты активирует: ${aspectHouseProfile.lifeThemes[0].toLowerCase()}.`;
+    }
+    if (aspectHousePhrase) {
+      parts.push(aspectHousePhrase);
+    }
+
+    // --- 4. Эмоциональный слой из профиля планеты ---
     let emotionPhrase: string | null = null;
     if (profile) {
       const emotions =
@@ -593,16 +633,9 @@ export class FuturisticGenerator {
     }
     if (emotionPhrase) {
       parts.push(emotionPhrase);
-    } else {
-      const fallbackEmotions = [
-        "Сегодня Вы можете почувствовать интерес и любопытство.",
-        "Возможно, придёт осознание, которого раньше не было.",
-        "Сегодняшний день может принести ясность.",
-      ];
-      parts.push(pickRandom(fallbackEmotions));
     }
 
-    // --- 3. Конкретный совет по теме ---
+    // --- 5. Конкретный совет ---
     const advice = getAdvice(primaryTheme);
     if (advice) {
       parts.push(advice);
@@ -610,55 +643,33 @@ export class FuturisticGenerator {
       parts.push(profile.recommendations);
     }
 
-    // Дополнительный совет по второй теме
     const advice2 = getAdvice(secondaryTheme);
     if (advice2 && advice2 !== advice) {
       parts.push(advice2);
     }
 
-    // --- 4. Временная привязка (один раз!) ---
+    // --- 6. Временная привязка + фаза ---
     const timePhrases = [
       `То, что Вы начнёте сегодня, может принести первые результаты ${futurePeriod}.`,
       `Сегодняшние шаги начнут откликаться ${futurePeriod}.`,
-      `Первые признаки изменений появятся ${futurePeriod}.`,
     ];
     parts.push(pickRandom(timePhrases));
 
-    // --- 5. Тональность аспекта + фаза транзита ---
-    if (themes.aspectPolarity === "negative") {
-      if (phase === "peak") {
-        parts.push("Это пик транзита. Действуйте прямо сейчас — не откладывайте.");
-      } else if (phase === "building") {
-        parts.push("Транзит набирает силу. Примите решение, пока энергия ещё есть.");
-      } else {
-        parts.push("Транзит спадает, но его влияние ещё актуально. Подумайте, что усвоили.");
-      }
-    } else if (themes.aspectPolarity === "positive") {
-      if (phase === "peak") {
-        parts.push("Это пик транзита! Энергия на полной. Действуйте смело.");
-      } else if (phase === "building") {
-        parts.push("Эта энергия нарастает. Сейчас — лучшее время для старта.");
-      } else {
-        parts.push("Транзит уже перестаёт, но его подарки ещё с Вами. Закрепите результат.");
-      }
+    if (phase === "peak") {
+      parts.push("Это пик транзита. Сейчас энергия на максимуме.");
+    } else if (phase === "building") {
+      parts.push("Транзит набирает силу. Есть время на подготовку.");
     } else {
-      if (phase === "peak") {
-        parts.push("Транзит в пике. Сейчас важны все решения.");
-      } else if (phase === "building") {
-        parts.push("Энергия теснится, но ещё не достигла пика. Есть время на подготовку.");
-      } else {
-        parts.push("Транзит уходит, но он оставил след. Подумайте, что означает для Вас.");
-      }
+      parts.push("Транзит уходит, но его влияние ещё актуально. Подумайте, что означает для Вас.");
     }
 
-    // --- 6. Мотивация ---
+    // --- 7. Мотивация ---
     if (context.motivationPhrase) {
       parts.push(context.motivationPhrase);
     } else {
       const fallbackMotivation = [
         "Действуйте, у Вас всё получится!",
         "Верьте в себя. Вы справитесь!",
-        "Это Ваш звёздный час. Вперёд!",
       ];
       parts.push(pickRandom(fallbackMotivation));
     }

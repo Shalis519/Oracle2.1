@@ -1219,6 +1219,8 @@ export async function computeDailyForecast(
       house: strongestTransit.transitHouse ?? 1,
       aspect: strongestTransit.type,
       aspectPlanet: strongestTransit.natalBody,
+      aspectSign: strongestTransit.natalSign,
+      aspectHouse: strongestTransit.natalHouse ?? 1,
       orb: strongestTransit.orb,
       currentDate: new Date(today),
       motivationPhrase: randomPhrase?.phrase,
