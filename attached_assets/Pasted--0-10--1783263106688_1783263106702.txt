@@ -1,0 +1,213 @@
+Формула расчета силы транзита
+Каждый транзит получает числовой балл от 0 до 10. Чем выше балл — тем сильнее транзит.
+
+typescript
+function calculateTransitScore(transit: TransitAspect): number {
+  let score = 0;
+  
+  // 1. ОРБИС (макс 5 баллов)
+  // Чем меньше орбис, тем выше балл
+  const orb = Math.abs(transit.orb);
+  if (orb <= 0.3) score += 5.0;
+  else if (orb <= 0.5) score += 4.5;
+  else if (orb <= 0.7) score += 4.0;
+  else if (orb <= 1.0) score += 3.5;
+  else if (orb <= 1.5) score += 3.0;
+  else if (orb <= 2.0) score += 2.5;
+  else if (orb <= 2.5) score += 2.0;
+  else if (orb <= 3.0) score += 1.5;
+  else score += 0;
+  
+  // 2. ПЛАНЕТА (макс 3 балла)
+  const planetScore: Record<string, number> = {
+    // Личные планеты (высший приоритет)
+    'Солнце': 3.0,
+    'Луна': 3.0,
+    'Меркурий': 2.8,
+    'Венера': 2.8,
+    'Марс': 2.8,
+    // Социальные (средний)
+    'Юпитер': 2.0,
+    'Сатурн': 2.0,
+    // Высшие (низший)
+    'Уран': 1.2,
+    'Нептун': 1.0,
+    'Плутон': 0.8
+  };
+  score += planetScore[transit.planet] || 1.0;
+  
+  // 3. АСПЕКТ (макс 2 балла)
+  const aspectScore: Record<string, number> = {
+    'соединение': 2.0,   // гармоничный
+    'тригон': 1.8,       // гармоничный
+    'секстиль': 1.6,     // гармоничный
+    'квадрат': 1.0,      // напряжённый
+    'оппозиция': 0.8,    // напряжённый
+    'квинконс': 0.5,     // напряжённый
+    'полуквадрат': 0.4,  // напряжённый
+    'полусекстиль': 0.3  // слабый
+  };
+  score += aspectScore[transit.aspect] || 0.5;
+  
+  // 4. ДОМ (макс 1 балл)
+  const houseScore: Record<number, number> = {
+    1: 1.0, 4: 1.0, 7: 1.0, 10: 1.0,  // угловые
+    2: 0.7, 5: 0.7, 8: 0.7, 11: 0.7,   // последующие
+    3: 0.4, 6: 0.4, 9: 0.4, 12: 0.4    // падающие
+  };
+  score += houseScore[transit.house] || 0.3;
+  
+  return score;
+}
+Максимальный балл: 5 + 3 + 2 + 1 = 11
+
+Пример расчета
+Транзит	Орбис	Планета	Аспект	Дом	ИТОГ
+Венера → Уран	0.2° (5.0)	Венера (2.8)	тригон (1.8)	7 (1.0)	10.6
+Марс → Сатурн	0.8° (4.0)	Марс (2.8)	квадрат (1.0)	10 (1.0)	8.8
+Меркурий → Юпитер	1.5° (3.0)	Меркурий (2.8)	секстиль (1.6)	3 (0.4)	7.8
+Юпитер → Нептун	0.5° (4.5)	Юпитер (2.0)	соединение (2.0)	11 (0.7)	9.2
+Выбирается: Венера → Уран (10.6 баллов) — самый высокий балл.
+
+Алгоритм выбора
+typescript
+function selectStrongestTransit(transits: TransitAspect[]): TransitAspect | null {
+  // 1. Фильтруем только сильные транзиты (орбис < 3°)
+  const strong = transits.filter(t => Math.abs(t.orb) < 3);
+  
+  if (strong.length === 0) return null;
+  
+  // 2. Сортируем по убыванию балла
+  const sorted = strong.sort((a, b) => {
+    return calculateTransitScore(b) - calculateTransitScore(a);
+  });
+  
+  // 3. Возвращаем первый (с максимальным баллом)
+  return sorted[0];
+}
+Что делать, если баллы равны?
+Если у двух транзитов одинаковый балл — выбираем тот, у которого меньше орбис.
+
+typescript
+// Если баллы равны
+if (scoreA === scoreB) {
+  return Math.abs(a.orb) - Math.abs(b.orb); // меньший орбис
+}
+Полный код для Replit (скопировать)
+typescript
+// lib/transit-score.ts
+
+export function calculateTransitScore(transit: TransitAspect): number {
+  let score = 0;
+  
+  // 1. Орбис (0-5 баллов)
+  const orb = Math.abs(transit.orb);
+  if (orb <= 0.3) score += 5.0;
+  else if (orb <= 0.5) score += 4.5;
+  else if (orb <= 0.7) score += 4.0;
+  else if (orb <= 1.0) score += 3.5;
+  else if (orb <= 1.5) score += 3.0;
+  else if (orb <= 2.0) score += 2.5;
+  else if (orb <= 2.5) score += 2.0;
+  else if (orb <= 3.0) score += 1.5;
+  
+  // 2. Планета (0-3 балла)
+  const planetScore: Record<string, number> = {
+    'Солнце': 3.0,
+    'Луна': 3.0,
+    'Меркурий': 2.8,
+    'Венера': 2.8,
+    'Марс': 2.8,
+    'Юпитер': 2.0,
+    'Сатурн': 2.0,
+    'Уран': 1.2,
+    'Нептун': 1.0,
+    'Плутон': 0.8
+  };
+  score += planetScore[transit.planet] || 1.0;
+  
+  // 3. Аспект (0-2 балла)
+  const aspectScore: Record<string, number> = {
+    'соединение': 2.0,
+    'тригон': 1.8,
+    'секстиль': 1.6,
+    'квадрат': 1.0,
+    'оппозиция': 0.8,
+    'квинконс': 0.5,
+    'полуквадрат': 0.4,
+    'полусекстиль': 0.3
+  };
+  score += aspectScore[transit.aspect] || 0.5;
+  
+  // 4. Дом (0-1 балл)
+  const houseScore: Record<number, number> = {
+    1: 1.0, 4: 1.0, 7: 1.0, 10: 1.0,
+    2: 0.7, 5: 0.7, 8: 0.7, 11: 0.7,
+    3: 0.4, 6: 0.4, 9: 0.4, 12: 0.4
+  };
+  score += houseScore[transit.house] || 0.3;
+  
+  return score;
+}
+
+export function selectStrongestTransit(transits: TransitAspect[]): TransitAspect | null {
+  const strong = transits.filter(t => Math.abs(t.orb) < 3);
+  if (strong.length === 0) return null;
+  
+  return strong.sort((a, b) => {
+    const scoreA = calculateTransitScore(a);
+    const scoreB = calculateTransitScore(b);
+    
+    // Сначала по баллу (по убыванию)
+    if (scoreA !== scoreB) return scoreB - scoreA;
+    
+    // Если баллы равны — по орбису (по возрастанию)
+    return Math.abs(a.orb) - Math.abs(b.orb);
+  })[0];
+}
+Обновленный текст для Replit
+text
+Добавить в задачу 4:
+
+Для выбора "самого сильного транзита" использовать числовой балл:
+
+Максимальный балл: 11
+
+1. Орбис (0-5 баллов):
+   - ≤0.3° → 5.0
+   - ≤0.5° → 4.5
+   - ≤0.7° → 4.0
+   - ≤1.0° → 3.5
+   - ≤1.5° → 3.0
+   - ≤2.0° → 2.5
+   - ≤2.5° → 2.0
+   - ≤3.0° → 1.5
+
+2. Планета (0-3 балла):
+   - Солнце, Луна → 3.0
+   - Меркурий, Венера, Марс → 2.8
+   - Юпитер, Сатурн → 2.0
+   - Уран → 1.2
+   - Нептун → 1.0
+   - Плутон → 0.8
+
+3. Аспект (0-2 балла):
+   - соединение → 2.0
+   - тригон → 1.8
+   - секстиль → 1.6
+   - квадрат → 1.0
+   - оппозиция → 0.8
+   - квинконс → 0.5
+   - полуквадрат → 0.4
+   - полусекстиль → 0.3
+
+4. Дом (0-1 балл):
+   - 1, 4, 7, 10 → 1.0
+   - 2, 5, 8, 11 → 0.7
+   - 3, 6, 9, 12 → 0.4
+
+Выбирается транзит с максимальным суммарным баллом.
+Если баллы равны — выбирается с меньшим орбисом.
+
+Реализовать в lib/transit-score.ts
+Использовать в oracle.ts в computeDailyForecast()

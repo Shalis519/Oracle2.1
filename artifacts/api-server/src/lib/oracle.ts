@@ -9,6 +9,7 @@ import { getFlyingStar, getStarByNumber, type FlyingStarData } from "./data/feng
 import { DREAM_MEANINGS, DEFAULT_DREAM_INTERPRETATION } from "./data/dreams";
 import { Solar } from "lunar-typescript";
 import { ensureOntologyLoaded } from "./semanticEngine";
+import { selectStrongestTransit } from "./transitScore";
 import { futuristicGenerator } from "./futuristicGenerator";
 
 // Canonical order of the ten Heavenly Stems (天干) and twelve Earthly Branches
@@ -1193,47 +1194,32 @@ export async function computeDailyForecast(
     );
   }
 
-  // ===== SEMANTIC FORECAST =====
+  // ===== SEMANTIC FORECAST (single strongest transit) =====
   await ensureOntologyLoaded();
 
-  const topTransits = transitAspects
-    .filter((t) => Math.abs(t.orb) < 3)
-    .sort((a, b) => Math.abs(a.orb) - Math.abs(b.orb))
-    .slice(0, 3);
+  const strongestTransit = selectStrongestTransit(transitAspects);
 
-  const forecasts: string[] = [];
-  const failedTransits: string[] = [];
+  let synthesisText: string;
 
-  for (const transit of topTransits) {
+  if (!strongestTransit) {
+    synthesisText = "Сегодня особенных астрологических событий не прогнозируется.";
+  } else {
     const context = {
-      planet: transit.transitBody,
-      sign: transit.transitSign,
-      house: transit.transitHouse ?? 1,
-      aspect: transit.type,
-      aspectPlanet: transit.natalBody,
-      orb: transit.orb,
+      planet: strongestTransit.transitBody,
+      sign: strongestTransit.transitSign,
+      house: strongestTransit.transitHouse ?? 1,
+      aspect: strongestTransit.type,
+      aspectPlanet: strongestTransit.natalBody,
+      orb: strongestTransit.orb,
       currentDate: new Date(today),
     };
 
     const forecast = futuristicGenerator.generate(context);
     if (forecast) {
-      forecasts.push(forecast);
+      synthesisText = forecast;
     } else {
-      const key = `${transit.transitBody} ${transit.type} ${transit.natalBody}`.trim();
-      failedTransits.push(key);
-    }
-  }
-
-  let synthesisText: string;
-
-  if (forecasts.length === 0) {
-    const missingData = failedTransits.join(", ");
-    synthesisText = `Для транзитов (${missingData}) пока нет семантических данных в Oracle Studio. Администратор заполняет онтологию. Прогнозы появятся после добавления данных.`;
-    warnings.push("Онтология заполнена не полностью");
-  } else {
-    synthesisText = forecasts.join("\n\n---\n\n");
-    if (failedTransits.length > 0) {
-      synthesisText += `\n\n⚠️ Для транзитов (${failedTransits.join(", ")}) пока нет данных в онтологии.`;
+      const key = `${strongestTransit.transitBody} ${strongestTransit.type} ${strongestTransit.natalBody}`.trim();
+      synthesisText = `Для транзита (${key}) пока нет семантических данных в Oracle Studio. Администратор заполняет онтологию. Прогнозы появятся после добавления данных.`;
       warnings.push("Онтология заполнена не полностью");
     }
   }
