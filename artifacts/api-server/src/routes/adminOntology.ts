@@ -8,10 +8,12 @@ import {
   ontologyEntityThemesTable,
   ontologyEntityProfilesTable,
   ontologyEntityRelationsTable,
+  motivationPhrasesTable,
   type OntologyEntity,
   type OntologyTheme,
   type OntologyEntityTheme,
   type OntologyEntityProfile,
+  type MotivationPhrase,
 } from "@workspace/db";
 import { parseWeight, clampWeight } from "@workspace/db/weights";
 import { requireAuth, requireAdmin } from "../lib/auth";
@@ -673,6 +675,65 @@ router.post("/admin/ontology/reseed", requireAuth, requireAdmin, async (_req, re
   } finally {
     client.release();
   }
+});
+
+/* ==========================
+   Motivation Phrases
+   ========================== */
+
+function serializeMotivationPhrase(p: MotivationPhrase) {
+  return {
+    id: p.id,
+    phrase: p.phrase,
+    isActive: p.isActive,
+    createdAt: p.createdAt.toISOString(),
+    updatedAt: p.updatedAt.toISOString(),
+  };
+}
+
+router.get("/admin/motivation-phrases", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const rows = await db.select().from(motivationPhrasesTable).orderBy(motivationPhrasesTable.createdAt);
+  res.json(rows.map(serializeMotivationPhrase));
+});
+
+router.post("/admin/motivation-phrases", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const body = req.body as Record<string, unknown>;
+  const phrase = typeof body.phrase === "string" ? body.phrase.trim() : "";
+  if (!phrase || phrase.length < 3) {
+    res.status(400).json({ error: "Phrase must be at least 3 characters" });
+    return;
+  }
+  const [created] = await db.insert(motivationPhrasesTable).values({ phrase }).returning();
+  res.status(201).json(serializeMotivationPhrase(created));
+});
+
+router.delete("/admin/motivation-phrases/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const id = req.params.id;
+  if (!id || typeof id !== "string") {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+  await db.delete(motivationPhrasesTable).where(eq(motivationPhrasesTable.id, id));
+  res.json({ success: true });
+});
+
+router.patch("/admin/motivation-phrases/:id/toggle", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const id = req.params.id;
+  if (!id || typeof id !== "string") {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+  const [row] = await db.select().from(motivationPhrasesTable).where(eq(motivationPhrasesTable.id, id)).limit(1);
+  if (!row) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  const [updated] = await db
+    .update(motivationPhrasesTable)
+    .set({ isActive: !row.isActive, updatedAt: new Date() })
+    .where(eq(motivationPhrasesTable.id, id))
+    .returning();
+  res.json(serializeMotivationPhrase(updated));
 });
 
 export default router;

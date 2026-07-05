@@ -10,6 +10,7 @@ export interface TransitContext {
   aspectPlanet?: string;
   orb: number;
   currentDate: Date;
+  motivationPhrase?: string;
 }
 
 /** Astrological daily motion in degrees/day (approximate mean values). */
@@ -41,7 +42,7 @@ export function calculateTransitDuration(
 ): TransitDuration {
   const speed = ASTROLOGICAL_SPEED[planet] ?? 0.5;
   const orbDegrees = Math.abs(orb);
-  const totalDays = orbDegrees / speed; // orb / speed = days to exact / leave aspect
+  const totalDays = orbDegrees / speed;
 
   let duration: number;
   let unit: "hours" | "days" | "weeks" | "months";
@@ -51,22 +52,22 @@ export function calculateTransitDuration(
   if (totalDays < 1) {
     duration = Math.max(1, Math.round(totalDays * 24));
     unit = "hours";
-    text = `в ближайшие ${duration} ${declension(duration, ["час", "часа", "часов"])}`;
+    text = `${duration} ${declension(duration, ["час", "часа", "часов"])}`;
     urgency = "срочно";
   } else if (totalDays < 7) {
     duration = Math.round(totalDays);
     unit = "days";
-    text = `в ближайшие ${duration} ${declension(duration, ["день", "дня", "дней"])}`;
+    text = `${duration} ${declension(duration, ["день", "дня", "дней"])}`;
     urgency = "скоро";
   } else if (totalDays < 30) {
     duration = Math.max(1, Math.round(totalDays / 7));
     unit = "weeks";
-    text = `в ближайшие ${duration} ${declension(duration, ["неделю", "недели", "недель"])}`;
+    text = `${duration} ${declension(duration, ["неделю", "недели", "недель"])}`;
     urgency = "в ближайшее время";
   } else {
     duration = Math.max(1, Math.round(totalDays / 30));
     unit = "months";
-    text = `в течение ${duration} ${declension(duration, ["месяца", "месяцев", "месяцев"])}`;
+    text = `${duration} ${declension(duration, ["месяца", "месяцев", "месяцев"])}`;
     urgency = "постепенно";
   }
 
@@ -83,6 +84,30 @@ function declension(count: number, forms: [string, string, string]): string {
   if (n1 > 1 && n1 < 5) return forms[1];
   if (n1 === 1) return forms[0];
   return forms[2];
+}
+
+/** Склонение тем на простой контекст (творительный / предложный). */
+function declineTheme(theme: string, caseName: "nominative" | "instrumental" = "nominative"): string {
+  if (caseName === "nominative") return theme;
+  const instrumental: Record<string, string> = {
+    "Учёба": "Учёбой",
+    "Любовь": "Любовью",
+    "Творчество": "Творчеством",
+    "Общение": "Общением",
+    "Свобода": "Свободой",
+    "Гармония": "Гармонией",
+    "Красота": "Красотой",
+    "Отношения": "Отношениями",
+    "Деньги": "Деньгами",
+    "Карьера": "Карьерой",
+    "Здоровье": "Здоровьем",
+    "Духовность": "Духовностью",
+  };
+  return instrumental[theme] || theme;
+}
+
+function pickRandom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 /** Aspect weight modifier: harmonious aspects amplify, tense aspects dampen. */
@@ -133,7 +158,6 @@ function resolveThemes(
   const aspectModifier = getAspectModifier(aspect);
   const aspectPolarity = getAspectPolarity(aspect);
 
-  // Score themes: planet themes dominate, sign/house contribute weighted, aspect scales total
   const scoreMap = new Map<string, number>();
 
   for (const t of planetThemes) {
@@ -198,12 +222,19 @@ export class FuturisticGenerator {
     context: TransitContext,
   ): string {
     const parts: string[] = [];
-
-    // 1. Бифуркация
     const primaryTheme = themes.primary;
     const secondaryTheme = themes.secondary;
+    const durationText = durationData.text;
+    const peakDate = durationData.peakDate.toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const futurePeriod = this.getFuturePeriod(context);
 
-    parts.push(`Сейчас ты стоишь на развилке между "${primaryTheme}" и "${secondaryTheme}".`);
+    // ===== 1. Бифуркация =====
+    parts.push(`Сейчас Вы стоите на развилке между "${primaryTheme}" и "${secondaryTheme}".`);
 
     // Aspect tonal flavour
     if (themes.aspectPolarity === "positive") {
@@ -211,80 +242,90 @@ export class FuturisticGenerator {
     } else if (themes.aspectPolarity === "negative") {
       parts.push("Требуется осознанный выбор и усилие. Напряжённость — не враг, а топливо для роста.");
     } else {
-      parts.push("Время для важных решений. Точка бифуркации открывается — выбирай свой путь.");
+      parts.push("Время для важных решений. Точка бифуркации открывается — выбирайте свой путь.");
     }
 
+    // Вариативная фраза выбора
     if (relation?.futuristic) {
       const fut = relation.futuristic as Record<string, unknown>;
       const archetype = String(fut.archetype ?? relation.description ?? "энергия");
       const bif = (fut.bifurcation ?? {}) as Record<string, string>;
       const oldPattern = bif.oldPattern ?? "старый шаблон";
       const newPossibility = bif.newPossibility ?? "новая возможность";
-
-      parts.push(`${archetype} подсвечивает твой старый шаблон "${oldPattern}",`);
+      parts.push(`${archetype} подсвечивает Ваш старый шаблон "${oldPattern}",`);
       parts.push(`а ${context.aspectPlanet} открывает путь к "${newPossibility}".`);
     } else {
-      parts.push(`Твой выбор определит, как ${primaryTheme} трансформируется в ${secondaryTheme}.`);
+      const choicePhrases = [
+        `Ваш выбор: остаться в привычном ${primaryTheme.toLowerCase()} или шагнуть в ${secondaryTheme.toLowerCase()}.`,
+        `Сейчас Вы выбираете между ${primaryTheme.toLowerCase()} и ${secondaryTheme.toLowerCase()}.`,
+        `Что для Вас важнее: ${primaryTheme.toLowerCase()} или ${secondaryTheme.toLowerCase()}?`,
+      ];
+      parts.push(pickRandom(choicePhrases));
     }
 
-    parts.push(`У тебя есть ${durationData.text}, чтобы выбрать новую ветку реальности.`);
-    parts.push("");
-
-    // 2. Окно возможностей
+    // ===== 2. Окно возможностей (единственное упоминание времени) =====
     const futOp = (relation?.futuristic?.opportunity ?? {}) as Record<string, string>;
     const opportunityDesc =
-      futOp.description ?? `в моменте, когда ${primaryTheme} встретится с ${secondaryTheme}`;
+      futOp.description ?? `в моменте, когда ${primaryTheme.toLowerCase()} встретится с ${declineTheme(secondaryTheme, "instrumental").toLowerCase()}`;
 
-    const peakDate = durationData.peakDate.toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const futurePhrases = [
+      `То, что Вы решите сейчас, откликнется ${futurePeriod}.`,
+      `Этот выбор повлияет на Вашу жизнь ${futurePeriod}.`,
+      `Сегодняшнее решение станет фундаментом для перемен ${futurePeriod}.`,
+      `Последствия этого выбора Вы почувствуете ${futurePeriod}.`,
+    ];
 
-    parts.push(`Идея, которая придет ${opportunityDesc} (запомни это время: ${peakDate}), — это не про сегодня.`);
-    parts.push(`Это про твой ${this.getFuturePeriod(context)}.`);
-    parts.push(`Если ты её проигнорируешь, мир не рухнет.`);
-    parts.push(`Но если запишешь и начнёшь делать — через ${durationData.text} ты не узнаешь свою жизнь.`);
+    parts.push(`Идея, которая придёт ${opportunityDesc} (пик аспекта: ${peakDate}), — это не случайность.`);
+    parts.push(pickRandom(futurePhrases));
+    parts.push(`Если Вы её проигнорируете, мир не рухнет.`);
+    parts.push(`Но если запишете и начнёте делать — ${futurePeriod} Вы не узнаете свою жизнь.`);
     parts.push("");
 
-    // 3. Таймер
+    // ===== 3. Таймер + срочность =====
     const futTimer = (relation?.futuristic?.timer ?? {}) as Record<string, string>;
-    const action = futTimer.action ?? `сделать выбор в пользу ${primaryTheme}`;
+    const action = futTimer.action ?? `сделать выбор в пользу ${primaryTheme.toLowerCase()}`;
 
-    parts.push(`У тебя есть ${durationData.text}, чтобы ${action}.`);
+    parts.push(`У Вас есть ${durationText}, чтобы ${action}.`);
 
     if (durationData.urgency === "срочно") {
-      parts.push("Действуй прямо сейчас! Время на исходе.");
+      parts.push("Действуйте прямо сейчас! Время на исходе.");
     } else if (durationData.urgency === "скоро") {
-      parts.push("Время идёт, не откладывай на завтра.");
+      parts.push("Время идёт, не откладывайте на завтра.");
     } else {
-      parts.push("У тебя есть время обдумать решение.");
+      parts.push("У Вас есть время обдумать решение.");
     }
 
     parts.push("");
-    parts.push("После этого окно захлопнется.");
-    parts.push("Не потому что возможности исчезнут, а потому что ты войдёшь в другой сценарий,");
-    parts.push("где этот выбор уже неактуален.");
+
+    // ===== 4. Мотивационная фраза =====
+    if (context.motivationPhrase) {
+      parts.push(context.motivationPhrase);
+    } else {
+      const fallbackMotivation = [
+        "Действуйте, у Вас всё получится!",
+        "Верьте в себя. Вы справитесь!",
+        "Это Ваш звёздный час. Вперёд!",
+      ];
+      parts.push(pickRandom(fallbackMotivation));
+    }
+
     parts.push("");
 
-    // 4. Вопрос-маяк
+    // ===== 5. Вопрос-маяк =====
     const futBeacon = (relation?.futuristic?.beacon ?? {}) as Record<string, string>;
-    const beacon = futBeacon.question ?? "Что бы ты делал, если бы знал, что не можешь провалиться?";
+    const beacon = futBeacon.question ?? "Что бы Вы делали, если бы знали, что не можете провалиться?";
     parts.push(beacon);
 
     return parts.join("\n");
   }
 
   private getFuturePeriod(context: TransitContext): string {
-    // TODO: compute next exact aspect date via ephemeris
-    // For now, use the aspect planet to indicate rough timeframe
-    if (!context.aspectPlanet) return "будущее";
+    if (!context.aspectPlanet) return "в будущем";
 
-    const periods: Record<string, string> = {
-      "Уран": "следующий год",
+    const periodMap: Record<string, string> = {
+      "Уран": "через год",
       "Сатурн": "через 2 года",
-      "Юпитер": "следующий год",
+      "Юпитер": "через год",
       "Меркурий": "через несколько недель",
       "Венера": "через несколько месяцев",
       "Марс": "через несколько месяцев",
@@ -292,7 +333,7 @@ export class FuturisticGenerator {
       "Солнце": "через несколько недель",
     };
 
-    return periods[context.aspectPlanet] ?? "ближайшее будущее";
+    return periodMap[context.aspectPlanet] ?? "в ближайшем будущем";
   }
 }
 

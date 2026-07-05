@@ -33,6 +33,7 @@ import {
   Link2,
   XCircle,
   RefreshCw,
+  MessageSquareQuote,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -784,6 +785,11 @@ export default function AdminStudioPage() {
   const [gateError, setGateError] = useState("");
   const [gateLoading, setGateLoading] = useState(false);
 
+  // Motivation phrases state
+  const [phrases, setPhrases] = useState<{ id: string; phrase: string; isActive: boolean }[]>([]);
+  const [phraseInput, setPhraseInput] = useState("");
+  const [phraseLoading, setPhraseLoading] = useState(false);
+
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn) {
@@ -851,7 +857,54 @@ export default function AdminStudioPage() {
   useEffect(() => {
     loadEntities();
     loadThemes();
+    loadPhrases();
   }, [loadEntities, loadThemes]);
+
+  const loadPhrases = useCallback(async () => {
+    try {
+      const res = await apiFetch("/admin/motivation-phrases");
+      if (!res.ok) { setPhrases([]); return; }
+      const data = await res.json();
+      setPhrases(Array.isArray(data) ? data : []);
+    } catch { setPhrases([]); }
+  }, []);
+
+  const handleAddPhrase = async () => {
+    const text = phraseInput.trim();
+    if (!text || text.length < 3) {
+      toast({ title: "Фраза слишком короткая", variant: "destructive" });
+      return;
+    }
+    setPhraseLoading(true);
+    try {
+      const res = await apiFetch("/admin/motivation-phrases", { method: "POST", body: JSON.stringify({ phrase: text }) });
+      if (!res.ok) throw new Error("Failed");
+      setPhraseInput("");
+      await loadPhrases();
+      toast({ title: "Фраза добавлена" });
+    } catch {
+      toast({ title: "Ошибка", variant: "destructive" });
+    } finally { setPhraseLoading(false); }
+  };
+
+  const handleTogglePhrase = async (id: string) => {
+    const res = await apiFetch(`/admin/motivation-phrases/${id}/toggle`, { method: "PATCH" });
+    if (res.ok) {
+      await loadPhrases();
+    } else {
+      toast({ title: "Ошибка", variant: "destructive" });
+    }
+  };
+
+  const handleDeletePhrase = async (id: string) => {
+    const res = await apiFetch(`/admin/motivation-phrases/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      await loadPhrases();
+      toast({ title: "Фраза удалена" });
+    } else {
+      toast({ title: "Ошибка", variant: "destructive" });
+    }
+  };
 
   const handleCreateEntity = async (values: Record<string, unknown>) => {
     const res = await apiFetch("/admin/ontology/entities", { method: "POST", body: JSON.stringify(values) });
@@ -1122,9 +1175,10 @@ export default function AdminStudioPage() {
       </div>
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:w-auto">
+        <TabsList className="grid w-full grid-cols-3 md:w-auto">
           <TabsTrigger value="entities"><Layers className="w-4 h-4 mr-2" />Сущности</TabsTrigger>
           <TabsTrigger value="themes"><BookOpen className="w-4 h-4 mr-2" />Жизненные темы</TabsTrigger>
+          <TabsTrigger value="phrases"><MessageSquareQuote className="w-4 h-4 mr-2" />Фразы</TabsTrigger>
         </TabsList>
 
         <TabsContent value="entities" className="space-y-6">
@@ -1274,6 +1328,59 @@ export default function AdminStudioPage() {
 
           {themes.length === 0 && (
             <div className="text-center py-20 text-muted-foreground">Нет тем. Создайте первую.</div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="phrases" className="space-y-6">
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <Input
+                value={phraseInput}
+                onChange={(e) => setPhraseInput(e.target.value)}
+                placeholder="Новая мотивационная фраза..."
+                onKeyDown={(e) => { if (e.key === "Enter") handleAddPhrase(); }}
+              />
+            </div>
+            <Button onClick={handleAddPhrase} disabled={phraseLoading || !phraseInput.trim()}>
+              <Plus className="w-4 h-4 mr-2" />Добавить
+            </Button>
+          </div>
+
+          <div className="space-y-3">
+            <AnimatePresence>
+              {phrases.map((p) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <Card className="bg-card/50 border-border">
+                    <CardContent className="py-3 px-4 flex items-center justify-between gap-4">
+                      <span className={p.isActive ? "" : "text-muted-foreground line-through"}>{p.phrase}</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <label className="flex items-center gap-1.5 text-sm cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={p.isActive}
+                            onChange={() => handleTogglePhrase(p.id)}
+                            className="accent-primary"
+                          />
+                          Активна
+                        </label>
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeletePhrase(p.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+
+          {phrases.length === 0 && (
+            <div className="text-center py-20 text-muted-foreground">Нет фраз. Добавьте первую.</div>
           )}
         </TabsContent>
       </Tabs>

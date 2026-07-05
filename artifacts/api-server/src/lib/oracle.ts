@@ -11,6 +11,8 @@ import { Solar } from "lunar-typescript";
 import { ensureOntologyLoaded } from "./semanticEngine";
 import { selectStrongestTransit } from "./transitScore";
 import { futuristicGenerator } from "./futuristicGenerator";
+import { db, motivationPhrasesTable } from "@workspace/db";
+import { eq, sql } from "drizzle-orm";
 
 // Canonical order of the ten Heavenly Stems (天干) and twelve Earthly Branches
 // (地支). Indices align 1:1 with HEAVENLY_STEMS / EARTHLY_BRANCHES.
@@ -1204,6 +1206,13 @@ export async function computeDailyForecast(
   if (!strongestTransit) {
     synthesisText = "Сегодня особенных астрологических событий не прогнозируется.";
   } else {
+    const [randomPhrase] = await db
+      .select()
+      .from(motivationPhrasesTable)
+      .where(eq(motivationPhrasesTable.isActive, true))
+      .orderBy(sql`random()`)
+      .limit(1);
+
     const context = {
       planet: strongestTransit.transitBody,
       sign: strongestTransit.transitSign,
@@ -1212,6 +1221,7 @@ export async function computeDailyForecast(
       aspectPlanet: strongestTransit.natalBody,
       orb: strongestTransit.orb,
       currentDate: new Date(today),
+      motivationPhrase: randomPhrase?.phrase,
     };
 
     const forecast = futuristicGenerator.generate(context);
