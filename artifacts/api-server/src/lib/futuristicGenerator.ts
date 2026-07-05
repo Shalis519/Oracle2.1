@@ -85,12 +85,43 @@ function declension(count: number, forms: [string, string, string]): string {
   return forms[2];
 }
 
-/** Weighted theme intersection across planet, house, sign. */
+/** Aspect weight modifier: harmonious aspects amplify, tense aspects dampen. */
+function getAspectModifier(aspect: string): number {
+  const modifiers: Record<string, number> = {
+    "тригон": 1.3,
+    "секстиль": 1.2,
+    "соединение": 1.1,
+    "квадрат": 0.7,
+    "оппозиция": 0.6,
+    "квинконс": 0.5,
+    "полуквадрат": 0.8,
+    "полусекстиль": 0.9,
+  };
+  return modifiers[aspect.toLowerCase()] ?? 1.0;
+}
+
+/** Aspect polarity drives forecast tonal flavour. */
+function getAspectPolarity(aspect: string): "positive" | "negative" | "neutral" {
+  const polarities: Record<string, "positive" | "negative" | "neutral"> = {
+    "тригон": "positive",
+    "секстиль": "positive",
+    "соединение": "neutral",
+    "квадрат": "negative",
+    "оппозиция": "negative",
+    "квинконс": "negative",
+    "полуквадрат": "negative",
+    "полусекстиль": "positive",
+  };
+  return polarities[aspect.toLowerCase()] ?? "neutral";
+}
+
+/** Weighted theme intersection across planet, house, sign, aspect. */
 function resolveThemes(
   planet: string,
   sign: string,
   house: number,
-): { primary: string; secondary: string } | null {
+  aspect: string,
+): { primary: string; secondary: string; aspectModifier: number; aspectPolarity: "positive" | "negative" | "neutral" } | null {
   const planetThemes = getEntityThemes(planet);
   const signThemes = getEntityThemes(sign);
   const houseThemes = getEntityThemes(String(house));
@@ -99,17 +130,20 @@ function resolveThemes(
     return null;
   }
 
-  // Score themes: planet themes dominate, sign/house contribute weighted
+  const aspectModifier = getAspectModifier(aspect);
+  const aspectPolarity = getAspectPolarity(aspect);
+
+  // Score themes: planet themes dominate, sign/house contribute weighted, aspect scales total
   const scoreMap = new Map<string, number>();
 
   for (const t of planetThemes) {
-    scoreMap.set(t.themeName, (scoreMap.get(t.themeName) ?? 0) + t.weight * 1.0);
+    scoreMap.set(t.themeName, (scoreMap.get(t.themeName) ?? 0) + t.weight * 1.0 * aspectModifier);
   }
   for (const t of signThemes) {
-    scoreMap.set(t.themeName, (scoreMap.get(t.themeName) ?? 0) + t.weight * 0.5);
+    scoreMap.set(t.themeName, (scoreMap.get(t.themeName) ?? 0) + t.weight * 0.5 * aspectModifier);
   }
   for (const t of houseThemes) {
-    scoreMap.set(t.themeName, (scoreMap.get(t.themeName) ?? 0) + t.weight * 0.7);
+    scoreMap.set(t.themeName, (scoreMap.get(t.themeName) ?? 0) + t.weight * 0.7 * aspectModifier);
   }
 
   const scored = Array.from(scoreMap.entries())
@@ -120,6 +154,8 @@ function resolveThemes(
   return {
     primary: scored[0][0],
     secondary: scored[1]?.[0] ?? scored[0][0],
+    aspectModifier,
+    aspectPolarity,
   };
 }
 
@@ -132,7 +168,7 @@ export class FuturisticGenerator {
         return null;
       }
 
-      const themes = resolveThemes(context.planet, context.sign, context.house);
+      const themes = resolveThemes(context.planet, context.sign, context.house, context.aspect);
       if (!themes) {
         logger.warn({ planet: context.planet }, "no themes resolved for transit");
         return null;
@@ -156,7 +192,7 @@ export class FuturisticGenerator {
   }
 
   private buildText(
-    themes: { primary: string; secondary: string },
+    themes: { primary: string; secondary: string; aspectModifier: number; aspectPolarity: "positive" | "negative" | "neutral" },
     relation: EntityRelation | null,
     durationData: TransitDuration,
     context: TransitContext,
@@ -168,6 +204,15 @@ export class FuturisticGenerator {
     const secondaryTheme = themes.secondary;
 
     parts.push(`Сейчас ты стоишь на развилке между "${primaryTheme}" и "${secondaryTheme}".`);
+
+    // Aspect tonal flavour
+    if (themes.aspectPolarity === "positive") {
+      parts.push("Энергия течёт свободно и естественно. То, что задумано, получится легко.");
+    } else if (themes.aspectPolarity === "negative") {
+      parts.push("Требуется осознанный выбор и усилие. Напряжённость — не враг, а топливо для роста.");
+    } else {
+      parts.push("Время для важных решений. Точка бифуркации открывается — выбирай свой путь.");
+    }
 
     if (relation?.futuristic) {
       const fut = relation.futuristic as Record<string, unknown>;
