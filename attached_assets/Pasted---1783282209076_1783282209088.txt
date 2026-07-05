@@ -1,0 +1,116 @@
+может есть какие то готовые грамматические коды, которые следят за построением предложений и их вшить в программу
+Прочитано 13 веб-страниц
+Да, такие инструменты существуют. В экосистеме Node.js/JavaScript есть несколько готовых решений для работы с русской морфологией, которые можно встроить в ваш проект.
+
+Подходящие библиотеки
+1. lvovich — склонение городов и имён (рекомендую для вашей задачи)
+Библиотека для склонения названий городов, имён, фамилий и отчеств по падежам. Работает офлайн, без зависимостей, подходит для браузера и сервера .
+
+javascript
+import { cityIn, cityFrom, cityTo, incline } from 'lvovich';
+
+// Склонение городов
+cityIn('Санкт-Петербург'); // → "Санкт-Петербурге"
+cityFrom('Москва');        // → "Москвы"
+cityTo('Москва');          // → "Москву"
+
+// Склонение имён
+incline({ first: 'Павел' }, 'genitive');   // → { first: 'Павла' }
+incline({ first: 'Анна', last: 'Иванова' }, 'dative'); 
+// → { first: 'Анне', last: 'Ивановой' }
+Установка: npm install lvovich
+
+2. Az.js — полный морфологический анализ
+Библиотека для токенизации, определения частей речи, склонения и приведения к нормальной форме. Основана на pymorphy2 .
+
+javascript
+import Az from 'az';
+
+// Инициализация словарей
+Az.Morph.init('path/to/dicts', () => {
+  const parses = Az.Morph('стали');
+  console.log(parses[0].tag.toString()); // → 'VERB,perf,intr plur,past,indc'
+  
+  // Склонение слова
+  const inflected = parses[0].inflect({ CAse: 'gent' });
+  console.log(inflected); // → 'сталей'
+});
+Установка: npm install az
+
+3. morpher-ru — склонение слов и словосочетаний
+Использует веб-сервис "Морфер" (бесплатно с ограничениями) .
+
+javascript
+import Morpher from 'morpher-ru';
+
+const morpher = new Morpher();
+morpher.declension('Москва').then(result => {
+  console.log(result.prepositional); // → 'Москве'
+});
+Установка: npm install morpher-ru
+
+4. decliner — склонение слов с числами
+Мини-библиотека для склонения слов в зависимости от числа .
+
+javascript
+import Decliner from 'decliner';
+
+const decliner = new Decliner(['рубль', 'рубля', 'рублей']);
+decliner.decline(1);  // → "рубль"
+decliner.decline(2);  // → "рубля"
+decliner.decline(5);  // → "рублей"
+Установка: npm install decliner
+
+Что выбрать для вашей задачи
+Задача	Рекомендация
+Склонение названий планет, знаков, домов по падежам	lvovich (можно расширить словарь)
+Склонение произвольных слов	Az.js или morpher-ru
+Согласование с числами	decliner
+Как встроить в ваш проект
+Пример с lvovich для склонения города/знака:
+
+typescript
+import { cityIn, cityFrom } from 'lvovich';
+
+function declineTheme(theme: string, caseType: 'genitive' | 'instrumental'): string {
+  // Для городов и некоторых существительных
+  if (caseType === 'genitive') return cityFrom(theme);
+  if (caseType === 'instrumental') return cityIn(theme); // приблизительно
+  return theme;
+}
+Для склонения произвольных слов (например, "Общение" → "Общения") лучше использовать Az.js:
+
+typescript
+import Az from 'az';
+
+Az.Morph.init('path/to/dicts', () => {
+  const parses = Az.Morph('Общение');
+  const inflected = parses[0]?.inflect({ CAse: 'gent' }); // родительный падеж
+  console.log(inflected); // → "Общения"
+});
+Текст для Replit
+text
+Для исправления грамматики в прогнозах предлагаю использовать готовую библиотеку.
+
+Рекомендую @kiraind/russian-tools или az для базового склонения.
+
+Задача:
+1. Установить пакет для работы с русской морфологией (например, az или lvovich)
+2. Создать утилиту для склонения тем по падежам
+3. Использовать в futuristicGenerator.ts для правильных окончаний
+
+Это решит проблемы с:
+- "в Рак" → "в Раке"
+- "общение" → "общения" (родительный падеж)
+- "учёба" → "учёбой" (творительный падеж)
+
+Код для склонения через Az.js:
+```typescript
+import Az from 'az';
+
+Az.Morph.init('./dicts', () => {
+  const parses = Az.Morph('Общение');
+  const inflected = parses[0]?.inflect({ CAse: 'gent' }); // родительный
+  console.log(inflected); // → 'Общения'
+});
+text
