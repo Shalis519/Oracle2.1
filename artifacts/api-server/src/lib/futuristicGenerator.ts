@@ -71,8 +71,10 @@ export function calculateTransitDuration(
     urgency = "постепенно";
   }
 
+  // FIX 3: real peak time using hours, not just days
   const peakDate = new Date(currentDate);
-  peakDate.setDate(peakDate.getDate() + Math.round(totalDays / 2));
+  const halfDurationMs = (totalDays / 2) * 24 * 60 * 60 * 1000;
+  peakDate.setTime(peakDate.getTime() + halfDurationMs);
 
   return { duration, unit, text, urgency, peakDate };
 }
@@ -86,24 +88,58 @@ function declension(count: number, forms: [string, string, string]): string {
   return forms[2];
 }
 
-/** Склонение тем на простой контекст (творительный / предложный). */
-function declineTheme(theme: string, caseName: "nominative" | "instrumental" = "nominative"): string {
+/** 
+ * Склонение тем в разные падежи.
+ * nominative: Общение
+ * genitive: общения (в пользу общения)
+ * instrumental: общением (с общением)
+ */
+function declineTheme(
+  theme: string,
+  caseName: "nominative" | "genitive" | "instrumental" = "nominative",
+): string {
   if (caseName === "nominative") return theme;
-  const instrumental: Record<string, string> = {
-    "Учёба": "Учёбой",
-    "Любовь": "Любовью",
-    "Творчество": "Творчеством",
-    "Общение": "Общением",
-    "Свобода": "Свободой",
-    "Гармония": "Гармонией",
-    "Красота": "Красотой",
-    "Отношения": "Отношениями",
-    "Деньги": "Деньгами",
-    "Карьера": "Карьерой",
-    "Здоровье": "Здоровьем",
-    "Духовность": "Духовностью",
+
+  const map: Record<string, Record<string, string>> = {
+    genitive: {
+      "Учёба": "учёбы",
+      "Любовь": "любви",
+      "Творчество": "творчества",
+      "Общение": "общения",
+      "Свобода": "свободы",
+      "Гармония": "гармонии",
+      "Красота": "красоты",
+      "Отношения": "отношений",
+      "Деньги": "денег",
+      "Карьера": "карьеры",
+      "Здоровье": "здоровья",
+      "Духовность": "духовности",
+    },
+    instrumental: {
+      "Учёба": "Учёбой",
+      "Любовь": "Любовью",
+      "Творчество": "Творчеством",
+      "Общение": "Общением",
+      "Свобода": "Свободой",
+      "Гармония": "Гармонией",
+      "Красота": "Красотой",
+      "Отношения": "Отношениями",
+      "Деньги": "Деньгами",
+      "Карьера": "Карьерой",
+      "Здоровье": "Здоровьем",
+      "Духовность": "Духовностью",
+    },
   };
-  return instrumental[theme] || theme;
+
+  return map[caseName]?.[theme] || theme;
+}
+
+/** Нормализованное обращение темы: с большой буквы в заголовке, с маленькой в описании. */
+function themeLabel(theme: string, position: "title" | "inline" | "declined"): string {
+  if (position === "title") return theme;
+  if (position === "inline") return theme.toLowerCase();
+  // declined = already lowercased by declineTheme caller
+  return theme.toLowerCase();
 }
 
 function pickRandom<T>(arr: T[]): T {
@@ -233,10 +269,9 @@ export class FuturisticGenerator {
     });
     const futurePeriod = this.getFuturePeriod(context);
 
-    // ===== 1. Бифуркация =====
+    // ===== 1. Бифуркация (только заголовок + тональность) =====
     parts.push(`Сейчас Вы стоите на развилке между "${primaryTheme}" и "${secondaryTheme}".`);
 
-    // Aspect tonal flavour
     if (themes.aspectPolarity === "positive") {
       parts.push("Энергия течёт свободно и естественно. То, что задумано, получится легко.");
     } else if (themes.aspectPolarity === "negative") {
@@ -245,7 +280,6 @@ export class FuturisticGenerator {
       parts.push("Время для важных решений. Точка бифуркации открывается — выбирайте свой путь.");
     }
 
-    // Вариативная фраза выбора
     if (relation?.futuristic) {
       const fut = relation.futuristic as Record<string, unknown>;
       const archetype = String(fut.archetype ?? relation.description ?? "энергия");
@@ -255,18 +289,19 @@ export class FuturisticGenerator {
       parts.push(`${archetype} подсвечивает Ваш старый шаблон "${oldPattern}",`);
       parts.push(`а ${context.aspectPlanet} открывает путь к "${newPossibility}".`);
     } else {
-      const choicePhrases = [
-        `Ваш выбор: остаться в привычном ${primaryTheme.toLowerCase()} или шагнуть в ${secondaryTheme.toLowerCase()}.`,
-        `Сейчас Вы выбираете между ${primaryTheme.toLowerCase()} и ${secondaryTheme.toLowerCase()}.`,
-        `Что для Вас важнее: ${primaryTheme.toLowerCase()} или ${secondaryTheme.toLowerCase()}?`,
+      // FIX 1: no "выбираете между" — другая семантика, не дублирующая заголовок
+      const followPhrases = [
+        `Внимание смещается от ${themeLabel(primaryTheme, "inline")} к ${themeLabel(secondaryTheme, "inline")}. Это естественный цикл.`,
+        `${primaryTheme} открывает дверь, за которой стоит ${themeLabel(secondaryTheme, "inline")}.`,
+        `Не выбирайте одно — найдите, как соединить ${themeLabel(primaryTheme, "inline")} и ${themeLabel(secondaryTheme, "inline")}.`,
       ];
-      parts.push(pickRandom(choicePhrases));
+      parts.push(pickRandom(followPhrases));
     }
 
-    // ===== 2. Окно возможностей (единственное упоминание времени) =====
+    // ===== 2. Окно возможностей =====
     const futOp = (relation?.futuristic?.opportunity ?? {}) as Record<string, string>;
     const opportunityDesc =
-      futOp.description ?? `в моменте, когда ${primaryTheme.toLowerCase()} встретится с ${declineTheme(secondaryTheme, "instrumental").toLowerCase()}`;
+      futOp.description ?? `в моменте, когда ${themeLabel(primaryTheme, "inline")} встретится с ${declineTheme(secondaryTheme, "instrumental").toLowerCase()}`;
 
     const futurePhrases = [
       `То, что Вы решите сейчас, откликнется ${futurePeriod}.`,
@@ -281,17 +316,30 @@ export class FuturisticGenerator {
     parts.push(`Но если запишете и начнёте делать — ${futurePeriod} Вы не узнаете свою жизнь.`);
     parts.push("");
 
-    // ===== 3. Таймер + срочность =====
+    // ===== 3. Таймер + срочность (тональность зависит от аспекта) =====
     const futTimer = (relation?.futuristic?.timer ?? {}) as Record<string, string>;
-    const action = futTimer.action ?? `сделать выбор в пользу ${primaryTheme.toLowerCase()}`;
+    // FIX 5: родительный падеж для "в пользу"
+    const action = futTimer.action ?? `сделать выбор в пользу ${declineTheme(primaryTheme, "genitive").toLowerCase()}`;
 
     parts.push(`У Вас есть ${durationText}, чтобы ${action}.`);
 
-    if (durationData.urgency === "срочно") {
-      parts.push("Действуйте прямо сейчас! Время на исходе.");
-    } else if (durationData.urgency === "скоро") {
-      parts.push("Время идёт, не откладывайте на завтра.");
+    // FIX 6: тональность срочности зависит от полярности аспекта, не только от duration
+    if (themes.aspectPolarity === "negative") {
+      if (durationData.urgency === "срочно") {
+        parts.push("Действуйте прямо сейчас! Время на исходе.");
+      } else if (durationData.urgency === "скоро") {
+        parts.push("Время идёт, не откладывайте на завтра.");
+      } else {
+        parts.push("Требуется внимание, но у Вас есть время продумать.");
+      }
+    } else if (themes.aspectPolarity === "positive") {
+      if (durationData.urgency === "срочно") {
+        parts.push("Всё складывается быстро и естественно. Не торопитесь.");
+      } else {
+        parts.push("Всё складывается в Вашу пользу. Действуйте, когда будет удобно.");
+      }
     } else {
+      // neutral
       parts.push("У Вас есть время обдумать решение.");
     }
 
