@@ -561,18 +561,7 @@ export class FuturisticGenerator {
     const aspectSignProfile = context.aspectSign ? getEntity(context.aspectSign)?.profile ?? null : null;
     const aspectHouseProfile = context.aspectHouse ? getEntity(`Дом ${context.aspectHouse}`)?.profile ?? null : null;
 
-    // --- 1. Вступление: стиль мышления от знака (если есть) ---
-    let signIntro: string | null = null;
-    if (signProfile?.positiveQualities && signProfile.positiveQualities.length > 0) {
-      const qualities = signProfile.positiveQualities.slice(0, 2).join(" и ");
-      const signPreposition = inSignPrep(context.sign);
-      signIntro = `${context.planet} ${signPreposition} придаёт этому ${qualities.toLowerCase()} оттенок.`;
-    }
-    if (signIntro) {
-      parts.push(signIntro);
-    }
-
-    // --- 2. Суть: описание связи планет (если есть) ---
+    // --- 1. Суть: описание связи планет (если есть) ---
     let corePhrase: string | null = null;
     if (relation?.description) {
       corePhrase = relation.description;
@@ -585,6 +574,17 @@ export class FuturisticGenerator {
     }
     if (corePhrase) {
       parts.push(corePhrase);
+    }
+
+    // --- 2. Вступление: стиль мышления от знака (если есть) ---
+    let signIntro: string | null = null;
+    if (signProfile?.positiveQualities && signProfile.positiveQualities.length > 0) {
+      const qualities = signProfile.positiveQualities.slice(0, 2).join(" и ");
+      const signPreposition = inSignPrep(context.sign);
+      signIntro = `${context.planet} ${signPreposition} придаёт этому ${qualities.toLowerCase()} оттенок.`;
+    }
+    if (signIntro) {
+      parts.push(signIntro);
     }
 
     // --- 3. Уточнение домов (если есть данные) ---
