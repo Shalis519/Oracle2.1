@@ -1,0 +1,203 @@
+КРИТИЧЕСКИЙ БАГ: Исправление 1
+Задача: Исправить parseFloat(weight) || 1.0 в admin-studio.tsx
+Файл: frontend/pages/admin-studio.tsx
+
+Строки: 511 и 554 (или там, где используется)
+
+tsx
+// ❌ БЫЛО:
+parseFloat(weight) || 1.0
+
+// ✅ СТАЛО:
+const parsedWeight = parseFloat(weight);
+Number.isFinite(parsedWeight) ? parsedWeight : 1.0
+Почему: parseFloat("0") возвращает 0, а 0 || 1.0 дает 1.0 — вес 0.0 невозможно сохранить.
+
+⚠️ МЕСТОПОЛОЖЕНИЕ ФАЙЛА: Исправление 2
+Задача: Перенести ontology-weights.ts в правильное место
+Вариант А (рекомендуемый): Положить в lib/db/src/weights.ts
+
+typescript
+// lib/db/src/weights.ts
+
+export const ONTOLOGY_WEIGHTS = {
+  MIN: 0.0,
+  MAX: 3.0,
+  DEFAULT: 1.0,
+  STEP: 0.5 // меняем на 0.5 (см. пункт 4)
+} as const;
+
+export const WEIGHT_LEVELS = [
+  { value: 0.0, label: 'нет связи', color: 'gray' },
+  { value: 0.5, label: 'слабая', color: 'yellow' },
+  { value: 1.0, label: 'базовая', color: 'green' },
+  { value: 1.5, label: 'сильная', color: 'blue' },
+  { value: 2.0, label: 'очень сильная', color: 'purple' },
+  { value: 2.5, label: 'критическая', color: 'orange' },
+  { value: 3.0, label: 'максимальная', color: 'red' }
+] as const;
+
+// ... остальные функции
+Импорт в бэкенде:
+
+typescript
+import { ONTOLOGY_WEIGHTS } from '@workspace/db/weights';
+Импорт в фронтенде:
+
+typescript
+import { ONTOLOGY_WEIGHTS } from '@workspace/db/weights';
+Вариант Б: Дублировать файл в artifacts/api-server/src/lib/ontology-weights.ts и artifacts/web/src/lib/ontology-weights.ts (но это дублирование, не рекомендую).
+
+⚠️ SQL CHECK vs Drizzle schema drift: Исправление 3
+Задача: Добавить CHECK в schema.ts вместо raw SQL
+Файл: lib/db/src/schema/ontology.ts
+
+typescript
+// lib/db/src/schema/ontology.ts
+
+import { check, sql } from 'drizzle-orm';
+
+// В таблице ontology_entity_themes
+export const ontologyEntityThemes = pgTable(
+  'ontology_entity_themes',
+  {
+    // ... существующие поля
+    weight: real('weight').default(1.0).notNull(),
+    // ...
+  },
+  (table) => [
+    // ДОБАВИТЬ CHECK
+    check(
+      'check_theme_weight',
+      sql`${table.weight} >= 0.0 AND ${table.weight} <= 3.0`
+    )
+  ]
+);
+
+// В таблице ontology_entity_relations
+export const ontologyEntityRelations = pgTable(
+  'ontology_entity_relations',
+  {
+    // ... существующие поля
+    weight: real('weight').default(1.0).notNull(),
+    // ...
+  },
+  (table) => [
+    // ДОБАВИТЬ CHECK
+    check(
+      'check_relation_weight',
+      sql`${table.weight} >= 0.0 AND ${table.weight} <= 3.0`
+    )
+  ]
+);
+После этого drizzle-kit push создаст constraint без дрейфа.
+
+⚠️ step="0.1" vs уровни 0.5: Исправление 4
+Задача: Сделать шаг веса = 0.5
+Вариант А (рекомендуемый): Изменить STEP на 0.5
+
+typescript
+// lib/db/src/weights.ts
+
+export const ONTOLOGY_WEIGHTS = {
+  MIN: 0.0,
+  MAX: 3.0,
+  DEFAULT: 1.0,
+  STEP: 0.5 // ← меняем с 0.1 на 0.5
+} as const;
+В UI:
+
+tsx
+<input 
+  type="range" 
+  min={ONTOLOGY_WEIGHTS.MIN} 
+  max={ONTOLOGY_WEIGHTS.MAX} 
+  step={ONTOLOGY_WEIGHTS.STEP} // 0.5
+  value={weight}
+  onChange={(e) => setWeight(parseFloat(e.target.value))}
+/>
+Вариант Б: Использовать Select вместо range
+
+tsx
+<Select value={weight} onValueChange={(v) => setWeight(parseFloat(v))}>
+  {WEIGHT_LEVELS.map(level => (
+    <SelectItem key={level.value} value={String(level.value)}>
+      {level.value} - {level.label}
+    </SelectItem>
+  ))}
+</Select>
+Рекомендую Вариант А (range с шагом 0.5) — нагляднее для пользователя.
+
+⚠️ Семантика 0.0 = "нет связи": Исправление 5
+Задача: Решить, что делать с весом 0.0
+Вариант А (рекомендуемый): Оставить 0.0 как "связь временно отключена"
+
+typescript
+// В semantic-engine.ts
+function getRelevantThemes(entity: Entity): Theme[] {
+  return entity.themes
+    .filter(t => t.weight > 0.0) // ← фильтруем 0.0
+    .sort((a, b) => b.weight - a.weight);
+}
+Вариант Б: Удалять запись при весе 0.0
+
+typescript
+// В API при сохранении
+if (weight === 0.0) {
+  // Удалить запись из БД
+  await db.delete(ontologyEntityThemes)
+    .where(eq(ontologyEntityThemes.id, id));
+} else {
+  // Сохранить/обновить
+}
+Рекомендую Вариант А — проще и понятнее для администратора.
+
+ИСПРАВЛЕННЫЙ ФАЙЛ weights.ts
+typescript
+// lib/db/src/weights.ts
+
+export const ONTOLOGY_WEIGHTS = {
+  MIN: 0.0,
+  MAX: 3.0,
+  DEFAULT: 1.0,
+  STEP: 0.5
+} as const;
+
+export const WEIGHT_LEVELS = [
+  { value: 0.0, label: 'нет связи', color: 'gray' },
+  { value: 0.5, label: 'слабая', color: 'yellow' },
+  { value: 1.0, label: 'базовая', color: 'green' },
+  { value: 1.5, label: 'сильная', color: 'blue' },
+  { value: 2.0, label: 'очень сильная', color: 'purple' },
+  { value: 2.5, label: 'критическая', color: 'orange' },
+  { value: 3.0, label: 'максимальная', color: 'red' }
+] as const;
+
+export function getWeightLabel(weight: number): string {
+  const levels = WEIGHT_LEVELS;
+  let closest = levels[0];
+  for (const level of levels) {
+    if (Math.abs(level.value - weight) < Math.abs(closest.value - weight)) {
+      closest = level;
+    }
+  }
+  return closest.label;
+}
+
+export function getWeightColor(weight: number): string {
+  const levels = WEIGHT_LEVELS;
+  let closest = levels[0];
+  for (const level of levels) {
+    if (Math.abs(level.value - weight) < Math.abs(closest.value - weight)) {
+      closest = level;
+    }
+  }
+  return closest.color;
+}
+ОБНОВЛЕННАЯ СВОДНАЯ ТАБЛИЦА
+№	Задача	Действие	Статус
+1	Баг || 1.0	Исправить в admin-studio.tsx	✅
+2	Место файла	Положить в lib/db/src/weights.ts	✅
+3	SQL CHECK	Добавить в schema.ts через .check()	✅
+4	Шаг веса	Изменить STEP на 0.5	✅
+5	Семантика 0.0	Фильтровать > 0.0 в semantic-engine	✅
