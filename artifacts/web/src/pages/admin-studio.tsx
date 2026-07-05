@@ -499,7 +499,7 @@ function AddLinkForm({
           ))}
         </SelectContent>
       </Select>
-      <Input value={weight} onChange={(e) => setWeight(e.target.value)} type="number" step="0.1" className="w-24" />
+      <Input value={weight} onChange={(e) => setWeight(e.target.value)} type="number" step="0.5" min="0" max="3" className="w-24" />
       <Select value={polarity} onValueChange={setPolarity}>
         <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
         <SelectContent>
@@ -508,7 +508,7 @@ function AddLinkForm({
           <SelectItem value="negative">негативная</SelectItem>
         </SelectContent>
       </Select>
-      <Button onClick={() => { if (!themeId) return; onAdd(themeId, parseFloat(weight) || 1.0, polarity); setThemeId(""); }} disabled={!themeId}>
+      <Button onClick={() => { if (!themeId) return; const pw = parseFloat(weight); onAdd(themeId, Number.isFinite(pw) ? pw : 1.0, polarity); setThemeId(""); }} disabled={!themeId}>
         <Plus className="w-4 h-4 mr-1" />Добавить
       </Button>
     </div>
@@ -548,10 +548,10 @@ function AddRelationForm({
       </Select>
       <Input value={relationType} onChange={(e) => setRelationType(e.target.value)} placeholder="Тип связи" className="w-[160px]" />
       <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Описание" className="w-[200px]" />
-      <Input value={weight} onChange={(e) => setWeight(e.target.value)} type="number" step="0.1" className="w-20" />
+      <Input value={weight} onChange={(e) => setWeight(e.target.value)} type="number" step="0.5" min="0" max="3" className="w-20" />
       <Button onClick={() => {
         if (!toId || !relationType.trim()) return;
-        onAdd(toId, relationType.trim(), description.trim(), parseFloat(weight) || 1.0);
+        const pw = parseFloat(weight); onAdd(toId, relationType.trim(), description.trim(), Number.isFinite(pw) ? pw : 1.0);
         setToId(""); setRelationType(""); setDescription(""); setWeight("1.0");
       }} disabled={!toId || !relationType.trim()}>
         <Plus className="w-4 h-4 mr-1" />Связать

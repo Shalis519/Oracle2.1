@@ -7,7 +7,9 @@ import {
   timestamp,
   uniqueIndex,
   jsonb,
+  check,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -54,6 +56,10 @@ export const ontologyEntityThemesTable = pgTable(
   },
   (table) => [
     uniqueIndex("entity_theme_unique").on(table.entityId, table.themeId),
+    check(
+      "check_theme_weight",
+      sql`${table.weight} >= 0.0 AND ${table.weight} <= 3.0`,
+    ),
   ],
 );
 
@@ -123,6 +129,10 @@ export const ontologyEntityRelationsTable = pgTable(
       table.fromEntityId,
       table.toEntityId,
       table.relationType,
+    ),
+    check(
+      "check_relation_weight",
+      sql`${table.weight} >= 0.0 AND ${table.weight} <= 3.0`,
     ),
   ],
 );
