@@ -272,9 +272,7 @@ export class FuturisticGenerator {
     // ===== 1. Бифуркация (только заголовок + тональность) =====
     parts.push(`Сейчас Вы стоите на развилке между "${primaryTheme}" и "${secondaryTheme}".`);
 
-    if (themes.aspectPolarity === "positive") {
-      parts.push("Энергия течёт свободно и естественно. То, что задумано, получится легко.");
-    } else if (themes.aspectPolarity === "negative") {
+    if (themes.aspectPolarity === "negative") {
       parts.push("Требуется осознанный выбор и усилие. Напряжённость — не враг, а топливо для роста.");
     } else {
       parts.push("Время для важных решений. Точка бифуркации открывается — выбирайте свой путь.");
