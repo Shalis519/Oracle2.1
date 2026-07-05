@@ -1,6 +1,11 @@
 import { logger } from "./logger";
-import { getEntity, getEntityThemes, findRelation, type EntityTheme, type EntityRelation } from "./semanticEngine";
-import { type TransitAspect } from "./astrology";
+import {
+  getEntity,
+  getEntityThemes,
+  findRelation,
+  type EntityRelation,
+  type EntityProfile,
+} from "./semanticEngine";
 
 export interface TransitContext {
   planet: string;
@@ -71,7 +76,6 @@ export function calculateTransitDuration(
     urgency = "постепенно";
   }
 
-  // FIX 3: real peak time using hours, not just days
   const peakDate = new Date(currentDate);
   const halfDurationMs = (totalDays / 2) * 24 * 60 * 60 * 1000;
   peakDate.setTime(peakDate.getTime() + halfDurationMs);
@@ -95,15 +99,15 @@ function declension(count: number, forms: [string, string, string]): string {
   return forms[2];
 }
 
-/** 
- * Склонение тем в разные падежи.
- * nominative: Общение
- * genitive: общения (в пользу общения)
- * instrumental: общением (с общением)
+/**
+ * Полная система склонения тем во все 6 падежей.
+ * Падежи: nominative (именительный), genitive (родительный),
+ * dative (дательный), accusative (винительный), instrumental (творительный),
+ * prepositional (предложный).
  */
 function declineTheme(
   theme: string,
-  caseName: "nominative" | "genitive" | "instrumental" = "nominative",
+  caseName: "nominative" | "genitive" | "dative" | "accusative" | "instrumental" | "prepositional" = "nominative",
 ): string {
   if (caseName === "nominative") return theme;
 
@@ -121,32 +125,126 @@ function declineTheme(
       "Карьера": "карьеры",
       "Здоровье": "здоровья",
       "Духовность": "духовности",
+      "Интеллект": "интеллекта",
+      "Соседи": "соседей",
+      "Братья и сёстры": "братьев и сестёр",
+      "Короткие путешествия": "коротких путешествий",
+      "Семья": "семьи",
+      "Борьба": "борьбы",
+      "Путешествия": "путешествий",
+      "Перемены": "перемен",
+      "Инновации": "инноваций",
+      "Будущее": "будущего",
+      "Независимость": "независимости",
+      "Технологии": "технологий",
+    },
+    dative: {
+      "Учёба": "учёбе",
+      "Любовь": "любви",
+      "Творчество": "творчеству",
+      "Общение": "общению",
+      "Свобода": "свободе",
+      "Гармония": "гармонии",
+      "Красота": "красоте",
+      "Отношения": "отношениям",
+      "Деньги": "деньгам",
+      "Карьера": "карьере",
+      "Здоровье": "здоровью",
+      "Духовность": "духовности",
+      "Интеллект": "интеллекту",
+      "Соседи": "соседям",
+      "Братья и сёстры": "братьям и сёстрам",
+      "Короткие путешествия": "коротким путешествиям",
+      "Семья": "семье",
+      "Борьба": "борьбе",
+      "Путешествия": "путешествиям",
+      "Перемены": "переменам",
+      "Инновации": "инновациям",
+      "Будущее": "будущему",
+      "Независимость": "независимости",
+      "Технологии": "технологиям",
+    },
+    accusative: {
+      "Учёба": "учёбу",
+      "Любовь": "любовь",
+      "Творчество": "творчество",
+      "Общение": "общение",
+      "Свобода": "свободу",
+      "Гармония": "гармонию",
+      "Красота": "красоту",
+      "Отношения": "отношения",
+      "Деньги": "деньги",
+      "Карьера": "карьеру",
+      "Здоровье": "здоровье",
+      "Духовность": "духовность",
+      "Интеллект": "интеллект",
+      "Соседи": "соседей",
+      "Братья и сёстры": "братьев и сестёр",
+      "Короткие путешествия": "короткие путешествия",
+      "Семья": "семью",
+      "Борьба": "борьбу",
+      "Путешествия": "путешествия",
+      "Перемены": "перемены",
+      "Инновации": "инновации",
+      "Будущее": "будущее",
+      "Независимость": "независимость",
+      "Технологии": "технологии",
     },
     instrumental: {
-      "Учёба": "Учёбой",
-      "Любовь": "Любовью",
-      "Творчество": "Творчеством",
-      "Общение": "Общением",
-      "Свобода": "Свободой",
-      "Гармония": "Гармонией",
-      "Красота": "Красотой",
-      "Отношения": "Отношениями",
-      "Деньги": "Деньгами",
-      "Карьера": "Карьерой",
-      "Здоровье": "Здоровьем",
-      "Духовность": "Духовностью",
+      "Учёба": "учёбой",
+      "Любовь": "любовью",
+      "Творчество": "творчеством",
+      "Общение": "общением",
+      "Свобода": "свободой",
+      "Гармония": "гармонией",
+      "Красота": "красотой",
+      "Отношения": "отношениями",
+      "Деньги": "деньгами",
+      "Карьера": "карьерой",
+      "Здоровье": "здоровьем",
+      "Духовность": "духовностью",
+      "Интеллект": "интеллектом",
+      "Соседи": "соседями",
+      "Братья и сёстры": "братьями и сёстрами",
+      "Короткие путешествия": "короткими путешествиями",
+      "Семья": "семьёй",
+      "Борьба": "борьбой",
+      "Путешествия": "путешествиями",
+      "Перемены": "переменами",
+      "Инновации": "инновациями",
+      "Будущее": "будущим",
+      "Независимость": "независимостью",
+      "Технологии": "технологиями",
+    },
+    prepositional: {
+      "Учёба": "учёбе",
+      "Любовь": "любви",
+      "Творчество": "творчестве",
+      "Общение": "общении",
+      "Свобода": "свободе",
+      "Гармония": "гармонии",
+      "Красота": "красоте",
+      "Отношения": "отношениях",
+      "Деньги": "деньгах",
+      "Карьера": "карьере",
+      "Здоровье": "здоровье",
+      "Духовность": "духовности",
+      "Интеллект": "интеллекте",
+      "Соседи": "соседях",
+      "Братья и сёстры": "братьях и сёстрах",
+      "Короткие путешествия": "коротких путешествиях",
+      "Семья": "семье",
+      "Борьба": "борьбе",
+      "Путешествия": "путешествиях",
+      "Перемены": "переменах",
+      "Инновации": "инновациях",
+      "Будущее": "будущем",
+      "Независимость": "независимости",
+      "Технологии": "технологиях",
     },
   };
 
   return map[caseName]?.[theme] || theme;
-}
-
-/** Нормализованное обращение темы: с большой буквы в заголовке, с маленькой в описании. */
-function themeLabel(theme: string, position: "title" | "inline" | "declined"): string {
-  if (position === "title") return theme;
-  if (position === "inline") return theme.toLowerCase();
-  // declined = already lowercased by declineTheme caller
-  return theme.toLowerCase();
 }
 
 function pickRandom<T>(arr: T[]): T {
@@ -183,13 +281,13 @@ function getAspectPolarity(aspect: string): "positive" | "negative" | "neutral" 
   return polarities[aspect.toLowerCase()] ?? "neutral";
 }
 
-/** Weighted theme intersection across planet, house, sign, aspect. */
+/** Weighted theme intersection across planet, house, sign, aspect. Returns top-3. */
 function resolveThemes(
   planet: string,
   sign: string,
   house: number,
   aspect: string,
-): { primary: string; secondary: string; aspectModifier: number; aspectPolarity: "positive" | "negative" | "neutral" } | null {
+): { primary: string; secondary: string; tertiary: string; all: string[]; aspectModifier: number; aspectPolarity: "positive" | "negative" | "neutral" } | null {
   const planetThemes = getEntityThemes(planet);
   const signThemes = getEntityThemes(sign);
   const houseThemes = getEntityThemes(String(house));
@@ -218,19 +316,171 @@ function resolveThemes(
 
   if (scored.length === 0) return null;
 
+  const all = scored.map(([name]) => name);
+
   return {
     primary: scored[0][0],
     secondary: scored[1]?.[0] ?? scored[0][0],
+    tertiary: scored[2]?.[0] ?? scored[1]?.[0] ?? scored[0][0],
+    all,
     aspectModifier,
     aspectPolarity,
   };
 }
 
+/** Конкретные actionable советы по жизненным темам. */
+const ADVICE_BY_THEME: Record<string, string[]> = {
+  "Общение": [
+    "Напишите важное сообщение, которое откладывали.",
+    "Позвоните близкому человеку, с которым давно не общались.",
+    "Обсудите свою идею с коллегой или другом.",
+    "Ответьте на письмо, которое требует внимания.",
+  ],
+  "Учёба": [
+    "Начните читать книгу по новой для Вас теме.",
+    "Запишитесь на короткий курс или вебинар.",
+    "Посмотрите лекцию по интересующей Вас теме.",
+    "Выделите 30 минут для изучения чего-то нового.",
+  ],
+  "Интеллект": [
+    "Решите задачку, которая требует нестандартного подхода.",
+    "Запишите свою мысль — она может оказаться важной.",
+    "Прочитайте статью вне своей обычной зоны интересов.",
+    "Обсудите идею с человеком, который смотрит на мир иначе.",
+  ],
+  "Соседи": [
+    "Обратите внимание на то, что говорят вокруг — там может быть подсказка.",
+    "Познакомьтесь с кем-то из ближнего окружения.",
+    "Помогите соседу с мелкой просьбой — откроется новый канал.",
+    "Послушайте местные новости или разговоры — в них скрыта информация.",
+  ],
+  "Короткие путешествия": [
+    "Смените обстановку — прогуляйтесь в незнакомом направлении.",
+    "Запланируйте поездку на выходные, даже если недалеко.",
+    "Поезжайте в соседний район и зайдите в новое место.",
+    "Возьмите выходной и уедьте за город, даже на день.",
+  ],
+  "Братья и сёстры": [
+    "Напишите родственнику, с которым давно не переписывались.",
+    "Позвоните брату или сестре — разговор будет необычайно тёплым.",
+    "Вспомните семейную историю — в ней ключ к вашему вопросу.",
+    "Обсудите наследственные темы с близким по возрасту родственником.",
+  ],
+  "Любовь": [
+    "Скажите близкому человеку то, что давно чувствуете.",
+    "Потратьте время вместе, без гаджетов и отвлечений.",
+    "Напишите записку с тёплыми словами.",
+    "Подарите что-то символичное — не дорогое, но осмысленное.",
+  ],
+  "Карьера": [
+    "Обновите резюме или профиль — даже если не ищете работу.",
+    "Запишите свои достижения за последний месяц.",
+    "Напишите коллеге с предложением о сотрудничестве.",
+    "Поставьте одну конкретную профессиональную цель на сегодня.",
+  ],
+  "Деньги": [
+    "Проверьте подписки — отмените те, что не используете.",
+    "Запишите все расходы за сегодня — осознанность растёт.",
+    "Изучите один финансовый инструмент, который не знали.",
+    "Положите небольшую сумму в резерв — начните накопление.",
+  ],
+  "Творчество": [
+    "Сделайте набросок или запишите мелодию — не ждите идеального момента.",
+    "Пересмотрите старые работы — там есть забытые идеи.",
+    "Попробуйте новый материал или инструмент.",
+    "Покажите свою работу кому-то — обратная связь творит чудеса.",
+  ],
+  "Здоровье": [
+    "Сделайте 10-минутную растяжку или прогулку.",
+    "Выпейте стакан воды прямо сейчас.",
+    "Лягте спать на 30 минут раньше обычного.",
+    "Запишите, что Вы ели сегодня — заметите паттерн.",
+  ],
+  "Духовность": [
+    "Потратьте 10 минут в тишине — без телефона.",
+    "Запишите вопрос, который давно не даёт покоя.",
+    "Прочитайте страницу из духовной или философской книги.",
+    "Сделайте один осознанный жест благодарности.",
+  ],
+  "Свобода": [
+    "Отмените одно обязательство, которое вытесняет Вас.",
+    "Выделите час только для себя — без объяснений никому.",
+    "Скажите «нет» тому, что Вы делаете по привычке, а не по выбору.",
+    "Запишите, от чего Вы хотели бы освободиться.",
+  ],
+  "Борьба": [
+    "Опишите конфликт на бумаге — увидите его иначе.",
+    "Поговорите с оппонентом напрямую, без посредников.",
+    "Выделите один шаг к решению — даже маленький.",
+    "Признайте свою часть ответственности — это снимет напряжение.",
+  ],
+  "Путешествия": [
+    "Поищите билеты — даже если не купите, мечта начинается с просмотра.",
+    "Прочитайте о культуре страны, о которой не знали.",
+    "Запланируйте маршрут — планирование тоже путешествие.",
+    "Спросите у друга о его путешествии — вдохновитесь чужим опытом.",
+  ],
+  "Семья": [
+    "Позвоните родителям — просто так, без повода.",
+    "Спросите у старшего родственника о семейной истории.",
+    "Сделайте что-то полезное для дома — мелочь, но важная.",
+    "Напишите письмо члену семьи, с которым разошлись.",
+  ],
+  "Гармония": [
+    "Приведите в порядок рабочее место — гармония начинается с пространства.",
+    "Послушайте музыку, которая успокаивает Вас.",
+    "Сделайте один шаг к примирению с тем, кто обидел.",
+    "Потратьте время на то, что приносит радость без пользы.",
+  ],
+  "Красота": [
+    "Посмотрите на обычную вещь как на произведение искусства.",
+    "Сделайте что-то приятное для своей внешности — не из обязанности.",
+    "Сфотографируйте момент, который кажется красивым.",
+    "Посетите выставку, парк или просто красивый уголок города.",
+  ],
+  "Перемены": [
+    "Сделайте одну вещь иначе, чем вчера.",
+    "Запишите, что Вы хотите изменить — конкретно, одной фразой.",
+    "Поговорите с человеком, который недавно что-то поменял.",
+    "Отпустите одну привычку на сегодня — посмотрите, что изменится.",
+  ],
+  "Инновации": [
+    "Попробуйте новое приложение или инструмент.",
+    "Прочитайте о технологии, о которой слышали, но не изучали.",
+    "Запишите идею, которая кажется безумной — она может стать проектом.",
+    "Спросите у молодого человека, что он использует — откроется новый мир.",
+  ],
+  "Будущее": [
+    "Напишите письмо себе из будущего — что бы Вы хотели сказать?",
+    "Запишите одну цель на год — и первый шаг к ней.",
+    "Поговорите с человеком, который уже там, где Вы хотите быть.",
+    "Сделайте что-то сегодня, за что будущий Вы скажет спасибо.",
+  ],
+  "Независимость": [
+    "Сделайте одно дело без чужой помощи.",
+    "Запишите, от чего или от кого Вы зависите — и один шаг к автономии.",
+    "Потратьте время в одиночестве — это не изоляция, а выбор.",
+    "Примите решение, которое раньше откладывали из страха.",
+  ],
+  "Технологии": [
+    "Организуйте файлы — цифровой порядок = ментальный порядок.",
+    "Попробуйте автоматизировать рутинную задачу.",
+    "Прочитайте инструкцию к гаджету — узнаете новые функции.",
+    "Сделайте резервную копию важных данных.",
+  ],
+};
+
+function getAdvice(theme: string): string | null {
+  const list = ADVICE_BY_THEME[theme];
+  if (!list || list.length === 0) return null;
+  return pickRandom(list);
+}
+
 export class FuturisticGenerator {
   generate(context: TransitContext): string | null {
     try {
-      const planetProfile = getEntity(context.planet);
-      if (!planetProfile) {
+      const entity = getEntity(context.planet);
+      if (!entity) {
         logger.warn({ planet: context.planet }, "entity not found in ontology");
         return null;
       }
@@ -251,7 +501,7 @@ export class FuturisticGenerator {
         context.currentDate,
       );
 
-      return this.buildText(themes, relation, durationData, context);
+      return this.buildText(themes, relation, durationData, context, entity.profile);
     } catch (error) {
       logger.error({ error, context }, "error generating forecast");
       return null;
@@ -259,10 +509,18 @@ export class FuturisticGenerator {
   }
 
   private buildText(
-    themes: { primary: string; secondary: string; aspectModifier: number; aspectPolarity: "positive" | "negative" | "neutral" },
+    themes: {
+      primary: string;
+      secondary: string;
+      tertiary: string;
+      all: string[];
+      aspectModifier: number;
+      aspectPolarity: "positive" | "negative" | "neutral";
+    },
     relation: EntityRelation | null,
     durationData: TransitDuration,
     context: TransitContext,
+    profile: EntityProfile | null,
   ): string {
     const parts: string[] = [];
     const primaryTheme = themes.primary;
@@ -271,58 +529,77 @@ export class FuturisticGenerator {
     const dayPart = getDayPart(durationData.peakDate.getHours());
     const futurePeriod = this.getFuturePeriod(context);
 
-    // ===== 1. Бифуркация (только заголовок + тональность) =====
-    parts.push(`Сейчас Вы стоите на развилке между "${primaryTheme}" и "${secondaryTheme}".`);
-
-    if (themes.aspectPolarity === "negative") {
-      parts.push("Требуется осознанный выбор и усилие. Напряжённость — не враг, а топливо для роста.");
-    } else {
-      parts.push("Время для важных решений. Точка бифуркации открывается — выбирайте свой путь.");
-    }
-
-    if (relation?.futuristic) {
-      const fut = relation.futuristic as Record<string, unknown>;
-      const archetype = String(fut.archetype ?? relation.description ?? "энергия");
-      const bif = (fut.bifurcation ?? {}) as Record<string, string>;
-      const oldPattern = bif.oldPattern ?? "старый шаблон";
-      const newPossibility = bif.newPossibility ?? "новая возможность";
-      parts.push(`${archetype} подсвечивает Ваш старый шаблон "${oldPattern}",`);
-      parts.push(`а ${context.aspectPlanet} открывает путь к "${newPossibility}".`);
-    } else {
-      // FIX 1: no "выбираете между" — другая семантика, не дублирующая заголовок
-      const followPhrases = [
-        `Внимание смещается от ${themeLabel(primaryTheme, "inline")} к ${themeLabel(secondaryTheme, "inline")}. Это естественный цикл.`,
-        `${primaryTheme} открывает дверь, за которой стоит ${themeLabel(secondaryTheme, "inline")}.`,
-        `Не выбирайте одно — найдите, как соединить ${themeLabel(primaryTheme, "inline")} и ${themeLabel(secondaryTheme, "inline")}.`,
-      ];
-      parts.push(pickRandom(followPhrases));
-    }
-
-    // ===== 2. Окно возможностей =====
-    const futOp = (relation?.futuristic?.opportunity ?? {}) as Record<string, string>;
-    const opportunityDesc =
-      futOp.description ?? `в моменте, когда ${themeLabel(primaryTheme, "inline")} встретится с ${declineTheme(secondaryTheme, "instrumental").toLowerCase()}`;
-
-    const futurePhrases = [
-      `То, что Вы решите сейчас, откликнется ${futurePeriod}.`,
-      `Этот выбор повлияет на Вашу жизнь ${futurePeriod}.`,
-      `Сегодняшнее решение станет фундаментом для перемен ${futurePeriod}.`,
-      `Последствия этого выбора Вы почувствуете ${futurePeriod}.`,
+    // --- 1. Открытие: конкретное, без абстракций ---
+    const openers = [
+      `Сегодняшний день открывает возможности в сфере ${declineTheme(primaryTheme, "genitive").toLowerCase()}.`,
+      `${primaryTheme} выходит на первый план — обратите на это внимание.`,
+      `Энергия сегодня направлена на ${declineTheme(primaryTheme, "accusative").toLowerCase()}.`,
+      `День благоприятен для ${declineTheme(primaryTheme, "genitive").toLowerCase()}.`,
     ];
+    parts.push(pickRandom(openers));
 
-    parts.push(`Идея, которая придёт ${dayPart}, — это не случайность.`);
-    parts.push(pickRandom(futurePhrases));
-    parts.push(`Но если запишете и начнёте делать — ${futurePeriod} Вы не узнаете свою жизнь.`);
-    parts.push("");
+    // Конкретная временная привязка: когда идея придёт
+    parts.push(`Важный момент ${dayPart} — не пропустите.`);
 
-    // ===== 3. Таймер + срочность (тональность зависит от аспекта) =====
-    const futTimer = (relation?.futuristic?.timer ?? {}) as Record<string, string>;
-    // FIX 5: родительный падеж для "в пользу"
-    const action = futTimer.action ?? `сделать выбор в пользу ${declineTheme(primaryTheme, "genitive").toLowerCase()}`;
+    if (themes.all.length > 2) {
+      const others = themes.all.slice(1, 4).filter((t) => t !== primaryTheme);
+      if (others.length > 0) {
+        const otherThemes = others.slice(0, 2).join(" и ");
+        const contextPhrases = [
+          `Рядом с этим — ${otherThemes.toLowerCase()}.`,
+          `Также важны: ${otherThemes.toLowerCase()}.`,
+          `В тени основной темы — ${otherThemes.toLowerCase()}.`,
+        ];
+        parts.push(pickRandom(contextPhrases));
+      }
+    }
 
-    parts.push(`У Вас есть ${durationText}, чтобы ${action}.`);
+    // --- 2. Эмоциональный слой из профиля ---
+    let emotionPhrase: string | null = null;
+    if (profile) {
+      const emotions =
+        themes.aspectPolarity === "negative"
+          ? profile.negativeEmotions
+          : profile.positiveEmotions;
+      if (emotions && emotions.length > 0) {
+        const picked = pickRandom(emotions).toLowerCase();
+        emotionPhrase = `Сегодня Вы можете почувствовать ${picked}.`;
+      }
+    }
+    if (emotionPhrase) {
+      parts.push(emotionPhrase);
+    } else {
+      const fallbackEmotions = [
+        "Сегодня Вы можете почувствовать интерес и любопытство.",
+        "Возможно, придёт осознание, которого раньше не было.",
+        "Сегодняшний день может принести ясность.",
+      ];
+      parts.push(pickRandom(fallbackEmotions));
+    }
 
-    // FIX 6: тональность срочности зависит от полярности аспекта, не только от duration
+    // --- 3. Конкретный совет по теме ---
+    const advice = getAdvice(primaryTheme);
+    if (advice) {
+      parts.push(advice);
+    } else if (profile?.recommendations) {
+      parts.push(profile.recommendations);
+    }
+
+    // Дополнительный совет по второй теме
+    const advice2 = getAdvice(secondaryTheme);
+    if (advice2 && advice2 !== advice) {
+      parts.push(advice2);
+    }
+
+    // --- 4. Временная привязка (один раз!) ---
+    const timePhrases = [
+      `То, что Вы начнёте сегодня, может принести первые результаты ${futurePeriod}.`,
+      `Сегодняшние шаги начнут откликаться ${futurePeriod}.`,
+      `Первые признаки изменений появятся ${futurePeriod}.`,
+    ];
+    parts.push(pickRandom(timePhrases));
+
+    // --- 5. Тональность аспекта + таймер ---
     if (themes.aspectPolarity === "negative") {
       if (durationData.urgency === "срочно") {
         parts.push("Действуйте прямо сейчас! Время на исходе.");
@@ -333,18 +610,15 @@ export class FuturisticGenerator {
       }
     } else if (themes.aspectPolarity === "positive") {
       if (durationData.urgency === "срочно") {
-        parts.push("Всё складывается быстро и естественно. Не торопитесь.");
+        parts.push(`У Вас есть ${durationText}, и всё складывается быстро. Не торопитесь.`);
       } else {
-        parts.push("Всё складывается в Вашу пользу. Действуйте, когда будет удобно.");
+        parts.push(`У Вас есть ${durationText}. Всё складывается в Вашу пользу. Действуйте, когда будет удобно.`);
       }
     } else {
-      // neutral
-      parts.push("У Вас есть время обдумать решение.");
+      parts.push(`У Вас есть ${durationText}, чтобы обдумать решение.`);
     }
 
-    parts.push("");
-
-    // ===== 4. Мотивационная фраза =====
+    // --- 6. Мотивация ---
     if (context.motivationPhrase) {
       parts.push(context.motivationPhrase);
     } else {
@@ -356,18 +630,11 @@ export class FuturisticGenerator {
       parts.push(pickRandom(fallbackMotivation));
     }
 
-    parts.push("");
-
-    // ===== 5. Вопрос-маяк =====
-    const futBeacon = (relation?.futuristic?.beacon ?? {}) as Record<string, string>;
-    const beacon = futBeacon.question ?? "Что бы Вы делали, если бы знали, что не можете провалиться?";
-    parts.push(beacon);
-
     return parts.join("\n");
   }
 
   private getFuturePeriod(context: TransitContext): string {
-    if (!context.aspectPlanet) return "в будущем";
+    if (!context.aspectPlanet) return "в ближайшем будущем";
 
     const periodMap: Record<string, string> = {
       "Уран": "через год",

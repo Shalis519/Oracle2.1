@@ -52,7 +52,30 @@ export interface EntityRelation {
 
 export interface EntityProfile {
   entityId: number;
-  semanticData: Record<string, unknown> | null;
+  keyMeanings: string | null;
+  psychologicalManifestations: string | null;
+  emotions: string | null;
+  strengths: string | null;
+  weaknesses: string | null;
+  recommendations: string | null;
+  warnings: string | null;
+  lifeThemes: string[];
+  keyMeaningsArr: string[];
+  positiveQualities: string[];
+  shadowQualities: string[];
+  positiveEmotions: string[];
+  negativeEmotions: string[];
+  strengthsArr: string[];
+  weaknessesArr: string[];
+  archetypes: string[];
+  professions: string[];
+  objects: string[];
+  colors: string[];
+  numbers: string[];
+  days: string[];
+  animals: string[];
+  places: string[];
+  materials: string[];
 }
 
 // Runtime type guard for relation rows
@@ -121,6 +144,36 @@ export async function loadOntology(): Promise<void> {
           };
         });
 
+      const profileData: EntityProfile | null = entityProfile
+        ? {
+            entityId: entityProfile.entityId,
+            keyMeanings: entityProfile.keyMeanings,
+            psychologicalManifestations: entityProfile.psychologicalManifestations,
+            emotions: entityProfile.emotions,
+            strengths: entityProfile.strengths,
+            weaknesses: entityProfile.weaknesses,
+            recommendations: entityProfile.recommendations,
+            warnings: entityProfile.warnings,
+            lifeThemes: (entityProfile.lifeThemes as string[]) ?? [],
+            keyMeaningsArr: (entityProfile.keyMeaningsArr as string[]) ?? [],
+            positiveQualities: (entityProfile.positiveQualities as string[]) ?? [],
+            shadowQualities: (entityProfile.shadowQualities as string[]) ?? [],
+            positiveEmotions: (entityProfile.positiveEmotions as string[]) ?? [],
+            negativeEmotions: (entityProfile.negativeEmotions as string[]) ?? [],
+            strengthsArr: (entityProfile.strengthsArr as string[]) ?? [],
+            weaknessesArr: (entityProfile.weaknessesArr as string[]) ?? [],
+            archetypes: (entityProfile.archetypes as string[]) ?? [],
+            professions: (entityProfile.professions as string[]) ?? [],
+            objects: (entityProfile.objects as string[]) ?? [],
+            colors: (entityProfile.colors as string[]) ?? [],
+            numbers: (entityProfile.numbers as string[]) ?? [],
+            days: (entityProfile.days as string[]) ?? [],
+            animals: (entityProfile.animals as string[]) ?? [],
+            places: (entityProfile.places as string[]) ?? [],
+            materials: (entityProfile.materials as string[]) ?? [],
+          }
+        : null;
+
       entityMap.set(entity.name, {
         id: entity.id,
         name: entity.name,
@@ -128,12 +181,7 @@ export async function loadOntology(): Promise<void> {
         type: entity.type ?? null,
         themes: entityThemesList,
         relations: entityRelations,
-        profile: entityProfile
-          ? {
-              entityId: entityProfile.entityId,
-              semanticData: null,
-            }
-          : null,
+        profile: profileData,
       });
     }
 
