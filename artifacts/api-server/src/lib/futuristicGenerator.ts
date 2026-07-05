@@ -79,6 +79,13 @@ export function calculateTransitDuration(
   return { duration, unit, text, urgency, peakDate };
 }
 
+function getDayPart(hours: number): string {
+  if (hours >= 5 && hours <= 11) return "в первой половине дня";
+  if (hours >= 12 && hours <= 16) return "во второй половине дня";
+  if (hours >= 17 && hours <= 20) return "вечером";
+  return "ночью";
+}
+
 function declension(count: number, forms: [string, string, string]): string {
   const n = Math.abs(count) % 100;
   const n1 = n % 10;
@@ -261,12 +268,7 @@ export class FuturisticGenerator {
     const primaryTheme = themes.primary;
     const secondaryTheme = themes.secondary;
     const durationText = durationData.text;
-    const peakDate = durationData.peakDate.toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const dayPart = getDayPart(durationData.peakDate.getHours());
     const futurePeriod = this.getFuturePeriod(context);
 
     // ===== 1. Бифуркация (только заголовок + тональность) =====
@@ -308,7 +310,7 @@ export class FuturisticGenerator {
       `Последствия этого выбора Вы почувствуете ${futurePeriod}.`,
     ];
 
-    parts.push(`Идея, которая придёт ${opportunityDesc} (пик аспекта: ${peakDate}), — это не случайность.`);
+    parts.push(`Идея, которая придёт ${dayPart}, — это не случайность.`);
     parts.push(pickRandom(futurePhrases));
     parts.push(`Но если запишете и начнёте делать — ${futurePeriod} Вы не узнаете свою жизнь.`);
     parts.push("");
