@@ -16,3 +16,4 @@
 - [Qi Men maiden structures](qimen-maidens.md) — 玉女守门 & Девушка variants (丁/Мистики, Главные Врата, good-door+no-dup); 寄宫 5→2 lodge must be applied before reading door/element operators, not just at output.
 - [Forecast payload schema drift](forecast-payload-schema-drift.md) — new required fields on a schema shared by a live endpoint + persisted snapshot must be injected at serialize time, NOT read from stored payload (else every forecast 500s).
 - [Ji Fu four scales](jifu-scales.md) — Джи Фу wish strength = same-palace matches of year/month/day/hour 值符; HOUR/DAY def A, MONTH/YEAR def B 旬首仪; calibrated for 2026 阴-half only, re-validate beyond.
+- [Semantic engine field naming](semantic-engine-fields.md) — in-memory relation models MUST mirror real DB column names (fromEntityId/toEntityId); never alias to sourceId/targetId or architect review flags it as a naming violation.

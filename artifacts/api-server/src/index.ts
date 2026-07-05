@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { seedOntology } from "./lib/seedOntology";
+import { loadOntology } from "./lib/semanticEngine";
 
 const rawPort = process.env["PORT"];
 
@@ -19,6 +20,11 @@ if (Number.isNaN(port) || port <= 0) {
 // Auto-seed ontology data on startup if tables are empty
 seedOntology().catch((err) => {
   logger.error({ err }, "Ontology seed failed");
+});
+
+// Load ontology into memory for semantic forecasts
+loadOntology().catch((err) => {
+  logger.warn({ err }, "Ontology load failed — semantic forecasts will show missing data");
 });
 
 app.listen(port, (err) => {

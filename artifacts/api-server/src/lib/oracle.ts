@@ -8,6 +8,8 @@ import {
 import { getFlyingStar, getStarByNumber, type FlyingStarData } from "./data/fengshui";
 import { DREAM_MEANINGS, DEFAULT_DREAM_INTERPRETATION } from "./data/dreams";
 import { Solar } from "lunar-typescript";
+import { ensureOntologyLoaded } from "./semanticEngine";
+import { futuristicGenerator } from "./futuristicGenerator";
 
 // Canonical order of the ten Heavenly Stems (天干) and twelve Earthly Branches
 // (地支). Indices align 1:1 with HEAVENLY_STEMS / EARTHLY_BRANCHES.
@@ -1151,205 +1153,16 @@ const SIGN_PREPOSITIONAL: Record<string, string> = {
   "Рыбы": "Рыбах",
 };
 
-const SIGN_MEANING: Record<string, string> = {
-  "Овен": "порывам инициативе и смелости",
-  "Телец": "практичности и устойчивости",
-  "Близнецы": "гибкости и коммуникативности",
-  "Рак": "эмоциональной чувствительности и заботе",
-  "Лев": "творческой самореализации и желанию быть в центре",
-  "Дева": "аналитичности и вниманию к деталям",
-  "Весы": "гармонии и умению видеть обе стороны",
-  "Скорпион": "глубине и трансформации",
-  "Стрелец": "расширению горизонтов и поиску смысла",
-  "Козерог": "дисциплине и ответственности",
-  "Водолей": "оригинальности и непредсказуемости",
-  "Рыбы": "интуиции и эмпатии",
-};
+// Old hardcoded transit text generators removed.
+// Semantic forecast now generated via semanticEngine + futuristicGenerator.
 
-const HOUSE_ACTION: Record<number, string> = {
-  1: "самовыражения и личной позиции",
-  2: "денежных ресурсов и ценностей",
-  3: "общения, родственников и повседневной жизни",
-  4: "семьи, дома и эмоциональной опоры",
-  5: "творчества, романтики и детей",
-  6: "работы, здоровья и сервиса",
-  7: "партнёрства и открытого взаимодействия",
-  8: "трансформаций и общих ресурсов",
-  9: "путешествий, обучения и философии",
-  10: "карьеры и общественного статуса",
-  11: "друзей, желаний и будущего",
-  12: "тайн и внутреннего мира",
-};
-
-/** Return a transit-quality verb based on body + sign + house + aspect. */
-function transitQualities(t: import("./astrology").TransitAspect): string {
-  const sign = t.transitSign;
-  const house = t.transitHouse;
-  const natalSign = t.natalSign;
-  const natalHouse = t.natalHouse;
-  const retro = t.transitRetrograde;
-
-  const signDesc = SIGN_MEANING[sign] ?? `астральной энергии`;
-  const houseDesc = house ? HOUSE_ACTION[house] ?? `сфере ${house}` : "жизни";
-  const natalHouseDesc = natalHouse ? HOUSE_ACTION[natalHouse] ?? `сфере ${natalHouse}` : "жизни";
-
-  const body = t.transitBody.toLowerCase();
-
-  // Core meaning maps: what each planet does in a sign+house
-  const meaning: string[] = [];
-
-  // Retrograde nuance
-  if (retro) {
-    if (body === "меркурий") {
-      meaning.push(`неожиданно придётся вернуться к недоделанным вопросам`);
-    } else if (body === "марс") {
-      meaning.push(`агрессия останет без результата`);
-    } else if (body === "венера") {
-      meaning.push(`прежние отношения возвращаются в память`);
-    } else {
-      meaning.push(`процесс требует пересмотра`);
-    }
-  }
-
-  // Sign-specific qualities
-  if (sign === "Рак" && body === "меркурий") {
-    meaning.push(`мышление становится чувствительным и эмоциональным`);
-  } else if (sign === "Овен") {
-    if (body === "меркурий") meaning.push(`быстрые решения и прямые идеи`);
-    if (body === "марс") meaning.push(`порыв энергии для действий`);
-  } else if (sign === "Телец") {
-    if (body === "венера") meaning.push(`желание комфорта и стабильности`);
-  }
-
-  // House-specific actions
-  if (house === 1) {
-    meaning.push(`окружающие видят вас изменившимся`);
-  } else if (house === 3) {
-    meaning.push(`общение становится особенно активным`);
-  } else if (house === 5) {
-    if (body === "меркурий") meaning.push(`творческие идеи потекут напролом`);
-    if (body === "венера") meaning.push(`романтика и дети окажутся в фокусе`);
-  }
-
-  // Natal house — where the effect lands
-  if (natalHouse === 5) {
-    meaning.push(`творчество и приятные эмоции затронут этот поток`);
-  } else if (natalHouse === 7) {
-    meaning.push(`отношения и переговоры требуют особого внимания`);
-  }
-
-  // Aspect flavor
-  switch (t.typeKey) {
-    case "trine":
-      if (!retro) meaning.push(`всё получится легко и естественно`);
-      break;
-    case "square":
-      meaning.push(`потребуется осознанного усилия`);
-      break;
-    case "opposition":
-      meaning.push(`баланс между желанием и действительностью`);
-      break;
-    case "sextile":
-      meaning.push(`под рукой окажется удобный шанс`);
-      break;
-  }
-
-  if (meaning.length === 0) {
-    return `~${signDesc}~ в сфере ${houseDesc}`;
-  }
-  const capitalized = meaning.map(
-    (s) => s.charAt(0).toUpperCase() + s.slice(1),
-  );
-  return capitalized.join(". ") + ".";
-}
-
-function buildTransitSentences(
-  transits: import("./astrology").TransitAspect[],
-): string[] {
-  if (transits.length === 0) return [];
-
-  const out: string[] = [];
-
-  const FEMININE_BODIES = new Set(["луна", "венера"]);
-  const bodyGender = (name: string) => FEMININE_BODIES.has(name.toLowerCase()) ? "жен" : "солнце" === name.toLowerCase() ? "сред" : "муж";
-
-  for (const t of transits) {
-    const gender = bodyGender(t.transitBody);
-    const transitPrefix = gender === "жен" ? "Транзитная " : gender === "сред" ? "Транзитное " : "Транзитный ";
-    const retroPrefix = gender === "жен" ? "Ретроградная " : gender === "сред" ? "Ретроградное " : "Ретроградный ";
-    const neverRetro = new Set(["солнце", "луна"]);
-    const retroTag = t.transitRetrograde && !neverRetro.has(t.transitBody.toLowerCase()) ? retroPrefix : "";
-    const natalLoc = t.natalHouse
-      ? ` в ${t.natalHouse} доме`
-      : "";
-
-    const signPrep = SIGN_PREPOSITIONAL[t.transitSign] ?? t.transitSign;
-    const inSign = inSignPrep(signPrep);
-
-    let connector: string;
-    switch (t.typeKey) {
-      case "conjunction":
-        connector = `в соединении с`;
-        break;
-      case "opposition":
-        connector = `противостоит`;
-        break;
-      default:
-        connector = `${aspectPrepRu(t.typeKey)} с`;
-        break;
-    }
-
-    const natalGender = bodyGender(t.natalBody);
-    const natalAdjInst = natalGender === "жен" ? "натальной " : "натальным ";
-    const natalAdjDat  = natalGender === "жен" ? "натальной " : "натальному ";
-
-    let natalPhrase: string;
-    if (t.typeKey === "opposition") {
-      natalPhrase = `${natalAdjDat}${bodyDative(t.natalBody.toLowerCase())}`;
-    } else {
-      natalPhrase = `${natalAdjInst}${bodyInstrumental(t.natalBody.toLowerCase())}`;
-    }
-
-    const head = `${transitPrefix}${retroTag}${t.transitBody} ${inSign} ${connector} ${natalPhrase}${natalLoc}`;
-    const body = transitQualities(t);
-    const duration = transitToDurationText(t.durationDays, t.transitBody);
-
-    out.push(`${head} — ${body} ${duration}.`);
-  }
-
-  return out;
-}
-
-function buildArcanaSentences(arcana: ArcanaData): string[] {
-  return [arcana.essence];
-}
-
-export function buildSynthesisText(
-  arcana: ArcanaData,
-  transits: import("./astrology").TransitAspect[],
-): string {
-  const arcanaParts = buildArcanaSentences(arcana);
-  const transitParts = buildTransitSentences(transits);
-
-  if (arcanaParts.length === 0 && transitParts.length === 0) {
-    return "Сегодня особенных астрологических событий не прогнозируется.";
-  }
-
-  // Arcana essence as its own paragraph, each transit as a new paragraph
-  const paragraphs: string[] = [...arcanaParts];
-  for (const t of transitParts) {
-    paragraphs.push(t);
-  }
-  return paragraphs.join("\n\n").trim();
-}
-
-/** New computeDailyForecast: uses natal chart + transits + arcana. */
-export function computeDailyForecast(
+/** New computeDailyForecast: uses natal chart + transits + arcana + ontology. */
+export async function computeDailyForecast(
   birthDate: string,
   natalChart: import("./astrology").NatalChart | null,
   transits: import("./astrology").TransitResult | null,
   today: string,
-): DailyForecastResult | null {
+): Promise<DailyForecastResult | null> {
   const matrixOk = parseDate(birthDate);
   if (!matrixOk) return null;
 
@@ -1380,9 +1193,52 @@ export function computeDailyForecast(
     );
   }
 
-  const hasWarning = warnings.length > 0 || conflicts.length > 0;
+  // ===== SEMANTIC FORECAST =====
+  await ensureOntologyLoaded();
 
-  const synthesisText = buildSynthesisText(arcana, transitAspects);
+  const topTransits = transitAspects
+    .filter((t) => Math.abs(t.orb) < 3)
+    .sort((a, b) => Math.abs(a.orb) - Math.abs(b.orb))
+    .slice(0, 3);
+
+  const forecasts: string[] = [];
+  const failedTransits: string[] = [];
+
+  for (const transit of topTransits) {
+    const context = {
+      planet: transit.transitBody,
+      sign: transit.transitSign,
+      house: transit.transitHouse ?? 1,
+      aspect: transit.type,
+      aspectPlanet: transit.natalBody,
+      orb: transit.orb,
+      currentDate: new Date(today),
+    };
+
+    const forecast = futuristicGenerator.generate(context);
+    if (forecast) {
+      forecasts.push(forecast);
+    } else {
+      const key = `${transit.transitBody} ${transit.type} ${transit.natalBody}`.trim();
+      failedTransits.push(key);
+    }
+  }
+
+  let synthesisText: string;
+
+  if (forecasts.length === 0) {
+    const missingData = failedTransits.join(", ");
+    synthesisText = `Для транзитов (${missingData}) пока нет семантических данных в Oracle Studio. Администратор заполняет онтологию. Прогнозы появятся после добавления данных.`;
+    warnings.push("Онтология заполнена не полностью");
+  } else {
+    synthesisText = forecasts.join("\n\n---\n\n");
+    if (failedTransits.length > 0) {
+      synthesisText += `\n\n⚠️ Для транзитов (${failedTransits.join(", ")}) пока нет данных в онтологии.`;
+      warnings.push("Онтология заполнена не полностью");
+    }
+  }
+
+  const hasWarning = warnings.length > 0 || conflicts.length > 0;
 
   const transitSummary: TransitSummary[] = transitAspects.map((t) => ({
     transitBody: t.transitBody,

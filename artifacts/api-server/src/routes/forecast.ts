@@ -63,7 +63,7 @@ function buildForecast(
   };
 }
 
-const CURRENT_FORECAST_VERSION = 10;
+const CURRENT_FORECAST_VERSION = 11;
 
 async function getOrComputeToday(
   userId: number,
@@ -128,7 +128,7 @@ async function getOrComputeToday(
     ? computeTransits(natalChart, date, birthLatitude, birthLongitude, birthTimezone)
     : null;
 
-  const result = computeDailyForecast(birthDate, natalChart, transits, date);
+  const result = await computeDailyForecast(birthDate, natalChart, transits, date);
   if (!result) return null;
 
   const [created] = await db

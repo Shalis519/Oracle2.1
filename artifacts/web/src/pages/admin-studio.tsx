@@ -13,6 +13,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Plus,
   Pencil,
   Trash2,
@@ -67,6 +73,8 @@ interface EntityRelation {
   weight: number;
   toEntity?: Entity | null;
   fromEntity?: Entity | null;
+  futuristic?: Record<string, unknown> | null;
+  keywords?: string[] | null;
 }
 
 interface Profile {
@@ -550,6 +558,81 @@ function AddLinkForm({
   );
 }
 
+/* ─── Futuristic Fields Sub-component ─── */
+
+function FuturisticFields({
+  futuristic,
+  onChange,
+  keywordsStr,
+  onKeywordsChange,
+}: {
+  futuristic: Record<string, unknown>;
+  onChange: (v: Record<string, unknown>) => void;
+  keywordsStr: string;
+  onKeywordsChange: (v: string) => void;
+}) {
+  const archetype = String((futuristic.archetype as string) ?? "");
+  const bif = (futuristic.bifurcation as Record<string, string>) ?? {};
+  const opp = (futuristic.opportunity as Record<string, string>) ?? {};
+  const timer = (futuristic.timer as Record<string, string>) ?? {};
+  const beacon = (futuristic.beacon as Record<string, string>) ?? {};
+
+  const setBif = (key: string, val: string) => onChange({ ...futuristic, bifurcation: { ...bif, [key]: val } });
+  const setOpp = (val: string) => onChange({ ...futuristic, opportunity: { ...opp, description: val } });
+  const setTimer = (val: string) => onChange({ ...futuristic, timer: { ...timer, action: val } });
+  const setBeacon = (val: string) => onChange({ ...futuristic, beacon: { ...beacon, question: val } });
+
+  return (
+    <Card className="p-3 space-y-3">
+      <p className="text-sm font-medium text-muted-foreground">Футурологические данные (опционально)</p>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="text-xs">Архетип</Label>
+          <Input placeholder="Революционерка любви" value={archetype} onChange={(e) => onChange({ ...futuristic, archetype: e.target.value })} className="h-8" />
+        </div>
+        <div>
+          <Label className="text-xs">Keywords (через запятую)</Label>
+          <Input placeholder="свобода, революция, любовь" value={keywordsStr} onChange={(e) => onKeywordsChange(e.target.value)} className="h-8" />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="text-xs">Старый паттерн</Label>
+          <Input placeholder="старый шаблон в любви" value={bif.oldPattern ?? ""} onChange={(e) => setBif("oldPattern", e.target.value)} className="h-8" />
+        </div>
+        <div>
+          <Label className="text-xs">Новая возможность</Label>
+          <Input placeholder="свободное самовыражение" value={bif.newPossibility ?? ""} onChange={(e) => setBif("newPossibility", e.target.value)} className="h-8" />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="text-xs">Комфорт</Label>
+          <Input placeholder="привычный круг общения" value={bif.comfort ?? ""} onChange={(e) => setBif("comfort", e.target.value)} className="h-8" />
+        </div>
+        <div>
+          <Label className="text-xs">Свобода</Label>
+          <Input placeholder="новые знакомства" value={bif.freedom ?? ""} onChange={(e) => setBif("freedom", e.target.value)} className="h-8" />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="text-xs">Описание возможностей</Label>
+          <Input placeholder="в момент неожиданного вдохновения" value={opp.description ?? ""} onChange={(e) => setOpp(e.target.value)} className="h-8" />
+        </div>
+        <div>
+          <Label className="text-xs">Действие для таймера</Label>
+          <Input placeholder="сказать да тому, что пугает" value={timer.action ?? ""} onChange={(e) => setTimer(e.target.value)} className="h-8" />
+        </div>
+      </div>
+      <div>
+        <Label className="text-xs">Вопрос-маяк</Label>
+        <Textarea placeholder="Что бы ты делал, если бы знал, что не можешь провалиться?" value={beacon.question ?? ""} onChange={(e) => setBeacon(e.target.value)} className="min-h-[60px]" />
+      </div>
+    </Card>
+  );
+}
+
 /* ─── Add Relation Form ─── */
 
 function AddRelationForm({
@@ -559,38 +642,59 @@ function AddRelationForm({
 }: {
   entities: Entity[];
   excludeEntityId: number;
-  onAdd: (toEntityId: number, relationType: string, description: string, weight: number) => void;
+  onAdd: (
+    toEntityId: number,
+    relationType: string,
+    description: string,
+    weight: number,
+    futuristic?: Record<string, unknown> | null,
+    keywords?: string[] | null,
+  ) => void;
 }) {
   const available = entities.filter((e) => e.id !== excludeEntityId);
   const [toId, setToId] = useState<number | "">("");
   const [relationType, setRelationType] = useState("");
   const [description, setDescription] = useState("");
   const [weight, setWeight] = useState<number>(ONTOLOGY_WEIGHTS.DEFAULT);
+  const [showFuturistic, setShowFuturistic] = useState(false);
+  const [futuristic, setFuturistic] = useState<Record<string, unknown>>({});
+  const [keywordsStr, setKeywordsStr] = useState("");
 
   if (available.length === 0) return <p className="text-sm text-muted-foreground">Нет доступных сущностей.</p>;
 
   return (
-    <div className="flex flex-wrap gap-3 items-end">
-      <Select value={toId ? String(toId) : ""} onValueChange={(v) => setToId(Number(v))}>
-        <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder="Связать с..." />
-        </SelectTrigger>
-        <SelectContent position="popper" side="bottom" sideOffset={4} className="max-h-60 overflow-y-auto z-[100]">
-          {available.map((e) => (
-            <SelectItem key={e.id} value={String(e.id)}>{e.symbol ? `${e.symbol} ` : ""}{e.name}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Input value={relationType} onChange={(e) => setRelationType(e.target.value)} placeholder="Тип связи" className="w-[160px]" />
-      <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Описание" className="w-[200px]" />
-      <WeightSlider value={weight} onChange={setWeight} />
-      <Button onClick={() => {
-        if (!toId || !relationType.trim()) return;
-        onAdd(toId, relationType.trim(), description.trim(), weight);
-        setToId(""); setRelationType(""); setDescription(""); setWeight(ONTOLOGY_WEIGHTS.DEFAULT);
-      }} disabled={!toId || !relationType.trim()}>
-        <Plus className="w-4 h-4 mr-1" />Связать
-      </Button>
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-3 items-end">
+        <Select value={toId ? String(toId) : ""} onValueChange={(v) => setToId(Number(v))}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Связать с..." />
+          </SelectTrigger>
+          <SelectContent position="popper" side="bottom" sideOffset={4} className="max-h-60 overflow-y-auto z-[100]">
+            {available.map((e) => (
+              <SelectItem key={e.id} value={String(e.id)}>{e.symbol ? `${e.symbol} ` : ""}{e.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Input value={relationType} onChange={(e) => setRelationType(e.target.value)} placeholder="Тип связи" className="w-[160px]" />
+        <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Описание" className="w-[200px]" />
+        <WeightSlider value={weight} onChange={setWeight} />
+        <Button variant="ghost" size="sm" onClick={() => setShowFuturistic((v) => !v)}>
+          {showFuturistic ? <X className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+          {showFuturistic ? "Скрыть" : "Футурология"}
+        </Button>
+        <Button onClick={() => {
+          if (!toId || !relationType.trim()) return;
+          const kw = keywordsStr.split(",").map((k) => k.trim()).filter(Boolean);
+          onAdd(toId, relationType.trim(), description.trim(), weight, showFuturistic ? futuristic : null, kw.length > 0 ? kw : null);
+          setToId(""); setRelationType(""); setDescription(""); setWeight(ONTOLOGY_WEIGHTS.DEFAULT);
+          setShowFuturistic(false); setFuturistic({}); setKeywordsStr("");
+        }} disabled={!toId || !relationType.trim()}>
+          <Plus className="w-4 h-4 mr-1" />Связать
+        </Button>
+      </div>
+      {showFuturistic && (
+        <FuturisticFields futuristic={futuristic} onChange={setFuturistic} keywordsStr={keywordsStr} onKeywordsChange={setKeywordsStr} />
+      )}
     </div>
   );
 }
@@ -880,11 +984,26 @@ export default function AdminStudioPage() {
     if (detailEntity) loadDetail(detailEntity.id);
   };
 
-  const handleAddRelation = async (toEntityId: number, relationType: string, description: string, weight: number) => {
+  const handleAddRelation = async (
+    toEntityId: number,
+    relationType: string,
+    description: string,
+    weight: number,
+    futuristic?: Record<string, unknown> | null,
+    keywords?: string[] | null,
+  ) => {
     if (!detailEntity) return;
     const res = await apiFetch("/admin/ontology/entity-relations", {
       method: "POST",
-      body: JSON.stringify({ fromEntityId: detailEntity.id, toEntityId, relationType, description, weight }),
+      body: JSON.stringify({
+        fromEntityId: detailEntity.id,
+        toEntityId,
+        relationType,
+        description,
+        weight,
+        futuristic: futuristic ?? undefined,
+        keywords: keywords ?? undefined,
+      }),
     });
     if (!res.ok) {
       const err = await res.json();

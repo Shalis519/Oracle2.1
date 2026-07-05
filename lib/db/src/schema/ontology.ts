@@ -117,6 +117,8 @@ export const ontologyEntityRelationsTable = pgTable(
     relationType: text("relation_type").notNull(),
     description: text("description"),
     weight: real("weight").notNull().default(1.0),
+    futuristic: jsonb("futuristic").$type<Record<string, unknown>>(),
+    keywords: text("keywords").array(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

@@ -1,0 +1,139 @@
+Исправленный план (с учетом вашего настояния)
+Что МЕНЯЕТСЯ:
+Пункт	Было	Стало
+Fallback на шаблоны	✅ Есть	❌ НЕТ
+Ошибка при пустой онтологии	Выбрасывать ошибку	Показывать понятное сообщение пользователю
+computeDailyForecast	Падает с ошибкой	Возвращает прогноз только из онтологии, или сообщение
+Что остается БЕЗ ИЗМЕНЕНИЙ:
+Пункт	Решение
+futuristic + keywords	✅ Добавляем в схему
+Semantic Engine	✅ Создаем
+Futuristic Generator	✅ Создаем
+transit-duration.ts	✅ Создаем (с исправленной формулой)
+Удаление SIGN_MEANING и HOUSE_ACTION	✅ УДАЛЯЕМ ПОЛНОСТЬЮ
+Удаление buildSynthesisText (старой)	✅ УДАЛЯЕМ ПОЛНОСТЬЮ
+Новый код для computeDailyForecast
+typescript
+// lib/oracle.ts
+
+export async function computeDailyForecast(
+  birthDate: Date,
+  natalChart: any,
+  transits: TransitAspect[],
+  date: Date
+): Promise<DailyForecast> {
+  
+  // ===== ТОЛЬКО ОНТОЛОГИЯ =====
+  
+  // 1. Загружаем онтологию
+  await semanticEngine.loadAll();
+  
+  // 2. Берем сильные транзиты
+  const topTransits = transits
+    .filter(t => Math.abs(t.orb) < 3)
+    .sort((a, b) => Math.abs(a.orb) - Math.abs(b.orb))
+    .slice(0, 3);
+  
+  if (topTransits.length === 0) {
+    return {
+      synthesisText: 'Сегодня нет сильных аспектов для прогноза.',
+      transits: [],
+      arcana: getArcanaOfDay(date),
+      conflicts: [],
+      warnings: [],
+      generatedBy: 'ontology'
+    };
+  }
+  
+  // 3. Генерируем прогноз для каждого транзита
+  const forecasts: string[] = [];
+  const failedTransits: string[] = [];
+  
+  for (const transit of topTransits) {
+    const context = {
+      planet: transit.planet,
+      sign: transit.sign,
+      house: transit.house,
+      aspect: transit.aspect,
+      aspectPlanet: transit.aspectPlanet,
+      orb: transit.orb,
+      currentDate: date
+    };
+    
+    const forecast = futuristicGenerator.generate(context);
+    
+    if (forecast) {
+      forecasts.push(forecast);
+    } else {
+      // Запоминаем, для чего не нашлось данных
+      const key = `${transit.planet} ${transit.aspect} ${transit.aspectPlanet || ''}`.trim();
+      failedTransits.push(key);
+    }
+  }
+  
+  // 4. Формируем результат
+  if (forecasts.length === 0) {
+    // НЕТ ДАННЫХ В ОНТОЛОГИИ
+    const missingData = failedTransits.join(', ');
+    return {
+      synthesisText: `Для транзитов (${missingData}) пока нет семантических данных в Oracle Studio. 
+                      Администратор заполняет онтологию. Прогнозы появятся после добавления данных.`,
+      transits: topTransits.map(t => ({
+        ...t,
+        description: 'нет данных в онтологии'
+      })),
+      arcana: getArcanaOfDay(date),
+      conflicts: [],
+      warnings: ['Онтология заполнена не полностью'],
+      generatedBy: 'ontology_partial'
+    };
+  }
+  
+  // 5. Есть хотя бы один прогноз из онтологии
+  let synthesisText = forecasts.join('\n\n---\n\n');
+  
+  if (failedTransits.length > 0) {
+    synthesisText += `\n\n⚠️ Для транзитов (${failedTransits.join(', ')}) пока нет данных в онтологии.`;
+  }
+  
+  return {
+    synthesisText,
+    transits: topTransits.map(t => ({
+      ...t,
+      description: t.description || 'данные в онтологии'
+    })),
+    arcana: getArcanaOfDay(date),
+    conflicts: [],
+    warnings: failedTransits.length > 0 ? ['Онтология заполнена не полностью'] : [],
+    generatedBy: 'ontology'
+  };
+}
+Что видит пользователь
+Сценарий 1: Данные есть
+text
+Прогноз из онтологии:
+"Сейчас ты стоишь на развилке между Любовь и Отношения..."
+Сценарий 2: Данных нет
+text
+Для транзитов (Венера квадрат Уран, Марс тригон Сатурн) пока нет 
+семантических данных в Oracle Studio. Администратор заполняет онтологию. 
+Прогнозы появятся после добавления данных.
+Сценарий 3: Частичные данные
+text
+(Прогноз для Венеры есть)
+---
+⚠️ Для транзитов (Марс тригон Сатурн) пока нет данных в онтологии.
+Почему это правильно для СЕЙЧАС
+Что получает администратор	Что получает пользователь
+✅ Видит реальные прогнозы из семантики	✅ Видит реальные прогнозы (не шаблоны)
+✅ Видит, каких данных не хватает	✅ Понимает, что система в разработке
+✅ Может добавлять данные и сразу видеть результат	✅ Не получает "фальшивых" прогнозов
+✅ Может тестировать семантику	✅ Доверяет прогнозам, т.к. они из семантики
+ИТОГ: План с ВАШИМ решением
+№	Задача	Решение
+1	Fallback на шаблоны	❌ НЕТ
+2	SIGN_MEANING, HOUSE_ACTION	❌ УДАЛИТЬ
+3	buildSynthesisText (старая)	❌ УДАЛИТЬ
+4	Прогноз без данных	✅ ПОКАЗЫВАТЬ СООБЩЕНИЕ
+5	Прогноз с частичными данными	✅ ПОКАЗЫВАТЬ ЧТО ЕСТЬ + ПРЕДУПРЕЖДЕНИЕ
+6	Все остальное	✅ По плану

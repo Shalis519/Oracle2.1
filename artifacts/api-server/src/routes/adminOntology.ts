@@ -553,15 +553,18 @@ router.post("/admin/ontology/entity-relations", requireAuth, requireAdmin, async
     return;
   }
   try {
+    const values = {
+      fromEntityId: body.fromEntityId,
+      toEntityId: body.toEntityId,
+      relationType: body.relationType,
+      description: typeof body.description === "string" ? body.description : null,
+      weight: clampWeight(parseWeight(body.weight)),
+      futuristic: typeof body.futuristic === "object" && body.futuristic !== null ? (body.futuristic as Record<string, unknown>) : undefined,
+      keywords: Array.isArray(body.keywords) ? body.keywords as string[] : undefined,
+    } as any;
     const [row] = await db
       .insert(ontologyEntityRelationsTable)
-      .values({
-        fromEntityId: body.fromEntityId,
-        toEntityId: body.toEntityId,
-        relationType: body.relationType,
-        description: typeof body.description === "string" ? body.description : null,
-        weight: clampWeight(parseWeight(body.weight)),
-      })
+      .values(values)
       .returning();
     res.status(201).json(row);
   } catch (e: any) {
@@ -584,16 +587,20 @@ router.patch("/admin/ontology/entity-relations/:id", requireAuth, requireAdmin, 
     return;
   }
   const body = req.body as Record<string, unknown>;
-  const updates: Partial<typeof ontologyEntityRelationsTable.$inferInsert> = {};
+  const updates: Record<string, unknown> = {};
   if (typeof body.relationType === "string") updates.relationType = body.relationType;
   if (typeof body.description === "string") updates.description = body.description;
   if (body.description === null) updates.description = null;
   const pw = clampWeight(parseWeight(body.weight));
   if (Number.isFinite(pw)) updates.weight = pw;
+  if (typeof body.futuristic === "object" && body.futuristic !== null) updates.futuristic = body.futuristic as Record<string, unknown>;
+  if (body.futuristic === null) updates.futuristic = null;
+  if (Array.isArray(body.keywords)) updates.keywords = body.keywords as string[];
+  if (body.keywords === null) updates.keywords = null;
 
   const [row] = await db
     .update(ontologyEntityRelationsTable)
-    .set({ ...updates, updatedAt: new Date() })
+    .set({ ...updates, updatedAt: new Date() } as any)
     .where(eq(ontologyEntityRelationsTable.id, id))
     .returning();
   if (!row) {

@@ -1,0 +1,254 @@
+import { logger } from "./logger";
+import { getEntity, getEntityThemes, findRelation, type EntityTheme, type EntityRelation } from "./semanticEngine";
+import { type TransitAspect } from "./astrology";
+
+export interface TransitContext {
+  planet: string;
+  sign: string;
+  house: number;
+  aspect: string;
+  aspectPlanet?: string;
+  orb: number;
+  currentDate: Date;
+}
+
+/** Astrological daily motion in degrees/day (approximate mean values). */
+const ASTROLOGICAL_SPEED: Record<string, number> = {
+  "Луна": 13.2,
+  "Меркурий": 1.2,
+  "Венера": 1.0,
+  "Марс": 0.52,
+  "Юпитер": 0.08,
+  "Сатурн": 0.03,
+  "Уран": 0.01,
+  "Нептун": 0.006,
+  "Плутон": 0.004,
+  "Солнце": 1.0,
+};
+
+export interface TransitDuration {
+  duration: number;
+  unit: "hours" | "days" | "weeks" | "months";
+  text: string;
+  urgency: "срочно" | "скоро" | "в ближайшее время" | "постепенно" | "длительно";
+  peakDate: Date;
+}
+
+export function calculateTransitDuration(
+  planet: string,
+  orb: number,
+  currentDate: Date = new Date(),
+): TransitDuration {
+  const speed = ASTROLOGICAL_SPEED[planet] ?? 0.5;
+  const orbDegrees = Math.abs(orb);
+  const totalDays = orbDegrees / speed; // orb / speed = days to exact / leave aspect
+
+  let duration: number;
+  let unit: "hours" | "days" | "weeks" | "months";
+  let text: string;
+  let urgency: TransitDuration["urgency"];
+
+  if (totalDays < 1) {
+    duration = Math.max(1, Math.round(totalDays * 24));
+    unit = "hours";
+    text = `в ближайшие ${duration} ${declension(duration, ["час", "часа", "часов"])}`;
+    urgency = "срочно";
+  } else if (totalDays < 7) {
+    duration = Math.round(totalDays);
+    unit = "days";
+    text = `в ближайшие ${duration} ${declension(duration, ["день", "дня", "дней"])}`;
+    urgency = "скоро";
+  } else if (totalDays < 30) {
+    duration = Math.max(1, Math.round(totalDays / 7));
+    unit = "weeks";
+    text = `в ближайшие ${duration} ${declension(duration, ["неделю", "недели", "недель"])}`;
+    urgency = "в ближайшее время";
+  } else {
+    duration = Math.max(1, Math.round(totalDays / 30));
+    unit = "months";
+    text = `в течение ${duration} ${declension(duration, ["месяца", "месяцев", "месяцев"])}`;
+    urgency = "постепенно";
+  }
+
+  const peakDate = new Date(currentDate);
+  peakDate.setDate(peakDate.getDate() + Math.round(totalDays / 2));
+
+  return { duration, unit, text, urgency, peakDate };
+}
+
+function declension(count: number, forms: [string, string, string]): string {
+  const n = Math.abs(count) % 100;
+  const n1 = n % 10;
+  if (n > 10 && n < 20) return forms[2];
+  if (n1 > 1 && n1 < 5) return forms[1];
+  if (n1 === 1) return forms[0];
+  return forms[2];
+}
+
+/** Weighted theme intersection across planet, house, sign. */
+function resolveThemes(
+  planet: string,
+  sign: string,
+  house: number,
+): { primary: string; secondary: string } | null {
+  const planetThemes = getEntityThemes(planet);
+  const signThemes = getEntityThemes(sign);
+  const houseThemes = getEntityThemes(String(house));
+
+  if (planetThemes.length === 0) {
+    return null;
+  }
+
+  // Score themes: planet themes dominate, sign/house contribute weighted
+  const scoreMap = new Map<string, number>();
+
+  for (const t of planetThemes) {
+    scoreMap.set(t.themeName, (scoreMap.get(t.themeName) ?? 0) + t.weight * 1.0);
+  }
+  for (const t of signThemes) {
+    scoreMap.set(t.themeName, (scoreMap.get(t.themeName) ?? 0) + t.weight * 0.5);
+  }
+  for (const t of houseThemes) {
+    scoreMap.set(t.themeName, (scoreMap.get(t.themeName) ?? 0) + t.weight * 0.7);
+  }
+
+  const scored = Array.from(scoreMap.entries())
+    .sort((a, b) => b[1] - a[1]);
+
+  if (scored.length === 0) return null;
+
+  return {
+    primary: scored[0][0],
+    secondary: scored[1]?.[0] ?? scored[0][0],
+  };
+}
+
+export class FuturisticGenerator {
+  generate(context: TransitContext): string | null {
+    try {
+      const planetProfile = getEntity(context.planet);
+      if (!planetProfile) {
+        logger.warn({ planet: context.planet }, "entity not found in ontology");
+        return null;
+      }
+
+      const themes = resolveThemes(context.planet, context.sign, context.house);
+      if (!themes) {
+        logger.warn({ planet: context.planet }, "no themes resolved for transit");
+        return null;
+      }
+
+      const relation = context.aspectPlanet
+        ? findRelation(context.planet, context.aspectPlanet)
+        : null;
+
+      const durationData = calculateTransitDuration(
+        context.planet,
+        context.orb,
+        context.currentDate,
+      );
+
+      return this.buildText(themes, relation, durationData, context);
+    } catch (error) {
+      logger.error({ error, context }, "error generating forecast");
+      return null;
+    }
+  }
+
+  private buildText(
+    themes: { primary: string; secondary: string },
+    relation: EntityRelation | null,
+    durationData: TransitDuration,
+    context: TransitContext,
+  ): string {
+    const parts: string[] = [];
+
+    // 1. Бифуркация
+    const primaryTheme = themes.primary;
+    const secondaryTheme = themes.secondary;
+
+    parts.push(`Сейчас ты стоишь на развилке между "${primaryTheme}" и "${secondaryTheme}".`);
+
+    if (relation?.futuristic) {
+      const fut = relation.futuristic as Record<string, unknown>;
+      const archetype = String(fut.archetype ?? relation.description ?? "энергия");
+      const bif = (fut.bifurcation ?? {}) as Record<string, string>;
+      const oldPattern = bif.oldPattern ?? "старый шаблон";
+      const newPossibility = bif.newPossibility ?? "новая возможность";
+
+      parts.push(`${archetype} подсвечивает твой старый шаблон "${oldPattern}",`);
+      parts.push(`а ${context.aspectPlanet} открывает путь к "${newPossibility}".`);
+    } else {
+      parts.push(`Твой выбор определит, как ${primaryTheme} трансформируется в ${secondaryTheme}.`);
+    }
+
+    parts.push(`У тебя есть ${durationData.text}, чтобы выбрать новую ветку реальности.`);
+    parts.push("");
+
+    // 2. Окно возможностей
+    const futOp = (relation?.futuristic?.opportunity ?? {}) as Record<string, string>;
+    const opportunityDesc =
+      futOp.description ?? `в моменте, когда ${primaryTheme} встретится с ${secondaryTheme}`;
+
+    const peakDate = durationData.peakDate.toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    parts.push(`Идея, которая придет ${opportunityDesc} (запомни это время: ${peakDate}), — это не про сегодня.`);
+    parts.push(`Это про твой ${this.getFuturePeriod(context)}.`);
+    parts.push(`Если ты её проигнорируешь, мир не рухнет.`);
+    parts.push(`Но если запишешь и начнёшь делать — через ${durationData.text} ты не узнаешь свою жизнь.`);
+    parts.push("");
+
+    // 3. Таймер
+    const futTimer = (relation?.futuristic?.timer ?? {}) as Record<string, string>;
+    const action = futTimer.action ?? `сделать выбор в пользу ${primaryTheme}`;
+
+    parts.push(`У тебя есть ${durationData.text}, чтобы ${action}.`);
+
+    if (durationData.urgency === "срочно") {
+      parts.push("Действуй прямо сейчас! Время на исходе.");
+    } else if (durationData.urgency === "скоро") {
+      parts.push("Время идёт, не откладывай на завтра.");
+    } else {
+      parts.push("У тебя есть время обдумать решение.");
+    }
+
+    parts.push("");
+    parts.push("После этого окно захлопнется.");
+    parts.push("Не потому что возможности исчезнут, а потому что ты войдёшь в другой сценарий,");
+    parts.push("где этот выбор уже неактуален.");
+    parts.push("");
+
+    // 4. Вопрос-маяк
+    const futBeacon = (relation?.futuristic?.beacon ?? {}) as Record<string, string>;
+    const beacon = futBeacon.question ?? "Что бы ты делал, если бы знал, что не можешь провалиться?";
+    parts.push(beacon);
+
+    return parts.join("\n");
+  }
+
+  private getFuturePeriod(context: TransitContext): string {
+    // TODO: compute next exact aspect date via ephemeris
+    // For now, use the aspect planet to indicate rough timeframe
+    if (!context.aspectPlanet) return "будущее";
+
+    const periods: Record<string, string> = {
+      "Уран": "следующий год",
+      "Сатурн": "через 2 года",
+      "Юпитер": "следующий год",
+      "Меркурий": "через несколько недель",
+      "Венера": "через несколько месяцев",
+      "Марс": "через несколько месяцев",
+      "Луна": "через несколько дней",
+      "Солнце": "через несколько недель",
+    };
+
+    return periods[context.aspectPlanet] ?? "ближайшее будущее";
+  }
+}
+
+export const futuristicGenerator = new FuturisticGenerator();
