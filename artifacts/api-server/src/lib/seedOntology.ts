@@ -46,6 +46,13 @@ export async function seedOntology() {
       { name: "Мать", slug: "mother", description: "Материнская энергия, забота, покров" },
       { name: "Память", slug: "memory", description: "Воспоминания, прошлое, ностальгия" },
       { name: "Подсознание", slug: "subconscious", description: "Глубинный разум, сны, инстинкты" },
+      { name: "Отношения", slug: "relationships", description: "Партнерство, единство, связи, общность" },
+      { name: "Искусство", slug: "art", description: "Творчество, вдохновение, эстетика, ремесло" },
+      { name: "Удовольствия", slug: "pleasures", description: "Наслаждения, удовольствие, любовь, радость" },
+      { name: "Ценности", slug: "values", description: "Ценности, принципы, этика, критерии" },
+      { name: "Красота", slug: "beauty", description: "Эстетика, внешний вид, грация, искусство оформления" },
+      { name: "Гармония", slug: "harmony", description: "Баланс, согласованность, мир, единство" },
+      { name: "Финансы", slug: "finances", description: "Деньги, имущество, инвестиции, доход" },
     ])
     .onConflictDoNothing({ target: ontologyThemesTable.slug })
     .returning();
@@ -58,7 +65,7 @@ export async function seedOntology() {
     { name: "Солнце", code: "sun", symbol: "☉", lifeThemes: ["Эго", "Свобода", "Творчество"], keyMeaningsArr: ["Сознание", "Эго", "Жизненная сила", "Авторитет"], positiveQualities: ["Мужественность", "Прямота", "Уверенность"], shadowQualities: ["Тщеславие", "Эгоцентризм", "Нетерпимость"], positiveEmotions: ["Радость", "Гордость", "Уверенность"], negativeEmotions: ["Отчаяние", "Ярость", "Унижение"], strengthsArr: ["Лидерство", "Вдохновение", "Целеустремлённость"], weaknessesArr: ["Гордыня", "Требовательность", "Негибкость"], archetypes: ["Король", "Герой", "Творец"], professions: [], objects: [], colors: [], days: [], animals: [], places: [], materials: [], numbers: [], keyMeanings: "Сознание, эго, жизненная сила, авторитет, лидерство", psychologicalManifestations: "Стремление быть в центре, получать признание, выражать себя", emotions: "Радость, гордость, уверенность, отчаяние", strengths: "Лидерство, вдохновение, целеустремлённость, оптимизм", weaknesses: "Гордыня, требовательность, негибкость, эгоцентризм", recommendations: "Будьте автентичны, излучайте своё сознание, заботьтесь о здоровье", warnings: "Опасно подаваться от чужого мнения, искать постоянное одобрение" },
     { name: "Луна", code: "moon", symbol: "☽", lifeThemes: ["Эмоции", "Привычки", "Забота", "Интуиция", "Дом", "Мать", "Память", "Подсознание"], keyMeaningsArr: ["Интуиция", "Привычки", "Эмоции", "Забота", "Память"], positiveQualities: ["Чуткость", "Заботливость", "Интуитивность", "Адаптивность", "Восприимчивость"], shadowQualities: ["Излишняя тревожность", "Зависимость от прошлого", "Чувствительность к критике", "Капризность", "Пассивность"], positiveEmotions: ["Умиротворение", "Нежность", "Забота", "Теплота", "Принятие", "Эмпатия"], negativeEmotions: ["Тревога", "Сентиментальность", "Обида", "Привязанность к прошлому", "Зависимость", "Капризы"], strengthsArr: ["Эмпатия", "Забота", "Интуиция", "Умение создавать уют", "Память", "Глубокое чувствование"], weaknessesArr: ["Тревожность", "Зависимость от внешнего мнения", "Склонность к унынию", "Сентиментальность", "Избегание конфликтов", "Перепады настроения"], archetypes: ["Мать", "Заботливая душа", "Интуитивная женщина", "Хранительница очага"], professions: ["Психолог", "Социальный работник", "Медицинская сестра", "Воспитатель", "Учитель начальных классов", "Массажист", "Акушерка", "Нутрициолог"], objects: ["Книга рецептов", "Семейный альбом", "Свечи", "Чайная чашка", "Плед", "Блокнот для записей", "Аромалампа"], colors: ["Серебристый", "Белый", "Перламутровый", "Светло-голубой"], days: ["Понедельник"], animals: ["Кошка", "Кролик", "Дельфин", "Собака (домашняя)"], places: ["Дом", "Кухня", "Сад", "Берег водоёма", "Спальня", "Кресло у окна"], materials: ["Ткань (мягкая, тёплая)", "Посуда", "Вода (символически)", "Дерево"], numbers: [], keyMeanings: "Интуиция, привычки, эмоции, забота, память", psychologicalManifestations: "Глубокая связь с внутренним миром, заботливость, изменчивость настроения", emotions: "Умиротворение, тревога, нежность, сентиментальность", strengths: "Эмпатия, забота, интуиция, умение создавать уют", weaknesses: "Тревожность, зависимость от внешнего мнения, склонность к унынию", recommendations: "Доверяйте своей интуиции, заботьтесь о себе, создавайте уют", warnings: "Не зацикливайтесь на прошлом, избегайте эмоциональных качелей, не растворяйтесь в других" },
     { name: "Меркурий", code: "mercury", symbol: "☿", lifeThemes: ["Общение", "Учёба", "Интеллект", "Соседи", "Братья и сёстры", "Короткие путешествия"], keyMeaningsArr: ["Мышление", "Речь", "Анализ", "Коммуникация"], positiveQualities: ["Ум", "Острота", "Адаптивность"], shadowQualities: ["Переменчивость", "Поверхностность", "Суетливость", "Логические ловушки"], positiveEmotions: ["Любопытство", "Интерес", "Оживление", "Вдохновение от новых идей"], negativeEmotions: ["Беспокойство", "Тревожность", "Сомнения", "Раздражение от непонимания", "Ментальная усталость"], strengthsArr: ["Ум", "Речистость", "Аналитическое мышление"], weaknessesArr: ["Непоследовательность", "Ментальная перегрузка", "Поверхностность", "Распыление внимания"], archetypes: ["Посланник", "Учёный", "Торговец"], professions: ["Писатель", "Журналист", "Преподаватель", "Переводчик", "Программист", "Аналитик", "Маркетолог", "Веб-разработчик", "Шахматист", "Учитель", "Бегун"], objects: ["Книга", "Ноутбук", "Телефон", "Письменные принадлежности", "Календарь", "Диктофон", "Шахматная доска", "Школьная доска", "Беговые кроссовки", "Велосипед", "Ролики", "Самокат"], colors: ["Жёлтый", "Оранжевый", "Голубой", "Серебристый"], days: ["Среда"], animals: ["Лиса", "Попугай", "Белка", "Дельфин"], places: ["Библиотека", "Книжный магазин", "Университет", "Коворкинг", "Кафе для работы", "Школа", "Спортивный стадион", "Парк"], materials: ["Бумага", "Ткань (лёгкая)", "Металл (медь, алюминий)", "Стекло"], numbers: [], keyMeanings: "Мышление, речь, анализ, коммуникация", psychologicalManifestations: "Стремление к анализу, любопытство, многозадачность", emotions: "Любопытство, интерес, беспокойство", strengths: "Ум, речистость, аналитическое мышление", weaknesses: "Непоследовательность, перегрузка, поверхность", recommendations: "Пишите, читайте, обучайтесь, делитесь идеями", warnings: "Остерегайтесь поверхности, не разбрасывайте внимание" },
-    { name: "Венера", code: "venus", symbol: "♀", lifeThemes: ["Любовь", "Красота", "Гармония"], keyMeaningsArr: ["Любовь", "Гармония", "Эстетика", "Ценности"], positiveQualities: ["Дипломатичность", "Чувство вкуса", "Умение объединять"], shadowQualities: ["Зависимость", "Поверхность", "Избегание конфликтов"], positiveEmotions: ["Нежность", "Любовь", "Удовлетворенность"], negativeEmotions: ["Тоска", "Ревность", "Разочарование"], strengthsArr: ["Объединитель", "Миротворец", "Художник"], weaknessesArr: ["Лень", "Послеповательность", "Подавленность"], archetypes: ["Любовница", "Художник", "Певица"], professions: [], objects: [], colors: [], days: [], animals: [], places: [], materials: [], numbers: [], keyMeanings: "Любовь, гармония, эстетика, ценности", psychologicalManifestations: "Стремление к гармонии, мягкость, отклик от конфликта", emotions: "Нежность, радость, удовлетворенность", strengths: "Умеет объединять, создавать красоту", weaknesses: "Зависимость, поверхность, лень", recommendations: "Практикуйте искусство, ухаживайте за эстетикой", warnings: "Опасно иллюзиям, избеганию конфликтов" },
+    { name: "Венера", code: "venus", symbol: "♀", lifeThemes: ["Любовь", "Отношения", "Красота", "Гармония", "Искусство", "Финансы", "Удовольствия", "Ценности"], keyMeaningsArr: ["Любовь", "Гармония", "Эстетика", "Ценности", "Притяжение"], positiveQualities: ["Дипломатичность", "Чувство вкуса", "Умение объединять", "Нежность", "Обаяние", "Тактичность"], shadowQualities: ["Зависимость", "Поверхность", "Избегание конфликтов", "Ревность", "Потворство желаниям", "Жертвенность"], positiveEmotions: ["Нежность", "Любовь", "Удовлетворенность", "Вдохновение", "Восторг", "Принятие"], negativeEmotions: ["Тоска", "Ревность", "Разочарование", "Обида", "Пустота", "Привязанность"], strengthsArr: ["Объединитель", "Миротворец", "Художник", "Создатель гармонии", "Дипломат", "Вдохновитель"], weaknessesArr: ["Лень", "Потворство желаниям", "Подавленность", "Зависимость от отношений", "Жертвенность", "Страх потерь"], archetypes: ["Любовница", "Художник", "Певица", "Дипломат", "Богиня любви", "Хранительница красоты"], professions: ["Художник", "Дизайнер", "Модельер", "Визажист", "Флорист", "Психолог (работа с парами)", "Свадебный организатор", "Искусствовед", "Музыкант", "Певица"], objects: ["Зеркало", "Цветы", "Украшения", "Предметы искусства", "Духи", "Косметика", "Шкатулка для украшений", "Ваза", "Парфюм"], colors: ["Розовый", "Зелёный", "Голубой", "Бежевый", "Пастельные тона", "Сиреневый"], days: ["Пятница"], animals: ["Голубь", "Лебедь", "Бабочка", "Кошечка"], places: ["Галерея", "Сад", "Ресторан", "Спа-салон", "Концертный зал", "Берег моря", "Квартира (уютная)"], materials: ["Шёлк", "Посуда (изящная)", "Фарфор", "Стекло", "Цветы", "Ароматы"], numbers: [], keyMeanings: "Любовь, гармония, эстетика, ценности, притяжение", psychologicalManifestations: "Стремление к красоте, стремление к гармонии, ценностное ориентирование", emotions: "Нежность, любовь, удовлетворенность, тоска, ревность, разочарование", strengths: "Объединитель, миротворец, художник, создатель гармонии, дипломат, вдохновитель", weaknesses: "Лень, потворство желаниям, подавленность, зависимость от отношений, жертвенность, страх потерь", recommendations: "Вкладывайте любовь в себя и окружающих, уделяйте время эстетике, создавайте гармонию", warnings: "Не впадайте в зависимость от отношений, избегайте поверхностных решений, не позволяйте страху быть собой" },
     { name: "Марс", code: "mars", symbol: "♂", lifeThemes: ["Борьба", "Секс", "Действие"], keyMeaningsArr: ["Действие", "Агрессия", "Смелость", "Движение"], positiveQualities: ["Смелость", "Прямота", "Целеустремлённость"], shadowQualities: ["Гнев", "Импульсивность", "Жестокость"], positiveEmotions: ["Страсть", "Уверенность", "Воодушевление"], negativeEmotions: ["Гнев", "Раздражение", "Злоба"], strengthsArr: ["Победитель", "Защитник", "Инициатор"], weaknessesArr: ["Агрессия", "Нетерпение", "Поспешность"], archetypes: ["Воин", "Охотник", "Предприниматель"], professions: [], objects: [], colors: [], days: [], animals: [], places: [], materials: [], numbers: [], keyMeanings: "Действие, агрессия, смелость, движение", psychologicalManifestations: "Прямота, решимость, импульсивность", emotions: "Страсть, гнев, уверенность", strengths: "Победитель, защитник, инициатор", weaknesses: "Агрессия, нетерпение, поспешность", recommendations: "Спорт, физактивная активность, цели", warnings: "Остерегайтесь конфликтов, травм" },
     { name: "Юпитер", code: "jupiter", symbol: "♃", lifeThemes: ["Удача", "Рост", "Мудрость"], keyMeaningsArr: ["Рост", "Удача", "Мудрость", "Стремление"], positiveQualities: ["Мудрость", "Щедрость", "Оптимизм"], shadowQualities: ["Неумеренность", "Расточность", "Раскошность"], positiveEmotions: ["Откровенность", "Веселье", "Благодарность"], negativeEmotions: ["Надменность", "Горесть", "Непомерность"], strengthsArr: ["Мудрец", "Защитник", "Философ"], weaknessesArr: ["Расточность", "Лень", "Неумеренность"], archetypes: ["Учитель", "Жрец", "Философ"], professions: [], objects: [], colors: [], days: [], animals: [], places: [], materials: [], numbers: [], keyMeanings: "Рост, удача, мудрость, стремление", psychologicalManifestations: "Оптимизм, стремление к росту, щедрость", emotions: "Откровенность, веселье, благодарность", strengths: "Мудрец, защитник, философ", weaknesses: "Расточность, лень, неумеренность", recommendations: "Учитесь, путешествуйте, делитесь знаниями", warnings: "Остерегайтесь переедания, раскошности" },
     { name: "Сатурн", code: "saturn", symbol: "♔", lifeThemes: ["Карьера", "Ответственность", "Время"], keyMeaningsArr: ["Структура", "Дисциплина", "Ограничение", "Время"], positiveQualities: ["Дисциплина", "Ответственность", "Настойчивость"], shadowQualities: ["Жестокость", "Ограниченность", "Депрессия"], positiveEmotions: ["Спокойствие", "Уважение", "Уверенность"], negativeEmotions: ["Страх", "Одиночество", "Отчаяние"], strengthsArr: ["Мастер", "Строитель", "Организатор"], weaknessesArr: ["Жестокость", "Медлительность", "Пессимизм"], archetypes: ["Старец", "Жрец", "Испытатель"], professions: [], objects: [], colors: [], days: [], animals: [], places: [], materials: [], numbers: [], keyMeanings: "Структура, дисциплина, ограничение, время", psychologicalManifestations: "Необходимость структуры, ответственность", emotions: "Спокойствие, страх, уважение", strengths: "Мастер, строитель, организатор", weaknesses: "Жестокость, медлительность", recommendations: "Планируйте, работайте систематически", warnings: "Не застривайте в ограничениях" },
@@ -276,7 +283,13 @@ export async function seedOntology() {
   addLink("mercury", "siblings", 0.6, "neutral");
   addLink("mercury", "short-trips", 0.6, "positive");
   addLink("venus", "love", 1.0, "positive");
-  addLink("venus", "creativity", 0.8, "positive");
+  addLink("venus", "relationships", 0.9, "positive");
+  addLink("venus", "beauty", 0.9, "positive");
+  addLink("venus", "harmony", 0.8, "positive");
+  addLink("venus", "art", 0.7, "positive");
+  addLink("venus", "finances", 0.6, "neutral");
+  addLink("venus", "pleasures", 0.6, "positive");
+  addLink("venus", "values", 0.5, "neutral");
   addLink("mars", "career", 0.7, "positive");
   addLink("mars", "struggle", 0.6, "neutral");
   addLink("jupiter", "travel", 0.8, "positive");
@@ -298,30 +311,56 @@ export async function seedOntology() {
   // Знаки
   addLink("aries", "struggle", 0.8, "neutral");
   addLink("taurus", "money", 0.8, "positive");
+  addLink("taurus", "beauty", 0.7, "positive");
+  addLink("taurus", "pleasures", 0.6, "positive");
   addLink("gemini", "communication", 1.0, "positive");
+  addLink("gemini", "relationships", 0.6, "positive");
   addLink("cancer", "family", 1.0, "positive");
+  addLink("cancer", "care", 0.7, "positive");
   addLink("leo", "creativity", 0.9, "positive");
+  addLink("leo", "pleasures", 0.6, "positive");
   addLink("virgo", "health", 0.9, "positive");
+  addLink("virgo", "habits", 0.6, "neutral");
   addLink("libra", "love", 0.9, "positive");
+  addLink("libra", "harmony", 0.8, "positive");
+  addLink("libra", "relationships", 0.7, "positive");
   addLink("scorpio", "struggle", 0.7, "neutral");
+  addLink("scorpio", "intuition", 0.7, "positive");
   addLink("sagittarius", "travel", 0.9, "positive");
+  addLink("sagittarius", "freedom", 0.7, "positive");
   addLink("capricorn", "career", 1.0, "positive");
+  addLink("capricorn", "values", 0.6, "neutral");
   addLink("aquarius", "freedom", 0.9, "positive");
+  addLink("aquarius", "innovations", 0.7, "positive");
   addLink("pisces", "spirituality", 0.9, "positive");
+  addLink("pisces", "subconscious", 0.7, "positive");
 
   // Дома
   addLink("house_1", "freedom", 0.7, "positive");
   addLink("house_2", "money", 1.0, "positive");
+  addLink("house_2", "finances", 0.8, "neutral");
+  addLink("house_2", "values", 0.5, "neutral");
   addLink("house_3", "communication", 0.9, "positive");
+  addLink("house_3", "intellect", 0.7, "positive");
   addLink("house_4", "family", 1.0, "positive");
+  addLink("house_4", "home", 0.8, "positive");
   addLink("house_5", "creativity", 1.0, "positive");
+  addLink("house_5", "pleasures", 0.7, "positive");
   addLink("house_6", "health", 0.9, "positive");
+  addLink("house_6", "habits", 0.6, "neutral");
   addLink("house_7", "love", 0.9, "positive");
+  addLink("house_7", "relationships", 0.8, "positive");
+  addLink("house_7", "harmony", 0.6, "positive");
   addLink("house_8", "struggle", 0.7, "neutral");
+  addLink("house_8", "intuition", 0.5, "neutral");
   addLink("house_9", "travel", 0.9, "positive");
+  addLink("house_9", "spirituality", 0.6, "positive");
   addLink("house_10", "career", 1.0, "positive");
+  addLink("house_10", "values", 0.5, "neutral");
   addLink("house_11", "freedom", 0.8, "positive");
+  addLink("house_11", "innovations", 0.6, "positive");
   addLink("house_12", "spirituality", 0.9, "positive");
+  addLink("house_12", "subconscious", 0.7, "positive");
 
   // Аспекты
   addLink("conjunction", "struggle", 0.5, "neutral");
@@ -379,7 +418,7 @@ export async function seedOntology() {
     })
     .filter(Boolean) as any[];
 
-  // Planet-to-planet aspect relations (Mercury)
+  // Planet-to-planet aspect relations
   const planetAspectRelations: [string, string, string, string, number][] = [
     ["mercury", "venus", "тригон", "Лёгкость в общении, приятные разговоры", 1.0],
     ["mercury", "uranus", "тригон", "Гениальные озарения, свежие идеи", 1.0],
@@ -395,6 +434,20 @@ export async function seedOntology() {
     ["uranus", "saturn", "оппозиция", "Бунт против системы, разрушение старых структур", 0.7],
     ["uranus", "neptune", "соединение", "Гениальные прозрения, идеи, опережающие время", 0.9],
     ["uranus", "pluto", "тригон", "Трансформация через неожиданные события", 0.8],
+    // Venus aspect relations
+    ["venus", "sun", "соединение", "Расцвет творчества, признание, яркая личная жизнь", 0.9],
+    ["venus", "moon", "тригон", "Гармоничные отношения, любовь и забота", 0.9],
+    ["venus", "moon", "квадрат", "Нестабильность в отношениях, ревность", 0.7],
+    ["venus", "mercury", "тригон", "Романтические разговоры, лёгкость в общении", 0.9],
+    ["venus", "mercury", "квадрат", "Непонимание в отношениях, словесные споры", 0.7],
+    ["venus", "mars", "соединение", "Сильная страсть, активная любовь", 0.9],
+    ["venus", "mars", "квадрат", "Конфликт между любовью и действиями", 0.7],
+    ["venus", "jupiter", "тригон", "Счастливый брак, изобилие любви", 0.9],
+    ["venus", "saturn", "оппозиция", "Сложности в отношениях, проверка чувств временем", 0.7],
+    ["venus", "uranus", "тригон", "Свободные отношения, революционер в любви", 0.9],
+    ["venus", "uranus", "квадрат", "Внезапные разрывы, хаос в личной жизни", 0.7],
+    ["venus", "neptune", "соединение", "Романтические мечты, идеализация партнёра", 0.9],
+    ["venus", "pluto", "тригон", "Интенсивная страсть, глубокая эмоциональная связь", 0.9],
   ];
 
   for (const [fromCode, toCode, aspectType, description, weight] of planetAspectRelations) {
