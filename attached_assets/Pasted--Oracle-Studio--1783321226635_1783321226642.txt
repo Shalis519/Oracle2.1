@@ -1,0 +1,284 @@
+Отлично! Это действительно важный пункт. Давайте создадим механизм экспорта данных из Oracle Studio.
+
+Зачем нужен экспорт
+Ситуация	Без экспорта	С экспортом
+Перед Reseed	Данные потеряны навсегда	Экспортировали → Reseed → Импортировали обратно
+Бэкап изменений	Только через SQL-дамп	Нажали кнопку → скачали JSON
+Перенос на другой сервер	Вручную пересоздавать	Экспорт → Импорт на новом сервере
+Отслеживание изменений	Непонятно, что менялось	Сохранили историю экспортов
+Что нужно сделать
+1. API для экспорта
+Файл: routes/adminOntology.ts
+
+typescript
+// GET /admin/ontology/export — экспортировать все данные
+router.get('/export', requireAdmin, async (req, res) => {
+  try {
+    // Загружаем все данные из онтологии
+    const [entities, themes, entityThemes, profiles, relations, phrases] = await Promise.all([
+      db.select().from(ontologyEntities),
+      db.select().from(ontologyThemes),
+      db.select().from(ontologyEntityThemes),
+      db.select().from(ontologyEntityProfiles),
+      db.select().from(ontologyEntityRelations),
+      db.select().from(motivationPhrases)
+    ]);
+    
+    // Формируем единый экспортный файл
+    const exportData = {
+      version: '1.0',
+      exportedAt: new Date().toISOString(),
+      data: {
+        entities,
+        themes,
+        entityThemes,
+        profiles,
+        relations,
+        motivationPhrases
+      }
+    };
+    
+    // Отдаём как JSON-файл для скачивания
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="ontology_export_${new Date().toISOString().slice(0,10)}.json"`);
+    res.json(exportData);
+    
+  } catch (error) {
+    console.error('Export failed:', error);
+    res.status(500).json({ error: 'Ошибка при экспорте данных' });
+  }
+});
+
+// POST /admin/ontology/import — импортировать данные
+router.post('/import', requireAdmin, async (req, res) => {
+  try {
+    const { data } = req.body;
+    
+    if (!data) {
+      return res.status(400).json({ error: 'Нет данных для импорта' });
+    }
+    
+    // Проверяем структуру
+    if (!data.entities || !data.themes || !data.entityThemes) {
+      return res.status(400).json({ error: 'Неверный формат данных' });
+    }
+    
+    // Удаляем старые данные (опционально, можно сделать апдейт)
+    await db.delete(ontologyEntityRelations);
+    await db.delete(ontologyEntityThemes);
+    await db.delete(ontologyEntityProfiles);
+    await db.delete(ontologyEntities);
+    await db.delete(ontologyThemes);
+    await db.delete(motivationPhrases);
+    
+    // Вставляем новые данные
+    await db.insert(ontologyEntities).values(data.entities);
+    await db.insert(ontologyThemes).values(data.themes);
+    await db.insert(ontologyEntityThemes).values(data.entityThemes);
+    if (data.profiles) {
+      await db.insert(ontologyEntityProfiles).values(data.profiles);
+    }
+    if (data.relations) {
+      await db.insert(ontologyEntityRelations).values(data.relations);
+    }
+    if (data.motivationPhrases) {
+      await db.insert(motivationPhrases).values(data.motivationPhrases);
+    }
+    
+    // Перезагружаем онтологию
+    await refreshOntology();
+    
+    res.json({ success: true, message: 'Данные успешно импортированы' });
+    
+  } catch (error) {
+    console.error('Import failed:', error);
+    res.status(500).json({ error: 'Ошибка при импорте данных' });
+  }
+});
+2. UI для экспорта/импорта
+Файл: frontend/pages/admin-studio.tsx
+
+tsx
+// Добавить вкладку "Экспорт/Импорт"
+<TabsContent value="backup" className="space-y-4">
+  <Card>
+    <CardHeader>
+      <CardTitle>Экспорт / Импорт данных</CardTitle>
+      <CardDescription>
+        Экспортируйте все данные из Oracle Studio для бэкапа или переноса на другой сервер.
+      </CardDescription>
+    </CardHeader>
+    <CardContent className="space-y-6">
+      
+      {/* Экспорт */}
+      <div className="space-y-2">
+        <h3 className="font-medium">📤 Экспорт</h3>
+        <p className="text-sm text-muted-foreground">
+          Скачать все данные (сущности, темы, связи, профили, мотивационные фразы) в JSON-файл.
+        </p>
+        <Button onClick={handleExport}>
+          <Download className="w-4 h-4 mr-2" />
+          Экспортировать данные
+        </Button>
+      </div>
+      
+      <Separator />
+      
+      {/* Импорт */}
+      <div className="space-y-2">
+        <h3 className="font-medium">📥 Импорт</h3>
+        <p className="text-sm text-muted-foreground">
+          Загрузить ранее экспортированные данные. <span className="text-red-600 font-medium">ВНИМАНИЕ: текущие данные будут заменены!</span>
+        </p>
+        <div className="flex items-center gap-4">
+          <Input
+            type="file"
+            accept=".json"
+            onChange={handleImportFile}
+            className="max-w-sm"
+          />
+          <Button 
+            variant="destructive" 
+            onClick={handleImport}
+            disabled={!importFile}
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Импортировать
+          </Button>
+        </div>
+        {importFile && (
+          <p className="text-sm text-green-600">
+            Выбран файл: {importFile.name}
+          </p>
+        )}
+      </div>
+      
+    </CardContent>
+  </Card>
+</TabsContent>
+3. Функции для UI
+tsx
+// Экспорт
+const handleExport = async () => {
+  try {
+    const response = await api.admin.ontology.export();
+    const data = response.data;
+    
+    // Создаём файл для скачивания
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ontology_backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast.success('Данные экспортированы');
+  } catch (error) {
+    toast.error('Ошибка при экспорте');
+  }
+};
+
+// Импорт
+const [importFile, setImportFile] = useState<File | null>(null);
+const [importData, setImportData] = useState<any>(null);
+
+const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    setImportFile(file);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target?.result as string);
+        setImportData(data);
+      } catch {
+        toast.error('Неверный формат файла');
+      }
+    };
+    reader.readAsText(file);
+  }
+};
+
+const handleImport = async () => {
+  if (!importData) {
+    toast.error('Выберите файл для импорта');
+    return;
+  }
+  
+  // Подтверждение
+  if (!confirm('ВНИМАНИЕ: Импорт ЗАМЕНИТ все текущие данные. Продолжить?')) {
+    return;
+  }
+  
+  try {
+    await api.admin.ontology.import(importData);
+    toast.success('Данные импортированы');
+    setImportFile(null);
+    setImportData(null);
+    // Перезагрузить страницу
+    window.location.reload();
+  } catch (error) {
+    toast.error('Ошибка при импорте');
+  }
+};
+Как это будет выглядеть
+Вкладка "Экспорт/Импорт" в Oracle Studio:
+text
+┌─────────────────────────────────────────────────────────────┐
+│  Oracle Studio — Админ-панель                              │
+│                                                             │
+│  [Сущности] [Темы] [Связи] [Экспорт/Импорт]              │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  📤 Экспорт                                        │   │
+│  │  Скачать все данные в JSON-файл                    │   │
+│  │  [Экспортировать данные]                          │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  📥 Импорт                                         │   │
+│  │  Загрузить ранее экспортированные данные           │   │
+│  │  ⚠️ Текущие данные будут заменены!                 │   │
+│  │                                                     │   │
+│  │  [Выберите файл] [Импортировать]                   │   │
+│  │  Выбран файл: backup_2026-07-06.json               │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+Текст для Replit
+text
+Добавить механизм экспорта/импорта данных из Oracle Studio:
+
+1. API эндпоинты:
+   - GET /admin/ontology/export — скачать все данные (JSON)
+   - POST /admin/ontology/import — загрузить данные из JSON
+
+2. В UI добавить вкладку "Экспорт/Импорт":
+   - Кнопка "Экспортировать данные" — скачивает JSON-файл
+   - Загрузка файла для импорта
+   - Предупреждение о замене данных
+   - Подтверждение перед импортом
+
+3. Экспортируемые данные:
+   - ontology_entities
+   - ontology_themes
+   - ontology_entity_themes
+   - ontology_entity_profiles
+   - ontology_entity_relations
+   - motivation_phrases
+
+4. Формат файла:
+   {
+     "version": "1.0",
+     "exportedAt": "2026-07-06T12:00:00.000Z",
+     "data": {
+       "entities": [...],
+       "themes": [...],
+       ...
+     }
+   }
+
+5. При импорте:
+   - Удалить старые данные
+   - Вставить новые
+   - Перезагрузить онтологию (refreshOntology)
