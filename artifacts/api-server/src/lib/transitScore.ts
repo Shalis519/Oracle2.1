@@ -67,12 +67,13 @@ export function calculateTransitScore(transit: TransitAspect): number {
   return score;
 }
 
-/** Select the single strongest transit by composite score.
- *  Falls back to tightest orb on a tie.
+/** Rank transits by composite score (orb < 3°), tightest orb on a tie,
+ *  deduplicating repeated transit–natal planet pairs. Returns up to `limit`
+ *  candidates; the generator picks the compatible subset from them.
  */
-export function selectStrongestTransit(transits: TransitAspect[]): TransitAspect | null {
+export function selectTopTransits(transits: TransitAspect[], limit = 6): TransitAspect[] {
   const strong = transits.filter((t) => Math.abs(t.orb) < 3);
-  if (strong.length === 0) return null;
+  if (strong.length === 0) return [];
 
   strong.sort((a, b) => {
     const scoreA = calculateTransitScore(a);
@@ -81,5 +82,14 @@ export function selectStrongestTransit(transits: TransitAspect[]): TransitAspect
     return Math.abs(a.orb) - Math.abs(b.orb);      // tighter orb on tie
   });
 
-  return strong[0]!;
+  const seen = new Set<string>();
+  const result: TransitAspect[] = [];
+  for (const t of strong) {
+    const key = `${t.transitBody}|${t.natalBody}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(t);
+    if (result.length >= limit) break;
+  }
+  return result;
 }

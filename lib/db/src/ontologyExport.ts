@@ -61,7 +61,7 @@ export const exportRelationSchema = z.object({
   relationType: z.string().min(1),
   description: z.string().nullable().optional(),
   weight: z.number().min(0).max(3),
-  futuristic: z.record(z.unknown()).nullable().optional(),
+  futuristic: z.record(z.string(), z.unknown()).nullable().optional(),
   keywords: z.array(z.string()).nullable().optional(),
 });
 

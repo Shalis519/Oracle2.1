@@ -178,9 +178,20 @@ async function buildEntityMap(): Promise<Map<string, OntologyEntity>> {
 export async function getEntity(name: string): Promise<OntologyEntity | null> {
   try {
     if (!isCacheValid()) {
-      const data = await buildEntityMap();
-      setCache(data);
-      logger.info({ count: data.size }, "ontology cache rebuilt");
+      // Singleflight: concurrent misses await one shared rebuild instead of
+      // each hammering the DB with a full ontology load.
+      if (!rebuildPromise) {
+        rebuildPromise = buildEntityMap()
+          .then((data) => {
+            setCache(data);
+            logger.info({ count: data.size }, "ontology cache rebuilt");
+            return data;
+          })
+          .finally(() => {
+            rebuildPromise = null;
+          });
+      }
+      await rebuildPromise;
     }
     return cache!.get(name) ?? null;
   } catch (error) {

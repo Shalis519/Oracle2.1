@@ -8,7 +8,7 @@ import {
 import { getFlyingStar, getStarByNumber, type FlyingStarData } from "./data/fengshui";
 import { DREAM_MEANINGS, DEFAULT_DREAM_INTERPRETATION } from "./data/dreams";
 import { Solar } from "lunar-typescript";
-import { selectStrongestTransit } from "./transitScore";
+import { selectTopTransits } from "./transitScore";
 import { futuristicGenerator } from "./futuristicGenerator";
 import { db, motivationPhrasesTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
@@ -1094,69 +1094,9 @@ function aspectPrepRu(type: string): string {
   }
 }
 
-/** Instrumental case for body names when used as object. */
-function bodyInstrumental(name: string): string {
-  const map: Record<string, string> = {
-    "северный узел": "Северным узлом",
-    "южный узел": "Южным узлом",
-    "хирон": "Хироном",
-    "плутон": "Плутоном",
-    "нептун": "Нептуном",
-    "уран": "Ураном",
-    "сатурн": "Сатурном",
-    "юпитер": "Юпитером",
-    "марс": "Марсом",
-    "венера": "Венерой",
-    "меркурий": "Меркурием",
-    "луна": "Луной",
-    "солнце": "Солнцем",
-  };
-  return map[name.toLowerCase()] ?? name;
-}
-
-/** Dative case for body names after "противостоит" etc. */
-function bodyDative(name: string): string {
-  const map: Record<string, string> = {
-    "северный узел": "Северному узлу",
-    "южный узел": "Южному узлу",
-    "хирон": "Хирону",
-    "плутон": "Плутону",
-    "нептун": "Нептуну",
-    "уран": "Урану",
-    "сатурн": "Сатурну",
-    "юпитер": "Юпитеру",
-    "марс": "Марсу",
-    "венера": "Венере",
-    "меркурий": "Меркурию",
-    "луна": "Луне",
-    "солнце": "Солнцу",
-  };
-  return map[name.toLowerCase()] ?? name;
-}
-
-/** Предлог «в» / «во» для предложного падежа знака (во Льве, в Раке). */
-function inSignPrep(sign: string): string {
-  if (sign.toLowerCase().startsWith("ль")) return `во ${sign}`;
-  return `в ${sign}`;
-}
-
-const SIGN_PREPOSITIONAL: Record<string, string> = {
-  "Овен": "Овне",
-  "Телец": "Тельце",
-  "Близнецы": "Близнецах",
-  "Рак": "Раке",
-  "Лев": "Льве",
-  "Дева": "Деве",
-  "Весы": "Весах",
-  "Скорпион": "Скорпионе",
-  "Стрелец": "Стрельце",
-  "Козерог": "Козероге",
-  "Водолей": "Водолее",
-  "Рыбы": "Рыбах",
-};
-
 // Old hardcoded transit text generators removed.
 // Semantic forecast now generated via semanticEngine + futuristicGenerator.
+// Russian grammar helpers live in futuristicGenerator.ts.
 
 /** New computeDailyForecast: uses natal chart + transits + arcana + ontology. */
 export async function computeDailyForecast(
@@ -1195,12 +1135,12 @@ export async function computeDailyForecast(
     );
   }
 
-  // ===== SEMANTIC FORECAST (single strongest transit) =====
-  const strongestTransit = selectStrongestTransit(transitAspects);
+  // ===== SEMANTIC FORECAST (up to 3 compatible transits, ontology-only) =====
+  const rankedTransits = selectTopTransits(transitAspects);
 
   let synthesisText: string;
 
-  if (!strongestTransit) {
+  if (rankedTransits.length === 0) {
     synthesisText = "Сегодня особенных астрологических событий не прогнозируется.";
   } else {
     const [randomPhrase] = await db
@@ -1210,24 +1150,16 @@ export async function computeDailyForecast(
       .orderBy(sql`random()`)
       .limit(1);
 
-    const context = {
-      planet: strongestTransit.transitBody,
-      sign: strongestTransit.transitSign,
-      house: strongestTransit.transitHouse ?? 1,
-      aspect: strongestTransit.type,
-      aspectPlanet: strongestTransit.natalBody,
-      aspectSign: strongestTransit.natalSign,
-      aspectHouse: strongestTransit.natalHouse ?? 1,
-      orb: strongestTransit.orb,
-      currentDate: new Date(today),
-      motivationPhrase: randomPhrase?.phrase,
-    };
-
-    const forecast = await futuristicGenerator.generate(context);
+    const forecast = await futuristicGenerator.generate(
+      rankedTransits,
+      new Date(today),
+      randomPhrase?.phrase,
+    );
     if (forecast) {
       synthesisText = forecast;
     } else {
-      const key = `${strongestTransit.transitBody} ${strongestTransit.type} ${strongestTransit.natalBody}`.trim();
+      const main = rankedTransits[0];
+      const key = `${main.transitBody} ${main.type} ${main.natalBody}`.trim();
       synthesisText = `Для транзита (${key}) пока нет семантических данных в Oracle Studio. Администратор заполняет онтологию. Прогнозы появятся после добавления данных.`;
       warnings.push("Онтология заполнена не полностью");
     }
