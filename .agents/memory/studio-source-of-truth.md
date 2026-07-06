@@ -33,6 +33,9 @@ seedOntology.ts only creates skeleton (entities + themes) and never overwrites m
 - Cache rebuild reads all ontology tables in parallel (5 queries), then builds Map in memory.
 - DB errors are thrown (not swallowed as `null`) so failures are visible in logs.
 
+## Startup sequence (critical)
+`index.ts` calls `seedOntology()` then `app.listen()`. **Do NOT call `loadOntology()` at startup** — it can hang in production (DB pool/SSL in containerized env). Cache is lazy-loaded on first request instead.
+
 ## How to invalidate cache manually
 - POST `/admin/forecast/invalidate-cache` — bumps forecast version
 - POST `/admin/ontology/reseed` — wipes & reseeds everything

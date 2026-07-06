@@ -1,7 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { seedOntology } from "./lib/seedOntology";
-import { loadOntology } from "./lib/semanticEngine";
 
 const rawPort = process.env["PORT"];
 
@@ -17,14 +16,13 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-/** Start server after seeding skeleton + pre-warming the ontology cache. */
+/** Start server after seeding skeleton. Cache is lazy-loaded on first request. */
 async function start(): Promise<void> {
   try {
     await seedOntology();
-    await loadOntology();
-    logger.info("Ontology seeded — Studio UI is the source of truth for relations & profiles");
+    logger.info("Ontology seeded -- Studio UI is the source of truth for relations & profiles");
   } catch (err) {
-    logger.error({ err }, "Ontology seed/load failed — aborting startup");
+    logger.error({ err }, "Ontology seed failed -- aborting startup");
     process.exit(1);
   }
 
