@@ -34,6 +34,9 @@ import {
   XCircle,
   RefreshCw,
   MessageSquareQuote,
+  Download,
+  Upload,
+  AlertTriangle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -790,6 +793,13 @@ export default function AdminStudioPage() {
   const [phraseInput, setPhraseInput] = useState("");
   const [phraseLoading, setPhraseLoading] = useState(false);
 
+  // Backup / import state
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importMode, setImportMode] = useState<"replace" | "merge">("merge");
+  const [importLoading, setImportLoading] = useState(false);
+  const [importError, setImportError] = useState("");
+  const [importConfirmOpen, setImportConfirmOpen] = useState(false);
+
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn) {
@@ -941,6 +951,63 @@ export default function AdminStudioPage() {
     }
     toast({ title: "Удалено" });
     loadEntities();
+  };
+
+  const handleExport = async () => {
+    try {
+      const res = await apiFetch("/admin/ontology/export");
+      if (!res.ok) {
+        const err = await res.json();
+        toast({ title: "Ошибка экспорта", description: err.error, variant: "destructive" });
+        return;
+      }
+      const json = await res.json();
+      const blob = new Blob([JSON.stringify(json.data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const date = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `aether-ontology-${date}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: "Экспорт завершён" });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Сетевая ошибка";
+      toast({ title: "Ошибка экспорта", description: msg, variant: "destructive" });
+    }
+  };
+
+  const handleImport = async () => {
+    if (!importFile) return;
+    setImportLoading(true);
+    setImportError("");
+    try {
+      const text = await importFile.text();
+      const data = JSON.parse(text);
+      const res = await apiFetch("/admin/ontology/import", {
+        method: "POST",
+        body: JSON.stringify({ mode: importMode, data }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        const details = err.details ? (Array.isArray(err.details) ? err.details.join("; ") : String(err.details)) : "";
+        setImportError(err.error + (details ? `: ${details}` : ""));
+        return;
+      }
+      toast({ title: `Импорт (${importMode}) завершён` });
+      loadEntities();
+      loadThemes();
+      loadPhrases();
+      setImportFile(null);
+      setImportConfirmOpen(false);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Ошибка чтения файла";
+      setImportError(msg);
+    } finally {
+      setImportLoading(false);
+    }
   };
 
   const handleReseed = async () => {
@@ -1175,10 +1242,11 @@ export default function AdminStudioPage() {
       </div>
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 md:w-auto">
+        <TabsList className="grid w-full grid-cols-4 md:w-auto">
           <TabsTrigger value="entities"><Layers className="w-4 h-4 mr-2" />Сущности</TabsTrigger>
           <TabsTrigger value="themes"><BookOpen className="w-4 h-4 mr-2" />Жизненные темы</TabsTrigger>
           <TabsTrigger value="phrases"><MessageSquareQuote className="w-4 h-4 mr-2" />Фразы</TabsTrigger>
+          <TabsTrigger value="backup"><Download className="w-4 h-4 mr-2" />Бэкап</TabsTrigger>
         </TabsList>
 
         <TabsContent value="entities" className="space-y-6">
@@ -1383,7 +1451,119 @@ export default function AdminStudioPage() {
             <div className="text-center py-20 text-muted-foreground">Нет фраз. Добавьте первую.</div>
           )}
         </TabsContent>
+
+        <TabsContent value="backup" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Download className="w-5 h-5 text-primary" />
+                  Экспорт онтологии
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Скачать JSON-снимок всей онтологии: сущности, темы, профили, связи, фразы. Файл можно импортировать обратно в любой момент.
+                </p>
+                <Button onClick={handleExport} className="w-full">
+                  <Download className="w-4 h-4 mr-2" />
+                  Скачать бэкап
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Upload className="w-5 h-5 text-primary" />
+                  Импорт онтологии
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Загрузить JSON-бэкап. Режим <b>merge</b> — обновит существующие и добавит новые. Режим <b>replace</b> — полностью заменит текущие данные.
+                </p>
+                <div className="flex items-center gap-3">
+                  <Select value={importMode} onValueChange={(v) => setImportMode(v as "replace" | "merge")}>
+                    <SelectTrigger className="w-[160px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="merge">merge (безопасно)</SelectItem>
+                      <SelectItem value="replace">replace (опасно)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <input
+                    type="file"
+                    accept="application/json"
+                    onChange={(e) => {
+                      setImportFile(e.target.files?.[0] ?? null);
+                      setImportError("");
+                    }}
+                    className="flex-1 text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground file:text-sm"
+                  />
+                </div>
+                {importMode === "replace" && (
+                  <div className="flex items-start gap-2 text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>Replace сотрёт все текущие данные онтологии и заменит их содержимым файла. Это нельзя отменить.</span>
+                  </div>
+                )}
+                {importError && (
+                  <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">{importError}</div>
+                )}
+                <Button
+                  onClick={() => setImportConfirmOpen(true)}
+                  disabled={!importFile || importLoading}
+                  className="w-full"
+                  variant={importMode === "replace" ? "destructive" : "default"}
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  {importLoading ? "Импорт..." : "Импортировать"}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
       </Tabs>
+
+      {/* Import confirmation dialog */}
+      <Dialog open={importConfirmOpen} onOpenChange={setImportConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-destructive" />
+              Подтвердите импорт
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm">
+              Вы собираетесь импортировать файл <b>{importFile?.name}</b> в режиме <b>{importMode}</b>.
+            </p>
+            {importMode === "replace" ? (
+              <p className="text-sm text-destructive">
+                Все текущие данные онтологии будут удалены и заменены содержимым файла. Это необратимо.
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Существующие записи будут обновлены, новые — добавлены. Ничего не удалится.
+              </p>
+            )}
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setImportConfirmOpen(false)}>
+                Отмена
+              </Button>
+              <Button
+                variant={importMode === "replace" ? "destructive" : "default"}
+                onClick={handleImport}
+                disabled={importLoading}
+              >
+                {importLoading ? "Импорт..." : "Подтвердить"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!editingEntity} onOpenChange={(v) => !v && setEditingEntity(null)}>
         <DialogContent className="max-w-lg">

@@ -15,6 +15,7 @@ import journalRouter from "./journal";
 import astrologyRouter from "./astrology";
 import notepadRouter from "./notepad";
 import adminOntologyRouter from "./adminOntology";
+import ontologyExportRouter from "./ontologyExport";
 
 const router: IRouter = Router();
 
@@ -34,5 +35,6 @@ router.use(journalRouter);
 router.use(astrologyRouter);
 router.use(notepadRouter);
 router.use(adminOntologyRouter);
+router.use(ontologyExportRouter);
 
 export default router;
