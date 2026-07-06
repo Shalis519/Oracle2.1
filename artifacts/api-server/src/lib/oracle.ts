@@ -8,7 +8,6 @@ import {
 import { getFlyingStar, getStarByNumber, type FlyingStarData } from "./data/fengshui";
 import { DREAM_MEANINGS, DEFAULT_DREAM_INTERPRETATION } from "./data/dreams";
 import { Solar } from "lunar-typescript";
-import { ensureOntologyLoaded } from "./semanticEngine";
 import { selectStrongestTransit } from "./transitScore";
 import { futuristicGenerator } from "./futuristicGenerator";
 import { db, motivationPhrasesTable } from "@workspace/db";
@@ -1197,8 +1196,6 @@ export async function computeDailyForecast(
   }
 
   // ===== SEMANTIC FORECAST (single strongest transit) =====
-  await ensureOntologyLoaded();
-
   const strongestTransit = selectStrongestTransit(transitAspects);
 
   let synthesisText: string;
@@ -1226,7 +1223,7 @@ export async function computeDailyForecast(
       motivationPhrase: randomPhrase?.phrase,
     };
 
-    const forecast = futuristicGenerator.generate(context);
+    const forecast = await futuristicGenerator.generate(context);
     if (forecast) {
       synthesisText = forecast;
     } else {

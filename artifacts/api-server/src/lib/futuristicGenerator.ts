@@ -369,15 +369,15 @@ function getAspectPolarity(aspect: string): "positive" | "negative" | "neutral" 
 }
 
 /** Weighted theme intersection across planet, house, sign, aspect. Returns top-3. */
-function resolveThemes(
+async function resolveThemes(
   planet: string,
   sign: string,
   house: number,
   aspect: string,
-): { primary: string; secondary: string; tertiary: string; all: string[]; aspectModifier: number; aspectPolarity: "positive" | "negative" | "neutral" } | null {
-  const planetThemes = getEntityThemes(planet);
-  const signThemes = getEntityThemes(sign);
-  const houseThemes = getEntityThemes(`Дом ${house}`);
+): Promise<{ primary: string; secondary: string; tertiary: string; all: string[]; aspectModifier: number; aspectPolarity: "positive" | "negative" | "neutral" } | null> {
+  const planetThemes = await getEntityThemes(planet);
+  const signThemes = await getEntityThemes(sign);
+  const houseThemes = await getEntityThemes(`Дом ${house}`);
 
   if (planetThemes.length === 0) {
     return null;
@@ -636,22 +636,22 @@ function getAdvice(theme: string): string | null {
 }
 
 export class FuturisticGenerator {
-  generate(context: TransitContext): string | null {
+  async generate(context: TransitContext): Promise<string | null> {
     try {
-      const entity = getEntity(context.planet);
+      const entity = await getEntity(context.planet);
       if (!entity) {
         logger.warn({ planet: context.planet }, "entity not found in ontology");
         return null;
       }
 
-      const themes = resolveThemes(context.planet, context.sign, context.house, context.aspect);
+      const themes = await resolveThemes(context.planet, context.sign, context.house, context.aspect);
       if (!themes) {
         logger.warn({ planet: context.planet }, "no themes resolved for transit");
         return null;
       }
 
       const relation = context.aspectPlanet
-        ? findRelation(context.planet, context.aspectPlanet, context.aspect)
+        ? await findRelation(context.planet, context.aspectPlanet, context.aspect)
         : null;
 
       const durationData = calculateTransitDuration(
@@ -660,14 +660,14 @@ export class FuturisticGenerator {
         context.currentDate,
       );
 
-      return this.buildText(themes, relation, durationData, context, entity.profile);
+      return await this.buildText(themes, relation, durationData, context, entity.profile);
     } catch (error) {
       logger.error({ error, context }, "error generating forecast");
       return null;
     }
   }
 
-  private buildText(
+  private async buildText(
     themes: {
       primary: string;
       secondary: string;
@@ -688,10 +688,12 @@ export class FuturisticGenerator {
     const futurePeriod = this.getFuturePeriod(context);
 
     // --- Профили знаков и домов ---
-    const signProfile = context.sign ? getEntity(context.sign)?.profile ?? null : null;
-    const houseProfile = context.house ? getEntity(`Дом ${context.house}`)?.profile ?? null : null;
-    const aspectSignProfile = context.aspectSign ? getEntity(context.aspectSign)?.profile ?? null : null;
-    const aspectHouseProfile = context.aspectHouse ? getEntity(`Дом ${context.aspectHouse}`)?.profile ?? null : null;
+    const [signProfile, houseProfile, aspectSignProfile, aspectHouseProfile] = await Promise.all([
+      context.sign ? getEntity(context.sign).then(e => e?.profile ?? null) : Promise.resolve(null),
+      context.house ? getEntity(`Дом ${context.house}`).then(e => e?.profile ?? null) : Promise.resolve(null),
+      context.aspectSign ? getEntity(context.aspectSign).then(e => e?.profile ?? null) : Promise.resolve(null),
+      context.aspectHouse ? getEntity(`Дом ${context.aspectHouse}`).then(e => e?.profile ?? null) : Promise.resolve(null),
+    ]);
 
     // --- 1. Суть: описание связи планет (если есть) ---
     let corePhrase: string | null = null;

@@ -7,20 +7,7 @@ import {
   ontologyEntityProfilesTable,
   ontologyEntityRelationsTable,
 } from "@workspace/db";
-
-// Explicit DB row type (Drizzle $inferSelect doesn't always pick up .array()/.jsonb())
-type DBEntityRelation = {
-  id: number;
-  fromEntityId: number;
-  toEntityId: number;
-  relationType: string;
-  description: string | null;
-  weight: number;
-  futuristic: Record<string, unknown> | null;
-  keywords: string[] | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { eq, inArray } from "drizzle-orm";
 
 export interface OntologyEntity {
   id: number;
@@ -78,150 +65,154 @@ export interface EntityProfile {
   materials: string[];
 }
 
-// Runtime type guard for relation rows
-function toDbRelation(row: unknown): DBEntityRelation {
-  const r = row as Record<string, unknown>;
-  return {
-    id: r.id as number,
-    fromEntityId: r.fromEntityId as number,
-    toEntityId: r.toEntityId as number,
-    relationType: r.relationType as string,
-    description: r.description as string | null,
-    weight: r.weight as number,
-    futuristic: (r.futuristic as Record<string, unknown> | null) ?? null,
-    keywords: (r.keywords as string[] | null) ?? null,
-    createdAt: r.createdAt as Date,
-    updatedAt: r.updatedAt as Date,
-  };
+/* ─── 30-second in-memory cache (explicitly invalidated by refreshOntology) ─── */
+
+let cache: Map<string, OntologyEntity> | null = null;
+let cacheExpiresAt = 0;
+let rebuildPromise: Promise<Map<string, OntologyEntity>> | null = null;
+const CACHE_TTL_MS = 30_000;
+
+function isCacheValid(): boolean {
+  return cache !== null && Date.now() < cacheExpiresAt;
 }
 
-let ontologyCache: Map<string, OntologyEntity> | null = null;
-let lastLoadTime = 0;
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+function setCache(data: Map<string, OntologyEntity>): void {
+  cache = data;
+  cacheExpiresAt = Date.now() + CACHE_TTL_MS;
+}
 
-/** Load all ontology data into module-level cache. */
-export async function loadOntology(): Promise<void> {
-  try {
-    const [entities, themes, entityThemes, profiles, rawRelations] = await Promise.all([
-      db.select().from(ontologyEntitiesTable),
-      db.select().from(ontologyThemesTable),
-      db.select().from(ontologyEntityThemesTable),
-      db.select().from(ontologyEntityProfilesTable),
-      db.select().from(ontologyEntityRelationsTable),
-    ]);
+function clearCache(): void {
+  cache = null;
+  cacheExpiresAt = 0;
+}
 
-    const relations = (rawRelations as unknown[]).map(toDbRelation);
+async function buildEntityMap(): Promise<Map<string, OntologyEntity>> {
+  const [entities, themes, entityThemes, profiles, rawRelations] = await Promise.all([
+    db.select().from(ontologyEntitiesTable),
+    db.select().from(ontologyThemesTable),
+    db.select().from(ontologyEntityThemesTable),
+    db.select().from(ontologyEntityProfilesTable),
+    db.select().from(ontologyEntityRelationsTable),
+  ]);
 
-    const entityMap = new Map<string, OntologyEntity>();
+  const entityMap = new Map<string, OntologyEntity>();
 
-    for (const entity of entities) {
-      const entityProfile = profiles.find((p) => p.entityId === entity.id) ?? null;
-      const entityThemesList: EntityTheme[] = entityThemes
-        .filter((et) => et.entityId === entity.id)
-        .map((et) => {
-          const theme = themes.find((t) => t.id === et.themeId);
-          return {
-            themeId: et.themeId,
-            themeName: theme?.name ?? "unknown",
-            weight: et.weight ?? 1.0,
-            polarity: et.polarity ?? "neutral",
-            contextRules: null,
-          };
-        });
+  for (const entity of entities) {
+    const entityProfile = profiles.find((p) => p.entityId === entity.id) ?? null;
+    const entityThemesList: EntityTheme[] = entityThemes
+      .filter((et) => et.entityId === entity.id)
+      .map((et) => {
+        const theme = themes.find((t) => t.id === et.themeId);
+        return {
+          themeId: et.themeId,
+          themeName: theme?.name ?? "unknown",
+          weight: et.weight ?? 1.0,
+          polarity: et.polarity ?? "neutral",
+          contextRules: null,
+        };
+      })
+      .sort((a, b) => b.weight - a.weight);
 
-      const entityRelations: EntityRelation[] = relations
-        .filter((r) => r.fromEntityId === entity.id)
-        .map((r) => {
-          const target = entities.find((e) => e.id === r.toEntityId);
-          return {
-            toEntityId: r.toEntityId,
-            toEntityName: target?.name ?? "unknown",
-            type: r.relationType,
-            description: r.description ?? null,
-            weight: r.weight ?? 1.0,
-            futuristic: r.futuristic ?? null,
-            keywords: r.keywords ?? null,
-          };
-        });
-
-      const profileData: EntityProfile | null = entityProfile
-        ? {
-            entityId: entityProfile.entityId,
-            keyMeanings: entityProfile.keyMeanings,
-            psychologicalManifestations: entityProfile.psychologicalManifestations,
-            emotions: entityProfile.emotions,
-            strengths: entityProfile.strengths,
-            weaknesses: entityProfile.weaknesses,
-            recommendations: entityProfile.recommendations,
-            warnings: entityProfile.warnings,
-            lifeThemes: (entityProfile.lifeThemes as string[]) ?? [],
-            keyMeaningsArr: (entityProfile.keyMeaningsArr as string[]) ?? [],
-            positiveQualities: (entityProfile.positiveQualities as string[]) ?? [],
-            shadowQualities: (entityProfile.shadowQualities as string[]) ?? [],
-            positiveEmotions: (entityProfile.positiveEmotions as string[]) ?? [],
-            negativeEmotions: (entityProfile.negativeEmotions as string[]) ?? [],
-            strengthsArr: (entityProfile.strengthsArr as string[]) ?? [],
-            weaknessesArr: (entityProfile.weaknessesArr as string[]) ?? [],
-            archetypes: (entityProfile.archetypes as string[]) ?? [],
-            professions: (entityProfile.professions as string[]) ?? [],
-            objects: (entityProfile.objects as string[]) ?? [],
-            colors: (entityProfile.colors as string[]) ?? [],
-            numbers: (entityProfile.numbers as string[]) ?? [],
-            days: (entityProfile.days as string[]) ?? [],
-            animals: (entityProfile.animals as string[]) ?? [],
-            places: (entityProfile.places as string[]) ?? [],
-            materials: (entityProfile.materials as string[]) ?? [],
-          }
-        : null;
-
-      entityMap.set(entity.name, {
-        id: entity.id,
-        name: entity.name,
-        description: null,
-        type: entity.type ?? null,
-        themes: entityThemesList,
-        relations: entityRelations,
-        profile: profileData,
+    const entityRelations: EntityRelation[] = rawRelations
+      .filter((r) => r.fromEntityId === entity.id)
+      .map((r) => {
+        const target = entities.find((e) => e.id === r.toEntityId);
+        return {
+          toEntityId: r.toEntityId,
+          toEntityName: target?.name ?? "unknown",
+          type: r.relationType,
+          description: r.description ?? null,
+          weight: r.weight ?? 1.0,
+          futuristic: (r.futuristic as Record<string, unknown> | null) ?? null,
+          keywords: (r.keywords as string[] | null) ?? null,
+        };
       });
-    }
 
-    ontologyCache = entityMap;
-    lastLoadTime = Date.now();
-    logger.info(`ontology loaded: ${entities.length} entities`);
+    const profileData: EntityProfile | null = entityProfile
+      ? {
+          entityId: entityProfile.entityId,
+          keyMeanings: entityProfile.keyMeanings,
+          psychologicalManifestations: entityProfile.psychologicalManifestations,
+          emotions: entityProfile.emotions,
+          strengths: entityProfile.strengths,
+          weaknesses: entityProfile.weaknesses,
+          recommendations: entityProfile.recommendations,
+          warnings: entityProfile.warnings,
+          lifeThemes: (entityProfile.lifeThemes as string[]) ?? [],
+          keyMeaningsArr: (entityProfile.keyMeaningsArr as string[]) ?? [],
+          positiveQualities: (entityProfile.positiveQualities as string[]) ?? [],
+          shadowQualities: (entityProfile.shadowQualities as string[]) ?? [],
+          positiveEmotions: (entityProfile.positiveEmotions as string[]) ?? [],
+          negativeEmotions: (entityProfile.negativeEmotions as string[]) ?? [],
+          strengthsArr: (entityProfile.strengthsArr as string[]) ?? [],
+          weaknessesArr: (entityProfile.weaknessesArr as string[]) ?? [],
+          archetypes: (entityProfile.archetypes as string[]) ?? [],
+          professions: (entityProfile.professions as string[]) ?? [],
+          objects: (entityProfile.objects as string[]) ?? [],
+          colors: (entityProfile.colors as string[]) ?? [],
+          numbers: (entityProfile.numbers as string[]) ?? [],
+          days: (entityProfile.days as string[]) ?? [],
+          animals: (entityProfile.animals as string[]) ?? [],
+          places: (entityProfile.places as string[]) ?? [],
+          materials: (entityProfile.materials as string[]) ?? [],
+        }
+      : null;
+
+    entityMap.set(entity.name, {
+      id: entity.id,
+      name: entity.name,
+      description: null,
+      type: entity.type ?? null,
+      themes: entityThemesList,
+      relations: entityRelations,
+      profile: profileData,
+    });
+  }
+
+  return entityMap;
+}
+
+/* ─── Public API ─── */
+
+/** Get ontology entity by name. Reads from 30-sec cache or rebuilds from DB. */
+export async function getEntity(name: string): Promise<OntologyEntity | null> {
+  try {
+    if (!isCacheValid()) {
+      const data = await buildEntityMap();
+      setCache(data);
+      logger.info({ count: data.size }, "ontology cache rebuilt");
+    }
+    return cache!.get(name) ?? null;
   } catch (error) {
-    logger.error({ error }, "failed to load ontology");
-    throw error;
+    logger.error({ error, name }, "failed to fetch entity");
+    throw error; // propagate so caller can distinguish DB failure vs missing data
   }
 }
 
-/** Get ontology entity by name (case-sensitive). */
-export function getEntity(name: string): OntologyEntity | null {
-  return ontologyCache?.get(name) ?? null;
-}
-
 /** Get entity themes sorted by weight desc. */
-export function getEntityThemes(name: string): EntityTheme[] {
-  const entity = getEntity(name);
-  return (entity?.themes ?? []).sort((a, b) => b.weight - a.weight);
+export async function getEntityThemes(name: string): Promise<EntityTheme[]> {
+  const entity = await getEntity(name);
+  return entity?.themes ?? [];
 }
 
 /** Get entity relations. */
-export function getEntityRelations(name: string): EntityRelation[] {
-  const entity = getEntity(name);
+export async function getEntityRelations(name: string): Promise<EntityRelation[]> {
+  const entity = await getEntity(name);
   return entity?.relations ?? [];
 }
 
-/** Find a relation from source to target by target name and relation type.
- *  Filters by aspect type (e.g. "тригон") so the correct description is used.
- */
-export function findRelation(sourceName: string, toEntityName: string, relationType?: string): EntityRelation | null {
-  const relations = getEntityRelations(sourceName);
+/** Find a relation from source to target by target name and relation type. */
+export async function findRelation(
+  sourceName: string,
+  toEntityName: string,
+  relationType?: string,
+): Promise<EntityRelation | null> {
+  const relations = await getEntityRelations(sourceName);
   const candidates = relations.filter((r) => r.toEntityName === toEntityName);
   if (candidates.length === 0) return null;
   if (relationType) {
     const exact = candidates.find((r) => r.type === relationType);
     if (exact) return exact;
-    // Fallback: fuzzy match ignoring case and common prefix/suffix differences
     const fuzzy = candidates.find((r) => {
       const a = r.type.toLowerCase().replace(/aspect_/g, "").replace(/\s/g, "");
       const b = relationType.toLowerCase().replace(/aspect_/g, "").replace(/\s/g, "");
@@ -233,18 +224,25 @@ export function findRelation(sourceName: string, toEntityName: string, relationT
 }
 
 /** Check if entity exists. */
-export function hasEntity(name: string): boolean {
-  return getEntity(name) !== null;
+export async function hasEntity(name: string): Promise<boolean> {
+  const entity = await getEntity(name);
+  return entity !== null;
 }
 
-/** Refresh the ontology cache. */
+/** Explicitly invalidate the 30-second cache (called by Studio UI mutations). */
 export async function refreshOntology(): Promise<void> {
-  await loadOntology();
+  clearCache();
+  logger.info("ontology cache invalidated");
 }
 
-/** Ensure cache is fresh (lazy TTL check). */
+/** Legacy no-op: cache is lazy-loaded. */
 export async function ensureOntologyLoaded(): Promise<void> {
-  if (!ontologyCache || Date.now() - lastLoadTime > CACHE_TTL_MS) {
-    await loadOntology();
-  }
+  // Cache is lazy-loaded by getEntity.
+}
+
+/** Legacy: used by index.ts startup. Rebuilds cache once. */
+export async function loadOntology(): Promise<void> {
+  const data = await buildEntityMap();
+  setCache(data);
+  logger.info({ count: data.size }, "ontology loaded");
 }

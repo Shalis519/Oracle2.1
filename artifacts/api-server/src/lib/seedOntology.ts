@@ -248,35 +248,7 @@ export async function seedOntology() {
     await db
       .insert(ontologyEntityProfilesTable)
       .values(profileInserts)
-      .onConflictDoUpdate({
-        target: ontologyEntityProfilesTable.entityId,
-        set: {
-          keyMeanings: sql`EXCLUDED.key_meanings`,
-          psychologicalManifestations: sql`EXCLUDED.psychological_manifestations`,
-          emotions: sql`EXCLUDED.emotions`,
-          strengths: sql`EXCLUDED.strengths`,
-          weaknesses: sql`EXCLUDED.weaknesses`,
-          recommendations: sql`EXCLUDED.recommendations`,
-          warnings: sql`EXCLUDED.warnings`,
-          lifeThemes: sql`EXCLUDED.life_themes`,
-          keyMeaningsArr: sql`EXCLUDED.key_meanings_arr`,
-          positiveQualities: sql`EXCLUDED.positive_qualities`,
-          shadowQualities: sql`EXCLUDED.shadow_qualities`,
-          positiveEmotions: sql`EXCLUDED.positive_emotions`,
-          negativeEmotions: sql`EXCLUDED.negative_emotions`,
-          strengthsArr: sql`EXCLUDED.strengths_arr`,
-          weaknessesArr: sql`EXCLUDED.weaknesses_arr`,
-          archetypes: sql`EXCLUDED.archetypes`,
-          professions: sql`EXCLUDED.professions`,
-          objects: sql`EXCLUDED.objects`,
-          colors: sql`EXCLUDED.colors`,
-          numbers: sql`EXCLUDED.numbers`,
-          days: sql`EXCLUDED.days`,
-          animals: sql`EXCLUDED.animals`,
-          places: sql`EXCLUDED.places`,
-          materials: sql`EXCLUDED.materials`,
-        },
-      });
+      .onConflictDoNothing();
   }
 
   // Связи сущностей с темами
@@ -519,13 +491,7 @@ export async function seedOntology() {
     await db
       .insert(ontologyEntityRelationsTable)
       .values(relationInserts)
-      .onConflictDoUpdate({
-        target: [ontologyEntityRelationsTable.fromEntityId, ontologyEntityRelationsTable.toEntityId, ontologyEntityRelationsTable.relationType],
-        set: {
-          description: sql`excluded.description`,
-          weight: sql`excluded.weight`,
-        },
-      });
+      .onConflictDoNothing();
   }
 
   // ─── Motivation phrases ───
