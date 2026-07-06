@@ -17,6 +17,8 @@ import {
   type MotivationPhrase,
 } from "@workspace/db";
 import { CURRENT_FORECAST_VERSION } from "./forecast";
+// NOTE: When ontology data changes significantly, bump CURRENT_FORECAST_VERSION
+// in forecast.ts so cached predictions regenerate with the new semantic data.
 import { parseWeight, clampWeight } from "@workspace/db/weights";
 import { requireAuth, requireAdmin } from "../lib/auth";
 import { seedOntology } from "../lib/seedOntology";
