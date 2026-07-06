@@ -17,15 +17,16 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-// Auto-seed ontology data on startup if tables are empty
-seedOntology().catch((err) => {
-  logger.error({ err }, "Ontology seed failed");
-});
-
-// Load ontology into memory for semantic forecasts
-loadOntology().catch((err) => {
-  logger.warn({ err }, "Ontology load failed — semantic forecasts will show missing data");
-});
+// Auto-seed ontology data on startup, then load into memory.
+// seedOntology() must complete BEFORE loadOntology() so the cache is fresh.
+(async () => {
+  try {
+    await seedOntology();
+    await loadOntology();
+  } catch (err) {
+    logger.error({ err }, "Ontology seed/load failed");
+  }
+})();
 
 app.listen(port, (err) => {
   if (err) {
