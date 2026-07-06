@@ -17,4 +17,5 @@
 - [Forecast payload schema drift](forecast-payload-schema-drift.md) — new required fields on a schema shared by a live endpoint + persisted snapshot must be injected at serialize time, NOT read from stored payload (else every forecast 500s).
 - [Ji Fu four scales](jifu-scales.md) — Джи Фу wish strength = same-palace matches of year/month/day/hour 值符; HOUR/DAY def A, MONTH/YEAR def B 旬首仪; calibrated for 2026 阴-half only, re-validate beyond.
 - [Semantic engine field naming](semantic-engine-fields.md) — in-memory relation models MUST mirror real DB column names (fromEntityId/toEntityId); never alias to sourceId/targetId or architect review flags it as a naming violation.
-- [Ontology seed/load race](ontology-seed-load-race.md) — seedOntology() and loadOntology() must be sequential AND before app.listen(); Studio UI edits must be mirrored in seedOntology.ts or deploy reverts them.
+- [Ontology seed/load race](ontology-seed-load-race.md) — seedOntology() and loadOntology() must be sequential AND before app.listen().
+- [Studio UI as source of truth](studio-source-of-truth.md) — relations & profiles: seedOntology.ts uses onConflictDoNothing, Studio UI edits survive deploy. semanticEngine.ts: 30-sec cache with explicit invalidation via refreshOntology().
