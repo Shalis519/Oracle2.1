@@ -157,10 +157,13 @@ function lowerFirst(text: string): string {
 /* ─── Сбор семантики транзита из онтологии ─── */
 
 async function resolveTransitThemes(t: TransitAspect): Promise<string[]> {
-  const [planetThemes, signThemes, houseThemes] = await Promise.all([
+  const [planetThemes, signThemes, transitHouseThemes, natalHouseThemes] = await Promise.all([
     getEntityThemes(t.transitBody),
     getEntityThemes(t.transitSign),
-    t.natalHouse ? getEntityThemes(`Дом ${t.natalHouse}`) : Promise.resolve([]),
+    t.transitHouse ? getEntityThemes(`Дом ${t.transitHouse}`) : Promise.resolve([]),
+    t.natalHouse && t.natalHouse !== t.transitHouse
+      ? getEntityThemes(`Дом ${t.natalHouse}`)
+      : Promise.resolve([]),
   ]);
 
   const modifier = getAspectModifier(t.type);
@@ -171,7 +174,11 @@ async function resolveTransitThemes(t: TransitAspect): Promise<string[]> {
   for (const th of signThemes) {
     scoreMap.set(th.themeName, (scoreMap.get(th.themeName) ?? 0) + th.weight * 0.5 * modifier);
   }
-  for (const th of houseThemes) {
+  // Дом, по которому идёт транзитная планета, — главная сфера проявления.
+  for (const th of transitHouseThemes) {
+    scoreMap.set(th.themeName, (scoreMap.get(th.themeName) ?? 0) + th.weight * 0.8 * modifier);
+  }
+  for (const th of natalHouseThemes) {
     scoreMap.set(th.themeName, (scoreMap.get(th.themeName) ?? 0) + th.weight * 0.7 * modifier);
   }
 
@@ -216,6 +223,7 @@ async function loadTransitSemantics(t: TransitAspect): Promise<TransitSemantics>
     relation?.description?.trim() ||
       profileHasText(planetProfile) ||
       profileHasText(signProfile) ||
+      profileHasText(houseEntity?.profile ?? null) ||
       profileHasText(natalHouseProfile) ||
       themes.length > 0,
   );
@@ -258,9 +266,12 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
   const t = s.transit;
   const parts: string[] = [];
 
-  // Фактическое астрономическое вступление (механика, не контент).
+  // Фактическое астрономическое вступление — полная цепочка связи (механика, не контент):
+  // транзитная планета в знаке → идёт по натальному дому → аспект → натальная планета в знаке → в её доме.
+  const transitPath = t.transitHouse ? `, проходя по Вашему ${t.transitHouse}-му дому,` : "";
+  const natalPlace = t.natalHouse ? ` в ${t.natalHouse}-м доме` : "";
   parts.push(
-    `Сегодня ${t.transitBody} ${signInPrepositional(t.transitSign)} образует ${aspectAccusative(t.type)} с ${bodyInstrumental(t.natalBody)} ${signInPrepositional(t.natalSign)}.`,
+    `Сегодня ${t.transitBody} ${signInPrepositional(t.transitSign)}${transitPath} образует ${aspectAccusative(t.type)} с ${bodyInstrumental(t.natalBody)} ${signInPrepositional(t.natalSign)}${natalPlace}.`,
   );
 
   // Ядро смысла — описание связи, внесённое администратором.
@@ -291,8 +302,19 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
     parts.push(`Знак придаёт этому влиянию свой оттенок: ${ensureSentence(lowerFirst(signKm))}`);
   }
 
-  // Сфера жизни — дом натальной планеты.
-  if (t.natalHouse && s.natalHouseProfile) {
+  // Сфера, по которой идёт транзитная планета, — натальный дом транзита.
+  if (t.transitHouse && s.houseProfile) {
+    const thKm = s.houseProfile.keyMeanings?.trim();
+    const thTheme = s.houseProfile.lifeThemes?.[0];
+    if (thKm) {
+      parts.push(`Транзит проходит через сферу ${t.transitHouse}-го дома: ${ensureSentence(lowerFirst(thKm))}`);
+    } else if (thTheme) {
+      parts.push(`Транзит активирует сферу ${t.transitHouse}-го дома — ${thTheme.toLowerCase()}.`);
+    }
+  }
+
+  // Сфера жизни — дом натальной планеты (если это другой дом).
+  if (t.natalHouse && s.natalHouseProfile && t.natalHouse !== t.transitHouse) {
     const houseKm = s.natalHouseProfile.keyMeanings?.trim();
     const houseTheme = s.natalHouseProfile.lifeThemes?.[0];
     if (houseKm) {

@@ -260,7 +260,7 @@ export interface TransitAspect {
   transitBodySymbol: string;
   transitSign: string;        // sign of transit body today
   transitSignSymbol: string;
-  transitHouse: number | null; // house this transit body occupies today
+  transitHouse: number | null; // NATAL house the transit body is moving through today
   transitRetrograde: boolean;
   natalBody: string;
   natalBodySymbol: string;
@@ -625,7 +625,9 @@ export function computeTransits(
           transitBodySymbol: t.symbol,
           transitSign: t.sign,
           transitSignSymbol: t.signSymbol,
-          transitHouse: t.house,
+          // Дом считается по НАТАЛЬНЫМ куспидам: по какому дому натальной карты
+          // идёт транзитная планета — это основа семантической цепочки прогноза.
+          transitHouse: getHouseForLongitude(t.longitude, natalChart.houses),
           transitRetrograde: t.retrograde,
           natalBody: natalBody.name,
           natalBodySymbol: natalBody.symbol,
