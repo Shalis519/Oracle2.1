@@ -194,11 +194,30 @@ async function loadTransitSemantics(t: TransitAspect): Promise<TransitSemantics>
     ]);
 
   const planetProfile = planetEntity?.profile ?? null;
+  const signProfile = signEntity?.profile ?? null;
+  const natalHouseProfile = natalHouseEntity?.profile ?? null;
+
+  // Есть ли ХОТЬ КАКОЙ-ТО контент онтологии, из которого можно построить текст:
+  // описание связи, профиль транзитной планеты, профиль её знака, профиль дома
+  // натальной планеты или темы с весами. Честный отказ — только когда пусто всё.
+  const profileHasText = (p: EntityProfile | null): boolean =>
+    Boolean(
+      p &&
+        (p.keyMeanings?.trim() ||
+          p.keyMeaningsArr?.length ||
+          p.positiveEmotions?.length ||
+          p.negativeEmotions?.length ||
+          p.recommendations?.trim() ||
+          p.warnings?.trim() ||
+          p.lifeThemes?.length),
+    );
 
   const hasContent = Boolean(
-    (relation?.description && relation.description.trim().length > 0) ||
-      (planetProfile?.keyMeanings && planetProfile.keyMeanings.trim().length > 0) ||
-      (planetProfile?.keyMeaningsArr && planetProfile.keyMeaningsArr.length > 0),
+    relation?.description?.trim() ||
+      profileHasText(planetProfile) ||
+      profileHasText(signProfile) ||
+      profileHasText(natalHouseProfile) ||
+      themes.length > 0,
   );
 
   return {
@@ -259,6 +278,13 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
     }
   }
 
+  // Топ-темы транзита по весам (планета + знак + дом) — фокус дня.
+  const topThemes = s.themes.slice(0, 2);
+  if (topThemes.length > 0) {
+    const focus = topThemes.map((th) => th.toLowerCase()).join(" и ");
+    parts.push(`В фокусе дня — ${focus}.`);
+  }
+
   // Окраска знака транзитной планеты.
   const signKm = s.signProfile?.keyMeanings?.trim();
   if (signKm) {
@@ -303,6 +329,9 @@ function describeSecondaryTransit(s: TransitSemantics, index: number): string | 
   }
   if (s.planetProfile?.keyMeaningsArr?.length) {
     return `${head} — акцент на: ${s.planetProfile.keyMeaningsArr.slice(0, 2).join(", ").toLowerCase()}.`;
+  }
+  if (s.themes.length > 0) {
+    return `${head} — в фокусе ${s.themes[0].toLowerCase()}.`;
   }
   return null;
 }
