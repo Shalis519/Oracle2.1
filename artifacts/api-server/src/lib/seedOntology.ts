@@ -54,7 +54,14 @@ export async function seedOntology() {
       { name: "Гармония", slug: "harmony", description: "Баланс, согласованность, мир, единство" },
       { name: "Финансы", slug: "finances", description: "Деньги, имущество, инвестиции, доход" },
     ])
-    .onConflictDoNothing({ target: ontologyThemesTable.slug })
+    .onConflictDoUpdate({
+      target: ontologyThemesTable.slug,
+      set: {
+        name: sql`excluded.name`,
+        description: sql`excluded.description`,
+        updatedAt: new Date(),
+      },
+    })
     .returning();
 
   const allThemeRows = await db.select().from(ontologyThemesTable);
@@ -388,7 +395,13 @@ export async function seedOntology() {
     await db
       .insert(ontologyEntityThemesTable)
       .values(entityThemeLinks)
-      .onConflictDoNothing();
+      .onConflictDoUpdate({
+        target: [ontologyEntityThemesTable.entityId, ontologyEntityThemesTable.themeId],
+        set: {
+          weight: sql`excluded.weight`,
+          polarity: sql`excluded.polarity`,
+        },
+      });
   }
 
   // Связи между сущностями (planets → signs: rulership)
@@ -475,7 +488,13 @@ export async function seedOntology() {
     await db
       .insert(ontologyEntityRelationsTable)
       .values(relationInserts)
-      .onConflictDoNothing();
+      .onConflictDoUpdate({
+        target: [ontologyEntityRelationsTable.fromEntityId, ontologyEntityRelationsTable.toEntityId, ontologyEntityRelationsTable.relationType],
+        set: {
+          description: sql`excluded.description`,
+          weight: sql`excluded.weight`,
+        },
+      });
   }
 
   logger.info(

@@ -642,6 +642,17 @@ router.delete("/admin/ontology/entity-relations/:id", requireAuth, requireAdmin,
   res.json({ success: true });
 });
 
+/* ─── Invalidate forecast cache ─── */
+
+router.post("/admin/forecast/invalidate-cache", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
+  await db
+    .update(forecastsTable)
+    .set({ version: 0 })
+    .where(eq(forecastsTable.version, CURRENT_FORECAST_VERSION));
+  res.json({ success: true, message: "Forecast cache invalidated — next request will regenerate" });
+  return;
+});
+
 /* ─── Reseed ─── */
 
 router.post("/admin/ontology/reseed", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
