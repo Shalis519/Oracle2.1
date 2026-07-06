@@ -651,7 +651,7 @@ export class FuturisticGenerator {
       }
 
       const relation = context.aspectPlanet
-        ? findRelation(context.planet, context.aspectPlanet)
+        ? findRelation(context.planet, context.aspectPlanet, context.aspect)
         : null;
 
       const durationData = calculateTransitDuration(

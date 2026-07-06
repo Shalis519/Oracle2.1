@@ -180,7 +180,14 @@ export async function seedOntology() {
         symbol: d.symbol,
       })),
     )
-    .onConflictDoNothing({ target: ontologyEntitiesTable.code });
+    .onConflictDoUpdate({
+      target: ontologyEntitiesTable.code,
+      set: {
+        name: sql`excluded.name`,
+        symbol: sql`excluded.symbol`,
+        updatedAt: new Date(),
+      },
+    });
 
   // Query ALL entities (including pre-existing) for the map
   const allEntityRows = await db.select().from(ontologyEntitiesTable);

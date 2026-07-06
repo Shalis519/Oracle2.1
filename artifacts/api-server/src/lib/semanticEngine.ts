@@ -211,10 +211,25 @@ export function getEntityRelations(name: string): EntityRelation[] {
   return entity?.relations ?? [];
 }
 
-/** Find a relation from source to target by target name. */
-export function findRelation(sourceName: string, toEntityName: string): EntityRelation | null {
+/** Find a relation from source to target by target name and relation type.
+ *  Filters by aspect type (e.g. "тригон") so the correct description is used.
+ */
+export function findRelation(sourceName: string, toEntityName: string, relationType?: string): EntityRelation | null {
   const relations = getEntityRelations(sourceName);
-  return relations.find((r) => r.toEntityName === toEntityName) ?? null;
+  const candidates = relations.filter((r) => r.toEntityName === toEntityName);
+  if (candidates.length === 0) return null;
+  if (relationType) {
+    const exact = candidates.find((r) => r.type === relationType);
+    if (exact) return exact;
+    // Fallback: fuzzy match ignoring case and common prefix/suffix differences
+    const fuzzy = candidates.find((r) => {
+      const a = r.type.toLowerCase().replace(/aspect_/g, "").replace(/\s/g, "");
+      const b = relationType.toLowerCase().replace(/aspect_/g, "").replace(/\s/g, "");
+      return a === b;
+    });
+    if (fuzzy) return fuzzy;
+  }
+  return candidates[0] ?? null;
 }
 
 /** Check if entity exists. */

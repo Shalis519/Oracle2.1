@@ -1,8 +1,13 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "uK0oCVuIWqRql1vximZi5"
 uri = "file://artifacts/web/public/logo.png"
 type = "image"
 title = "mystical aether oracle logo"
+
+[[outputs]]
+id = "XYutFAfC2K8x99mg6xOPH"
+uri = "file://tmp/update_production_ontology.txt"
+type = "text"
+title = "SQL-скрипт для обновления Production базы"
