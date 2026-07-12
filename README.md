@@ -87,6 +87,13 @@ pnpm --filter @workspace/web run dev
   after editing `lib/api-spec/openapi.yaml`
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 
+## Local development (outside Replit)
+
+See [`LOCAL_SETUP.md`](./LOCAL_SETUP.md) for a step-by-step guide to running
+this project on your own computer (Windows, macOS, or Linux), including
+Node.js/pnpm installation, a local `.env`, and a database/auth provider that
+work outside Replit.
+
 ## Reusing this project on another Replit account
 
 1. Import this GitHub repository into the new account (Replit → Create → Import

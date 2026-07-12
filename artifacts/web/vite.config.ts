@@ -52,6 +52,20 @@ export default defineConfig({
     fs: {
       strict: true,
     },
+    // Outside Replit there is no shared reverse proxy stitching the web app
+    // and API server into one origin, so forward /api calls to the local
+    // API server ourselves. Inside Replit (REPL_ID is set) the shared proxy
+    // already handles this and requests to /api never reach Vite at all.
+    ...(process.env.REPL_ID === undefined
+      ? {
+          proxy: {
+            "/api": {
+              target: `http://localhost:${process.env.API_PORT ?? 8080}`,
+              changeOrigin: true,
+            },
+          },
+        }
+      : {}),
   },
   preview: {
     port,

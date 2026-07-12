@@ -20,3 +20,4 @@
 - [Semantic engine field naming](semantic-engine-fields.md) — in-memory relation models MUST mirror real DB column names (fromEntityId/toEntityId); never alias to sourceId/targetId or architect review flags it as a naming violation.
 - [Ontology seed/load race](ontology-seed-load-race.md) — seedOntology() and loadOntology() must be sequential AND before app.listen().
 - [Studio UI as source of truth](studio-source-of-truth.md) — relations & profiles: seedOntology.ts uses onConflictDoNothing, Studio UI edits survive deploy. semanticEngine.ts: 30-sec cache with explicit invalidation via refreshOntology().
+- [Local dev outside Replit](local-dev-outside-replit.md) — Clerk dev keys work off-Replit unmodified; proxy/CORS/PORT/preinstall must be made portable for Windows.
