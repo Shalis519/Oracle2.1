@@ -42,6 +42,12 @@ const allowedOrigins = (process.env.REPLIT_DOMAINS ?? "")
   .filter(Boolean)
   .map((d) => `https://${d}`);
 
+// Render production + local development
+allowedOrigins.push(
+  "https://aether-oracle-web.onrender.com",
+  "http://localhost:5173"
+);
+
 app.use(
   cors({
     credentials: true,
