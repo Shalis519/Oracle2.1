@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { setBaseUrl } from "@workspace/api-client-react";
-import { ClerkProvider, SignIn, SignUp, Show, useClerk } from "@clerk/react";
+import { setBaseUrl, setAuthTokenGetter } from "@workspace/api-client-react";
+import { ClerkProvider, SignIn, SignUp, Show, useClerk, useAuth } from "@clerk/react";
 import { publishableKeyFromHost } from "@clerk/react/internal";
 import { shadcn } from "@clerk/themes";
 import { Switch, Route, useLocation, Router as WouterRouter, Redirect, Link } from "wouter";
@@ -149,6 +149,22 @@ function ClerkQueryClientCacheInvalidator() {
   return null;
 }
 
+function ApiTokenInitializer() {
+  const { getToken } = useAuth();
+
+  useEffect(() => {
+    setAuthTokenGetter(async () => {
+      try {
+        return await getToken();
+      } catch {
+        return null;
+      }
+    });
+  }, [getToken]);
+
+  return null;
+}
+
 function HomeRedirect() {
   return (
     <>
@@ -206,6 +222,7 @@ function ClerkProviderWithRoutes() {
     >
       <QueryClientProvider client={queryClient}>
         <ClerkQueryClientCacheInvalidator />
+        <ApiTokenInitializer />
         <TooltipProvider>
           <Switch>
             <Route path="/" component={HomeRedirect} />
