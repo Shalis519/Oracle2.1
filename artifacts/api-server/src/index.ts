@@ -26,6 +26,16 @@ async function start(): Promise<void> {
     process.exit(1);
   }
 
+  // Public health-check endpoint — no auth required
+  // ⚠️ If your app.ts has global clerkMiddleware() applied to all routes,
+  //    move this app.get("/health", ...) BEFORE that middleware in app.ts
+  app.get("/health", (req, res) => {
+    res.status(200).json({
+      status: "ok",
+      timestamp: new Date().toISOString(),
+    });
+  });
+
   app.listen(port, (err) => {
     if (err) {
       logger.error({ err }, "Error listening on port");
