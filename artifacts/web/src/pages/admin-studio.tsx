@@ -808,9 +808,12 @@ export default function AdminStudioPage() {
       setAdminCheckLoading(false);
       return;
     }
-    apiFetch("/profile")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
+       apiFetch("/profile")
+      .then((res) => {
+        if (!res.ok) throw new Error("Not ok");
+        return res.json();
+      })
+      .then((data: any) => {
         const admin = data?.role === "admin";
         setIsAdmin(admin);
         try { localStorage.setItem("aether_is_admin", String(admin)); } catch {}
@@ -1186,25 +1189,29 @@ export default function AdminStudioPage() {
             id="gate-btn"
             className="w-full"
             disabled={!secretCode.trim() || gateLoading}
-            onClick={async () => {
+                       onClick={async () => {
               setGateError("");
               setGateLoading(true);
+              try {
               const res = await apiFetch("/profile/make-admin", {
-                method: "POST",
-                body: JSON.stringify({ secret: secretCode.trim() }),
-              });
-              setGateLoading(false);
-              if (!res.ok) {
-                const err = await res.json().catch(() => ({ error: "Ошибка" }));
-                setGateError(err.error || "Неверный код");
-                return;
-              }
-              const data = await res.json();
-              if (data.role === "admin") {
-                setIsAdmin(true);
-                try { localStorage.setItem("aether_is_admin", "true"); } catch {}
-              } else {
-                setGateError("Неверный код");
+                  method: "POST",
+                  body: JSON.stringify({ secret: secretCode.trim() }),
+                });
+                setGateLoading(false);
+                if (!res.ok) {
+                  setGateError("Неверный код админа");
+                  return;
+                }
+                const data = await res.json();
+                if (data?.role === "admin") {
+                  setIsAdmin(true);
+                  try { localStorage.setItem("aether_is_admin", "true"); } catch {}
+                } else {
+                  setGateError("Неверный код админа");
+                }
+              } catch (err: any) {
+                setGateLoading(false);
+                setGateError(err?.message || "Неверный код админа");
               }
             }}
           >
