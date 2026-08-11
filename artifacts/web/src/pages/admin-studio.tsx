@@ -110,7 +110,9 @@ interface Profile {
   materials?: string[];
 }
 
-const API = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api`;
+const API = import.meta.env.VITE_API_URL 
+  ? import.meta.env.VITE_API_URL.replace(/\/$/, "") 
+  : "https://aether-oracle-api.onrender.com/api";
 
 async function apiFetch(path: string, opts?: RequestInit) {
   const token = await (window as any).Clerk?.session?.getToken();
