@@ -1,10 +1,10 @@
-import { getAuth } from "@clerk/express";
+import { getAuth, clerkClient } from "@clerk/express";
 import type { Request, Response, NextFunction } from "express";
 import { eq } from "drizzle-orm";
 import { db, usersTable, type User } from "@workspace/db";
+import { logger } from "./logger";
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       clerkUserId?: string;
@@ -13,8 +13,6 @@ declare global {
   }
 }
 
-/** JIT-provision a local user row keyed by the Clerk user id.
- *  If no admin exists in the system, the first user becomes admin. */
 export async function getOrCreateUser(clerkUserId: string): Promise<User> {
   const [existing] = await db
     .select()
@@ -53,12 +51,32 @@ export async function requireAuth(
   next: NextFunction,
 ): Promise<void> {
   const auth = getAuth(req);
-  const clerkUserId =
-    (auth?.sessionClaims?.userId as string | undefined) || auth?.userId;
+  let clerkUserId = auth?.userId;
+
   if (!clerkUserId) {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+
+    if (token) {
+      try {
+        const payload = await clerkClient.verifyToken(token);
+        clerkUserId = payload.sub ?? null;
+        logger.info({ userId: clerkUserId }, "Bearer token verified manually");
+      } catch (err) {
+        logger.warn({ err }, "Bearer token verification failed");
+      }
+    }
+  }
+
+  if (!clerkUserId) {
+    logger.warn(
+      { path: req.path, authHeader: req.headers.authorization?.slice(0, 20) },
+      "No clerkUserId — returning 401"
+    );
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
+
   req.clerkUserId = clerkUserId;
   req.localUser = await getOrCreateUser(clerkUserId);
   next();
