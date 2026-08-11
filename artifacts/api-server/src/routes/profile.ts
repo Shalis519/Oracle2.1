@@ -7,6 +7,7 @@ import {
   UpdateProfileResponse,
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
+import { logger } from "../lib/logger";
 import { computeNatalChart, type NatalChartInput, type NatalChart } from "../lib/astrology";
 
 const router: IRouter = Router();
@@ -57,15 +58,14 @@ function serialize(user: {
   };
 }
 
-router.get("/profile", requireAuth, async (req, res): Promise<void> => {
-  res.json(GetProfileResponse.parse(serialize(req.localUser!)));
+router.get("/profile", requireAuth, async (req, res) => {
+  return res.json(GetProfileResponse.parse(serialize(req.localUser!)));
 });
 
-router.put("/profile", requireAuth, async (req, res): Promise<void> => {
+router.put("/profile", requireAuth, async (req, res) => {
   const parsed = UpdateProfileBody.safeParse(req.body);
   if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
+    return res.status(400).json({ error: parsed.error.message });
   }
 
   const [updated] = await db
@@ -74,27 +74,46 @@ router.put("/profile", requireAuth, async (req, res): Promise<void> => {
     .where(eq(usersTable.id, req.localUser!.id))
     .returning();
 
-  res.json(UpdateProfileResponse.parse(serialize(updated)));
+  return res.json(UpdateProfileResponse.parse(serialize(updated)));
 });
 
-router.post("/profile/make-admin", requireAuth, async (req, res): Promise<void> => {
+router.post("/profile/make-admin", requireAuth, async (req, res) => {
   const user = req.localUser!;
+
+  // Если уже админ — сразу возвращаем профиль, ничего не проверяя
   if (user.role === "admin") {
-    res.json(serialize(user));
-    return;
+    return res.json(serialize(user));
   }
+
+  // Защита: если админ-секрет не настроен на сервере
+  if (!process.env.ADMIN_SECRET) {
+    logger.error("ADMIN_SECRET environment variable is not set");
+    return res.status(500).json({
+      error: "Server configuration error: ADMIN_SECRET is not set. Contact developer.",
+    });
+  }
+
   const body = req.body as Record<string, unknown>;
-  const secret = typeof body.secret === "string" ? body.secret : "";
+
+  // Поддерживаем оба варианта: фронтенд может слать либо secret, либо code
+  const secret =
+    typeof body.secret === "string"
+      ? body.secret
+      : typeof body.code === "string"
+        ? body.code
+        : "";
+
   if (secret !== process.env.ADMIN_SECRET) {
-    res.status(403).json({ error: "Invalid secret code" });
-    return;
+    return res.status(403).json({ error: "Invalid secret code" });
   }
+
   const [updated] = await db
     .update(usersTable)
     .set({ role: "admin" })
     .where(eq(usersTable.id, user.id))
     .returning();
-  res.json(serialize(updated));
+
+  return res.json(serialize(updated));
 });
 
 function parseBirthTime(time: string | null): { hour: number; minute: number } {
@@ -103,11 +122,10 @@ function parseBirthTime(time: string | null): { hour: number; minute: number } {
   return { hour: Number.isFinite(h) ? h : 12, minute: Number.isFinite(m) ? m : 0 };
 }
 
-router.post("/profile/natal-chart", requireAuth, async (req, res): Promise<void> => {
+router.post("/profile/natal-chart", requireAuth, async (req, res) => {
   const user = req.localUser!;
   if (!user.birthDate || user.birthLatitude == null || user.birthLongitude == null) {
-    res.status(400).json({ error: "Заполните дату рождения и место рождения в профиле." });
-    return;
+    return res.status(400).json({ error: "Заполните дату рождения и место рождения в профиле." });
   }
   const [y, m, d] = user.birthDate.split("-").map(Number);
   const { hour, minute } = parseBirthTime(user.birthTime);
@@ -128,9 +146,9 @@ router.post("/profile/natal-chart", requireAuth, async (req, res): Promise<void>
       .set({ natalChart: chart as any })
       .where(eq(usersTable.id, user.id))
       .returning();
-    res.json({ chart: updated.natalChart });
+    return res.json({ chart: updated.natalChart });
   } catch (e) {
-    res.status(500).json({ error: "Не удалось рассчитать натальную карту." });
+    return res.status(500).json({ error: "Не удалось рассчитать натальную карту." });
   }
 });
 
