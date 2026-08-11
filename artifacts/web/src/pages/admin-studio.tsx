@@ -111,7 +111,7 @@ interface Profile {
 }
 
 const API = import.meta.env.VITE_API_URL 
-  ? import.meta.env.VITE_API_URL.replace(/\/$/, "") 
+  ? import.meta.env.VITE_API_URL.replace(/\/$/, "") + "/api"
   : "https://aether-oracle-api.onrender.com/api";
 
 async function apiFetch(path: string, opts?: RequestInit) {
