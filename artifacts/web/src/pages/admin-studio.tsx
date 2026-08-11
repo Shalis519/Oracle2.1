@@ -112,12 +112,14 @@ interface Profile {
 
 const API = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api`;
 
-function apiFetch(path: string, opts?: RequestInit) {
+async function apiFetch(path: string, opts?: RequestInit) {
+  const token = await (window as any).Clerk?.session?.getToken();
   return fetch(`${API}${path}`, {
     ...opts,
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(opts?.headers ?? {}),
     },
   });
