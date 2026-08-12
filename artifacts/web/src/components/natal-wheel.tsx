@@ -80,10 +80,7 @@ const PAD = 30;
 const R_OUTER = 300;
 const R_ZODIAC_IN = 256;
 const R_GLYPH_SIGN = 278;
-const R_HOUSE_RING = 256;
-const R_HOUSE_NUM = 238;
 const R_PLANET = 206;
-const R_TICK_OUT = R_ZODIAC_IN;
 const R_ASPECT = 168;
 const R_CUSP_LABEL = R_OUTER + 15;
 
@@ -195,16 +192,9 @@ export default function NatalWheel({
       {/* house cusps: radial guides styled like the reference chart */}
       {houses.map((h) => {
         const a = toXY(R_ASPECT, h.longitude);
-        const b = toXY(R_ZODIAC_IN, h.longitude);
+        const b = toXY(R_CUSP_LABEL - 4, h.longitude);
         const cuspLabel = toXY(R_CUSP_LABEL, h.longitude);
         const next = houses.find((x) => x.number === (h.number % 12) + 1);
-        let midLon = h.longitude + 15;
-        if (next) {
-          let span = next.longitude - h.longitude;
-          span = ((span % 360) + 360) % 360;
-          midLon = h.longitude + span / 2;
-        }
-        const numPos = toXY(R_HOUSE_NUM, midLon);
         const isAngular = h.number === 1 || h.number === 4 || h.number === 7 || h.number === 10;
         return (
           <g key={`h${h.number}`}>
@@ -217,16 +207,6 @@ export default function NatalWheel({
               strokeWidth={isAngular ? 1.35 : 0.9}
             />
             <text
-              x={numPos.x}
-              y={numPos.y}
-              textAnchor="middle"
-              dominantBaseline="central"
-              fontSize={12}
-              fill="hsl(164 15% 55%)"
-            >
-              {toRoman(h.number)}
-            </text>
-            <text
               x={cuspLabel.x}
               y={cuspLabel.y}
               textAnchor="middle"
@@ -234,7 +214,7 @@ export default function NatalWheel({
               fontSize={9}
               fill="hsl(45 42% 68% / 0.9)"
             >
-              {degreeLabel(h.degreeInSign)}
+              {toRoman(h.number)} {degreeLabel(h.degreeInSign)}
             </text>
           </g>
         );
@@ -296,12 +276,9 @@ export default function NatalWheel({
 
       {/* planets */}
       {placed.map(({ b, lon, displayLon }) => {
-        const tickOut = toXY(R_TICK_OUT, lon);
-        const tickIn = toXY(R_PLANET + 14, displayLon);
         const gpos = toXY(R_PLANET, displayLon);
         return (
           <g key={b.key}>
-            <line x1={tickOut.x} y1={tickOut.y} x2={tickIn.x} y2={tickIn.y} stroke="hsl(45 30% 60% / 0.4)" strokeWidth={0.75} />
             <text
               x={gpos.x}
               y={gpos.y}
@@ -313,8 +290,8 @@ export default function NatalWheel({
               {g(b.symbol)}
             </text>
             <text
-              x={gpos.x}
-              y={gpos.y + 14}
+              x={gpos.x + 11}
+              y={gpos.y - 9}
               textAnchor="middle"
               dominantBaseline="central"
               fontSize={8}
@@ -324,8 +301,8 @@ export default function NatalWheel({
             </text>
             {b.retrograde && (
               <text
-                x={gpos.x}
-                y={gpos.y + 25}
+                x={gpos.x + 10}
+                y={gpos.y + 12}
                 textAnchor="middle"
                 dominantBaseline="central"
                 fontSize={8}

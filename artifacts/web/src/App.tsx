@@ -213,6 +213,7 @@ function ClerkProviderWithRoutes() {
             ...ruRU.signIn?.start,
             title: "Войти в Aether Oracle",
             subtitle: "Чтобы продолжить работу в Aether Oracle",
+            dividerText: "",
           },
         },
         signUp: {
@@ -221,6 +222,7 @@ function ClerkProviderWithRoutes() {
             ...ruRU.signUp?.start,
             title: "Создать аккаунт в Aether Oracle",
             subtitle: "Начните свой путь в Aether Oracle",
+            dividerText: "",
           },
         },
       }}
