@@ -90,6 +90,7 @@ const clerkAppearance = {
     logoBox: "flex justify-center mb-4",
     logoImage: "h-16 object-contain",
     socialButtonsBlockButton: "border border-border hover:bg-muted/50",
+    socialButtonsBlockButton__github: "hidden",
     formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90",
     formFieldInput: "bg-input border-border text-foreground focus:ring-ring",
     footerAction: "mt-4",
@@ -204,7 +205,25 @@ function ClerkProviderWithRoutes() {
       appearance={clerkAppearance}
       signInUrl={`${basePath}/sign-in`}
       signUpUrl={`${basePath}/sign-up`}
-      localization={ruRU}
+      localization={{
+        ...ruRU,
+        signIn: {
+          ...ruRU.signIn,
+          start: {
+            ...ruRU.signIn?.start,
+            title: "Войти в Aether Oracle",
+            subtitle: "Чтобы продолжить работу в Aether Oracle",
+          },
+        },
+        signUp: {
+          ...ruRU.signUp,
+          start: {
+            ...ruRU.signUp?.start,
+            title: "Создать аккаунт в Aether Oracle",
+            subtitle: "Начните свой путь в Aether Oracle",
+          },
+        },
+      }}
       routerPush={(to) => setLocation(stripBase(to))}
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
     >
