@@ -106,7 +106,12 @@ export default function ProfilePage() {
     return () => clearTimeout(t);
   }, [cityQuery]);
 
-  const { data: birthCities, isFetching: isFetchingBirth } = useSearchCities(
+  const {
+    data: birthCities,
+    isFetching: isFetchingBirth,
+    isError: isBirthSearchError,
+    refetch: refetchBirthCities,
+  } = useSearchCities(
     { q: birthCityDebounced },
     {
       query: {
@@ -116,7 +121,12 @@ export default function ProfilePage() {
     },
   );
 
-  const { data: cities, isFetching } = useSearchCities(
+  const {
+    data: cities,
+    isFetching,
+    isError: isCitySearchError,
+    refetch: refetchCities,
+  } = useSearchCities(
     { q: cityDebounced },
     {
       query: {
@@ -279,6 +289,18 @@ export default function ProfilePage() {
                           <CommandEmpty>Введите минимум две буквы.</CommandEmpty>
                         ) : isFetchingBirth ? (
                           <CommandEmpty>Поиск...</CommandEmpty>
+                        ) : isBirthSearchError ? (
+                          <CommandEmpty className="flex flex-col gap-2 py-3">
+                            <span>Не удалось выполнить поиск.</span>
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => refetchBirthCities()}
+                            >
+                              Повторить
+                            </Button>
+                          </CommandEmpty>
                         ) : !birthCities || birthCities.length === 0 ? (
                           <CommandEmpty>Ничего не найдено.</CommandEmpty>
                         ) : (
@@ -360,6 +382,18 @@ export default function ProfilePage() {
                           <CommandEmpty>Введите минимум две буквы.</CommandEmpty>
                         ) : isFetching ? (
                           <CommandEmpty>Поиск...</CommandEmpty>
+                        ) : isCitySearchError ? (
+                          <CommandEmpty className="flex flex-col gap-2 py-3">
+                            <span>Не удалось выполнить поиск.</span>
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => refetchCities()}
+                            >
+                              Повторить
+                            </Button>
+                          </CommandEmpty>
                         ) : !cities || cities.length === 0 ? (
                           <CommandEmpty>Ничего не найдено.</CommandEmpty>
                         ) : (
