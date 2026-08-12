@@ -20,16 +20,9 @@ export async function getOrCreateUser(clerkUserId: string): Promise<User> {
     .where(eq(usersTable.clerkUserId, clerkUserId));
   if (existing) return existing;
 
-  const [anyAdmin] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.role, "admin"))
-    .limit(1);
-  const role = anyAdmin ? "user" : "admin";
-
   const [created] = await db
     .insert(usersTable)
-    .values({ clerkUserId, role })
+    .values({ clerkUserId, role: "user" })
     .onConflictDoNothing({ target: usersTable.clerkUserId })
     .returning();
 
