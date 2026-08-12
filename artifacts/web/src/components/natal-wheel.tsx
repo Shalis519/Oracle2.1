@@ -90,7 +90,7 @@ interface NatalWheelProps {
 const SIZE = 620;
 const C = SIZE / 2;
 // Padding around the wheel so angle labels (ASC/DSC/MC/IC) are never clipped.
-const PAD = 30;
+const PAD = 55;
 
 const R_OUTER = 300;
 const R_ZODIAC_IN = 256;
@@ -208,8 +208,8 @@ export default function NatalWheel({
 
       {/* house cusps: radial guides styled like the reference chart */}
       {houses.map((h) => {
-        const a = toXY(R_ASPECT, h.longitude);
-        const b = toXY(R_CUSP_LABEL - 4, h.longitude);
+        const a = toXY(R_ZODIAC_IN, h.longitude);
+        const b = toXY(R_CUSP_LABEL + 12, h.longitude);
         const cuspLabel = toXY(R_CUSP_LABEL, h.longitude);
         const isAngular = h.number === 1 || h.number === 4 || h.number === 7 || h.number === 10;
         return (
@@ -267,15 +267,15 @@ export default function NatalWheel({
       {angles.map((ang) => {
         const o = toXY(R_OUTER, ang.longitude);
         const inn = toXY(R_ASPECT, ang.longitude);
-        const lab = toXY(R_OUTER + 3, ang.longitude);
+        const lab = toXY(R_OUTER + 28, ang.longitude);
         const isMain = ang.key === "ascendant" || ang.key === "midheaven";
-        const isAsc = ang.key === "ascendant";
-        const isDsc = ang.key === "descendant";
-        const angleAbbr = ang.key === "ascendant"
+        const isAsc = ang.key === "ascendant" || ang.abbr === "ASC";
+        const isDsc = ang.key === "descendant" || ang.abbr === "DSC";
+        const angleAbbr = isAsc
           ? "ASC"
-          : ang.key === "descendant"
+          : isDsc
             ? "DSC"
-            : ang.key === "midheaven"
+            : ang.key === "midheaven" || ang.abbr === "MC"
               ? "MC"
               : "IC";
         return (
@@ -314,7 +314,6 @@ export default function NatalWheel({
               textAnchor="middle"
               dominantBaseline="central"
               fontSize={24}
-              fontWeight={700}
               fill="hsl(45 55% 78%)"
             >
               {g(b.symbol)}
@@ -325,7 +324,6 @@ export default function NatalWheel({
               textAnchor="middle"
               dominantBaseline="central"
               fontSize={10}
-              fontWeight={600}
               fill="hsl(45 42% 70% / 0.95)"
             >
               {degreeLabel(b.degreeInSign)}
@@ -337,7 +335,6 @@ export default function NatalWheel({
                 textAnchor="middle"
                 dominantBaseline="central"
                 fontSize={10}
-                fontWeight={700}
                 fill="hsl(45 42% 70% / 0.95)"
               >
                 R
