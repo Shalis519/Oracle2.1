@@ -41,6 +41,21 @@ const SIGN_KEYS = [
   "aquarius",
   "pisces",
 ];
+const SIGN_SECTOR_COLORS = [
+  "hsl(0 55% 38%)",
+  "hsl(112 45% 32%)",
+  "hsl(215 62% 40%)",
+  "hsl(188 55% 38%)",
+  "hsl(0 55% 38%)",
+  "hsl(112 45% 32%)",
+  "hsl(215 62% 40%)",
+  "hsl(188 55% 38%)",
+  "hsl(0 55% 38%)",
+  "hsl(112 45% 32%)",
+  "hsl(215 62% 40%)",
+  "hsl(188 55% 38%)",
+];
+
 const SIGN_SYMBOLS: Record<string, string> = {
   aries: "\u2648",
   taurus: "\u2649",
@@ -134,6 +149,20 @@ export default function NatalWheel({
     return m;
   }, [bodies]);
 
+  const annularSectorPath = (startLon: number, endLon: number) => {
+    const outerStart = toXY(R_OUTER, startLon);
+    const outerEnd = toXY(R_OUTER, endLon);
+    const innerEnd = toXY(R_ZODIAC_IN, endLon);
+    const innerStart = toXY(R_ZODIAC_IN, startLon);
+    return [
+      `M ${outerStart.x} ${outerStart.y}`,
+      `A ${R_OUTER} ${R_OUTER} 0 0 0 ${outerEnd.x} ${outerEnd.y}`,
+      `L ${innerEnd.x} ${innerEnd.y}`,
+      `A ${R_ZODIAC_IN} ${R_ZODIAC_IN} 0 0 1 ${innerStart.x} ${innerStart.y}`,
+      "Z",
+    ].join(" ");
+  };
+
   return (
     <svg
       viewBox={`${-PAD} ${-PAD} ${SIZE + PAD * 2} ${SIZE + PAD * 2}`}
@@ -156,6 +185,12 @@ export default function NatalWheel({
         const even = i % 2 === 0;
         return (
           <g key={key}>
+            <path
+              d={annularSectorPath(start, start + 30)}
+              fill={SIGN_SECTOR_COLORS[i]}
+              fillOpacity={0.52}
+              stroke="none"
+            />
             <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="hsl(45 30% 60% / 0.3)" strokeWidth={1} />
             <text
               x={mid.x}
@@ -195,7 +230,6 @@ export default function NatalWheel({
         const a = toXY(R_ASPECT, h.longitude);
         const b = toXY(R_CUSP_LABEL - 4, h.longitude);
         const cuspLabel = toXY(R_CUSP_LABEL, h.longitude);
-        const next = houses.find((x) => x.number === (h.number % 12) + 1);
         const isAngular = h.number === 1 || h.number === 4 || h.number === 7 || h.number === 10;
         return (
           <g key={`h${h.number}`}>
@@ -212,8 +246,9 @@ export default function NatalWheel({
               y={cuspLabel.y}
               textAnchor="middle"
               dominantBaseline="central"
-              fontSize={9}
-              fill="hsl(45 42% 68% / 0.9)"
+              fontSize={12}
+              fontWeight={600}
+              fill="hsl(45 42% 68% / 0.95)"
             >
               {toRoman(h.number)} {degreeLabel(h.degreeInSign)}
             </text>
@@ -247,8 +282,10 @@ export default function NatalWheel({
       {angles.map((ang) => {
         const o = toXY(R_OUTER, ang.longitude);
         const inn = toXY(R_ASPECT, ang.longitude);
-        const lab = toXY(R_OUTER + 17, ang.longitude);
+        const lab = toXY(R_OUTER + 3, ang.longitude);
         const isMain = ang.key === "ascendant" || ang.key === "midheaven";
+        const isAsc = ang.key === "ascendant";
+        const isDsc = ang.key === "descendant";
         return (
           <g key={ang.key}>
             <line
@@ -258,12 +295,11 @@ export default function NatalWheel({
               y2={o.y}
               stroke={isMain ? "hsl(45 65% 68% / 0.7)" : "hsl(45 55% 62% / 0.4)"}
               strokeWidth={isMain ? 1.5 : 1}
-              strokeDasharray="4 3"
             />
             <text
-              x={lab.x}
+              x={lab.x + (isAsc ? -5 : isDsc ? 5 : 0)}
               y={lab.y}
-              textAnchor="middle"
+              textAnchor={isAsc ? "end" : isDsc ? "start" : "middle"}
               dominantBaseline="central"
               fontSize={12}
               fontWeight={700}
@@ -285,28 +321,29 @@ export default function NatalWheel({
               y={gpos.y}
               textAnchor="middle"
               dominantBaseline="central"
-              fontSize={19}
+              fontSize={24}
               fill="hsl(45 55% 78%)"
             >
               {g(b.symbol)}
             </text>
             <text
-              x={gpos.x + 11}
-              y={gpos.y - 9}
+              x={gpos.x + 14}
+              y={gpos.y - 12}
               textAnchor="middle"
               dominantBaseline="central"
-              fontSize={8}
-              fill="hsl(45 42% 70% / 0.9)"
+              fontSize={10}
+              fontWeight={600}
+              fill="hsl(45 42% 70% / 0.95)"
             >
               {degreeLabel(b.degreeInSign)}
             </text>
             {b.retrograde && (
               <text
-                x={gpos.x + 10}
-                y={gpos.y + 12}
+                x={gpos.x + 13}
+                y={gpos.y + 16}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize={8}
+                fontSize={10}
                 fontWeight={700}
                 fill="hsl(0 60% 65% / 0.9)"
               >
