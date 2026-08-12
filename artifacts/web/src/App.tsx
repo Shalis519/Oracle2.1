@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { setBaseUrl, setAuthTokenGetter } from "@workspace/api-client-react";
 import { ClerkProvider, SignIn, SignUp, Show, useClerk, useAuth } from "@clerk/react";
+import { ruRU } from "@clerk/localizations";
 import { publishableKeyFromHost } from "@clerk/react/internal";
 import { shadcn } from "@clerk/themes";
 import { Switch, Route, useLocation, Router as WouterRouter, Redirect, Link } from "wouter";
@@ -203,20 +204,7 @@ function ClerkProviderWithRoutes() {
       appearance={clerkAppearance}
       signInUrl={`${basePath}/sign-in`}
       signUpUrl={`${basePath}/sign-up`}
-      localization={{
-        signIn: {
-          start: {
-            title: "С возвращением",
-            subtitle: "Войдите, чтобы открыть Оракул",
-          },
-        },
-        signUp: {
-          start: {
-            title: "Создать аккаунт",
-            subtitle: "Начните свой путь",
-          },
-        },
-      }}
+      localization={ruRU}
       routerPush={(to) => setLocation(stripBase(to))}
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
     >
