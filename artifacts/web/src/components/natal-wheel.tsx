@@ -206,25 +206,6 @@ export default function NatalWheel({
         );
       })}
 
-      {/* degree ticks every 5 / 10 degrees on the zodiac inner edge */}
-      {Array.from({ length: 72 }).map((_, i) => {
-        const lon = i * 5;
-        const major = i % 6 === 0;
-        const o = toXY(R_ZODIAC_IN, lon);
-        const inn = toXY(R_ZODIAC_IN - (major ? 10 : 5), lon);
-        return (
-          <line
-            key={`t${i}`}
-            x1={o.x}
-            y1={o.y}
-            x2={inn.x}
-            y2={inn.y}
-            stroke="hsl(45 30% 60% / 0.25)"
-            strokeWidth={major ? 1 : 0.5}
-          />
-        );
-      })}
-
       {/* house cusps: radial guides styled like the reference chart */}
       {houses.map((h) => {
         const a = toXY(R_ASPECT, h.longitude);
@@ -290,6 +271,13 @@ export default function NatalWheel({
         const isMain = ang.key === "ascendant" || ang.key === "midheaven";
         const isAsc = ang.key === "ascendant";
         const isDsc = ang.key === "descendant";
+        const angleAbbr = ang.key === "ascendant"
+          ? "ASC"
+          : ang.key === "descendant"
+            ? "DSC"
+            : ang.key === "midheaven"
+              ? "MC"
+              : "IC";
         return (
           <g key={ang.key}>
             <line
@@ -309,7 +297,7 @@ export default function NatalWheel({
               fontWeight={700}
               fill={isMain ? "hsl(45 65% 72%)" : "hsl(45 40% 62%)"}
             >
-              {ang.abbr} {degreeLabel(ang.degreeInSign)}
+              {angleAbbr} {degreeLabel(ang.degreeInSign)}
             </text>
           </g>
         );
@@ -326,6 +314,7 @@ export default function NatalWheel({
               textAnchor="middle"
               dominantBaseline="central"
               fontSize={24}
+              fontWeight={700}
               fill="hsl(45 55% 78%)"
             >
               {g(b.symbol)}
@@ -349,7 +338,7 @@ export default function NatalWheel({
                 dominantBaseline="central"
                 fontSize={10}
                 fontWeight={700}
-                fill="hsl(0 60% 65% / 0.9)"
+                fill="hsl(45 42% 70% / 0.95)"
               >
                 R
               </text>
