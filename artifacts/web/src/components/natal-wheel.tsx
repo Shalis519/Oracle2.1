@@ -233,25 +233,29 @@ export default function NatalWheel({
         const isAngular = h.number === 1 || h.number === 4 || h.number === 7 || h.number === 10;
         return (
           <g key={`h${h.number}`}>
-            <line
-              x1={a.x}
-              y1={a.y}
-              x2={b.x}
-              y2={b.y}
-              stroke={isAngular ? "hsl(320 48% 72% / 0.62)" : "hsl(320 35% 68% / 0.48)"}
-              strokeWidth={isAngular ? 1.35 : 0.9}
-            />
-            <text
-              x={cuspLabel.x}
-              y={cuspLabel.y}
-              textAnchor="middle"
-              dominantBaseline="central"
-              fontSize={12}
-              fontWeight={600}
-              fill="hsl(45 42% 68% / 0.95)"
-            >
-              {toRoman(h.number)} {degreeLabel(h.degreeInSign)}
-            </text>
+            {!isAngular && (
+              <>
+                <line
+                  x1={a.x}
+                  y1={a.y}
+                  x2={b.x}
+                  y2={b.y}
+                  stroke="hsl(320 35% 68% / 0.48)"
+                  strokeWidth={0.9}
+                />
+                <text
+                  x={cuspLabel.x}
+                  y={cuspLabel.y}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={12}
+                  fontWeight={600}
+                  fill="hsl(45 42% 68% / 0.95)"
+                >
+                  {toRoman(h.number)} {degreeLabel(h.degreeInSign)}
+                </text>
+              </>
+            )}
           </g>
         );
       })}
