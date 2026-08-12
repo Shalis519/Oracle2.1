@@ -119,8 +119,7 @@ export interface JiFuWish {
 /**
  * Scan an N-day window × 12 double-hours. For every double-hour, the Ji Fu sits in
  * its hour-sector; strength counts how many of {год, месяц, день, час} share that
- * sector. Cards are emitted when strength ≥ 2 (the hour plus at least one larger
- * scale), sorted strongest-first then chronologically.
+ * sector. Cards are emitted when strength ≥ 2 (the hour plus at least one larger scale), then shown in chronological order.
  */
 export function computeJiFuWishes(from: Date, days: number): JiFuWish[] {
   const start = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
@@ -161,7 +160,6 @@ export function computeJiFuWishes(from: Date, days: number): JiFuWish[] {
   }
 
   wishes.sort((a, b) =>
-    b.strength - a.strength ||
     a.date.localeCompare(b.date) ||
     a.hourBranch - b.hourBranch,
   );
