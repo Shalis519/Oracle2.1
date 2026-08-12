@@ -25,6 +25,7 @@ const ROMAN = [
   "XII",
 ];
 const toRoman = (n: number) => ROMAN[n - 1] ?? String(n);
+const degreeLabel = (value: string) => value.split(" ")[0] ?? value;
 
 const SIGN_KEYS = [
   "aries",
@@ -84,6 +85,7 @@ const R_HOUSE_NUM = 238;
 const R_PLANET = 206;
 const R_TICK_OUT = R_ZODIAC_IN;
 const R_ASPECT = 168;
+const R_CUSP_LABEL = R_OUTER + 15;
 
 export default function NatalWheel({
   bodies,
@@ -190,10 +192,11 @@ export default function NatalWheel({
         );
       })}
 
-      {/* house cusps */}
+      {/* house cusps: radial guides styled like the reference chart */}
       {houses.map((h) => {
         const a = toXY(R_ASPECT, h.longitude);
-        const b = toXY(R_HOUSE_RING, h.longitude);
+        const b = toXY(R_ZODIAC_IN, h.longitude);
+        const cuspLabel = toXY(R_CUSP_LABEL, h.longitude);
         const next = houses.find((x) => x.number === (h.number % 12) + 1);
         let midLon = h.longitude + 15;
         if (next) {
@@ -210,8 +213,8 @@ export default function NatalWheel({
               y1={a.y}
               x2={b.x}
               y2={b.y}
-              stroke={isAngular ? "hsl(45 55% 60% / 0.6)" : "hsl(45 30% 60% / 0.45)"}
-              strokeWidth={isAngular ? 1.5 : 1}
+              stroke={isAngular ? "hsl(320 48% 72% / 0.62)" : "hsl(320 35% 68% / 0.48)"}
+              strokeWidth={isAngular ? 1.35 : 0.9}
             />
             <text
               x={numPos.x}
@@ -222,6 +225,16 @@ export default function NatalWheel({
               fill="hsl(164 15% 55%)"
             >
               {toRoman(h.number)}
+            </text>
+            <text
+              x={cuspLabel.x}
+              y={cuspLabel.y}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={9}
+              fill="hsl(45 42% 68% / 0.9)"
+            >
+              {degreeLabel(h.degreeInSign)}
             </text>
           </g>
         );
@@ -275,7 +288,7 @@ export default function NatalWheel({
               fontWeight={700}
               fill={isMain ? "hsl(45 65% 72%)" : "hsl(45 40% 62%)"}
             >
-              {ang.abbr}
+              {ang.abbr} {degreeLabel(ang.degreeInSign)}
             </text>
           </g>
         );
@@ -299,14 +312,25 @@ export default function NatalWheel({
             >
               {g(b.symbol)}
             </text>
+            <text
+              x={gpos.x}
+              y={gpos.y + 14}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={8}
+              fill="hsl(45 42% 70% / 0.9)"
+            >
+              {degreeLabel(b.degreeInSign)}
+            </text>
             {b.retrograde && (
               <text
-                x={gpos.x + 13}
-                y={gpos.y - 9}
+                x={gpos.x}
+                y={gpos.y + 25}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize={9}
-                fill="hsl(0 60% 65%)"
+                fontSize={8}
+                fontWeight={700}
+                fill="hsl(0 60% 65% / 0.9)"
               >
                 R
               </text>
