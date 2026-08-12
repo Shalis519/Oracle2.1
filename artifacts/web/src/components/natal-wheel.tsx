@@ -80,6 +80,7 @@ const PAD = 30;
 const R_OUTER = 300;
 const R_ZODIAC_IN = 256;
 const R_GLYPH_SIGN = 278;
+const R_HOUSE_NUM = 238;
 const R_PLANET = 206;
 const R_ASPECT = 168;
 const R_CUSP_LABEL = R_OUTER + 15;
