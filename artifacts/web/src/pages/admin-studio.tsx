@@ -110,9 +110,8 @@ interface Profile {
   materials?: string[];
 }
 
-const API = import.meta.env.VITE_API_URL 
-  ? import.meta.env.VITE_API_URL.replace(/\/$/, "") + "/api"
-  : "https://aether-oracle-api.onrender.com/api";
+// Oracle Studio always uses the production API service, never the static Web origin.
+const API = "https://aether-oracle-api.onrender.com/api";
 
 async function apiFetch(path: string, opts?: RequestInit) {
   const token = await (window as any).Clerk?.session?.getToken();
