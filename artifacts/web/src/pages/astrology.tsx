@@ -74,8 +74,11 @@ export default function AstrologyPage() {
     10: "midheaven",
   };
   const displayedAspects = chart?.aspects.filter(
-    (a) => a.body1 !== "northnode" && a.body1 !== "southnode" &&
-      a.body2 !== "northnode" && a.body2 !== "southnode"
+    (a) =>
+      a.body1Symbol !== "☊" &&
+      a.body1Symbol !== "☋" &&
+      a.body2Symbol !== "☊" &&
+      a.body2Symbol !== "☋"
   ) ?? [];
 
   if (isMissingData) {

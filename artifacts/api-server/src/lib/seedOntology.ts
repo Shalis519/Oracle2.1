@@ -522,7 +522,7 @@ export async function seedOntology() {
     await db
       .insert(motivationPhrasesTable)
       .values(phrases.map((phrase) => ({ phrase, isActive: true })))
-      .onConflictDoNothing();
+      .onConflictDoNothing({ target: motivationPhrasesTable.phrase });
   }
 
   logger.info(
