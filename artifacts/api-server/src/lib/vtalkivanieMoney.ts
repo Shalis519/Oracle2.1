@@ -177,7 +177,8 @@ function sectorsForDate(date: Date): { stars: MoneyStarSector[]; warning: string
     }
   }
   const annualNine = annual.get(9);
-  if (targets.length < 3 && annualNine && annualNine !== "Центр") {
+  const hasMonthlyReplacement = targets.some((star) => star.source === "месячная");
+  if (hasMonthlyReplacement && annualNine && annualNine !== "Центр") {
     targets.push(starAtDirection(9, annualNine, "годовая"));
     warnings.push("Добавлен резервный сектор годовой звезды 9");
   }
