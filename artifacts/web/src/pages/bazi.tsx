@@ -306,14 +306,16 @@ export default function BaziPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">Цель: увеличить денежные поступления.</p>
+              <p className="text-sm text-muted-foreground">Используйте малый или большой тайчи.</p>
               <p className="text-sm leading-relaxed">
                 {vtalkivanieMoney.daysUntil === 0
                   ? `Сегодня (${formatDate(vtalkivanieMoney.date)}) - день активации`
                   : `${formatDate(vtalkivanieMoney.date)} (через ${vtalkivanieMoney.daysUntil} дн.) - день активации`}.
                 Подходящий день - {vtalkivanieMoney.dayAnimal}.
               </p>
-              <p className="text-sm text-muted-foreground">
-                Подходящие ветви по карте рождения: {vtalkivanieMoney.daySources.join(", ")}.
+              <p className="text-sm leading-relaxed">
+                Одновременно установите три активатора максимально близко к внешним стенам помещения на высоте 70-100 см от пола.
               </p>
               <div>
                 <p className="text-sm font-medium mb-1">Сектора и активаторы:</p>
@@ -326,17 +328,16 @@ export default function BaziPage() {
                 </ul>
               </div>
               <div>
-                <p className="text-sm font-medium mb-1">Строго подходящие часы:</p>
+                <p className="text-sm font-medium mb-1">Подходящие часы (двухчасовки):</p>
                 <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
                   {vtalkivanieMoney.hours.map((hour) => (
-                    <li key={hour.animal}>{hour.animal} ({hour.period})</li>
+                    <li key={hour.animal}>{hour.animal} ({hour.period}) - {hour.reason}</li>
                   ))}
                 </ul>
               </div>
               {vtalkivanieMoney.warning && (
                 <p className="text-sm text-amber-200/90">{vtalkivanieMoney.warning}</p>
               )}
-              <p className="text-sm leading-relaxed">{vtalkivanieMoney.instruction}</p>
               {vtalkivanieMoney.daysUntil > 0 && (
                 <p className="text-sm text-amber-200/90">Подготовьтесь заранее: активация состоится через {vtalkivanieMoney.daysUntil} дн.</p>
               )}

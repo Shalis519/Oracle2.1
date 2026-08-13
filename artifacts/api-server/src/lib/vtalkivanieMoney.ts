@@ -13,19 +13,19 @@ const MONTHS = [
   "июля", "августа", "сентября", "октября", "ноября", "декабря",
 ];
 const PERIODS = [
-  "23:00–01:00", "01:00–03:00", "03:00–05:00", "05:00–07:00",
-  "07:00–09:00", "09:00–11:00", "11:00–13:00", "13:00–15:00",
-  "15:00–17:00", "17:00–19:00", "19:00–21:00", "21:00–23:00",
+  "23:00-01:00", "01:00-03:00", "03:00-05:00", "05:00-07:00",
+  "07:00-09:00", "09:00-11:00", "11:00-13:00", "13:00-15:00",
+  "15:00-17:00", "17:00-19:00", "19:00-21:00", "21:00-23:00",
 ];
 const SECTOR_DEGREES: Record<string, string> = {
-  Север: "337,5°–22,5°",
-  "Северо-восток": "22,5°–67,5°",
-  Восток: "67,5°–112,5°",
-  "Юго-восток": "112,5°–157,5°",
-  Юг: "157,5°–202,5°",
-  "Юго-запад": "202,5°–247,5°",
-  Запад: "247,5°–292,5°",
-  "Северо-запад": "292,5°–337,5°",
+  Север: "337,5°-22,5°",
+  "Северо-восток": "22,5°-67,5°",
+  Восток: "67,5°-112,5°",
+  "Юго-восток": "112,5°-157,5°",
+  Юг: "157,5°-202,5°",
+  "Юго-запад": "202,5°-247,5°",
+  Запад: "247,5°-292,5°",
+  "Северо-запад": "292,5°-337,5°",
 };
 
 // Земная ветвь года или дня рождения -> ветвь дня активации из PDF.
@@ -45,10 +45,9 @@ const MONEY_DAY_BY_BIRTH_BRANCH: Record<number, number> = {
 };
 
 const STAR_ACTIVATORS: Record<number, string> = {
-  1: "фонтанчик / вода",
-  6: "вентилятор / металл",
-  8: "свеча / земля",
-  9: "свеча / огонь",
+  1: "фонтанчик",
+  6: "вентилятор",
+  8: "свеча",
 };
 
 export interface MoneyStarSector {
@@ -151,7 +150,7 @@ function strictHours(date: Date, natalBranches: number[]): MoneyActivationHour[]
     result.push({
       animal: ANIMALS[hourBranch],
       period: PERIODS[hourBranch],
-      reason: "без пустоты и столкновений с днём, месяцем и натальной картой",
+      reason: "подходит: нет пустоты и столкновений с днём, месяцем и натальной картой",
     });
   }
   return result;
@@ -176,12 +175,6 @@ function sectorsForDate(date: Date): { stars: MoneyStarSector[]; warning: string
     } else if (annualDirection) {
       targets.push(starAtDirection(number, annualDirection, "годовая"));
     }
-  }
-  const annualNine = annual.get(9);
-  const hasMonthlyReplacement = targets.some((star) => star.source === "месячная");
-  if (hasMonthlyReplacement && annualNine && annualNine !== "Центр") {
-    targets.push(starAtDirection(9, annualNine, "годовая"));
-    warnings.push("Добавлен резервный сектор годовой звезды 9");
   }
   return { stars: targets, warning: warnings.length ? warnings.join(". ") + "." : null };
 }
