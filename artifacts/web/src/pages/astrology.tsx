@@ -68,6 +68,14 @@ export default function AstrologyPage() {
 
   const isMissingData = errStatus === 400 || !chart;
   const angleKeyByHouse: Record<number, string> = { 1: "asc", 4: "ic", 7: "dsc", 10: "mc" };
+  const displayedAspects = chart?.aspects.filter(
+    (a) =>
+      !(
+        a.typeKey === "opposition" &&
+        ((a.body1 === "northnode" && a.body2 === "southnode") ||
+          (a.body1 === "southnode" && a.body2 === "northnode"))
+      )
+  ) ?? [];
 
   if (isMissingData) {
     return (
@@ -207,23 +215,23 @@ export default function AstrologyPage() {
             <CardTitle className="font-serif text-lg">Аспекты</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            {chart.aspects.length === 0 ? (
+            {displayedAspects.length === 0 ? (
               <p className="px-4 py-3 text-sm text-muted-foreground">
                 Значимых аспектов не найдено.
               </p>
             ) : (
               <div className="divide-y divide-border max-h-[420px] overflow-y-auto">
-                {chart.aspects.map((a, i) => (
+                {displayedAspects.map((a, i) => (
                   <div
                     key={i}
                     className="flex items-center justify-between px-4 py-2 text-sm"
                   >
                     <span className="flex items-center gap-1.5">
-                      <span className="text-primary text-base w-5 text-center">
+                      <span className={`text-primary w-5 text-center ${a.body1 === "sun" ? "text-xl" : "text-base"}`}>
                         {glyph(a.body1Symbol)}
                       </span>
                       <span className="text-muted-foreground">{glyph(a.typeSymbol)}</span>
-                      <span className="text-primary text-base w-5 text-center">
+                      <span className={`text-primary w-5 text-center ${a.body2 === "sun" ? "text-xl" : "text-base"}`}>
                         {glyph(a.body2Symbol)}
                       </span>
                     </span>
