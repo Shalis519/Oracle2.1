@@ -368,7 +368,7 @@ export default function BaziPage() {
                 Сектор: <span className="font-semibold text-sky-200">{personalPostHorse.mountain}</span> ({personalPostHorse.degrees}).
               </p>
               <p className="text-sm leading-relaxed">
-                Разместите на внешней стене указанного сектора в указанный час изображение {personalPostHorse.image.toLowerCase()}, мордой к входной двери помещения. Картинка должна висеть на высоте 70-100 см.
+                Разместите на внешней стене указанного сектора в указанный час изображение {personalPostHorse.image.toLowerCase()}, мордой к входной двери помещения. Картинка должна висеть на уровне глаз.
               </p>
               <div>
                 <p className="text-sm font-medium mb-1">Подходящие часы:</p>
