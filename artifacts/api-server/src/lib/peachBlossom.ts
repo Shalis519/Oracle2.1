@@ -256,7 +256,7 @@ function formatDate(d: Date): string {
   return `${d.getDate()} ${MONTHS_RU[d.getMonth()]} (${weekday})`;
 }
 
-/** Builds the (day, hour) activation pairs over the next `daysAhead` days. */
+/** Builds activation pairs from today through the next `daysAhead - 1` calendar days. */
 function buildDayHourPairs(
   animal: PeachAnimal,
   natalBranchIdxs: number[],
@@ -267,7 +267,7 @@ function buildDayHourPairs(
   const validDays = validDayBranches(pbIdx, natalBranchIdxs);
   const pairs: PeachPair[] = [];
 
-  for (let i = 1; i <= daysAhead; i++) {
+  for (let i = 0; i < daysAhead; i++) {
     const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
     let dayBranchIdx: number;
     let curYearIdx: number;
