@@ -307,6 +307,7 @@ export default function BaziPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm leading-relaxed">Цель: увеличить денежные поступления.</p>
+              <p className="text-sm leading-relaxed">Ваши дни вталкивания денег - {vtalkivanieMoney.daySources.join(", ")}.</p>
               <p className="text-sm text-muted-foreground">Используйте малый или большой тайчи.</p>
               <p className="text-sm leading-relaxed">
                 {vtalkivanieMoney.daysUntil === 0
@@ -330,7 +331,7 @@ export default function BaziPage() {
                 <p className="text-sm font-medium mb-1">Подходящие часы (двухчасовки):</p>
                 <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
                   {vtalkivanieMoney.hours.map((hour) => (
-                    <li key={hour.animal}>{hour.animal} ({hour.period}) - {hour.reason}</li>
+                    <li key={hour.animal}>{hour.animal} ({hour.period})</li>
                   ))}
                 </ul>
               </div>
