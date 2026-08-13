@@ -1,5 +1,4 @@
-import { getAuth } from "@clerk/express";
-import { verifyToken } from "@clerk/backend";
+import { getAuth, verifyToken } from "@clerk/express";
 import type { Request, Response, NextFunction } from "express";
 import { eq } from "drizzle-orm";
 import { db, usersTable, type User } from "@workspace/db";
