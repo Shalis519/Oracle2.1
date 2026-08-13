@@ -98,7 +98,9 @@ const R_GLYPH_SIGN = 278;
 const R_HOUSE_NUM = 238;
 const R_PLANET = 206;
 const R_ASPECT = 168;
-const R_CUSP_LABEL = R_OUTER + 15;
+const R_CUSP_LINE_END = R_OUTER + 15;
+const R_CUSP_TEXT = R_CUSP_LINE_END + 18;
+const ANGLE_STROKE_WIDTH = 1.5;
 
 export default function NatalWheel({
   bodies,
@@ -211,8 +213,8 @@ export default function NatalWheel({
         // Угловые куспиды уже покрываются линиями ASC/DSC/MC/IC;
         // остальные линии идут непрерывно от внутреннего круга наружу.
         const a = toXY(R_ASPECT, h.longitude);
-        const b = toXY(R_CUSP_LABEL + 12, h.longitude);
-        const cuspLabel = toXY(R_CUSP_LABEL, h.longitude);
+        const b = toXY(R_CUSP_LINE_END, h.longitude);
+        const cuspLabel = toXY(R_CUSP_TEXT, h.longitude);
         const isAngular = h.number === 1 || h.number === 4 || h.number === 7 || h.number === 10;
         return (
           <g key={`h${h.number}`}>
@@ -232,7 +234,7 @@ export default function NatalWheel({
                   textAnchor="middle"
                   dominantBaseline="central"
                   fontSize={12}
-                      fill="hsl(45 42% 68% / 0.95)"
+                  fill="hsl(45 42% 68% / 0.95)"
                 >
                   {toRoman(h.number)} {degreeLabel(h.degreeInSign)}
                 </text>
@@ -266,9 +268,9 @@ export default function NatalWheel({
 
       {/* angle markers (ASC / DSC / MC / IC) */}
       {angles.map((ang) => {
-        const o = toXY(R_OUTER, ang.longitude);
+        const lineEnd = toXY(R_CUSP_LINE_END, ang.longitude);
         const inn = toXY(R_ASPECT, ang.longitude);
-        const lab = toXY(R_OUTER + 20, ang.longitude);
+        const lab = toXY(R_CUSP_TEXT, ang.longitude);
         const isMain = ang.key === "ascendant" || ang.key === "midheaven";
         const isAsc = ang.key === "ascendant" || ang.abbr === "ASC";
         const isDsc = ang.key === "descendant" || ang.abbr === "DSC";
@@ -284,10 +286,10 @@ export default function NatalWheel({
             <line
               x1={inn.x}
               y1={inn.y}
-              x2={o.x}
-              y2={o.y}
+              x2={lineEnd.x}
+              y2={lineEnd.y}
               stroke={isMain ? "hsl(45 65% 68% / 0.7)" : "hsl(45 55% 62% / 0.4)"}
-              strokeWidth={isMain ? 1.5 : 1}
+              strokeWidth={ANGLE_STROKE_WIDTH}
             />
             <text
               x={lab.x + (isAsc ? -5 : isDsc ? 5 : 0)}
