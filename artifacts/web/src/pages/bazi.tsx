@@ -310,8 +310,8 @@ export default function BaziPage() {
               <p className="text-sm text-muted-foreground">Используйте малый или большой тайчи.</p>
               <p className="text-sm leading-relaxed">
                 {vtalkivanieMoney.daysUntil === 0
-                  ? `Дата (сегодня): ${formatDate(vtalkivanieMoney.date)} - день активации.`
-                  : `Дата (через ${vtalkivanieMoney.daysUntil} дн.): ${formatDate(vtalkivanieMoney.date)} - день активации.`}
+                  ? `${formatDate(vtalkivanieMoney.date)} (сегодня)`
+                  : `${formatDate(vtalkivanieMoney.date)} (через ${vtalkivanieMoney.daysUntil} дн.)`}
               </p>
               <p className="text-sm leading-relaxed">
                 Одновременно установите три активатора максимально близко к внешним стенам помещения на высоте 70-100 см от пола.
@@ -334,9 +334,6 @@ export default function BaziPage() {
                   ))}
                 </ul>
               </div>
-              {vtalkivanieMoney.warning && (
-                <p className="text-sm text-amber-200/90">{vtalkivanieMoney.warning}</p>
-              )}
               {vtalkivanieMoney.daysUntil > 0 && (
                 <p className="text-sm text-amber-200/90">Подготовьтесь заранее: активация состоится через {vtalkivanieMoney.daysUntil} дн.</p>
               )}
