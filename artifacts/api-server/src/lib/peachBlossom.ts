@@ -408,6 +408,20 @@ const ACTIVATION: PeachActivation = {
  * birth-year and birth-day Earthly Branches (via lunar-typescript, so solar-term
  * boundaries are respected). Returns null on malformed/out-of-range dates.
  */
+export function hasPeachActivationOnDate(
+  birthDate: string,
+  birthTime: string | null,
+  date: string,
+): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(date);
+  if (!match) return false;
+  const target = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0);
+  const result = computePeachBlossom(birthDate, birthTime, target);
+  if (!result) return false;
+  const label = formatDate(target);
+  return result.favorableDays.some((day) => day.pairs.some((pair) => pair.date === label));
+}
+
 export function computePeachBlossom(
   birthDate: string,
   birthTime: string | null,

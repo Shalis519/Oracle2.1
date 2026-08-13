@@ -16,8 +16,14 @@ import {
   DeleteNotepadItemParams,
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
-import { todayString, isSpendingDay } from "../lib/oracle";
+import {
+  todayString,
+  isSpendingDay,
+  computeNobleHelperActivation,
+} from "../lib/oracle";
 import { getActivationsForDate } from "../lib/data/activations";
+import { hasPeachActivationOnDate } from "../lib/peachBlossom";
+import { computeVtalkivanieActivation } from "../lib/vtalkivanie";
 import { daysUntilBirthday } from "../lib/dates";
 
 const router: IRouter = Router();
@@ -56,6 +62,35 @@ async function buildAutoItems(
       refKey: "spending",
       text: "День трат: запланируйте добровольные траты, подробности во вкладке Бацзы",
     });
+  }
+
+  if (birthDate) {
+    if (hasPeachActivationOnDate(birthDate, birthTime, date)) {
+      auto.push({
+        source: "bazi-peach",
+        refKey: "peach",
+        text: "Цветок Персика: проведите активацию сегодня, подробности во вкладке Бацзы",
+      });
+    }
+
+    const reminderDate = new Date(`${date}T12:00:00`);
+    const noble = computeNobleHelperActivation(birthDate, birthTime, reminderDate);
+    if (noble?.date === date) {
+      auto.push({
+        source: "bazi-noble",
+        refKey: "noble",
+        text: "Благородный помощник: проведите активацию сегодня, подробности во вкладке Бацзы",
+      });
+    }
+
+    const vtalkivanie = computeVtalkivanieActivation(birthDate, birthTime, reminderDate);
+    if (vtalkivanie?.date === date) {
+      auto.push({
+        source: "bazi-vtalkivanie",
+        refKey: "vtalkivanie",
+        text: "Вталкивание людей: проведите активацию сегодня, подробности во вкладке Бацзы",
+      });
+    }
   }
 
   const contacts = await db
@@ -98,6 +133,9 @@ async function reconcileAutoItems(
           "activation",
           "birthday",
           "spending",
+          "bazi-peach",
+          "bazi-noble",
+          "bazi-vtalkivanie",
         ]),
       ),
     );
