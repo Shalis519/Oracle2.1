@@ -138,11 +138,11 @@ export default function AstrologyPage() {
                     className="flex items-center justify-between px-4 py-2 text-sm"
                   >
                     <span className="flex items-center gap-2">
-                      <span className="relative inline-flex items-center justify-center w-5 text-lg text-primary [text-shadow:0_0_0_currentColor] [-webkit-text-stroke:0.35px_currentColor]">
+                      <span className={`relative inline-flex items-center justify-center w-5 text-primary ${b.key === "sun" ? "text-xl" : "text-lg"}`}>
                         {glyph(b.symbol)}
                         {b.retrograde && (
                           <span
-                            className="absolute left-[calc(100%-1px)] top-[calc(50%+5px)] text-[9px] leading-none font-normal text-muted-foreground"
+                            className="absolute left-[calc(100%-1px)] top-[calc(50%+5px)] text-[6px] leading-none font-normal text-muted-foreground"
                             aria-label="Ретроградное движение"
                           >
                             R

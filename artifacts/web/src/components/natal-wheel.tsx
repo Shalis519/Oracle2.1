@@ -318,10 +318,10 @@ export default function NatalWheel({
               y={gpos.y}
               textAnchor="middle"
               dominantBaseline="central"
-              fontSize={24}
+              fontSize={b.key === "sun" ? 27 : 24}
               fill="hsl(45 55% 78%)"
               stroke="hsl(45 55% 78%)"
-              strokeWidth={0.55}
+              strokeWidth={0.25}
               paintOrder="stroke"
             >
               {g(b.symbol)}
