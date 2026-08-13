@@ -90,7 +90,7 @@ interface NatalWheelProps {
 const SIZE = 620;
 const C = SIZE / 2;
 // Padding around the wheel so angle labels (ASC/DSC/MC/IC) are never clipped.
-const PAD = 55;
+const PAD = 90;
 
 const R_OUTER = 300;
 const R_ZODIAC_IN = 256;
@@ -208,7 +208,9 @@ export default function NatalWheel({
 
       {/* house cusps: radial guides styled like the reference chart */}
       {houses.map((h) => {
-        const a = toXY(R_ZODIAC_IN, h.longitude);
+        // Угловые куспиды уже покрываются линиями ASC/DSC/MC/IC;
+        // остальные линии идут непрерывно от внутреннего круга наружу.
+        const a = toXY(R_ASPECT, h.longitude);
         const b = toXY(R_CUSP_LABEL + 12, h.longitude);
         const cuspLabel = toXY(R_CUSP_LABEL, h.longitude);
         const isAngular = h.number === 1 || h.number === 4 || h.number === 7 || h.number === 10;
@@ -230,8 +232,7 @@ export default function NatalWheel({
                   textAnchor="middle"
                   dominantBaseline="central"
                   fontSize={12}
-                  fontWeight={600}
-                  fill="hsl(45 42% 68% / 0.95)"
+                      fill="hsl(45 42% 68% / 0.95)"
                 >
                   {toRoman(h.number)} {degreeLabel(h.degreeInSign)}
                 </text>
@@ -267,7 +268,7 @@ export default function NatalWheel({
       {angles.map((ang) => {
         const o = toXY(R_OUTER, ang.longitude);
         const inn = toXY(R_ASPECT, ang.longitude);
-        const lab = toXY(R_OUTER + 28, ang.longitude);
+        const lab = toXY(R_OUTER + 20, ang.longitude);
         const isMain = ang.key === "ascendant" || ang.key === "midheaven";
         const isAsc = ang.key === "ascendant" || ang.abbr === "ASC";
         const isDsc = ang.key === "descendant" || ang.abbr === "DSC";
@@ -315,6 +316,9 @@ export default function NatalWheel({
               dominantBaseline="central"
               fontSize={24}
               fill="hsl(45 55% 78%)"
+              stroke="hsl(45 55% 78%)"
+              strokeWidth={0.55}
+              paintOrder="stroke"
             >
               {g(b.symbol)}
             </text>
