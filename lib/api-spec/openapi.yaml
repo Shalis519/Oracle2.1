@@ -2519,6 +2519,89 @@ components:
         interpretation:
           type: string
 
+    LunarReturnLocation:
+      type: object
+      required: [city, latitude, longitude, timezone, source]
+      properties:
+        city:
+          type: [string, "null"]
+        latitude:
+          type: number
+        longitude:
+          type: number
+        timezone:
+          type: [string, "null"]
+        source:
+          type: string
+          enum: [residence, birth]
+
+    LunarReturnMoon:
+      type: object
+      required: [key, name, sign, signKey, degreeInSign, longitude, house]
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        sign:
+          type: string
+        signKey:
+          type: string
+        degreeInSign:
+          type: string
+        longitude:
+          type: number
+        house:
+          type: [integer, "null"]
+
+    LunarReturnAngle:
+      type: object
+      required: [key, abbr, sign, degreeInSign, longitude]
+      properties:
+        key:
+          type: string
+        abbr:
+          type: string
+        sign:
+          type: string
+        degreeInSign:
+          type: string
+        longitude:
+          type: number
+
+    LunarReturn:
+      type: object
+      required: [returnDate, returnTime, periodStart, periodEnd, location, usedBirthPlace, warning, ascendant, moon, keyThemes, recommendations]
+      properties:
+        returnDate:
+          type: string
+        returnTime:
+          type: string
+        periodStart:
+          type: string
+        periodEnd:
+          type: string
+        location:
+          $ref: "#/components/schemas/LunarReturnLocation"
+        usedBirthPlace:
+          type: boolean
+        warning:
+          type: [string, "null"]
+        ascendant:
+          oneOf:
+            - $ref: "#/components/schemas/LunarReturnAngle"
+            - type: "null"
+        moon:
+          $ref: "#/components/schemas/LunarReturnMoon"
+        keyThemes:
+          type: array
+          items:
+            type: string
+        recommendations:
+          type: array
+          items:
+            type: string
+
     NatalChart:
       type: object
       required: [bodies, angles, houses, aspects, cinderellaGates, meta]
@@ -2543,5 +2626,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/CinderellaGate"
+        lunarReturn:
+          oneOf:
+            - $ref: "#/components/schemas/LunarReturn"
+            - type: "null"
         meta:
           $ref: "#/components/schemas/NatalChartMeta"

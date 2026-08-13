@@ -796,6 +796,39 @@ export const GetNatalChartResponse = zod.object({
   "activeTo": zod.string().nullable(),
   "interpretation": zod.string()
 })),
+  "lunarReturn": zod.union([zod.object({
+  "returnDate": zod.string(),
+  "returnTime": zod.string(),
+  "periodStart": zod.string(),
+  "periodEnd": zod.string(),
+  "location": zod.object({
+  "city": zod.string().nullable(),
+  "latitude": zod.number(),
+  "longitude": zod.number(),
+  "timezone": zod.string().nullable(),
+  "source": zod.enum(['residence', 'birth'])
+}),
+  "usedBirthPlace": zod.boolean(),
+  "warning": zod.string().nullable(),
+  "ascendant": zod.union([zod.object({
+  "key": zod.string(),
+  "abbr": zod.string(),
+  "sign": zod.string(),
+  "degreeInSign": zod.string(),
+  "longitude": zod.number()
+}),zod.null()]),
+  "moon": zod.object({
+  "key": zod.string(),
+  "name": zod.string(),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "degreeInSign": zod.string(),
+  "longitude": zod.number(),
+  "house": zod.number().nullable()
+}),
+  "keyThemes": zod.array(zod.string()),
+  "recommendations": zod.array(zod.string())
+}),zod.null()]).optional(),
   "meta": zod.object({
   "timezone": zod.string(),
   "julianDate": zod.number(),

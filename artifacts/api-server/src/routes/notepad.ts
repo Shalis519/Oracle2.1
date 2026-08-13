@@ -27,6 +27,8 @@ import { computeVtalkivanieActivation } from "../lib/vtalkivanie";
 import { computeVtalkivanieMoneyActivation } from "../lib/vtalkivanieMoney";
 import { computePersonalPostHorseActivation } from "../lib/personalPostHorse";
 import { daysUntilBirthday } from "../lib/dates";
+import { computeLunarForProfile, lunarReturnStartsToday, lunarReturnSummaryText } from "../lib/lunarReturn";
+import { computeNatalChart } from "../lib/astrology";
 
 const router: IRouter = Router();
 
@@ -47,7 +49,16 @@ async function buildAutoItems(
   date: string,
   birthDate: string | null,
   birthTime: string | null,
-  birthLocation: { latitude: number | null; longitude: number | null; timezone: string | null },
+  birthLocation: {
+    latitude: number | null;
+    longitude: number | null;
+    timezone: string | null;
+    city: string | null;
+    cityLatitude: number | null;
+    cityLongitude: number | null;
+    cityTimezone: string | null;
+    birthPlace: string | null;
+  },
 ): Promise<AutoItem[]> {
   const auto: AutoItem[] = [];
 
@@ -112,6 +123,30 @@ async function buildAutoItems(
         text: `Личная Путешествующая лошадь: сектор ${personalPostHorse.mountain}, подробности во вкладке Бацзы`,
       });
     }
+
+    const lunarReturn = computeLunarForProfile(
+      {
+        birthDate,
+        birthTime,
+        birthPlace: birthLocation.birthPlace,
+        birthLatitude: birthLocation.latitude,
+        birthLongitude: birthLocation.longitude,
+        birthTimezone: birthLocation.timezone,
+        city: birthLocation.city,
+        cityLatitude: birthLocation.cityLatitude,
+        cityLongitude: birthLocation.cityLongitude,
+        cityTimezone: birthLocation.cityTimezone,
+      },
+      date,
+      (input) => computeNatalChart(input),
+    );
+    if (lunarReturnStartsToday(lunarReturn, date)) {
+      auto.push({
+        source: "western-lunar-return",
+        refKey: `lunar-return:${lunarReturn!.returnDate}`,
+        text: lunarReturnSummaryText(),
+      });
+    }
   }
 
   const contacts = await db
@@ -140,7 +175,16 @@ async function reconcileAutoItems(
   date: string,
   birthDate: string | null,
   birthTime: string | null,
-  birthLocation: { latitude: number | null; longitude: number | null; timezone: string | null },
+  birthLocation: {
+    latitude: number | null;
+    longitude: number | null;
+    timezone: string | null;
+    city: string | null;
+    cityLatitude: number | null;
+    cityLongitude: number | null;
+    cityTimezone: string | null;
+    birthPlace: string | null;
+  },
 ): Promise<void> {
   const desired = await buildAutoItems(userId, date, birthDate, birthTime, birthLocation);
 
@@ -160,6 +204,7 @@ async function reconcileAutoItems(
           "bazi-vtalkivanie",
           "bazi-vtalkivanie-money",
           "bazi-personal-post-horse",
+          "western-lunar-return",
         ]),
       ),
     );
@@ -208,7 +253,16 @@ router.get("/notepad/today", requireAuth, async (req, res): Promise<void> => {
     date,
     user.birthDate,
     user.birthTime,
-    { latitude: user.birthLatitude, longitude: user.birthLongitude, timezone: user.birthTimezone },
+    {
+      latitude: user.birthLatitude,
+      longitude: user.birthLongitude,
+      timezone: user.birthTimezone,
+      city: user.city,
+      cityLatitude: user.cityLatitude,
+      cityLongitude: user.cityLongitude,
+      cityTimezone: user.cityTimezone,
+      birthPlace: user.birthPlace,
+    },
   );
   const rows = await db
     .select()

@@ -279,6 +279,37 @@ export default function AstrologyPage() {
         </Card>
       )}
 
+      {chart.lunarReturn && (
+        <Card className="bg-card/40 backdrop-blur-md border-primary/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="font-serif text-lg">Лунар</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <p>
+              <span className="font-medium">Период:</span> с {new Date(`${chart.lunarReturn.periodStart}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })} по {new Date(`${chart.lunarReturn.periodEnd}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}
+            </p>
+            <p>
+              <span className="font-medium">Момент возвращения:</span> {new Date(`${chart.lunarReturn.returnDate}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}, {chart.lunarReturn.returnTime}
+            </p>
+            <p><span className="font-medium">Город расчёта:</span> {chart.lunarReturn.location.city ?? "не указан"}</p>
+            {chart.lunarReturn.warning && (
+              <p className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-amber-200">{chart.lunarReturn.warning}</p>
+            )}
+            {chart.lunarReturn.ascendant && (
+              <p><span className="font-medium">Асцендент лунара:</span> {chart.lunarReturn.ascendant.sign}, {chart.lunarReturn.ascendant.degreeInSign}</p>
+            )}
+            <p><span className="font-medium">Луна лунара:</span> {chart.lunarReturn.moon.sign}, {chart.lunarReturn.moon.degreeInSign}, {chart.lunarReturn.moon.house ? `${chart.lunarReturn.moon.house} дом` : "дом не определён"}</p>
+            <p><span className="font-medium">Главные темы месяца:</span> {chart.lunarReturn.keyThemes.join(", ")}</p>
+            <div>
+              <p className="font-medium">Рекомендации:</p>
+              {chart.lunarReturn.recommendations.map((recommendation, index) => (
+                <p key={index} className="mt-1 leading-relaxed text-muted-foreground">{recommendation}</p>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <p className="text-xs text-muted-foreground/60 text-center">
         Точность расчёта — до угловых минут. Часовой пояс определяется
         автоматически по координатам места рождения.

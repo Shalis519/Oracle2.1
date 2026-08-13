@@ -970,12 +970,65 @@ export interface NatalChartMeta {
   houseSystem: string;
 }
 
+export type LunarReturnLocationSource = typeof LunarReturnLocationSource[keyof typeof LunarReturnLocationSource];
+
+
+export const LunarReturnLocationSource = {
+  residence: 'residence',
+  birth: 'birth',
+} as const;
+
+export interface LunarReturnLocation {
+  /** @nullable */
+  city: string | null;
+  latitude: number;
+  longitude: number;
+  /** @nullable */
+  timezone: string | null;
+  source: LunarReturnLocationSource;
+}
+
+export interface LunarReturnMoon {
+  key: string;
+  name: string;
+  sign: string;
+  signKey: string;
+  degreeInSign: string;
+  longitude: number;
+  /** @nullable */
+  house: number | null;
+}
+
+export interface LunarReturnAngle {
+  key: string;
+  abbr: string;
+  sign: string;
+  degreeInSign: string;
+  longitude: number;
+}
+
+export interface LunarReturn {
+  returnDate: string;
+  returnTime: string;
+  periodStart: string;
+  periodEnd: string;
+  location: LunarReturnLocation;
+  usedBirthPlace: boolean;
+  /** @nullable */
+  warning: string | null;
+  ascendant: LunarReturnAngle | null;
+  moon: LunarReturnMoon;
+  keyThemes: string[];
+  recommendations: string[];
+}
+
 export interface NatalChart {
   bodies: NatalBody[];
   angles: NatalAngle[];
   houses: NatalHouse[];
   aspects: NatalAspect[];
   cinderellaGates: CinderellaGate[];
+  lunarReturn?: LunarReturn | null;
   meta: NatalChartMeta;
 }
 

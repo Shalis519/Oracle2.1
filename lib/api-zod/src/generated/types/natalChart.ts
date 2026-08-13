@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { CinderellaGate } from './cinderellaGate';
+import type { LunarReturn } from './lunarReturn';
 import type { NatalAngle } from './natalAngle';
 import type { NatalAspect } from './natalAspect';
 import type { NatalBody } from './natalBody';
@@ -18,5 +19,6 @@ export interface NatalChart {
   houses: NatalHouse[];
   aspects: NatalAspect[];
   cinderellaGates: CinderellaGate[];
+  lunarReturn?: LunarReturn | null;
   meta: NatalChartMeta;
 }

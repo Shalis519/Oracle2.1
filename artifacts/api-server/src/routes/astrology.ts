@@ -2,6 +2,8 @@ import { Router, type IRouter } from "express";
 import { GetNatalChartResponse } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
 import { computeNatalChart } from "../lib/astrology";
+import { computeLunarForProfile } from "../lib/lunarReturn";
+import { todayString } from "../lib/oracle";
 
 const router: IRouter = Router();
 
@@ -47,7 +49,24 @@ router.get("/astrology/natal", requireAuth, async (req, res): Promise<void> => {
     timezone: birthTimezone,
   });
 
-  res.json(GetNatalChartResponse.parse(chart));
+  const lunarReturn = computeLunarForProfile(
+    {
+      birthDate: user.birthDate,
+      birthTime: user.birthTime,
+      birthPlace: user.birthPlace,
+      birthLatitude: user.birthLatitude,
+      birthLongitude: user.birthLongitude,
+      birthTimezone: user.birthTimezone,
+      city: user.city,
+      cityLatitude: user.cityLatitude,
+      cityLongitude: user.cityLongitude,
+      cityTimezone: user.cityTimezone,
+    },
+    todayString(),
+    (input) => computeNatalChart(input),
+  );
+
+  res.json(GetNatalChartResponse.parse({ ...chart, lunarReturn }));
 });
 
 export default router;
