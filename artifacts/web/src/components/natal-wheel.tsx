@@ -101,8 +101,8 @@ const R_ASPECT = 168;
 const R_CUSP_LINE_END = R_OUTER + 15;
 const R_CUSP_TEXT = R_CUSP_LINE_END + 18;
 const ANGLE_STROKE_WIDTH = 1.5;
-const RETRO_OFFSET_X = 12;
-const RETRO_OFFSET_Y = 11;
+const RETRO_OFFSET_X = 8;
+const RETRO_OFFSET_Y = 8;
 
 export default function NatalWheel({
   bodies,
@@ -342,7 +342,7 @@ export default function NatalWheel({
                 y={gpos.y + RETRO_OFFSET_Y}
                 textAnchor="start"
                 dominantBaseline="central"
-                fontSize={10}
+                fontSize={9}
                 fill="hsl(45 42% 70% / 0.95)"
               >
                 R
