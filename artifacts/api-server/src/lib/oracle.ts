@@ -431,7 +431,7 @@ export function computeFengShui(
       .getEightChar();
     const monthBranchIdx = ZHI_CN.indexOf(todayEC.getMonthZhi());
     const yearBranchIdx = ZHI_CN.indexOf(todayEC.getYearZhi());
-    const offset = FLY_ORDER_DIRECTIONS.indexOf(annual.direction);
+    const offset = FLY_ORDER_DIRECTIONS.findIndex((direction) => direction === annual.direction);
     if (monthBranchIdx >= 0 && yearBranchIdx >= 0 && offset >= 0) {
       const monthlyNum =
         ((monthlyCenterStar(yearBranchIdx, monthBranchIdx) - 1 + offset) % 9) + 1;

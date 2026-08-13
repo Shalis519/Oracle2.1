@@ -375,7 +375,7 @@ export default function BaziPage() {
                 <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
                   {personalPostHorse.hours.map((hour) => (
                     <li key={hour.animal} className={hour.isHorseHour ? "text-sky-200" : ""}>
-                      {hour.animal} ({hour.period}){hour.isHorseHour ? " - час личной лошади" : ""}
+                      {hour.animal} ({hour.period}) - {hour.reason}
                     </li>
                   ))}
                 </ul>

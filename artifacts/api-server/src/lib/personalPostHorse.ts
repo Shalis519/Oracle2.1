@@ -28,6 +28,52 @@ const HORSE_BY_GROUP: Record<number, number> = {
   7: 5,  // 未 Коза -> 巳 Змея
 };
 
+const SIX_HARMONY = [1, 0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+const SAN_HE_GROUPS = [[8, 0, 4], [11, 3, 7], [2, 6, 10], [5, 9, 1]];
+const SEASONAL_GROUPS = [[2, 3, 4], [5, 6, 7], [8, 9, 10], [11, 0, 1]];
+const clashOf = (branch: number): number => (branch + 6) % 12;
+
+const DAY_OFFICERS = [
+  "Установление", "Устранение", "Наполнение", "Баланс", "Стабильность", "Удержание",
+  "Разрушение", "Опасность", "Успех", "Сбор урожая", "Открытие", "Закрытие",
+] as const;
+
+const SAN_SHA_GROUPS: Array<{ source: number[]; sha: number[]; robbery: number; disaster: number }> = [
+  { source: [8, 0, 4], sha: [5, 6, 7], robbery: 5, disaster: 6 },
+  { source: [11, 3, 7], sha: [8, 9, 10], robbery: 8, disaster: 9 },
+  { source: [2, 6, 10], sha: [11, 0, 1], robbery: 11, disaster: 0 },
+  { source: [5, 9, 1], sha: [2, 3, 4], robbery: 2, disaster: 3 },
+];
+
+const PUNISHMENT_GROUPS = [[0, 3], [2, 5, 8], [1, 10, 7]];
+const SELF_PUNISHMENT = new Set([4, 6, 9, 11]);
+const HARM_PAIRS = [[0, 7], [1, 6], [2, 5], [3, 4], [8, 11], [9, 10]];
+const BREAK_PAIRS = [[0, 9], [3, 6], [4, 1], [7, 10], [2, 11], [5, 8]];
+
+function samePair(a: number, b: number, pairs: number[][]): boolean {
+  return pairs.some(([left, right]) => (a === left && b === right) || (a === right && b === left));
+}
+
+function hasPunishment(a: number, b: number): boolean {
+  if (a === b && SELF_PUNISHMENT.has(a)) return true;
+  return PUNISHMENT_GROUPS.some((group) => group.includes(a) && group.includes(b));
+}
+
+function isSanSha(dayBranch: number, yearBranch: number, monthBranch: number): boolean {
+  const yearGroup = SAN_SHA_GROUPS.find((group) => group.source.includes(yearBranch));
+  const monthGroup = SAN_SHA_GROUPS.find((group) => group.source.includes(monthBranch));
+  return Boolean(yearGroup?.sha.includes(dayBranch) || monthGroup?.sha.includes(dayBranch));
+}
+
+function isUnfavorableNatalRelation(dayBranch: number, natalBranches: number[]): boolean {
+  return natalBranches.some((natal) =>
+    dayBranch === clashOf(natal)
+    || hasPunishment(dayBranch, natal)
+    || samePair(dayBranch, natal, HARM_PAIRS)
+    || samePair(dayBranch, natal, BREAK_PAIRS),
+  );
+}
+
 const HORSE_SECTORS: Record<number, {
   mountain: string;
   direction: string;
@@ -64,6 +110,7 @@ export interface PersonalPostHorseHour {
   animal: string;
   period: string;
   isHorseHour: boolean;
+  reason: string;
 }
 
 export interface PersonalPostHorseActivation {
@@ -101,6 +148,10 @@ function isoDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+function dayOfficer(dayBranch: number, monthBranch: number): string {
+  return DAY_OFFICERS[(dayBranch - monthBranch + 12) % 12];
+}
+
 function isEarthPeriod(date: Date): boolean {
   const month = date.getMonth() + 1;
   const day = date.getDate();
@@ -114,20 +165,49 @@ function hasVoidHour(ec: ReturnType<typeof baziAt>, branch: number): boolean {
     .includes(branch);
 }
 
-function buildHours(date: Date, horseBranch: number): PersonalPostHorseHour[] {
+function buildHours(
+  date: Date,
+  horseBranch: number,
+  monthBranch: number,
+  natalBranches: number[],
+): PersonalPostHorseHour[] {
   const ec = baziAt(date);
   const dayBranch = ZHI_CN.indexOf(ec.getDayZhi());
-  const hours: PersonalPostHorseHour[] = [];
-  for (let branch = 0; branch < 12; branch++) {
+  const candidates = new Map<number, string>();
+  candidates.set(horseBranch, "час личной лошади");
+  candidates.set(SIX_HARMONY[horseBranch], "слияние с личной лошадью");
+  for (const group of SAN_HE_GROUPS) {
+    if (group.includes(horseBranch)) {
+      for (const branch of group) {
+        if (!candidates.has(branch)) candidates.set(branch, "союз с личной лошадью");
+      }
+    }
+  }
+  for (const group of SEASONAL_GROUPS) {
+    if (group.includes(horseBranch)) {
+      for (const branch of group) {
+        if (!candidates.has(branch)) candidates.set(branch, "сезон с личной лошадью");
+      }
+    }
+  }
+
+  const result: PersonalPostHorseHour[] = [];
+  const ordered = [...candidates.entries()].sort(
+    ([a], [b]) => (a === 0 ? 12 : a) - (b === 0 ? 12 : b),
+  );
+  for (const [branch, reason] of ordered) {
     if (hasVoidHour(ec, branch)) continue;
-    if (branch === (dayBranch + 6) % 12) continue;
-    hours.push({
+    if (branch === clashOf(dayBranch)) continue;
+    if (branch === clashOf(monthBranch)) continue;
+    if (natalBranches.some((natal) => branch === clashOf(natal))) continue;
+    result.push({
       animal: ANIMALS[branch],
       period: PERIODS[branch],
       isHorseHour: branch === horseBranch,
+      reason,
     });
   }
-  return hours;
+  return result;
 }
 
 /**
@@ -146,10 +226,14 @@ export function computePersonalPostHorseActivation(
   try {
     const birthEc = getBirthEightChar(birthDate, birthTime, location);
     if (!birthEc) return null;
+    const birthYearBranch = ZHI_CN.indexOf(birthEc.getYearZhi());
     const birthDayBranch = ZHI_CN.indexOf(birthEc.getDayZhi());
     const horseBranch = HORSE_BY_GROUP[birthDayBranch];
     const sector = HORSE_SECTORS[horseBranch];
     if (birthDayBranch < 0 || horseBranch === undefined || !sector) return null;
+    // If the personal horse clashes with the natal day branch, it is the personal Destroyer.
+    if (horseBranch === clashOf(birthDayBranch)) return null;
+    const natalBranches = [birthYearBranch, birthDayBranch].filter((branch) => branch >= 0);
 
     for (let offset = 0; offset <= 3; offset++) {
       const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset, 12, 0, 0);
@@ -159,19 +243,23 @@ export function computePersonalPostHorseActivation(
       const yearBranch = ZHI_CN.indexOf(ec.getYearZhi());
       const monthBranch = ZHI_CN.indexOf(ec.getMonthZhi());
       if (dayBranch < 0 || yearBranch < 0 || monthBranch < 0) continue;
+      // The activation date must be the day of the personal horse.
+      if (dayBranch !== horseBranch) continue;
       if (dayBranch === (yearBranch + 6) % 12) continue;
       if (dayBranch === (monthBranch + 6) % 12) continue;
-      const hours = buildHours(date, horseBranch);
-      if (hours.length === 0) continue;
-      const preferredHours = hours.filter((hour) => hour.isHorseHour);
-      const selectedHours = preferredHours.length > 0 ? preferredHours : hours;
+      if (isSanSha(dayBranch, yearBranch, monthBranch)) continue;
+      if (dayOfficer(dayBranch, monthBranch) === "Разрушение") continue;
+      if (isUnfavorableNatalRelation(dayBranch, natalBranches)) continue;
+      const hours = buildHours(date, horseBranch, monthBranch, natalBranches);
+      // The personal horse hour is mandatory; affinity hours are supplementary.
+      if (!hours.some((hour) => hour.isHorseHour)) continue;
       return {
         date: isoDate(date),
         daysUntil: offset,
         dayAnimal: ANIMALS[dayBranch],
         horseAnimal: ANIMALS[horseBranch],
         ...sector,
-        hours: selectedHours,
+        hours,
         instruction: `Разместите изображение личной лошади в секторе ${sector.mountain}, мордой к двери. Подходящее изображение: ${sector.image}.`,
         safety: "Если поездок и работы стало слишком много и вы сильно устали, уберите изображение лошади в шкаф до восстановления.",
       };

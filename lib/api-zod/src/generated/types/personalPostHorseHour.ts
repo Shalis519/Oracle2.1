@@ -10,4 +10,5 @@ export interface PersonalPostHorseHour {
   animal: string;
   period: string;
   isHorseHour: boolean;
+  reason: string;
 }

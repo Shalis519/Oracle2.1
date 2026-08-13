@@ -1832,7 +1832,7 @@ components:
 
     PersonalPostHorseHour:
       type: object
-      required: [animal, period, isHorseHour]
+      required: [animal, period, isHorseHour, reason]
       properties:
         animal:
           type: string
@@ -1840,6 +1840,8 @@ components:
           type: string
         isHorseHour:
           type: boolean
+        reason:
+          type: string
 
     PersonalPostHorseActivation:
       type: object

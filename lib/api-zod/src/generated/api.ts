@@ -475,7 +475,8 @@ export const GetBaziResponse = zod.object({
   "hours": zod.array(zod.object({
   "animal": zod.string(),
   "period": zod.string(),
-  "isHorseHour": zod.boolean()
+  "isHorseHour": zod.boolean(),
+  "reason": zod.string()
 })),
   "instruction": zod.string(),
   "safety": zod.string()
