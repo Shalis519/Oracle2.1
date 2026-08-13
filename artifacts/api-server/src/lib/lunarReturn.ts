@@ -64,15 +64,9 @@ function signedDifference(value: number, target: number): number {
   return ((value - target + 540) % 360) - 180;
 }
 
-function shiftLocalDate(date: string, days: number): string {
-  const d = new Date(`${date}T12:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
-function localDateTimeFromOffset(date: string, minutes: number): { date: string; hour: number; minute: number } {
+function dateTimeFromOffset(date: string, offsetMinutes: number): { date: string; hour: number; minute: number } {
   const d = new Date(`${date}T00:00:00Z`);
-  d.setUTCMinutes(minutes);
+  d.setUTCMinutes(offsetMinutes);
   return { date: d.toISOString().slice(0, 10), hour: d.getUTCHours(), minute: d.getUTCMinutes() };
 }
 
@@ -96,60 +90,83 @@ function findReturnInRange(
   location: LunarReturnLocation,
   buildChart: ChartBuilder,
 ): { date: string; hour: number; minute: number } | null {
-  const samples: { date: string; hour: number; minute: number; difference: number }[] = [];
-  for (let dayOffset = 0; dayOffset <= 40; dayOffset += 1) {
-    const day = shiftLocalDate(startDate, direction * dayOffset);
-    for (const hour of [0, 6, 12, 18]) {
-      const chart = buildChart({
-        year: Number(day.slice(0, 4)),
-        month: Number(day.slice(5, 7)),
-        day: Number(day.slice(8, 10)),
-        hour,
-        minute: 0,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        timezone: location.timezone,
+  const samples: { offset: number; longitude: number }[] = [];
+  const step = 360;
+  const minOffset = -40 * 24 * 60;
+  const maxOffset = 40 * 24 * 60;
+
+  for (let offset = minOffset; offset <= maxOffset; offset += step) {
+    const point = dateTimeFromOffset(startDate, offset);
+    const chart = buildChart({
+      year: Number(point.date.slice(0, 4)),
+      month: Number(point.date.slice(5, 7)),
+      day: Number(point.date.slice(8, 10)),
+      hour: point.hour,
+      minute: point.minute,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      timezone: location.timezone,
+    });
+    const moon = findMoon(chart);
+    if (moon) samples.push({ offset, longitude: moon.longitude });
+  }
+
+  const crossings: { low: number; high: number; baseLongitude: number; targetDistance: number }[] = [];
+  for (let index = 1; index < samples.length; index += 1) {
+    const previous = samples[index - 1];
+    const current = samples[index];
+    const arc = normalize(current.longitude - previous.longitude);
+    const targetDistance = normalize(natalMoonLongitude - previous.longitude);
+    if (arc > 0 && arc < 30 && targetDistance <= arc) {
+      crossings.push({
+        low: previous.offset,
+        high: current.offset,
+        baseLongitude: previous.longitude,
+        targetDistance,
       });
-      const moon = findMoon(chart);
-      if (!moon) continue;
-      samples.push({ date: day, hour, minute: 0, difference: signedDifference(moon.longitude, natalMoonLongitude) });
     }
   }
 
-  const ordered = direction === 1 ? samples : [...samples].reverse();
-  for (let index = 1; index < ordered.length; index += 1) {
-    const previous = ordered[index - 1];
-    const current = ordered[index];
-    if (Math.abs(previous.difference) <= 0.15) return previous;
-    if (previous.difference === 0 || current.difference === 0 || previous.difference * current.difference < 0) {
-      let low = 0;
-      let high = 360;
-      const base = previous.date;
-      for (let iteration = 0; iteration < 9; iteration += 1) {
-        const middle = Math.floor((low + high) / 2);
-        const point = localDateTimeFromOffset(base, middle);
-        const chart = buildChart({
-          year: Number(point.date.slice(0, 4)),
-          month: Number(point.date.slice(5, 7)),
-          day: Number(point.date.slice(8, 10)),
-          hour: point.hour,
-          minute: point.minute,
-          latitude: location.latitude,
-          longitude: location.longitude,
-          timezone: location.timezone,
-        });
-        const moon = findMoon(chart);
-        if (!moon) break;
-        const difference = signedDifference(moon.longitude, natalMoonLongitude);
-        if (Math.abs(difference) <= 0.08) return point;
-        if (previous.difference * difference <= 0) high = middle;
-        else low = middle;
-      }
-      const point = localDateTimeFromOffset(base, Math.floor((low + high) / 2));
-      return point;
+  const candidates = crossings
+    .filter((crossing) => direction === 1 ? crossing.high >= 0 : crossing.low <= 0)
+    .sort((a, b) => direction === 1 ? a.low - b.low : b.high - a.high);
+  const crossing = candidates[0];
+  if (!crossing) return null;
+
+  let low = crossing.low;
+  let high = crossing.high;
+  const evaluateLongitude = (offset: number): number | null => {
+    const point = dateTimeFromOffset(startDate, offset);
+    const chart = buildChart({
+      year: Number(point.date.slice(0, 4)),
+      month: Number(point.date.slice(5, 7)),
+      day: Number(point.date.slice(8, 10)),
+      hour: point.hour,
+      minute: point.minute,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      timezone: location.timezone,
+    });
+    const moon = findMoon(chart);
+    return moon?.longitude ?? null;
+  };
+
+  const targetDistance = crossing.targetDistance;
+  for (let iteration = 0; iteration < 14; iteration += 1) {
+    const middle = Math.floor((low + high) / 2);
+    const middleLongitude = evaluateLongitude(middle);
+    if (middleLongitude == null) break;
+    const middleDistance = normalize(middleLongitude - crossing.baseLongitude);
+    if (Math.abs(middleDistance - targetDistance) <= 0.005) {
+      low = middle;
+      high = middle;
+      break;
     }
+    if (middleDistance >= targetDistance) high = middle;
+    else low = middle;
   }
-  return null;
+
+  return dateTimeFromOffset(startDate, Math.floor((low + high) / 2));
 }
 
 function recommendations(signKey: string, houseNumber: number | null): { themes: string[]; texts: string[] } {
