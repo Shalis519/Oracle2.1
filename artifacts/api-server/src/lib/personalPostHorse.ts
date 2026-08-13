@@ -35,25 +35,25 @@ const HORSE_SECTORS: Record<number, {
   image: string;
 }> = {
   2: {
-    mountain: "СВ3 (Тигр 寅)",
+    mountain: "СВ-3",
     direction: "Северо-восток",
     degrees: "52,5°-67,5°",
     image: "Лошадь, бегущая по зелёной траве",
   },
   8: {
-    mountain: "ЮЗ3 (Обезьяна 申)",
+    mountain: "ЮЗ-3",
     direction: "Юго-запад",
     degrees: "232,5°-247,5°",
     image: "Серая или белая лошадь",
   },
   11: {
-    mountain: "СЗ3 (Свинья 亥)",
+    mountain: "СЗ-3",
     direction: "Северо-запад",
     degrees: "322,5°-337,5°",
     image: "Лошадь, бегущая по воде",
   },
   5: {
-    mountain: "ЮВ3 (Змея 巳)",
+    mountain: "ЮВ-3",
     direction: "Юго-восток",
     degrees: "142,5°-157,5°",
     image: "Красный конь",

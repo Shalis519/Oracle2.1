@@ -356,6 +356,8 @@ export default function BaziPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">Цель: активировать поездки и сдвинуть застоявшиеся дела с места.</p>
+              <p className="text-sm text-muted-foreground">Используйте малый тайчи.</p>
               <p className="text-sm leading-relaxed">
                 {personalPostHorse.daysUntil === 0
                   ? `Сегодня (${formatDate(personalPostHorse.date)}) - день установки`
@@ -363,9 +365,11 @@ export default function BaziPage() {
               </p>
               <p className="text-sm leading-relaxed">
                 Личная лошадь по земной ветви дня рождения: <span className="font-semibold text-sky-200">{personalPostHorse.horseAnimal}</span>.
-                Сектор: <span className="font-semibold text-sky-200">{personalPostHorse.mountain}</span> ({personalPostHorse.direction}, {personalPostHorse.degrees}).
+                Сектор: <span className="font-semibold text-sky-200">{personalPostHorse.mountain}</span> ({personalPostHorse.degrees}).
               </p>
-              <p className="text-sm text-muted-foreground">Рекомендуемое изображение: {personalPostHorse.image}.</p>
+              <p className="text-sm leading-relaxed">
+                Разместите на внешней стене указанного сектора в указанный час изображение {personalPostHorse.image.toLowerCase()}, мордой к входной двери помещения. Картинка должна висеть на высоте 70-100 см.
+              </p>
               <div>
                 <p className="text-sm font-medium mb-1">Подходящие часы:</p>
                 <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
