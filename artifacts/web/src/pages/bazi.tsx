@@ -110,6 +110,7 @@ export default function BaziPage() {
   const promo = bazi.promotionActivation;
   const noble = bazi.nobleHelperActivation;
   const vtalkivanie = bazi.vtalkivanieActivation;
+  const vtalkivanieMoney = bazi.vtalkivanieMoneyActivation;
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
@@ -288,6 +289,55 @@ export default function BaziPage() {
               </div>
               {vtalkivanie.daysUntil > 0 && (
                 <p className="text-sm text-emerald-200/90">Подготовьтесь заранее: активация состоится через {vtalkivanie.daysUntil} дн.</p>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {vtalkivanieMoney && (
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <Card className="bg-card/40 backdrop-blur-md border-amber-500/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Coins className="w-5 h-5 text-amber-300" />
+                Активизация «Вталкивание денег»
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm leading-relaxed">
+                {vtalkivanieMoney.daysUntil === 0
+                  ? `Сегодня (${formatDate(vtalkivanieMoney.date)}) — день активации`
+                  : `${formatDate(vtalkivanieMoney.date)} (через ${vtalkivanieMoney.daysUntil} дн.) — день активации`}.
+                Подходящий день — {vtalkivanieMoney.dayAnimal}.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Подходящие ветви по карте рождения: {vtalkivanieMoney.daySources.join(", ")}.
+              </p>
+              <div>
+                <p className="text-sm font-medium mb-1">Сектора и активаторы:</p>
+                <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                  {vtalkivanieMoney.stars.map((star) => (
+                    <li key={star.number}>
+                      Звезда {star.number} ({star.source}) — {star.direction}{star.degrees ? ` (${star.degrees})` : ""}; {star.activator}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-sm font-medium mb-1">Строго подходящие часы:</p>
+                <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                  {vtalkivanieMoney.hours.map((hour) => (
+                    <li key={hour.animal}>{hour.animal} ({hour.period})</li>
+                  ))}
+                </ul>
+              </div>
+              {vtalkivanieMoney.warning && (
+                <p className="text-sm text-amber-200/90">{vtalkivanieMoney.warning}</p>
+              )}
+              <p className="text-sm leading-relaxed">{vtalkivanieMoney.instruction}</p>
+              {vtalkivanieMoney.daysUntil > 0 && (
+                <p className="text-sm text-amber-200/90">Подготовьтесь заранее: активация состоится через {vtalkivanieMoney.daysUntil} дн.</p>
               )}
             </CardContent>
           </Card>

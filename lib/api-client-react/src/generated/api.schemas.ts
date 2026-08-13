@@ -335,6 +335,43 @@ export interface VtalkivanieActivation {
   familyInstruction: string;
 }
 
+export interface VtalkivanieMoneyHour {
+  animal: string;
+  period: string;
+  reason: string;
+}
+
+export type VtalkivanieMoneyStarSectorSource = typeof VtalkivanieMoneyStarSectorSource[keyof typeof VtalkivanieMoneyStarSectorSource];
+
+
+export const VtalkivanieMoneyStarSectorSource = {
+  годовая: 'годовая',
+  месячная: 'месячная',
+} as const;
+
+export interface VtalkivanieMoneyStarSector {
+  number: number;
+  source: VtalkivanieMoneyStarSectorSource;
+  direction: string;
+  /** @nullable */
+  degrees: string | null;
+  activator: string;
+  replacedByMonthlyFive: boolean;
+}
+
+export interface VtalkivanieMoneyActivation {
+  date: string;
+  daysUntil: number;
+  month: string;
+  dayAnimal: string;
+  daySources: string[];
+  hours: VtalkivanieMoneyHour[];
+  stars: VtalkivanieMoneyStarSector[];
+  /** @nullable */
+  warning: string | null;
+  instruction: string;
+}
+
 export interface BaziSummary {
   dayMaster: string;
   dayElement: string;
@@ -345,6 +382,7 @@ export interface BaziSummary {
   promotionActivation?: PromotionActivation | null;
   nobleHelperActivation?: NobleHelperActivation | null;
   vtalkivanieActivation?: VtalkivanieActivation | null;
+  vtalkivanieMoneyActivation?: VtalkivanieMoneyActivation | null;
 }
 
 export interface PeachBranchName {

@@ -10,6 +10,7 @@ import type { BaziStar } from './baziStar';
 import type { NobleHelperActivation } from './nobleHelperActivation';
 import type { PromotionActivation } from './promotionActivation';
 import type { VtalkivanieActivation } from './vtalkivanieActivation';
+import type { VtalkivanieMoneyActivation } from './vtalkivanieMoneyActivation';
 
 export interface BaziSummary {
   dayMaster: string;
@@ -21,4 +22,5 @@ export interface BaziSummary {
   promotionActivation?: PromotionActivation | null;
   nobleHelperActivation?: NobleHelperActivation | null;
   vtalkivanieActivation?: VtalkivanieActivation | null;
+  vtalkivanieMoneyActivation?: VtalkivanieMoneyActivation | null;
 }

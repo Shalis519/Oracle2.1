@@ -24,6 +24,7 @@ import {
 import { getActivationsForDate } from "../lib/data/activations";
 import { hasPeachActivationOnDate } from "../lib/peachBlossom";
 import { computeVtalkivanieActivation } from "../lib/vtalkivanie";
+import { computeVtalkivanieMoneyActivation } from "../lib/vtalkivanieMoney";
 import { daysUntilBirthday } from "../lib/dates";
 
 const router: IRouter = Router();
@@ -91,6 +92,15 @@ async function buildAutoItems(
         text: "Вталкивание людей: проведите активацию сегодня, подробности во вкладке Бацзы",
       });
     }
+
+    const vtalkivanieMoney = computeVtalkivanieMoneyActivation(birthDate, birthTime, reminderDate);
+    if (vtalkivanieMoney?.date === date) {
+      auto.push({
+        source: "bazi-vtalkivanie-money",
+        refKey: "vtalkivanie-money",
+        text: "Вталкивание денег: проведите активацию сегодня, подробности во вкладке Бацзы",
+      });
+    }
   }
 
   const contacts = await db
@@ -136,6 +146,7 @@ async function reconcileAutoItems(
           "bazi-peach",
           "bazi-noble",
           "bazi-vtalkivanie",
+          "bazi-vtalkivanie-money",
         ]),
       ),
     );

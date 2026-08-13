@@ -6,7 +6,7 @@ import {
 } from "../../data/qimen/threeGenerals";
 import { DOOR_MAIDEN_TABLE } from "../../data/qimen/maidens";
 import { ENEMY, MYSTICS } from "../../data/qimen/stems";
-import { getFlyingStar } from "../data/fengshui";
+import { flyingStarYear, getFlyingStar } from "../data/fengshui";
 
 const WONDERS = ["乙", "丙", "丁"] as const;
 const QUALIFY_STARS = new Set(["天辅", "天心", "天任"]);
@@ -104,10 +104,10 @@ export interface JadeMaidenHit {
 
 // Годовая летящая звезда сектора === 5 (五黄 «Жёлтая Пятёрка»): в Ци Мэнь такой
 // сектор не используется. Направление берётся из годовой карты (2026 — юг).
-function annualYellowFive(palace: number): boolean {
+function annualYellowFive(palace: number, date: Date): boolean {
   const dirFull = PALACES[palace].dirFull;
   const dir = dirFull.charAt(0).toUpperCase() + dirFull.slice(1);
-  return getFlyingStar(dir).starNumber === 5;
+  return getFlyingStar(dir, flyingStarYear(date)).starNumber === 5;
 }
 
 export function detectJadeMaiden(date: Date, hourBranch: number): JadeMaidenHit[] {
@@ -130,7 +130,7 @@ export function detectJadeMaiden(date: Date, hourBranch: number): JadeMaidenHit[
     if (!variant) continue;
     // 五黄: сектор с годовой звездой «Жёлтая Пятёрка» в Ци Мэнь не используется
     // (в 2026 году — юг); такие структуры исключаем.
-    if (annualYellowFive(p)) continue;
+    if (annualYellowFive(p, date)) continue;
     // Врата Смерти (死门) и Врата Испуга/Шока (惊门) исключаются из расчёта.
     if (c.door === "死门" || c.door === "惊门") continue;
     hits.push({ palace: p, variant, heavenStem: h, earthStem: e, door: c.door, isMainGate: isMain });

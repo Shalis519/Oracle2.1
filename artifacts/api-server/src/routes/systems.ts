@@ -17,6 +17,7 @@ import {
 } from "../lib/oracle";
 import { computePeachBlossom } from "../lib/peachBlossom";
 import { computeVtalkivanieActivation } from "../lib/vtalkivanie";
+import { computeVtalkivanieMoneyActivation } from "../lib/vtalkivanieMoney";
 
 const router: IRouter = Router();
 
@@ -63,6 +64,10 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
     user.birthDate,
     user.birthTime,
   );
+  const vtalkivanieMoneyActivation = computeVtalkivanieMoneyActivation(
+    user.birthDate,
+    user.birthTime,
+  );
   res.json(
     GetBaziResponse.parse({
       ...result,
@@ -70,6 +75,7 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
       nobleHelperActivation,
       spendingDays,
       vtalkivanieActivation,
+      vtalkivanieMoneyActivation,
     }),
   );
 });

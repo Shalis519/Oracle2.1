@@ -1177,6 +1177,10 @@ components:
           anyOf:
             - $ref: "#/components/schemas/VtalkivanieActivation"
             - type: "null"
+        vtalkivanieMoneyActivation:
+          anyOf:
+            - $ref: "#/components/schemas/VtalkivanieMoneyActivation"
+            - type: "null"
 
     PeachBranchName:
       type: object
@@ -1762,6 +1766,64 @@ components:
         relationshipInstruction:
           type: string
         familyInstruction:
+          type: string
+
+    VtalkivanieMoneyStarSector:
+      type: object
+      required: [number, source, direction, degrees, activator, replacedByMonthlyFive]
+      properties:
+        number:
+          type: integer
+        source:
+          type: string
+          enum: [годовая, месячная]
+        direction:
+          type: string
+        degrees:
+          type: [string, "null"]
+        activator:
+          type: string
+        replacedByMonthlyFive:
+          type: boolean
+
+    VtalkivanieMoneyHour:
+      type: object
+      required: [animal, period, reason]
+      properties:
+        animal:
+          type: string
+        period:
+          type: string
+        reason:
+          type: string
+
+    VtalkivanieMoneyActivation:
+      type: object
+      required: [date, daysUntil, month, dayAnimal, daySources, hours, stars, warning, instruction]
+      properties:
+        date:
+          type: string
+        daysUntil:
+          type: integer
+        month:
+          type: string
+        dayAnimal:
+          type: string
+        daySources:
+          type: array
+          items:
+            type: string
+        hours:
+          type: array
+          items:
+            $ref: "#/components/schemas/VtalkivanieMoneyHour"
+        stars:
+          type: array
+          items:
+            $ref: "#/components/schemas/VtalkivanieMoneyStarSector"
+        warning:
+          type: [string, "null"]
+        instruction:
           type: string
 
     FengShuiInfo:
