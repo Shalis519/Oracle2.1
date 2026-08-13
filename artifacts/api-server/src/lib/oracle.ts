@@ -1148,17 +1148,25 @@ export async function computeDailyForecast(
   if (rankedTransits.length === 0) {
     synthesisText = "Сегодня особенных астрологических событий не прогнозируется.";
   } else {
-    const [randomPhrase] = await db
+    const activePhrases = await db
       .select()
       .from(motivationPhrasesTable)
       .where(eq(motivationPhrasesTable.isActive, true))
-      .orderBy(sql`random()`)
-      .limit(1);
+      .orderBy(motivationPhrasesTable.createdAt);
+    // Один и тот же пользовательский прогноз не должен менять фразу при обновлении.
+    // Дата даёт стабильный индекс, поэтому фраза меняется раз в день.
+    const dailyPhraseIndex = Array.from(today).reduce(
+      (sum, char) => sum + char.charCodeAt(0),
+      0,
+    );
+    const dailyPhrase = activePhrases.length
+      ? activePhrases[dailyPhraseIndex % activePhrases.length]?.phrase
+      : undefined;
 
     const forecast = await futuristicGenerator.generate(
       rankedTransits,
       new Date(today),
-      randomPhrase?.phrase,
+      dailyPhrase,
     );
     if (forecast) {
       synthesisText = forecast;
