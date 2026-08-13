@@ -462,6 +462,23 @@ export const GetBaziResponse = zod.object({
 })),
   "warning": zod.string().nullable(),
   "instruction": zod.string()
+}),zod.null()]).optional(),
+  "personalPostHorseActivation": zod.union([zod.object({
+  "date": zod.string(),
+  "daysUntil": zod.number(),
+  "dayAnimal": zod.string(),
+  "horseAnimal": zod.string(),
+  "mountain": zod.string(),
+  "direction": zod.string(),
+  "degrees": zod.string(),
+  "image": zod.string(),
+  "hours": zod.array(zod.object({
+  "animal": zod.string(),
+  "period": zod.string(),
+  "isHorseHour": zod.boolean()
+})),
+  "instruction": zod.string(),
+  "safety": zod.string()
 }),zod.null()]).optional()
 })
 

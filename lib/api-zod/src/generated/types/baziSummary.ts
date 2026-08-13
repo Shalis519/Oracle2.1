@@ -8,6 +8,7 @@
 import type { BaziPillar } from './baziPillar';
 import type { BaziStar } from './baziStar';
 import type { NobleHelperActivation } from './nobleHelperActivation';
+import type { PersonalPostHorseActivation } from './personalPostHorseActivation';
 import type { PromotionActivation } from './promotionActivation';
 import type { VtalkivanieActivation } from './vtalkivanieActivation';
 import type { VtalkivanieMoneyActivation } from './vtalkivanieMoneyActivation';
@@ -23,4 +24,5 @@ export interface BaziSummary {
   nobleHelperActivation?: NobleHelperActivation | null;
   vtalkivanieActivation?: VtalkivanieActivation | null;
   vtalkivanieMoneyActivation?: VtalkivanieMoneyActivation | null;
+  personalPostHorseActivation?: PersonalPostHorseActivation | null;
 }

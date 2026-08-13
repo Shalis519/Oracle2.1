@@ -111,6 +111,7 @@ export default function BaziPage() {
   const noble = bazi.nobleHelperActivation;
   const vtalkivanie = bazi.vtalkivanieActivation;
   const vtalkivanieMoney = bazi.vtalkivanieMoneyActivation;
+  const personalPostHorse = bazi.personalPostHorseActivation;
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
@@ -338,6 +339,46 @@ export default function BaziPage() {
               <p className="text-sm leading-relaxed">{vtalkivanieMoney.instruction}</p>
               {vtalkivanieMoney.daysUntil > 0 && (
                 <p className="text-sm text-amber-200/90">Подготовьтесь заранее: активация состоится через {vtalkivanieMoney.daysUntil} дн.</p>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {personalPostHorse && (
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <Card className="bg-card/40 backdrop-blur-md border-sky-500/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Compass className="w-5 h-5 text-sky-300" />
+                Личная Путешествующая лошадь
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm leading-relaxed">
+                {personalPostHorse.daysUntil === 0
+                  ? `Сегодня (${formatDate(personalPostHorse.date)}) — день установки`
+                  : `${formatDate(personalPostHorse.date)} (через ${personalPostHorse.daysUntil} дн.) — благоприятная дата установки`}.
+              </p>
+              <p className="text-sm leading-relaxed">
+                Личная лошадь по земной ветви дня рождения: <span className="font-semibold text-sky-200">{personalPostHorse.horseAnimal}</span>.
+                Сектор: <span className="font-semibold text-sky-200">{personalPostHorse.mountain}</span> ({personalPostHorse.direction}, {personalPostHorse.degrees}).
+              </p>
+              <p className="text-sm text-muted-foreground">Рекомендуемое изображение: {personalPostHorse.image}.</p>
+              <div>
+                <p className="text-sm font-medium mb-1">Подходящие часы:</p>
+                <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                  {personalPostHorse.hours.map((hour) => (
+                    <li key={hour.animal} className={hour.isHorseHour ? "text-sky-200" : ""}>
+                      {hour.animal} ({hour.period}){hour.isHorseHour ? " — час личной лошади" : ""}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="text-sm leading-relaxed">{personalPostHorse.instruction}</p>
+              <p className="text-sm text-sky-200/90">{personalPostHorse.safety}</p>
+              {personalPostHorse.daysUntil > 0 && (
+                <p className="text-sm text-sky-200/90">Подготовьтесь заранее: установка состоится через {personalPostHorse.daysUntil} дн.</p>
               )}
             </CardContent>
           </Card>

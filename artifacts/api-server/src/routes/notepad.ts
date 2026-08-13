@@ -25,6 +25,7 @@ import { getActivationsForDate } from "../lib/data/activations";
 import { hasPeachActivationOnDate } from "../lib/peachBlossom";
 import { computeVtalkivanieActivation } from "../lib/vtalkivanie";
 import { computeVtalkivanieMoneyActivation } from "../lib/vtalkivanieMoney";
+import { computePersonalPostHorseActivation } from "../lib/personalPostHorse";
 import { daysUntilBirthday } from "../lib/dates";
 
 const router: IRouter = Router();
@@ -101,6 +102,15 @@ async function buildAutoItems(
         text: "Вталкивание денег: проведите активацию сегодня, подробности во вкладке Бацзы",
       });
     }
+
+    const personalPostHorse = computePersonalPostHorseActivation(birthDate, birthTime, reminderDate);
+    if (personalPostHorse?.date === date) {
+      auto.push({
+        source: "bazi-personal-post-horse",
+        refKey: "personal-post-horse",
+        text: `Личная Путешествующая лошадь: сектор ${personalPostHorse.mountain}, подробности во вкладке Бацзы`,
+      });
+    }
   }
 
   const contacts = await db
@@ -147,6 +157,7 @@ async function reconcileAutoItems(
           "bazi-noble",
           "bazi-vtalkivanie",
           "bazi-vtalkivanie-money",
+          "bazi-personal-post-horse",
         ]),
       ),
     );

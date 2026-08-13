@@ -1181,6 +1181,10 @@ components:
           anyOf:
             - $ref: "#/components/schemas/VtalkivanieMoneyActivation"
             - type: "null"
+        personalPostHorseActivation:
+          anyOf:
+            - $ref: "#/components/schemas/PersonalPostHorseActivation"
+            - type: "null"
 
     PeachBranchName:
       type: object
@@ -1824,6 +1828,46 @@ components:
         warning:
           type: [string, "null"]
         instruction:
+          type: string
+
+    PersonalPostHorseHour:
+      type: object
+      required: [animal, period, isHorseHour]
+      properties:
+        animal:
+          type: string
+        period:
+          type: string
+        isHorseHour:
+          type: boolean
+
+    PersonalPostHorseActivation:
+      type: object
+      required: [date, daysUntil, dayAnimal, horseAnimal, mountain, direction, degrees, image, hours, instruction, safety]
+      properties:
+        date:
+          type: string
+        daysUntil:
+          type: integer
+        dayAnimal:
+          type: string
+        horseAnimal:
+          type: string
+        mountain:
+          type: string
+        direction:
+          type: string
+        degrees:
+          type: string
+        image:
+          type: string
+        hours:
+          type: array
+          items:
+            $ref: "#/components/schemas/PersonalPostHorseHour"
+        instruction:
+          type: string
+        safety:
           type: string
 
     FengShuiInfo:

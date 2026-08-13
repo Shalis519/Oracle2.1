@@ -372,6 +372,26 @@ export interface VtalkivanieMoneyActivation {
   instruction: string;
 }
 
+export interface PersonalPostHorseHour {
+  animal: string;
+  period: string;
+  isHorseHour: boolean;
+}
+
+export interface PersonalPostHorseActivation {
+  date: string;
+  daysUntil: number;
+  dayAnimal: string;
+  horseAnimal: string;
+  mountain: string;
+  direction: string;
+  degrees: string;
+  image: string;
+  hours: PersonalPostHorseHour[];
+  instruction: string;
+  safety: string;
+}
+
 export interface BaziSummary {
   dayMaster: string;
   dayElement: string;
@@ -383,6 +403,7 @@ export interface BaziSummary {
   nobleHelperActivation?: NobleHelperActivation | null;
   vtalkivanieActivation?: VtalkivanieActivation | null;
   vtalkivanieMoneyActivation?: VtalkivanieMoneyActivation | null;
+  personalPostHorseActivation?: PersonalPostHorseActivation | null;
 }
 
 export interface PeachBranchName {

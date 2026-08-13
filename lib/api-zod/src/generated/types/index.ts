@@ -69,6 +69,8 @@ export * from './peachFlowerScope';
 export * from './peachOverview';
 export * from './peachPair';
 export * from './personalMatrix';
+export * from './personalPostHorseActivation';
+export * from './personalPostHorseHour';
 export * from './profile';
 export * from './profileGender';
 export * from './profileInput';

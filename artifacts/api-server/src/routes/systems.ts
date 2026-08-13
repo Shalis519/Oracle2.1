@@ -18,6 +18,7 @@ import {
 import { computePeachBlossom } from "../lib/peachBlossom";
 import { computeVtalkivanieActivation } from "../lib/vtalkivanie";
 import { computeVtalkivanieMoneyActivation } from "../lib/vtalkivanieMoney";
+import { computePersonalPostHorseActivation } from "../lib/personalPostHorse";
 
 const router: IRouter = Router();
 
@@ -68,6 +69,10 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
     user.birthDate,
     user.birthTime,
   );
+  const personalPostHorseActivation = computePersonalPostHorseActivation(
+    user.birthDate,
+    user.birthTime,
+  );
   res.json(
     GetBaziResponse.parse({
       ...result,
@@ -76,6 +81,7 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
       spendingDays,
       vtalkivanieActivation,
       vtalkivanieMoneyActivation,
+      personalPostHorseActivation,
     }),
   );
 });
