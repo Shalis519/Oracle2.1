@@ -18,7 +18,15 @@
 // for 中元 years (子午卯酉, incl. 2026) and ГОД for the current 三元 cycle. The 阳
 // half (after 冬至) of the daily model is mirrored but not yet anchored to a source.
 import { Solar } from "lunar-typescript";
-import { BRANCH_ANIMAL_RU_GEN, BRANCH_HOUR_WINDOW, BRANCHES, STEMS, XUN_YI_STEM, parseGanZhi } from "./constants";
+import {
+  BRANCH_ANIMAL_RU_GEN,
+  BRANCH_HOUR_WINDOW,
+  CHRONOLOGICAL_HOUR_BRANCHES,
+  BRANCHES,
+  STEMS,
+  XUN_YI_STEM,
+  parseGanZhi,
+} from "./constants";
 import { buildChart } from "./chart";
 import { juForDate } from "./ju";
 import { dateToIso } from "./calendar";
@@ -133,7 +141,7 @@ export function computeJiFuWishes(from: Date, days: number): JiFuWish[] {
     const dp = dayJiFuPalace(date);
     const iso = dateToIso(date);
 
-    for (let h = 0; h < 12; h++) {
+    for (const h of CHRONOLOGICAL_HOUR_BRANCHES) {
       const hp = hourJiFuPalace(date, h);
       const matchYear = yp === hp;
       const matchMonth = mp === hp;
@@ -159,9 +167,13 @@ export function computeJiFuWishes(from: Date, days: number): JiFuWish[] {
     }
   }
 
+  const chronologicalPosition = new Map<number, number>(
+    CHRONOLOGICAL_HOUR_BRANCHES.map((branch, position) => [branch, position]),
+  );
   wishes.sort((a, b) =>
     a.date.localeCompare(b.date) ||
-    a.hourBranch - b.hourBranch,
+    (chronologicalPosition.get(a.hourBranch) ?? 99) -
+      (chronologicalPosition.get(b.hourBranch) ?? 99),
   );
   return wishes;
 }

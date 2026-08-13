@@ -25,6 +25,10 @@ export const BRANCH_HOUR_WINDOW = [
   "15:00–17:00", "17:00–19:00", "19:00–21:00", "21:00–23:00",
 ] as const;
 
+// Display order for all double-hours: chronological daytime cycle first,
+// followed by the late-Zi interval that crosses midnight.
+export const CHRONOLOGICAL_HOUR_BRANCHES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0] as const;
+
 // Six clashes (六冲): branch index -> the branch it clashes with (opposite, +6).
 export function clashesBranch(a: number, b: number): boolean {
   return (a - b + 12) % 12 === 6;

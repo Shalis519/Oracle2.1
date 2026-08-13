@@ -1,6 +1,13 @@
 // Qi Men Dun Jia — public entry: scan an N-day window for personal walk structures.
 import {
-  BRANCH_ANIMAL_RU, BRANCH_ANIMAL_RU_GEN, BRANCH_HOUR_WINDOW, BRANCHES, clashesBranch, PALACES, STEMS,
+  BRANCH_ANIMAL_RU,
+  BRANCH_ANIMAL_RU_GEN,
+  BRANCH_HOUR_WINDOW,
+  CHRONOLOGICAL_HOUR_BRANCHES,
+  BRANCHES,
+  clashesBranch,
+  PALACES,
+  STEMS,
 } from "./constants";
 import { birthYearBranch, dayInfo } from "./calendar";
 import { detectThreeGenerals, detectJadeMaiden, detectDoorMaiden } from "./structures";
@@ -117,7 +124,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     date.setDate(mStart.getDate() + d);
     const day = dayInfo(date);
     const dayGz = STEMS[day.stem] + BRANCHES[day.branch];
-    for (let h = 0; h < 12; h++) {
+    for (const h of CHRONOLOGICAL_HOUR_BRANCHES) {
       for (const hit of detectJadeMaiden(date, h)) {
         jadeMaidens.push({
           date: day.iso,
@@ -181,7 +188,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     const day = dayInfo(date);
     if (clashesBranch(yearBranch, day.branch)) continue; // personal 六冲 filter
     const dayGz = STEMS[day.stem] + BRANCHES[day.branch];
-    for (let h = 0; h < 12; h++) {
+    for (const h of CHRONOLOGICAL_HOUR_BRANCHES) {
       for (const hit of detectThreeGenerals(date, h)) {
         structures.push({
           date: day.iso,
