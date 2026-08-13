@@ -44,6 +44,27 @@ const MONEY_DAY_BY_BIRTH_BRANCH: Record<number, number> = {
   11: 7, // Свинья -> Коза
 };
 
+const NOBLE_HELPER_BY_STEM: Record<string, number[]> = {
+  "Дерево-Ян": [7, 1],
+  "Дерево-Инь": [8, 0],
+  "Огонь-Ян": [9, 11],
+  "Огонь-Инь": [11, 9],
+  "Земля-Ян": [1, 7],
+  "Земля-Инь": [0, 8],
+  "Металл-Ян": [1, 7],
+  "Металл-Инь": [2, 6],
+  "Вода-Ян": [3, 5],
+  "Вода-Инь": [5, 3],
+};
+
+// Личная Почтовая лошадь определяется по земной ветви дня рождения.
+const POST_HORSE_BY_DAY_BRANCH: Record<number, number> = {
+  0: 2, 4: 2, 8: 2,
+  2: 8, 6: 8, 10: 8,
+  5: 11, 9: 11, 1: 11,
+  11: 5, 3: 5, 7: 5,
+};
+
 const SIX_HARMONY = [1, 0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
 const SAN_HE_GROUPS = [[8, 0, 4], [11, 3, 7], [2, 6, 10], [5, 9, 1]];
 const SEASONAL_GROUPS = [[2, 3, 4], [5, 6, 7], [8, 9, 10], [11, 0, 1]];
@@ -136,7 +157,12 @@ function flyingMap(date: Date, source: "годовая" | "месячная"): M
   ]));
 }
 
-function strictHours(date: Date, natalBranches: number[]): MoneyActivationHour[] {
+function strictHours(
+  date: Date,
+  natalBranches: number[],
+  nobleBranches: number[],
+  postHorseBranch: number | undefined,
+): MoneyActivationHour[] {
   const ec = baziAt(date);
   const dayBranch = ZHI_CN.indexOf(ec.getDayZhi());
   const monthBranch = ZHI_CN.indexOf(ec.getMonthZhi());
@@ -163,6 +189,12 @@ function strictHours(date: Date, natalBranches: number[]): MoneyActivationHour[]
         if (!candidates.has(branch)) candidates.set(branch, "сезон с днём активации");
       }
     }
+  }
+  for (const branch of nobleBranches) {
+    if (!candidates.has(branch)) candidates.set(branch, "час Благородного человека");
+  }
+  if (postHorseBranch !== undefined && !candidates.has(postHorseBranch)) {
+    candidates.set(postHorseBranch, "час Почтовой лошади");
   }
 
   return [...candidates.entries()]
@@ -216,6 +248,16 @@ export function computeVtalkivanieMoneyActivation(
     if (!birthEc) return null;
     const birthYearBranch = ZHI_CN.indexOf(birthEc.getYearZhi());
     const birthDayBranch = ZHI_CN.indexOf(birthEc.getDayZhi());
+    const birthYearStem = GAN_CN.indexOf(birthEc.getYearGan());
+    const birthDayStem = GAN_CN.indexOf(birthEc.getDayGan());
+    const birthYearStemInfo = ["Дерево", "Дерево", "Огонь", "Огонь", "Земля", "Земля", "Металл", "Металл", "Вода", "Вода"][birthYearStem];
+    const birthDayStemInfo = ["Дерево", "Дерево", "Огонь", "Огонь", "Земля", "Земля", "Металл", "Металл", "Вода", "Вода"][birthDayStem];
+    const stemPolarity = (stem: number) => stem % 2 === 0 ? "Ян" : "Инь";
+    const nobleBranches = [...new Set([
+      ...(NOBLE_HELPER_BY_STEM[`${birthYearStemInfo}-${stemPolarity(birthYearStem)}`] ?? []),
+      ...(NOBLE_HELPER_BY_STEM[`${birthDayStemInfo}-${stemPolarity(birthDayStem)}`] ?? []),
+    ])];
+    const postHorseBranch = POST_HORSE_BY_DAY_BRANCH[birthDayBranch];
     const targets = [birthYearBranch, birthDayBranch]
       .filter((idx) => idx >= 0)
       .map((idx) => MONEY_DAY_BY_BIRTH_BRANCH[idx]);
@@ -226,7 +268,7 @@ export function computeVtalkivanieMoneyActivation(
       const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset, 12, 0, 0);
       const dayBranch = ZHI_CN.indexOf(baziAt(date).getDayZhi());
       if (!targets.includes(dayBranch)) continue;
-      const hours = strictHours(date, natalBranches);
+      const hours = strictHours(date, natalBranches, nobleBranches, postHorseBranch);
       if (hours.length === 0) continue;
       const { stars, warning } = sectorsForDate(date);
       if (stars.length === 0) continue;
