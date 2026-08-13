@@ -806,7 +806,12 @@ function selectActivationHours(opts: {
 
   const hours: NobleHelperHour[] = [];
   const avoidHours: AvoidHour[] = [];
-  for (const [idx, reason] of candidates) {
+  // Показываем двухчасовки по суточному циклу, как в блоке Джи Фу:
+  // 01:00–03:00, 03:00–05:00, …, 21:00–23:00, затем 23:00–01:00.
+  const chronologicalCandidates = [...candidates.entries()].sort(
+    ([a], [b]) => (a === 0 ? 12 : a) - (b === 0 ? 12 : b),
+  );
+  for (const [idx, reason] of chronologicalCandidates) {
     // The Noble's own hour anchors the whole activation, so it is always offered
     // as the preferred choice; the exclusions only prune the supplementary
     // affinity hours (слияние / союз / сезон).
