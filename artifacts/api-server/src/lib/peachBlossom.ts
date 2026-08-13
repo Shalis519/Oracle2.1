@@ -1,4 +1,5 @@
 import { Solar } from "lunar-typescript";
+import { type BirthLocationContext, getBirthEightChar } from "./oracle";
 import {
   PEACH_ANIMAL_META,
   PEACH_INTERPRETATION,
@@ -158,7 +159,7 @@ const PEACH_ANIMAL_BRANCH_IDX: Record<PeachAnimal, number> = {
   Петух: 9,
 };
 
-// Display order of the double-hours (from 丑, wrapping to 子 last) — matches the source.
+// Display order of the double-hours (from 丑, wrapping to 子 last) - matches the source.
 const HOUR_ORDER_IDX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0];
 
 /** Six-clash (六冲) partner of an Earthly Branch by index. */
@@ -412,11 +413,12 @@ export function hasPeachActivationOnDate(
   birthDate: string,
   birthTime: string | null,
   date: string,
+  location?: BirthLocationContext,
 ): boolean {
   const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(date);
   if (!match) return false;
   const target = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0);
-  const result = computePeachBlossom(birthDate, birthTime, target);
+  const result = computePeachBlossom(birthDate, birthTime, target, location);
   if (!result) return false;
   const label = formatDate(target);
   return result.favorableDays.some((day) => day.pairs.some((pair) => pair.date === label));
@@ -426,6 +428,7 @@ export function computePeachBlossom(
   birthDate: string,
   birthTime: string | null,
   today: Date = new Date(),
+  location?: BirthLocationContext,
 ): PeachBlossomResult | null {
   const d = parseDate(birthDate);
   if (!d) return null;
@@ -434,10 +437,8 @@ export function computePeachBlossom(
   let yearBranchIdx: number;
   let dayBranchIdx: number;
   try {
-    const { hour, minute } = parseHourMinute(birthTime);
-    const ec = Solar.fromYmdHms(d.year, d.month, d.day, hour, minute, 0)
-      .getLunar()
-      .getEightChar();
+    const ec = getBirthEightChar(birthDate, birthTime, location);
+    if (!ec) return null;
     yearBranchIdx = ZHI_CN.indexOf(ec.getYearZhi());
     dayBranchIdx = ZHI_CN.indexOf(ec.getDayZhi());
   } catch {

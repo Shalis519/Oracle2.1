@@ -1,5 +1,6 @@
 import { Solar } from "lunar-typescript";
 import { HEAVENLY_STEMS } from "./data/bazi";
+import { type BirthLocationContext, getBirthEightChar } from "./oracle";
 import {
   FLY_ORDER_DIRECTIONS,
   getFlyingStar,
@@ -150,6 +151,7 @@ export function computeVtalkivanieActivation(
   birthDate: string,
   birthTime: string | null,
   today: Date = new Date(),
+  location?: BirthLocationContext,
 ): VtalkivanieActivation | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(birthDate);
   if (!match) return null;
@@ -158,7 +160,8 @@ export function computeVtalkivanieActivation(
   const birthHour = Number.isFinite(parsedHour) ? parsedHour : 12;
   const birthMinute = Number.isFinite(parsedMinute) ? parsedMinute : 0;
   try {
-    const birthEc = baziAt(birth, birthHour, birthMinute);
+    const birthEc = getBirthEightChar(birthDate, birthTime, location);
+    if (!birthEc) return null;
     const yearStemIndex = GAN_CN.indexOf(birthEc.getYearGan());
     const dayStemIndex = GAN_CN.indexOf(birthEc.getDayGan());
     const yearStem = HEAVENLY_STEMS[yearStemIndex];

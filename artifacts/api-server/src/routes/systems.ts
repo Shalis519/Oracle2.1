@@ -42,7 +42,12 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
     res.status(400).json({ error: "Заполните дату рождения в профиле." });
     return;
   }
-  const result = computeBazi(user.birthDate, user.birthTime);
+  const birthLocation = {
+    latitude: user.birthLatitude,
+    longitude: user.birthLongitude,
+    timezone: user.birthTimezone,
+  };
+  const result = computeBazi(user.birthDate, user.birthTime, birthLocation);
   if (!result) {
     res.status(400).json({ error: "Некорректная дата рождения." });
     return;
@@ -50,10 +55,14 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
   const promotionActivation = computePromotionActivation(
     user.birthDate,
     user.birthTime,
+    new Date(),
+    birthLocation,
   );
   const nobleHelperActivation = computeNobleHelperActivation(
     user.birthDate,
     user.birthTime,
+    new Date(),
+    birthLocation,
   );
   const spendingDays = computeSpendingDays(
     user.birthDate,
@@ -64,14 +73,20 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
   const vtalkivanieActivation = computeVtalkivanieActivation(
     user.birthDate,
     user.birthTime,
+    new Date(),
+    birthLocation,
   );
   const vtalkivanieMoneyActivation = computeVtalkivanieMoneyActivation(
     user.birthDate,
     user.birthTime,
+    new Date(),
+    birthLocation,
   );
   const personalPostHorseActivation = computePersonalPostHorseActivation(
     user.birthDate,
     user.birthTime,
+    new Date(),
+    birthLocation,
   );
   res.json(
     GetBaziResponse.parse({
@@ -92,12 +107,17 @@ router.get("/peach-blossom", requireAuth, async (req, res): Promise<void> => {
     res.status(400).json({ error: "Заполните дату рождения в профиле." });
     return;
   }
-  const result = computePeachBlossom(user.birthDate, user.birthTime);
-  if (!result) {
+  const birthLocation = {
+    latitude: user.birthLatitude,
+    longitude: user.birthLongitude,
+    timezone: user.birthTimezone,
+  };
+  const peachBlossom = computePeachBlossom(user.birthDate, user.birthTime, new Date(), birthLocation);
+  if (!peachBlossom) {
     res.status(400).json({ error: "Некорректная дата рождения." });
     return;
   }
-  res.json(GetPeachBlossomResponse.parse(result));
+  res.json(GetPeachBlossomResponse.parse(peachBlossom));
 });
 
 router.get("/fengshui", requireAuth, async (req, res): Promise<void> => {

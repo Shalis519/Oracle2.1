@@ -47,6 +47,7 @@ async function buildAutoItems(
   date: string,
   birthDate: string | null,
   birthTime: string | null,
+  birthLocation: { latitude: number | null; longitude: number | null; timezone: string | null },
 ): Promise<AutoItem[]> {
   const auto: AutoItem[] = [];
 
@@ -67,7 +68,7 @@ async function buildAutoItems(
   }
 
   if (birthDate) {
-    if (hasPeachActivationOnDate(birthDate, birthTime, date)) {
+    if (hasPeachActivationOnDate(birthDate, birthTime, date, birthLocation)) {
       auto.push({
         source: "bazi-peach",
         refKey: "peach",
@@ -76,7 +77,7 @@ async function buildAutoItems(
     }
 
     const reminderDate = new Date(`${date}T12:00:00`);
-    const noble = computeNobleHelperActivation(birthDate, birthTime, reminderDate);
+    const noble = computeNobleHelperActivation(birthDate, birthTime, reminderDate, birthLocation);
     if (noble?.date === date) {
       auto.push({
         source: "bazi-noble",
@@ -85,7 +86,7 @@ async function buildAutoItems(
       });
     }
 
-    const vtalkivanie = computeVtalkivanieActivation(birthDate, birthTime, reminderDate);
+    const vtalkivanie = computeVtalkivanieActivation(birthDate, birthTime, reminderDate, birthLocation);
     if (vtalkivanie?.date === date) {
       auto.push({
         source: "bazi-vtalkivanie",
@@ -94,7 +95,7 @@ async function buildAutoItems(
       });
     }
 
-    const vtalkivanieMoney = computeVtalkivanieMoneyActivation(birthDate, birthTime, reminderDate);
+    const vtalkivanieMoney = computeVtalkivanieMoneyActivation(birthDate, birthTime, reminderDate, birthLocation);
     if (vtalkivanieMoney?.date === date) {
       auto.push({
         source: "bazi-vtalkivanie-money",
@@ -103,7 +104,7 @@ async function buildAutoItems(
       });
     }
 
-    const personalPostHorse = computePersonalPostHorseActivation(birthDate, birthTime, reminderDate);
+    const personalPostHorse = computePersonalPostHorseActivation(birthDate, birthTime, reminderDate, birthLocation);
     if (personalPostHorse?.date === date) {
       auto.push({
         source: "bazi-personal-post-horse",
@@ -139,8 +140,9 @@ async function reconcileAutoItems(
   date: string,
   birthDate: string | null,
   birthTime: string | null,
+  birthLocation: { latitude: number | null; longitude: number | null; timezone: string | null },
 ): Promise<void> {
-  const desired = await buildAutoItems(userId, date, birthDate, birthTime);
+  const desired = await buildAutoItems(userId, date, birthDate, birthTime, birthLocation);
 
   const existing = await db
     .select()
@@ -201,7 +203,13 @@ router.get("/notepad/today", requireAuth, async (req, res): Promise<void> => {
   const user = req.localUser!;
   const userId = user.id;
   const date = todayString();
-  await reconcileAutoItems(userId, date, user.birthDate, user.birthTime);
+  await reconcileAutoItems(
+    userId,
+    date,
+    user.birthDate,
+    user.birthTime,
+    { latitude: user.birthLatitude, longitude: user.birthLongitude, timezone: user.birthTimezone },
+  );
   const rows = await db
     .select()
     .from(notepadItemsTable)

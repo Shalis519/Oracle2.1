@@ -41,6 +41,46 @@ interface ParsedDate {
   day: number;
 }
 
+export interface BirthLocationContext {
+  latitude?: number | null;
+  longitude?: number | null;
+  timezone?: string | null;
+}
+
+function parseBirthClock(birthTime: string | null): { hour: number; minute: number } {
+  if (!birthTime) return { hour: 12, minute: 0 };
+  const hm = /^(\d{1,2}):(\d{2})/.exec(birthTime);
+  if (!hm) return { hour: 12, minute: 0 };
+  const hour = Number(hm[1]);
+  const minute = Number(hm[2]);
+  return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59
+    ? { hour, minute }
+    : { hour: 12, minute: 0 };
+}
+
+/**
+ * Canonical birth chart moment shared by BaZi and all personal activations.
+ * The profile stores the civil local birth time selected together with the city;
+ * coordinates and timezone travel with the context and must not be silently
+ * replaced by the sandbox timezone or converted a second time.
+ */
+export function getBirthEightChar(
+  birthDate: string,
+  birthTime: string | null,
+  _location?: BirthLocationContext,
+) {
+  const d = parseDate(birthDate);
+  if (!d || d.month < 1 || d.month > 12 || d.day < 1 || d.day > 31) return null;
+  const { hour, minute } = parseBirthClock(birthTime);
+  try {
+    return Solar.fromYmdHms(d.year, d.month, d.day, hour, minute, 0)
+      .getLunar()
+      .getEightChar();
+  } catch {
+    return null;
+  }
+}
+
 function parseDate(dateStr: string): ParsedDate | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateStr);
   if (!m) return null;
@@ -137,6 +177,7 @@ export interface BaziResult {
 export function computeBazi(
   birthDate: string,
   birthTime: string | null,
+  _location?: BirthLocationContext,
 ): BaziResult | null {
   const d = parseDate(birthDate);
   if (!d) return null;
@@ -145,21 +186,6 @@ export function computeBazi(
   if (d.month < 1 || d.month > 12 || d.day < 1 || d.day > 31) return null;
 
   const mod = (a: number, n: number) => ((a % n) + n) % n;
-
-  let hour = 12;
-  let minute = 0;
-  if (birthTime) {
-    const hm = /^(\d{1,2}):(\d{2})/.exec(birthTime);
-    if (hm) {
-      const h = Number(hm[1]);
-      const m = Number(hm[2]);
-      // Ignore an unparseable time rather than failing the whole chart.
-      if (h >= 0 && h <= 23 && m >= 0 && m <= 59) {
-        hour = h;
-        minute = m;
-      }
-    }
-  }
 
   // The calendar library throws on impossible dates; treat any failure as
   // "cannot compute" so callers get a clean null instead of a 500.
@@ -172,8 +198,8 @@ export function computeBazi(
     hourStemIdx: number,
     hourBranchIdx: number;
   try {
-    const solar = Solar.fromYmdHms(d.year, d.month, d.day, hour, minute, 0);
-    const eightChar = solar.getLunar().getEightChar();
+    const eightChar = getBirthEightChar(birthDate, birthTime);
+    if (!eightChar) return null;
 
     const ganIdx = (c: string) => GAN_CN.indexOf(c);
     const zhiIdx = (c: string) => ZHI_CN.indexOf(c);
@@ -539,6 +565,7 @@ export function computePromotionActivation(
   birthDate: string,
   birthTime: string | null,
   today: Date = new Date(),
+  location?: BirthLocationContext,
 ): PromotionActivationResult | null {
   const d = parseDate(birthDate);
   if (!d) return null;
@@ -551,9 +578,8 @@ export function computePromotionActivation(
   let periodEnd: string;
   try {
     // Promotion animal from the BIRTH-year heavenly stem.
-    const birthEC = Solar.fromYmdHms(d.year, d.month, d.day, 12, 0, 0)
-      .getLunar()
-      .getEightChar();
+    const birthEC = getBirthEightChar(birthDate, birthTime, location);
+    if (!birthEC) return null;
     const stem = HEAVENLY_STEMS[GAN_CN.indexOf(birthEC.getYearGan())];
     if (!stem) return null;
     const promoAnimal =
@@ -592,7 +618,7 @@ export function computePromotionActivation(
 
   // The sector work is done "в дни Благородного"; surface the favourable hours of
   // the nearest day of the Noble so the user picks a good двухчасовка for it.
-  const noble = computeNobleHelperActivation(birthDate, birthTime, today);
+  const noble = computeNobleHelperActivation(birthDate, birthTime, today, location);
 
   // Annual star comes from the existing 2026 chart; the monthly star flies
   // forward from its central seed along the same path.
@@ -857,6 +883,7 @@ export function computeNobleHelperActivation(
   birthDate: string,
   birthTime: string | null,
   today: Date = new Date(),
+  location?: BirthLocationContext,
 ): NobleHelperActivationResult | null {
   const d = parseDate(birthDate);
   if (!d) return null;
@@ -865,22 +892,8 @@ export function computeNobleHelperActivation(
   let nobleIdxs: number[];
   let selfBranchIdxs: number[];
   try {
-    let hour = 12;
-    let minute = 0;
-    if (birthTime) {
-      const hm = /^(\d{1,2}):(\d{2})/.exec(birthTime);
-      if (hm) {
-        const h = Number(hm[1]);
-        const m = Number(hm[2]);
-        if (h >= 0 && h <= 23 && m >= 0 && m <= 59) {
-          hour = h;
-          minute = m;
-        }
-      }
-    }
-    const birthEC = Solar.fromYmdHms(d.year, d.month, d.day, hour, minute, 0)
-      .getLunar()
-      .getEightChar();
+    const birthEC = getBirthEightChar(birthDate, birthTime, location);
+    if (!birthEC) return null;
     const yearStem = HEAVENLY_STEMS[GAN_CN.indexOf(birthEC.getYearGan())];
     const dayStem = HEAVENLY_STEMS[GAN_CN.indexOf(birthEC.getDayGan())];
     if (!yearStem || !dayStem) return null;

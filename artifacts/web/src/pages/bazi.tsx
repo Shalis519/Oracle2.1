@@ -206,7 +206,7 @@ export default function BaziPage() {
                 {peach.flowers.map((f, i) => (
                   <div key={i} className="rounded-lg border border-rose-500/20 bg-rose-500/5 p-3 space-y-2">
                     <p className="font-serif font-semibold text-rose-300">
-                      Цветок Персика{f.scopeLabel ? ` ${f.scopeLabel}` : ""} — {f.animal}
+                      Цветок Персика{f.scopeLabel ? ` ${f.scopeLabel}` : ""} - {f.animal}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Сектор {f.sector} ({f.degrees})
@@ -266,9 +266,9 @@ export default function BaziPage() {
             <CardContent className="space-y-4">
               <p className="text-sm leading-relaxed">
                 {vtalkivanie.daysUntil === 0
-                  ? `Сегодня (${formatDate(vtalkivanie.date)}) — день активации`
-                  : `${formatDate(vtalkivanie.date)} (через ${vtalkivanie.daysUntil} дн.) — день активации`}.
-                Подходящий день — {vtalkivanie.dayAnimal}, час — {vtalkivanie.hourAnimal} ({vtalkivanie.period}).
+                  ? `Сегодня (${formatDate(vtalkivanie.date)}) - день активации`
+                  : `${formatDate(vtalkivanie.date)} (через ${vtalkivanie.daysUntil} дн.) - день активации`}.
+                Подходящий день - {vtalkivanie.dayAnimal}, час - {vtalkivanie.hourAnimal} ({vtalkivanie.period}).
               </p>
               <p className="text-sm text-muted-foreground">
                 Подходящий месяц: {vtalkivanie.month}. Ствол года: {vtalkivanie.yearStem}; ствол дня: {vtalkivanie.dayStem}.
@@ -278,7 +278,7 @@ export default function BaziPage() {
                 <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
                   {vtalkivanie.stars.map((star) => (
                     <li key={star.number}>
-                      Звезда {star.number} ({star.source}) — {star.direction}{star.degrees ? ` (${star.degrees})` : ""}
+                      Звезда {star.number} ({star.source}) - {star.direction}{star.degrees ? ` (${star.degrees})` : ""}
                     </li>
                   ))}
                 </ul>
@@ -308,9 +308,9 @@ export default function BaziPage() {
             <CardContent className="space-y-4">
               <p className="text-sm leading-relaxed">
                 {vtalkivanieMoney.daysUntil === 0
-                  ? `Сегодня (${formatDate(vtalkivanieMoney.date)}) — день активации`
-                  : `${formatDate(vtalkivanieMoney.date)} (через ${vtalkivanieMoney.daysUntil} дн.) — день активации`}.
-                Подходящий день — {vtalkivanieMoney.dayAnimal}.
+                  ? `Сегодня (${formatDate(vtalkivanieMoney.date)}) - день активации`
+                  : `${formatDate(vtalkivanieMoney.date)} (через ${vtalkivanieMoney.daysUntil} дн.) - день активации`}.
+                Подходящий день - {vtalkivanieMoney.dayAnimal}.
               </p>
               <p className="text-sm text-muted-foreground">
                 Подходящие ветви по карте рождения: {vtalkivanieMoney.daySources.join(", ")}.
@@ -320,7 +320,7 @@ export default function BaziPage() {
                 <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
                   {vtalkivanieMoney.stars.map((star) => (
                     <li key={star.number}>
-                      Звезда {star.number} ({star.source}) — {star.direction}{star.degrees ? ` (${star.degrees})` : ""}; {star.activator}
+                      Звезда {star.number} ({star.source}) - {star.direction}{star.degrees ? ` (${star.degrees})` : ""}; {star.activator}
                     </li>
                   ))}
                 </ul>
@@ -357,8 +357,8 @@ export default function BaziPage() {
             <CardContent className="space-y-4">
               <p className="text-sm leading-relaxed">
                 {personalPostHorse.daysUntil === 0
-                  ? `Сегодня (${formatDate(personalPostHorse.date)}) — день установки`
-                  : `${formatDate(personalPostHorse.date)} (через ${personalPostHorse.daysUntil} дн.) — благоприятная дата установки`}.
+                  ? `Сегодня (${formatDate(personalPostHorse.date)}) - день установки`
+                  : `${formatDate(personalPostHorse.date)} (через ${personalPostHorse.daysUntil} дн.) - благоприятная дата установки`}.
               </p>
               <p className="text-sm leading-relaxed">
                 Личная лошадь по земной ветви дня рождения: <span className="font-semibold text-sky-200">{personalPostHorse.horseAnimal}</span>.
@@ -370,7 +370,7 @@ export default function BaziPage() {
                 <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
                   {personalPostHorse.hours.map((hour) => (
                     <li key={hour.animal} className={hour.isHorseHour ? "text-sky-200" : ""}>
-                      {hour.animal} ({hour.period}){hour.isHorseHour ? " — час личной лошади" : ""}
+                      {hour.animal} ({hour.period}){hour.isHorseHour ? " - час личной лошади" : ""}
                     </li>
                   ))}
                 </ul>
@@ -426,7 +426,7 @@ export default function BaziPage() {
                   <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
                     {promo.hours.map((h, i) => (
                       <li key={i}>
-                        {h.animal} ({h.period}) — {h.reason}
+                        {h.animal} ({h.period}) - {h.reason}
                       </li>
                     ))}
                   </ul>
@@ -455,10 +455,10 @@ export default function BaziPage() {
 
               <p className="text-sm leading-relaxed">
                 {noble.daysUntil === 0
-                  ? `Сегодня (${formatDate(noble.date)}) — день Благородного`
+                  ? `Сегодня (${formatDate(noble.date)}) - день Благородного`
                   : noble.daysUntil === 1
-                    ? `Завтра (${formatDate(noble.date)}) — день Благородного`
-                    : `${formatDate(noble.date)} (через ${noble.daysUntil} дн.) — день Благородного`}{" "}
+                    ? `Завтра (${formatDate(noble.date)}) - день Благородного`
+                    : `${formatDate(noble.date)} (через ${noble.daysUntil} дн.) - день Благородного`}{" "}
                 ({noble.animal}). В секторе{" "}
                 <span className="font-semibold text-secondary">
                   {noble.sector} ({noble.degrees})
@@ -478,7 +478,7 @@ export default function BaziPage() {
                 <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
                   {noble.hours.map((h, i) => (
                     <li key={i}>
-                      {h.animal} ({h.period}) — {h.reason}
+                      {h.animal} ({h.period}) - {h.reason}
                     </li>
                   ))}
                 </ul>

@@ -1,4 +1,5 @@
 import { Solar } from "lunar-typescript";
+import { type BirthLocationContext, getBirthEightChar } from "./oracle";
 import { FLY_ORDER_DIRECTIONS, flyingStarYear, getFlyingStar } from "./data/fengshui";
 
 const ZHI_CN = "子丑寅卯辰巳午未申酉戌亥".split("");
@@ -189,11 +190,13 @@ export function computeVtalkivanieMoneyActivation(
   birthDate: string,
   birthTime: string | null,
   today: Date = new Date(),
+  location?: BirthLocationContext,
 ): VtalkivanieMoneyActivation | null {
   const birth = parseBirth(birthDate, birthTime);
   if (!birth) return null;
   try {
-    const birthEc = baziAt(birth.date, birth.hour, birth.minute);
+    const birthEc = getBirthEightChar(birthDate, birthTime, location);
+    if (!birthEc) return null;
     const birthYearBranch = ZHI_CN.indexOf(birthEc.getYearZhi());
     const birthDayBranch = ZHI_CN.indexOf(birthEc.getDayZhi());
     const targets = [birthYearBranch, birthDayBranch]
@@ -210,7 +213,7 @@ export function computeVtalkivanieMoneyActivation(
       if (hours.length === 0) continue;
       const { stars, warning } = sectorsForDate(date);
       if (stars.length === 0) continue;
-      const starText = stars.map((star) => `${star.number} — ${star.direction}`).join(", ");
+      const starText = stars.map((star) => `${star.number} - ${star.direction}`).join(", ");
       return {
         date: isoDate(date),
         daysUntil: offset,
@@ -220,7 +223,7 @@ export function computeVtalkivanieMoneyActivation(
         hours,
         stars,
         warning,
-        instruction: `В день активации используйте сектора: ${starText}. Для звезды 1 — фонтанчик, для звезды 6 — вентилятор, для звезды 8 — свечу.`,
+        instruction: `В день активации используйте сектора: ${starText}. Для звезды 1 - фонтанчик, для звезды 6 - вентилятор, для звезды 8 - свечу.`,
       };
     }
   } catch {

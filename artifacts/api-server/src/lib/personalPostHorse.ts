@@ -1,4 +1,5 @@
 import { Solar } from "lunar-typescript";
+import { type BirthLocationContext, getBirthEightChar } from "./oracle";
 
 const ZHI_CN = "子丑寅卯辰巳午未申酉戌亥".split("");
 const ANIMALS = [
@@ -138,11 +139,13 @@ export function computePersonalPostHorseActivation(
   birthDate: string,
   birthTime: string | null,
   today: Date = new Date(),
+  location?: BirthLocationContext,
 ): PersonalPostHorseActivation | null {
   const birth = parseBirth(birthDate, birthTime);
   if (!birth) return null;
   try {
-    const birthEc = baziAt(birth.date, birth.hour, birth.minute);
+    const birthEc = getBirthEightChar(birthDate, birthTime, location);
+    if (!birthEc) return null;
     const birthDayBranch = ZHI_CN.indexOf(birthEc.getDayZhi());
     const horseBranch = HORSE_BY_GROUP[birthDayBranch];
     const sector = HORSE_SECTORS[horseBranch];
