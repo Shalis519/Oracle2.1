@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 import {
   db,
   ontologyEntitiesTable,
@@ -521,7 +522,7 @@ export async function seedOntology() {
   if (phrases.length > 0) {
     await db
       .insert(motivationPhrasesTable)
-      .values(phrases.map((phrase) => ({ phrase, isActive: true })))
+      .values(phrases.map((phrase) => ({ id: randomUUID(), phrase, isActive: true })))
       .onConflictDoNothing({ target: motivationPhrasesTable.phrase });
   }
 

@@ -183,8 +183,8 @@ export default function AstrologyPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-card/40 backdrop-blur-md">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <Card className="bg-card/40 backdrop-blur-md h-fit self-start">
           <CardHeader className="pb-2">
             <CardTitle className="font-serif text-lg">Дома (Плацидус)</CardTitle>
           </CardHeader>
