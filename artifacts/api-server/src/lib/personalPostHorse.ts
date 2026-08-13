@@ -1,5 +1,6 @@
 import { Solar } from "lunar-typescript";
 import { type BirthLocationContext, getBirthEightChar } from "./oracle";
+import { isEclipseCorridorDate } from "./eclipseEphemeris";
 
 const ZHI_CN = "子丑寅卯辰巳午未申酉戌亥".split("");
 const ANIMALS = [
@@ -238,6 +239,7 @@ export function computePersonalPostHorseActivation(
     for (let offset = 0; offset <= 3; offset++) {
       const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset, 12, 0, 0);
       if (isEarthPeriod(date)) continue;
+      if (isEclipseCorridorDate(date)) continue;
       const ec = baziAt(date);
       const dayBranch = ZHI_CN.indexOf(ec.getDayZhi());
       const yearBranch = ZHI_CN.indexOf(ec.getYearZhi());

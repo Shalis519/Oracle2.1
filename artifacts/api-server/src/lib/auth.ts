@@ -1,4 +1,5 @@
-import { getAuth, clerkClient } from "@clerk/express";
+import { getAuth } from "@clerk/express";
+import { verifyToken } from "@clerk/backend";
 import type { Request, Response, NextFunction } from "express";
 import { eq } from "drizzle-orm";
 import { db, usersTable, type User } from "@workspace/db";
@@ -52,7 +53,9 @@ export async function requireAuth(
 
     if (token) {
       try {
-        const payload = await clerkClient.verifyToken(token);
+        const payload = await verifyToken(token, {
+          secretKey: process.env.CLERK_SECRET_KEY,
+        });
         clerkUserId = payload.sub ?? null;
         logger.info({ userId: clerkUserId }, "Bearer token verified manually");
       } catch (err) {

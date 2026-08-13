@@ -169,6 +169,9 @@ importers:
 
   artifacts/api-server:
     dependencies:
+      '@clerk/backend':
+        specifier: 3.8.4
+        version: 3.8.4
       '@clerk/express':
         specifier: ^2.1.32
         version: 2.1.32(express@5.2.1(supports-color@8.1.1))
@@ -3515,7 +3518,7 @@ snapshots:
 
   '@clerk/backend@3.8.4':
     dependencies:
-      '@clerk/shared': 4.22.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@clerk/shared': 4.28.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       standardwebhooks: 1.0.0
       tslib: 2.8.1
     transitivePeerDependencies:
