@@ -16,6 +16,7 @@ import {
   todayString,
 } from "../lib/oracle";
 import { computePeachBlossom } from "../lib/peachBlossom";
+import { computeVtalkivanieActivation } from "../lib/vtalkivanie";
 
 const router: IRouter = Router();
 
@@ -58,12 +59,17 @@ router.get("/bazi", requireAuth, async (req, res): Promise<void> => {
     todayString(),
     30,
   );
+  const vtalkivanieActivation = computeVtalkivanieActivation(
+    user.birthDate,
+    user.birthTime,
+  );
   res.json(
     GetBaziResponse.parse({
       ...result,
       promotionActivation,
       nobleHelperActivation,
       spendingDays,
+      vtalkivanieActivation,
     }),
   );
 });

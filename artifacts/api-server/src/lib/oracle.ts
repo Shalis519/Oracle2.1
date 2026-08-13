@@ -5,7 +5,13 @@ import {
   ELEMENT_MEANINGS,
   SYMBOLIC_STARS,
 } from "./data/bazi";
-import { getFlyingStar, getStarByNumber, type FlyingStarData } from "./data/fengshui";
+import {
+  getFlyingStar,
+  getStarByNumber,
+  FLY_ORDER_DIRECTIONS,
+  flyingStarYear,
+  type FlyingStarData,
+} from "./data/fengshui";
 import { DREAM_MEANINGS, DEFAULT_DREAM_INTERPRETATION } from "./data/dreams";
 import { Solar } from "lunar-typescript";
 import { selectTopTransits } from "./transitScore";
@@ -381,7 +387,7 @@ export function computeFengShui(
   bedDirection: string,
   today: Date = new Date(),
 ): FengShuiResult {
-  const annual = getFlyingStar(bedDirection);
+  const annual = getFlyingStar(bedDirection, flyingStarYear(today));
 
   // Default the monthly star to the annual one; overwrite it once the current
   // Bazi month is known.
@@ -487,20 +493,6 @@ const ANIMAL_ORDER = [
   "Свинья",
 ];
 
-// Lo Shu forward-fly path: the central palace first, then the order in which
-// energy flies through the eight outer palaces. Index = step offset.
-const FLY_ORDER_DIRECTIONS = [
-  "Центр",
-  "Северо-запад",
-  "Запад",
-  "Северо-восток",
-  "Юг",
-  "Север",
-  "Юго-запад",
-  "Восток",
-  "Юго-восток",
-];
-
 // Degree span (45° each) of the eight compass sectors. The centre has none.
 const SECTOR_DEGREES: Record<string, string> = {
   Север: "337,5°–22,5°",
@@ -604,7 +596,8 @@ export function computePromotionActivation(
 
   // Annual star comes from the existing 2026 chart; the monthly star flies
   // forward from its central seed along the same path.
-  const annualStar = getFlyingStar(direction).starNumber;
+      const annualStar = getFlyingStar(direction, flyingStarYear(today)).starNumber;
+
   const monthlyStar =
     ((monthlyCenterStar(yearBranchIdx, monthBranchIdx) - 1 + offset) % 9) + 1;
   if ([2, 5].includes(annualStar) || [2, 5].includes(monthlyStar)) {
@@ -955,7 +948,7 @@ export function computeNobleHelperActivation(
 
     // Skip the sector holding the annual 5-yellow misfortune star.
     const dir8 = BRANCH_SECTOR[nobleIdx].sector.replace(/-\d+$/, "");
-    if (getFlyingStar(dir8).starNumber === 5) continue;
+    if (getFlyingStar(dir8, flyingStarYear(today)).starNumber === 5) continue;
 
     const caution = threeShaBranches(yearBranchIdx).includes(nobleIdx)
       ? "В этом году сектор попадает под влияние Трёх Ша. Активируйте мягко и осторожно, без резких перестановок."

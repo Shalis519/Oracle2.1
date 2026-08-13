@@ -1,3 +1,5 @@
+import { Solar } from "lunar-typescript";
+
 export interface FlyingStarData {
   direction: string;
   starNumber: number;
@@ -113,17 +115,52 @@ export const FLYING_STARS_2026: Record<string, FlyingStarData> = {
   },
 };
 
-export function getFlyingStar(direction: string): FlyingStarData {
-  return FLYING_STARS_2026[direction] ?? FLYING_STARS_2026["Центр"];
-}
+// Порядок прохождения звезды от центра по дворцам Ло Шу. В 2026 году
+// центральная звезда равна 1, поэтому эта последовательность полностью
+// совпадает с картой FLYING_STARS_2026.
+export const FLY_ORDER_DIRECTIONS = [
+  "Центр",
+  "Северо-запад",
+  "Запад",
+  "Северо-восток",
+  "Юг",
+  "Север",
+  "Юго-запад",
+  "Восток",
+  "Юго-восток",
+] as const;
 
-// Each of the nine flying stars appears exactly once in the 2026 annual chart,
-// so the chart doubles as a star-number -> meaning lookup. This is reused to
-// describe the MONTHLY flying star that visits a sector in a given Bazi month.
+// Each of the nine flying stars appears exactly once in the 2026 annual chart;
+// its descriptions are reused for the same numbered star in later years.
 const STAR_BY_NUMBER: Record<number, FlyingStarData> = Object.fromEntries(
   Object.values(FLYING_STARS_2026).map((s) => [s.starNumber, s]),
 );
-
 export function getStarByNumber(starNumber: number): FlyingStarData {
   return STAR_BY_NUMBER[starNumber] ?? FLYING_STARS_2026["Центр"];
+}
+
+/** Solar-term-aware year used by the annual flying-star cycle. */
+export function flyingStarYear(date: Date): number {
+  const ec = Solar.fromYmdHms(
+    date.getFullYear(), date.getMonth() + 1, date.getDate(),
+    date.getHours(), date.getMinutes(), 0,
+  ).getLunar().getEightChar();
+  const yearGanIndex = "甲乙丙丁戊己庚辛壬癸".indexOf(ec.getYearGan());
+  const expectedIndex = ((date.getFullYear() - 4) % 10 + 10) % 10;
+  return yearGanIndex === expectedIndex ? date.getFullYear() : date.getFullYear() - 1;
+}
+
+/** Central annual star for the Gregorian year, matching the 2026 reference map. */
+export function annualCenterStar(year: number): number {
+  const normalized = ((year % 9) + 9) % 9;
+  return normalized === 0 ? 2 : 11 - normalized;
+}
+
+/** Return the annual star occupying a direction for the requested year. */
+export function getFlyingStar(direction: string, year = new Date().getFullYear()): FlyingStarData {
+  const offset = FLY_ORDER_DIRECTIONS.indexOf(direction as (typeof FLY_ORDER_DIRECTIONS)[number]);
+  if (offset < 0) return FLYING_STARS_2026["Центр"];
+  const starNumber = ((annualCenterStar(year) - 1 + offset) % 9) + 1;
+  const base = getStarByNumber(starNumber);
+  return { ...base, direction };
 }

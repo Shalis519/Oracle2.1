@@ -420,6 +420,26 @@ export const GetBaziResponse = zod.object({
   "caution": zod.string().nullable(),
   "date": zod.string(),
   "daysUntil": zod.number()
+}),zod.null()]).optional(),
+  "vtalkivanieActivation": zod.union([zod.object({
+  "date": zod.string(),
+  "daysUntil": zod.number(),
+  "month": zod.string(),
+  "dayAnimal": zod.string(),
+  "hourAnimal": zod.string(),
+  "period": zod.string(),
+  "yearStem": zod.string(),
+  "dayStem": zod.string(),
+  "stars": zod.array(zod.object({
+  "number": zod.number(),
+  "source": zod.enum(['годовая', 'месячная']),
+  "sector": zod.string(),
+  "direction": zod.string(),
+  "degrees": zod.string().nullable()
+})),
+  "businessInstruction": zod.string(),
+  "relationshipInstruction": zod.string(),
+  "familyInstruction": zod.string()
 }),zod.null()]).optional()
 })
 

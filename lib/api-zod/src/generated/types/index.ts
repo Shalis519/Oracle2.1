@@ -88,3 +88,6 @@ export * from './travelInput';
 export * from './travelStats';
 export * from './travelUpdate';
 export * from './upcomingBirthday';
+export * from './vtalkivanieActivation';
+export * from './vtalkivanieStarSector';
+export * from './vtalkivanieStarSectorSource';

@@ -1173,6 +1173,10 @@ components:
           anyOf:
             - $ref: "#/components/schemas/NobleHelperActivation"
             - type: "null"
+        vtalkivanieActivation:
+          anyOf:
+            - $ref: "#/components/schemas/VtalkivanieActivation"
+            - type: "null"
 
     PeachBranchName:
       type: object
@@ -1712,6 +1716,53 @@ components:
           type: string
         daysUntil:
           type: integer
+
+    VtalkivanieStarSector:
+      type: object
+      required: [number, source, sector, direction, degrees]
+      properties:
+        number:
+          type: integer
+        source:
+          type: string
+          enum: [годовая, месячная]
+        sector:
+          type: string
+        direction:
+          type: string
+        degrees:
+          type: [string, "null"]
+
+    VtalkivanieActivation:
+      type: object
+      required: [date, daysUntil, month, dayAnimal, hourAnimal, period, yearStem, dayStem, stars, businessInstruction, relationshipInstruction, familyInstruction]
+      properties:
+        date:
+          type: string
+        daysUntil:
+          type: integer
+        month:
+          type: string
+        dayAnimal:
+          type: string
+        hourAnimal:
+          type: string
+        period:
+          type: string
+        yearStem:
+          type: string
+        dayStem:
+          type: string
+        stars:
+          type: array
+          items:
+            $ref: "#/components/schemas/VtalkivanieStarSector"
+        businessInstruction:
+          type: string
+        relationshipInstruction:
+          type: string
+        familyInstruction:
+          type: string
 
     FengShuiInfo:
       type: object

@@ -303,6 +303,38 @@ export interface NobleHelperActivation {
   daysUntil: number;
 }
 
+export type VtalkivanieStarSectorSource = typeof VtalkivanieStarSectorSource[keyof typeof VtalkivanieStarSectorSource];
+
+
+export const VtalkivanieStarSectorSource = {
+  годовая: 'годовая',
+  месячная: 'месячная',
+} as const;
+
+export interface VtalkivanieStarSector {
+  number: number;
+  source: VtalkivanieStarSectorSource;
+  sector: string;
+  direction: string;
+  /** @nullable */
+  degrees: string | null;
+}
+
+export interface VtalkivanieActivation {
+  date: string;
+  daysUntil: number;
+  month: string;
+  dayAnimal: string;
+  hourAnimal: string;
+  period: string;
+  yearStem: string;
+  dayStem: string;
+  stars: VtalkivanieStarSector[];
+  businessInstruction: string;
+  relationshipInstruction: string;
+  familyInstruction: string;
+}
+
 export interface BaziSummary {
   dayMaster: string;
   dayElement: string;
@@ -312,6 +344,7 @@ export interface BaziSummary {
   spendingDays: string[];
   promotionActivation?: PromotionActivation | null;
   nobleHelperActivation?: NobleHelperActivation | null;
+  vtalkivanieActivation?: VtalkivanieActivation | null;
 }
 
 export interface PeachBranchName {

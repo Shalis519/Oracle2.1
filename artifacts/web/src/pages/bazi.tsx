@@ -109,6 +109,7 @@ export default function BaziPage() {
 
   const promo = bazi.promotionActivation;
   const noble = bazi.nobleHelperActivation;
+  const vtalkivanie = bazi.vtalkivanieActivation;
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
@@ -250,6 +251,48 @@ export default function BaziPage() {
           </Card>
         )}
       </motion.div>
+
+      {vtalkivanie && (
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <Card className="bg-card/40 backdrop-blur-md border-emerald-500/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-emerald-300" />
+                Активизация «Вталкивание людей»
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm leading-relaxed">
+                {vtalkivanie.daysUntil === 0
+                  ? `Сегодня (${formatDate(vtalkivanie.date)}) — день активации`
+                  : `${formatDate(vtalkivanie.date)} (через ${vtalkivanie.daysUntil} дн.) — день активации`}.
+                Подходящий день — {vtalkivanie.dayAnimal}, час — {vtalkivanie.hourAnimal} ({vtalkivanie.period}).
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Подходящий месяц: {vtalkivanie.month}. Ствол года: {vtalkivanie.yearStem}; ствол дня: {vtalkivanie.dayStem}.
+              </p>
+              <div>
+                <p className="text-sm font-medium mb-1">Сектора звёзд:</p>
+                <ul className="list-disc list-inside space-y-0.5 text-sm text-muted-foreground">
+                  {vtalkivanie.stars.map((star) => (
+                    <li key={star.number}>
+                      Звезда {star.number} ({star.source}) — {star.direction}{star.degrees ? ` (${star.degrees})` : ""}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="space-y-2 text-sm leading-relaxed">
+                <p><span className="font-medium">Для бизнеса:</span> {vtalkivanie.businessInstruction}</p>
+                <p><span className="font-medium">Для новых знакомств:</span> {vtalkivanie.relationshipInstruction}</p>
+                <p><span className="font-medium">Для рождения детей:</span> {vtalkivanie.familyInstruction}</p>
+              </div>
+              {vtalkivanie.daysUntil > 0 && (
+                <p className="text-sm text-emerald-200/90">Подготовьтесь заранее: активация состоится через {vtalkivanie.daysUntil} дн.</p>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {promo && (
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
