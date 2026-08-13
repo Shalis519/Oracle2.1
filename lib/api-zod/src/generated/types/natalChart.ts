@@ -5,6 +5,7 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { CinderellaGate } from './cinderellaGate';
 import type { NatalAngle } from './natalAngle';
 import type { NatalAspect } from './natalAspect';
 import type { NatalBody } from './natalBody';
@@ -16,5 +17,6 @@ export interface NatalChart {
   angles: NatalAngle[];
   houses: NatalHouse[];
   aspects: NatalAspect[];
+  cinderellaGates: CinderellaGate[];
   meta: NatalChartMeta;
 }

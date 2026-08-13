@@ -1045,6 +1045,7 @@ export interface DailyForecastResult {
   synthesisText: string;
   matrix: ForecastMatrix;
   transits: TransitSummary[];
+  cinderellaGates: import("./cinderellaGates").CinderellaGate[];
   conflicts: string[];
   warnings: string[];
 }
@@ -1202,6 +1203,7 @@ export async function computeDailyForecast(
     synthesisText,
     matrix: { number: arcana.number, name: arcana.name, essence: arcana.essence },
     transits: transitSummary,
+    cinderellaGates: transits?.cinderellaGates ?? [],
     conflicts,
     warnings,
   };

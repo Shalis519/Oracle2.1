@@ -1968,6 +1968,10 @@ components:
                 type: integer
               durationDays:
                 type: integer
+        cinderellaGates:
+          type: array
+          items:
+            $ref: "#/components/schemas/CinderellaGate"
         conflicts:
           type: array
           items:
@@ -2481,9 +2485,43 @@ components:
         houseSystem:
           type: string
 
+    CinderellaGate:
+      type: object
+      required: [id, mode, transitBody, transitBodySymbol, natalBody, natalBodySymbol, aspectType, aspectKey, aspectSymbol, orb, peakDate, activeFrom, activeTo, interpretation]
+      properties:
+        id:
+          type: string
+        mode:
+          type: string
+          enum: [natal, transit]
+        transitBody:
+          type: [string, "null"]
+        transitBodySymbol:
+          type: [string, "null"]
+        natalBody:
+          type: string
+        natalBodySymbol:
+          type: string
+        aspectType:
+          type: string
+        aspectKey:
+          type: string
+        aspectSymbol:
+          type: string
+        orb:
+          type: number
+        peakDate:
+          type: [string, "null"]
+        activeFrom:
+          type: [string, "null"]
+        activeTo:
+          type: [string, "null"]
+        interpretation:
+          type: string
+
     NatalChart:
       type: object
-      required: [bodies, angles, houses, aspects, meta]
+      required: [bodies, angles, houses, aspects, cinderellaGates, meta]
       properties:
         bodies:
           type: array
@@ -2501,5 +2539,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/NatalAspect"
+        cinderellaGates:
+          type: array
+          items:
+            $ref: "#/components/schemas/CinderellaGate"
         meta:
           $ref: "#/components/schemas/NatalChartMeta"

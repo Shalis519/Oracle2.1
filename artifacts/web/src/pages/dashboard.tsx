@@ -117,6 +117,28 @@ export default function DashboardPage() {
                     <p key={i} className="leading-relaxed text-lg">{para}</p>
                   ))}
                 </div>
+                {forecast.cinderellaGates && forecast.cinderellaGates.length > 0 && (
+                  <div className="mt-4 p-4 rounded-xl bg-primary/5 border border-primary/10">
+                    <h4 className="font-semibold text-primary mb-3">Врата Золушки</h4>
+                    <div className="space-y-4">
+                      {forecast.cinderellaGates.map((gate, i) => {
+                        const formatGateDate = (value: string | null) => value
+                          ? new Date(`${value}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
+                          : "";
+                        return (
+                          <div key={gate.id ?? i} className="space-y-1 text-sm">
+                            <p><span className="font-medium">Период:</span> с {formatGateDate(gate.activeFrom)} по {formatGateDate(gate.activeTo)}</p>
+                            <p><span className="font-medium">Кульминация:</span> {formatGateDate(gate.peakDate)}</p>
+                            <p className="text-muted-foreground">
+                              {gate.transitBody} - натальный {gate.natalBody}, {gate.aspectType.toLowerCase()}, орбис {gate.orb.toFixed(2)}°
+                            </p>
+                            <p className="leading-relaxed">{gate.interpretation}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                 {forecast.transits && forecast.transits.length > 0 && (
                   <div className="mt-4 p-4 rounded-xl bg-primary/5 border border-primary/10">
                     <h4 className="font-semibold text-primary mb-2">Ключевые транзиты сегодня</h4>

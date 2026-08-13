@@ -1,5 +1,7 @@
 import circularPkg from "circular-natal-horoscope-js";
 
+import { detectNatalCinderellaGates, detectTransitCinderellaGates, type CinderellaBody, type CinderellaGate } from "./cinderellaGates";
+
 const { Origin, Horoscope } = circularPkg as unknown as {
   Origin: new (args: {
     year: number;
@@ -278,6 +280,7 @@ export interface TransitResult {
   date: string;
   transitBodies: TransitBody[];
   aspects: TransitAspect[];
+  cinderellaGates: CinderellaGate[];
 }
 
 export interface NatalChart {
@@ -285,6 +288,7 @@ export interface NatalChart {
   angles: NatalAngle[];
   houses: NatalHouse[];
   aspects: NatalAspect[];
+  cinderellaGates: CinderellaGate[];
   meta: {
     timezone: string;
     julianDate: number;
@@ -494,12 +498,14 @@ export function computeNatalChart(input: NatalChartInput): NatalChart {
   });
 
   const aspects: NatalAspect[] = computeAspects(bodies);
+  const cinderellaGates = detectNatalCinderellaGates(bodies);
 
   return {
     bodies,
     angles,
     houses,
     aspects,
+    cinderellaGates,
     meta: {
       timezone: input.timezone ?? "UTC",
       julianDate: origin.julianDate,
@@ -647,9 +653,30 @@ export function computeTransits(
   // Tightest aspects first; limit to top 5 for prose synthesis
   aspects.sort((a, z) => a.orb - z.orb);
 
+  const cinderellaGates = detectTransitCinderellaGates(
+    natalChart.bodies,
+    dateStr,
+    (transitDate) => {
+      const y = Number(transitDate.slice(0, 4));
+      const m = Number(transitDate.slice(5, 7));
+      const d = Number(transitDate.slice(8, 10));
+      return computeNatalChart({
+        year: y,
+        month: m,
+        day: d,
+        hour: 12,
+        minute: 0,
+        latitude,
+        longitude,
+        timezone,
+      }).bodies;
+    },
+  );
+
   return {
     date: dateStr,
     transitBodies,
     aspects: aspects.slice(0, 5),
+    cinderellaGates,
   };
 }

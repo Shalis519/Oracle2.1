@@ -258,6 +258,22 @@ export const GetTodayForecastResponse = zod.object({
   "house": zod.number().optional(),
   "durationDays": zod.number().optional()
 })).optional(),
+  "cinderellaGates": zod.array(zod.object({
+  "id": zod.string(),
+  "mode": zod.enum(['natal', 'transit']),
+  "transitBody": zod.string().nullable(),
+  "transitBodySymbol": zod.string().nullable(),
+  "natalBody": zod.string(),
+  "natalBodySymbol": zod.string(),
+  "aspectType": zod.string(),
+  "aspectKey": zod.string(),
+  "aspectSymbol": zod.string(),
+  "orb": zod.number(),
+  "peakDate": zod.string().nullable(),
+  "activeFrom": zod.string().nullable(),
+  "activeTo": zod.string().nullable(),
+  "interpretation": zod.string()
+})).optional(),
   "conflicts": zod.array(zod.string()),
   "warnings": zod.array(zod.string()),
   "feedback": zod.union([zod.object({
@@ -307,6 +323,22 @@ export const ListForecastsResponseItem = zod.object({
   "orb": zod.number().optional(),
   "house": zod.number().optional(),
   "durationDays": zod.number().optional()
+})).optional(),
+  "cinderellaGates": zod.array(zod.object({
+  "id": zod.string(),
+  "mode": zod.enum(['natal', 'transit']),
+  "transitBody": zod.string().nullable(),
+  "transitBodySymbol": zod.string().nullable(),
+  "natalBody": zod.string(),
+  "natalBodySymbol": zod.string(),
+  "aspectType": zod.string(),
+  "aspectKey": zod.string(),
+  "aspectSymbol": zod.string(),
+  "orb": zod.number(),
+  "peakDate": zod.string().nullable(),
+  "activeFrom": zod.string().nullable(),
+  "activeTo": zod.string().nullable(),
+  "interpretation": zod.string()
 })).optional(),
   "conflicts": zod.array(zod.string()),
   "warnings": zod.array(zod.string()),
@@ -747,6 +779,22 @@ export const GetNatalChartResponse = zod.object({
   "typeKey": zod.string(),
   "typeSymbol": zod.string(),
   "orb": zod.number()
+})),
+  "cinderellaGates": zod.array(zod.object({
+  "id": zod.string(),
+  "mode": zod.enum(['natal', 'transit']),
+  "transitBody": zod.string().nullable(),
+  "transitBodySymbol": zod.string().nullable(),
+  "natalBody": zod.string(),
+  "natalBodySymbol": zod.string(),
+  "aspectType": zod.string(),
+  "aspectKey": zod.string(),
+  "aspectSymbol": zod.string(),
+  "orb": zod.number(),
+  "peakDate": zod.string().nullable(),
+  "activeFrom": zod.string().nullable(),
+  "activeTo": zod.string().nullable(),
+  "interpretation": zod.string()
 })),
   "meta": zod.object({
   "timezone": zod.string(),

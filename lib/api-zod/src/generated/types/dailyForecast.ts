@@ -5,6 +5,7 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { CinderellaGate } from './cinderellaGate';
 import type { DailyForecastTransitsItem } from './dailyForecastTransitsItem';
 import type { Feedback } from './feedback';
 import type { ForecastMatrix } from './forecastMatrix';
@@ -18,6 +19,7 @@ export interface DailyForecast {
   synthesisText: string;
   matrix: ForecastMatrix;
   transits?: DailyForecastTransitsItem[];
+  cinderellaGates?: CinderellaGate[];
   conflicts: string[];
   warnings: string[];
   feedback?: Feedback | null;

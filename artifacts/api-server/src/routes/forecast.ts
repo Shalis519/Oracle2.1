@@ -46,7 +46,7 @@ function buildForecast(
 ) {
   const payload = row.payload as Pick<
     DailyForecastResult,
-    "matrix" | "transits" | "conflicts" | "warnings"
+    "matrix" | "transits" | "cinderellaGates" | "conflicts" | "warnings"
   >;
   return {
     id: row.id,
@@ -57,6 +57,7 @@ function buildForecast(
     synthesisText: row.synthesisText,
     matrix: payload.matrix,
     transits: payload.transits ?? [],
+    cinderellaGates: payload.cinderellaGates ?? [],
     conflicts: payload.conflicts ?? [],
     warnings: payload.warnings ?? [],
     feedback: fb ? serializeFeedback(fb) : null,
@@ -127,6 +128,7 @@ async function getOrComputeToday(
   const payload = {
     matrix: result.matrix,
     transits: result.transits,
+    cinderellaGates: result.cinderellaGates,
     conflicts: result.conflicts,
     warnings: result.warnings,
   };

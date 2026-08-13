@@ -616,6 +616,36 @@ export type DailyForecastTransitsItem = {
   durationDays?: number;
 };
 
+export type CinderellaGateMode = typeof CinderellaGateMode[keyof typeof CinderellaGateMode];
+
+
+export const CinderellaGateMode = {
+  natal: 'natal',
+  transit: 'transit',
+} as const;
+
+export interface CinderellaGate {
+  id: string;
+  mode: CinderellaGateMode;
+  /** @nullable */
+  transitBody: string | null;
+  /** @nullable */
+  transitBodySymbol: string | null;
+  natalBody: string;
+  natalBodySymbol: string;
+  aspectType: string;
+  aspectKey: string;
+  aspectSymbol: string;
+  orb: number;
+  /** @nullable */
+  peakDate: string | null;
+  /** @nullable */
+  activeFrom: string | null;
+  /** @nullable */
+  activeTo: string | null;
+  interpretation: string;
+}
+
 export interface Feedback {
   id: number;
   forecastId: number;
@@ -635,6 +665,7 @@ export interface DailyForecast {
   synthesisText: string;
   matrix: ForecastMatrix;
   transits?: DailyForecastTransitsItem[];
+  cinderellaGates?: CinderellaGate[];
   conflicts: string[];
   warnings: string[];
   feedback?: Feedback | null;
@@ -944,6 +975,7 @@ export interface NatalChart {
   angles: NatalAngle[];
   houses: NatalHouse[];
   aspects: NatalAspect[];
+  cinderellaGates: CinderellaGate[];
   meta: NatalChartMeta;
 }
 

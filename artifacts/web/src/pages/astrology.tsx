@@ -258,6 +258,27 @@ export default function AstrologyPage() {
         </Card>
       </div>
 
+      {chart.cinderellaGates && chart.cinderellaGates.length > 0 && (
+        <Card className="bg-card/40 backdrop-blur-md border-primary/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="font-serif text-lg">Врата Золушки в натальной карте</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {chart.cinderellaGates.map((gate) => (
+              <div key={gate.id} className="rounded-lg border border-primary/10 bg-primary/5 p-3">
+                <div className="flex items-center gap-2 font-medium text-primary">
+                  <span>{glyph(gate.transitBodySymbol ?? "")}</span>
+                  <span>{gate.transitBody ?? "Хирон"} - {gate.natalBody}</span>
+                  <span className="text-muted-foreground">({gate.aspectType.toLowerCase()})</span>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">Орбис {gate.orb.toFixed(2)}°</p>
+                <p className="mt-2 text-sm leading-relaxed">{gate.interpretation}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       <p className="text-xs text-muted-foreground/60 text-center">
         Точность расчёта — до угловых минут. Часовой пояс определяется
         автоматически по координатам места рождения.

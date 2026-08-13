@@ -17,6 +17,8 @@ export * from './baziSummary';
 export * from './chatMessage';
 export * from './chatMessageInput';
 export * from './childBirth';
+export * from './cinderellaGate';
+export * from './cinderellaGateMode';
 export * from './city';
 export * from './computeNatalChart200';
 export * from './computeNatalChart200Chart';
