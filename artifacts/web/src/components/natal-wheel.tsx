@@ -273,7 +273,11 @@ export default function NatalWheel({
         const lineEnd = toXY(R_CUSP_LINE_END, ang.longitude);
         const inn = toXY(R_ASPECT, ang.longitude);
         const lab = toXY(R_CUSP_TEXT, ang.longitude);
-        const isMain = ang.key === "ascendant" || ang.key === "midheaven";
+        const isMain =
+          ang.key === "ascendant" ||
+          ang.key === "descendant" ||
+          ang.key === "midheaven" ||
+          ang.key === "imumcoeli";
         const isAsc = ang.key === "ascendant" || ang.abbr === "ASC";
         const isDsc = ang.key === "descendant" || ang.abbr === "DSC";
         const angleAbbr = isAsc

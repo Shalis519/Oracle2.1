@@ -67,14 +67,15 @@ export default function AstrologyPage() {
   }
 
   const isMissingData = errStatus === 400 || !chart;
-  const angleKeyByHouse: Record<number, string> = { 1: "asc", 4: "ic", 7: "dsc", 10: "mc" };
+  const angleKeyByHouse: Record<number, string> = {
+    1: "ascendant",
+    4: "imumcoeli",
+    7: "descendant",
+    10: "midheaven",
+  };
   const displayedAspects = chart?.aspects.filter(
-    (a) =>
-      !(
-        a.typeKey === "opposition" &&
-        ((a.body1 === "northnode" && a.body2 === "southnode") ||
-          (a.body1 === "southnode" && a.body2 === "northnode"))
-      )
+    (a) => a.body1 !== "northnode" && a.body1 !== "southnode" &&
+      a.body2 !== "northnode" && a.body2 !== "southnode"
   ) ?? [];
 
   if (isMissingData) {
@@ -194,8 +195,13 @@ export default function AstrologyPage() {
                     className="flex items-center justify-between px-4 py-2 text-sm border-b border-border"
                   >
                     <span className="flex items-center gap-2 text-muted-foreground">
-                      {angle && <span className="font-semibold text-primary">{angle.abbr}</span>}
-                      <span>{toRoman(h.number)} дом</span>
+                      {angle ? (
+                        <span className="font-semibold text-primary">
+                          {angle.abbr === "ASC" ? "Asc" : angle.abbr === "DSC" ? "Dsc" : angle.abbr} ({toRoman(h.number)})
+                        </span>
+                      ) : (
+                        <span>{toRoman(h.number)} дом</span>
+                      )}
                     </span>
                     <span className="flex items-center gap-1.5">
                       <span className="text-secondary">{glyph(h.signSymbol)}</span>
