@@ -44,6 +44,10 @@ const MONEY_DAY_BY_BIRTH_BRANCH: Record<number, number> = {
   11: 7, // Свинья -> Коза
 };
 
+const SIX_HARMONY = [1, 0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+const SAN_HE_GROUPS = [[8, 0, 4], [11, 3, 7], [2, 6, 10], [5, 9, 1]];
+const SEASONAL_GROUPS = [[2, 3, 4], [5, 6, 7], [8, 9, 10], [11, 0, 1]];
+
 const STAR_ACTIVATORS: Record<number, string> = {
   1: "фонтанчик",
   6: "вентилятор",
@@ -136,24 +140,44 @@ function strictHours(date: Date, natalBranches: number[]): MoneyActivationHour[]
   const ec = baziAt(date);
   const dayBranch = ZHI_CN.indexOf(ec.getDayZhi());
   const monthBranch = ZHI_CN.indexOf(ec.getMonthZhi());
-  const dayGan = GAN_CN.indexOf(ec.getDayGan());
-  if (dayBranch < 0 || monthBranch < 0 || dayGan < 0) return [];
+  if (dayBranch < 0 || monthBranch < 0) return [];
+
   const voidBranches = Array.from(ec.getDayXunKong())
     .map((branch) => ZHI_CN.indexOf(branch))
     .filter((idx) => idx >= 0);
   const clash = (idx: number) => (idx + 6) % 12;
-  const result: MoneyActivationHour[] = [];
-  for (let hourBranch = 0; hourBranch < 12; hourBranch++) {
-    if (voidBranches.includes(hourBranch)) continue;
-    if (hourBranch === clash(dayBranch) || hourBranch === clash(monthBranch)) continue;
-    if (natalBranches.some((branch) => hourBranch === clash(branch))) continue;
-    result.push({
+  const candidates = new Map<number, string>();
+  candidates.set(dayBranch, "час дня активации");
+  const harmony = SIX_HARMONY[dayBranch];
+  if (!candidates.has(harmony)) candidates.set(harmony, "слияние с днём активации");
+  for (const group of SAN_HE_GROUPS) {
+    if (group.includes(dayBranch)) {
+      for (const branch of group) {
+        if (!candidates.has(branch)) candidates.set(branch, "союз с днём активации");
+      }
+    }
+  }
+  for (const group of SEASONAL_GROUPS) {
+    if (group.includes(dayBranch)) {
+      for (const branch of group) {
+        if (!candidates.has(branch)) candidates.set(branch, "сезон с днём активации");
+      }
+    }
+  }
+
+  return [...candidates.entries()]
+    .sort(([a], [b]) => (a === 0 ? 12 : a) - (b === 0 ? 12 : b))
+    .filter(([hourBranch]) => {
+      if (voidBranches.includes(hourBranch)) return false;
+      if (hourBranch === clash(dayBranch) || hourBranch === clash(monthBranch)) return false;
+      if (natalBranches.some((branch) => hourBranch === clash(branch))) return false;
+      return true;
+    })
+    .map(([hourBranch, reason]) => ({
       animal: ANIMALS[hourBranch],
       period: PERIODS[hourBranch],
-      reason: "подходит: нет пустоты и столкновений с днём, месяцем и натальной картой",
-    });
-  }
-  return result;
+      reason,
+    }));
 }
 
 function sectorsForDate(date: Date): { stars: MoneyStarSector[]; warning: string | null } {
@@ -206,7 +230,6 @@ export function computeVtalkivanieMoneyActivation(
       if (hours.length === 0) continue;
       const { stars, warning } = sectorsForDate(date);
       if (stars.length === 0) continue;
-      const starText = stars.map((star) => `${star.number} - ${star.direction}`).join(", ");
       return {
         date: isoDate(date),
         daysUntil: offset,
@@ -216,7 +239,7 @@ export function computeVtalkivanieMoneyActivation(
         hours,
         stars,
         warning,
-        instruction: `В день активации используйте сектора: ${starText}. Для звезды 1 - фонтанчик, для звезды 6 - вентилятор, для звезды 8 - свечу.`,
+        instruction: `Для звезды 1 используйте фонтанчик, для звезды 6 - вентилятор, для звезды 8 - свечу.`,
       };
     }
   } catch {

@@ -306,13 +306,12 @@ export default function BaziPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">Цель: увеличить денежные поступления.</p>
+              <p className="text-sm leading-relaxed">Цель: увеличить денежные поступления.</p>
               <p className="text-sm text-muted-foreground">Используйте малый или большой тайчи.</p>
               <p className="text-sm leading-relaxed">
                 {vtalkivanieMoney.daysUntil === 0
-                  ? `Сегодня (${formatDate(vtalkivanieMoney.date)}) - день активации`
-                  : `${formatDate(vtalkivanieMoney.date)} (через ${vtalkivanieMoney.daysUntil} дн.) - день активации`}.
-                Подходящий день - {vtalkivanieMoney.dayAnimal}.
+                  ? `Дата (сегодня): ${formatDate(vtalkivanieMoney.date)} - день активации.`
+                  : `Дата (через ${vtalkivanieMoney.daysUntil} дн.): ${formatDate(vtalkivanieMoney.date)} - день активации.`}
               </p>
               <p className="text-sm leading-relaxed">
                 Одновременно установите три активатора максимально близко к внешним стенам помещения на высоте 70-100 см от пола.
