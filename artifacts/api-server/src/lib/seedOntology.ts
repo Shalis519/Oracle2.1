@@ -612,6 +612,13 @@ export async function seedOntology() {
   )`);
   await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS synastry_house_interpretation_unique ON synastry_house_interpretations (planet_body, house_number, direction_key)`);
   await db.insert(synastryHouseInterpretationsTable).values(houseSeed).onConflictDoNothing();
+  const houseAdditionalSeed = [
+    { planetBody: "moon", houseNumber: 1, title: "Луна в I доме", text: "Вы эмоционально затрагиваете самоощущение контакта и его способ проявляться в мире. Рядом с вами ему легче показывать чувства, но ваша реакция может особенно сильно влиять на его настроение." },
+    { planetBody: "mercury", houseNumber: 6, title: "Меркурий в VI доме", text: "Вы влияете на повседневный ритм контакта, его рабочие привычки и внимание к деталям. Общение помогает ему упорядочивать дела, находить практичные решения и заботиться о собственном режиме." },
+    { planetBody: "mars", houseNumber: 12, title: "Марс в XII доме", text: "Ваши действия затрагивают скрытые переживания контакта и процессы, которые он не всегда осознаёт. Связь может пробуждать сильную внутреннюю энергию, но требует бережности, чтобы напряжение не накапливалось молча." },
+    { planetBody: "jupiter", houseNumber: 12, title: "Юпитер в XII доме", text: "Вы приносите контакту ощущение внутренней поддержки и расширяете его представление о духовных и скрытых ресурсах. Ваше влияние может проявляться тихо, через доверие, помощь и чувство защищённости." },
+  ].map((item) => ({ ...item, directionKey: "neutral", categoryKey: "general", sourceNote: "Расширенный набор планет в домах", isActive: true }));
+  await db.insert(synastryHouseInterpretationsTable).values(houseAdditionalSeed).onConflictDoNothing();
   await db.execute(sql`UPDATE synastry_house_interpretations SET text = CASE planet_body
     WHEN 'sun' THEN 'Вы пробуждаете у контакта желание проявляться, творить, радоваться и чувствовать себя особенным. Ваше присутствие может усиливать романтический интерес и тягу к совместному творчеству.'
     WHEN 'moon' THEN 'Вы создаёте у контакта ощущение знакомости, домашнего тепла и эмоциональной причастности. Ваше влияние затрагивает его глубокие воспоминания и потребность в безопасности.'
