@@ -113,10 +113,15 @@ export default function ContactsPage() {
       }
     };
 
+    const onError = (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Не удалось сохранить контакт.";
+      toast({ title: "Контакт не сохранён", description: message });
+    };
+
     if (editingId) {
-      updateContact.mutate({ id: editingId, data: payload }, { onSuccess });
+      updateContact.mutate({ id: editingId, data: payload }, { onSuccess, onError });
     } else {
-      createContact.mutate({ data: payload }, { onSuccess });
+      createContact.mutate({ data: payload }, { onSuccess, onError });
     }
   };
 
