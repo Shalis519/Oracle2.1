@@ -13,11 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Compass, AlertCircle, Sparkles, Coins, Flower2 } from "lucide-react";
@@ -252,19 +247,17 @@ export default function BaziPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm leading-relaxed">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="font-semibold underline decoration-dotted underline-offset-4 cursor-help">
-                      Дни трат
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-sm leading-relaxed">
-                    Запланируйте «добровольные траты»: оплатите счета, совершайте покупки, займитесь благотворительностью, делайте подарки. Это «подкармливает» денежную энергию.
-                  </TooltipContent>
-                </Tooltip>
+              <div className="text-sm leading-relaxed">
+                <details>
+                  <summary className="inline cursor-pointer font-semibold underline decoration-dotted underline-offset-4">
+                    Дни трат
+                  </summary>
+                  <p className="mt-2 rounded-md border border-amber-500/20 bg-amber-500/5 p-3 text-sm leading-relaxed text-muted-foreground">
+                    Запланируйте добровольные траты: оплатите счета, совершайте покупки, займитесь благотворительностью, делайте подарки. Это подкармливает денежную энергию.
+                  </p>
+                </details>
                 : {formatSpendingDays(bazi.spendingDays)}.
-              </p>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -352,9 +345,6 @@ export default function BaziPage() {
                   ))}
                 </ul>
               </div>
-              {vtalkivanieMoney.daysUntil > 0 && (
-                <p className="text-sm text-amber-200/90">Подготовьтесь заранее: активация состоится через {vtalkivanieMoney.daysUntil} дн.</p>
-              )}
             </CardContent>
           </Card>
         </motion.div>
