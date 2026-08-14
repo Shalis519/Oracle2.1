@@ -212,6 +212,8 @@ router.post("/contacts/:id/synastry", requireAuth, async (req, res): Promise<voi
       },
       userLabel: user.name || "Пользователь",
       contactLabel: contact.name,
+      userGender: user.gender,
+      contactGender: contact.gender,
     });
     const [updated] = await db.update(contactsTable).set({
       synastryEnabled: true,

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { and, eq, inArray } from "drizzle-orm";
-import { db, cinderellaInterpretationsTable } from "@workspace/db";
+import { db, cinderellaInterpretationsTable, synastryInterpretationsTable } from "@workspace/db";
 import { computeNatalChart, type NatalChart, type NatalChartInput } from "./astrology";
 import { searchCities } from "./cities";
 
@@ -12,6 +12,18 @@ const TARGET_LABELS: Record<(typeof TARGETS)[number], string> = {
   sun: "Солнце",
   pluto: "Плутон",
 };
+const GENERAL_ASPECTS = [
+  { key: "conjunction", label: "Соединение", symbol: "☌", angle: 0, orb: 3.72 },
+  { key: "sextile", label: "Секстиль", symbol: "⚹", angle: 60, orb: 0.61 },
+  { key: "square", label: "Квадрат", symbol: "□", angle: 90, orb: 0.93 },
+  { key: "trine", label: "Тригон", symbol: "△", angle: 120, orb: 1.23 },
+  { key: "opposition", label: "Оппозиция", symbol: "☍", angle: 180, orb: 2.85 },
+] as const;
+const GENERAL_BODY_KEYS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith"] as const;
+const GENERAL_BODY_LABELS: Record<string, string> = {
+  sun: "Солнце", moon: "Луна", mercury: "Меркурий", venus: "Венера", mars: "Марс", jupiter: "Юпитер",
+  saturn: "Сатурн", uranus: "Уран", neptune: "Нептун", pluto: "Плутон", chiron: "Хирон", lilith: "Лилит",
+};
 const ASPECTS = [
   { key: "conjunction", label: "Соединение", symbol: "☌", angle: 0 },
   { key: "trine", label: "Тригон", symbol: "△", angle: 120 },
@@ -19,6 +31,28 @@ const ASPECTS = [
 ] as const;
 
 type SynastryPerson = "user" | "contact";
+
+export interface SynastryAspect {
+  sourcePerson: SynastryPerson;
+  sourceBody: string;
+  sourceLabel: string;
+  targetPerson: SynastryPerson;
+  targetBody: string;
+  targetLabel: string;
+  aspectKey: string;
+  aspectType: string;
+  aspectSymbol: string;
+  orb: number;
+  directionKey: string;
+  categoryKey: string;
+  interpretation: string;
+}
+
+export interface SynastryTheme {
+  key: string;
+  label: string;
+  aspects: SynastryAspect[];
+}
 
 export interface SynastryGate {
   pairKey: string;
@@ -40,7 +74,8 @@ export interface SynastryResult {
   inputHash: string;
   summary: string;
   cinderellaGates: SynastryGate[];
-  aspects: unknown[];
+  aspects: SynastryAspect[];
+  themes: SynastryTheme[];
   warnings: string[];
 }
 
@@ -49,12 +84,22 @@ function angularDistance(a: number, b: number) {
   return raw > 180 ? 360 - raw : raw;
 }
 
-function findAspect(a: number, b: number, maxOrb = 3) {
+function findCinderellaAspect(a: number, b: number, maxOrb = 3) {
   const distance = angularDistance(a, b);
   let best: (typeof ASPECTS)[number] & { orb: number } | null = null;
   for (const aspect of ASPECTS) {
     const orb = Math.abs(distance - aspect.angle);
     if (orb <= maxOrb && (!best || orb < best.orb)) best = { ...aspect, orb };
+  }
+  return best;
+}
+
+function findGeneralAspect(a: number, b: number) {
+  const distance = angularDistance(a, b);
+  let best: (typeof GENERAL_ASPECTS)[number] & { orbValue: number } | null = null;
+  for (const aspect of GENERAL_ASPECTS) {
+    const orbValue = Math.abs(distance - aspect.angle);
+    if (orbValue <= aspect.orb && (!best || orbValue < best.orbValue)) best = { ...aspect, orbValue };
   }
   return best;
 }
@@ -83,6 +128,39 @@ function inputHash(input: unknown) {
   return createHash("sha256").update(JSON.stringify(input)).digest("hex");
 }
 
+function normalizeGender(value: string | null | undefined) {
+  const normalized = (value ?? "").toLowerCase();
+  if (["male", "м", "муж", "мужской"].includes(normalized)) return "male";
+  if (["female", "ж", "жен", "женский"].includes(normalized)) return "female";
+  return null;
+}
+
+function directionFor(sourcePerson: SynastryPerson, userGender?: string | null, contactGender?: string | null) {
+  const user = normalizeGender(userGender);
+  const contact = normalizeGender(contactGender);
+  if (!user || !contact || user === contact) return "neutral";
+  const sourceGender = sourcePerson === "user" ? user : contact;
+  return sourceGender === "male" ? "male-to-female" : "female-to-male";
+}
+
+function themeLabel(key: string) {
+  const labels: Record<string, string> = {
+    sensuality: "Чувственность и притяжение", conflict: "Конфликты и напряжение", emotions: "Эмоциональная связь",
+    communication: "Общение и понимание", support: "Поддержка и развитие", general: "Общая динамика",
+  };
+  return labels[key] ?? key;
+}
+
+function fallbackCategory(sourceBody: string, targetBody: string, aspectKey: string) {
+  const bodies = new Set([sourceBody, targetBody]);
+  if (bodies.has("venus") || bodies.has("mars") || bodies.has("pluto")) return "sensuality";
+  if (["square", "opposition"].includes(aspectKey) && (bodies.has("saturn") || bodies.has("uranus") || bodies.has("mars"))) return "conflict";
+  if (bodies.has("moon")) return "emotions";
+  if (bodies.has("mercury")) return "communication";
+  if (bodies.has("jupiter") || bodies.has("sun")) return "support";
+  return "general";
+}
+
 export function resolveContactBirthLocation(place: string | null | undefined) {
   const city = place ? searchCities(place, 1)[0] : undefined;
   return city ? { latitude: city.lat, longitude: city.lng, timezone: city.timezone, name: city.name } : null;
@@ -93,6 +171,8 @@ export async function calculateSynastry(params: {
   contactInput: NatalChartInput;
   userLabel: string;
   contactLabel: string;
+  userGender?: string | null;
+  contactGender?: string | null;
 }) : Promise<SynastryResult> {
   const input = { user: params.userInput, contact: params.contactInput };
   const userChart = computeNatalChart(params.userInput);
@@ -119,7 +199,7 @@ export async function calculateSynastry(params: {
       { chiron: contactChiron, target: userTarget, sourcePerson: "contact" as const, sourceLabel: params.contactLabel, targetPerson: "user" as const, targetLabel: params.userLabel },
     ];
     for (const direction of directions) {
-      const aspect = findAspect(direction.chiron.longitude, direction.target.longitude);
+      const aspect = findCinderellaAspect(direction.chiron.longitude, direction.target.longitude);
       if (!aspect) continue;
       const pairKey = `chiron-${targetKey}`;
       const interpretation = interpretationByPair.get(`${pairKey}:${aspect.key}`)
@@ -140,6 +220,39 @@ export async function calculateSynastry(params: {
     }
   }
 
+  const interpretationRows = await db.select().from(synastryInterpretationsTable).where(eq(synastryInterpretationsTable.isActive, true));
+  const interpretationMap = new Map(interpretationRows.map((row) => [`${row.sourceBody}:${row.targetBody}:${row.aspectKey}:${row.directionKey}`, row]));
+  const aspects: SynastryAspect[] = [];
+  const userBodies = userChart.bodies.filter((body) => (GENERAL_BODY_KEYS as readonly string[]).includes(body.key));
+  const contactBodies = contactChart.bodies.filter((body) => (GENERAL_BODY_KEYS as readonly string[]).includes(body.key));
+  for (const source of userBodies) {
+    for (const target of contactBodies) {
+      const found = findGeneralAspect(source.longitude, target.longitude);
+      if (!found) continue;
+      const directionKey = directionFor("user", params.userGender, params.contactGender);
+      const row = interpretationMap.get(`${source.key}:${target.key}:${found.key}:${directionKey}`)
+        ?? interpretationMap.get(`${source.key}:${target.key}:${found.key}:neutral`);
+      const categoryKey = row?.categoryKey ?? fallbackCategory(source.key, target.key, found.key);
+      aspects.push({ sourcePerson: "user", sourceBody: source.key, sourceLabel: params.userLabel, targetPerson: "contact", targetBody: target.key, targetLabel: params.contactLabel, aspectKey: found.key, aspectType: found.label, aspectSymbol: found.symbol, orb: Number(found.orbValue.toFixed(2)), directionKey, categoryKey, interpretation: row?.text?.trim() || "В разработке" });
+    }
+  }
+  for (const source of contactBodies) {
+    for (const target of userBodies) {
+      const found = findGeneralAspect(source.longitude, target.longitude);
+      if (!found) continue;
+      const directionKey = directionFor("contact", params.userGender, params.contactGender);
+      const row = interpretationMap.get(`${source.key}:${target.key}:${found.key}:${directionKey}`)
+        ?? interpretationMap.get(`${source.key}:${target.key}:${found.key}:neutral`);
+      const categoryKey = row?.categoryKey ?? fallbackCategory(source.key, target.key, found.key);
+      aspects.push({ sourcePerson: "contact", sourceBody: source.key, sourceLabel: params.contactLabel, targetPerson: "user", targetBody: target.key, targetLabel: params.userLabel, aspectKey: found.key, aspectType: found.label, aspectSymbol: found.symbol, orb: Number(found.orbValue.toFixed(2)), directionKey, categoryKey, interpretation: row?.text?.trim() || "В разработке" });
+    }
+  }
+  const grouped = new Map<string, SynastryAspect[]>();
+  for (const aspect of aspects) grouped.set(aspect.categoryKey, [...(grouped.get(aspect.categoryKey) ?? []), aspect]);
+  const themes = [...grouped.entries()]
+    .filter(([, items]) => items.length >= 3)
+    .map(([key, items]) => ({ key, label: themeLabel(key), aspects: items.sort((a, b) => a.orb - b.orb) }));
+
   const hash = inputHash(input);
   return {
     version: 1,
@@ -148,7 +261,8 @@ export async function calculateSynastry(params: {
     inputHash: hash,
     summary: gates.length ? `Найдено связей Врат Золушки: ${gates.length}.` : "Значимые Врата Золушки не найдены.",
     cinderellaGates: gates.sort((a, b) => a.orb - b.orb),
-    aspects: [],
+    aspects: aspects.sort((a, b) => a.orb - b.orb),
+    themes,
     warnings: [],
   };
 }

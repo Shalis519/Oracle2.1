@@ -17,6 +17,7 @@ import notepadRouter from "./notepad";
 import adminOntologyRouter from "./adminOntology";
 import ontologyExportRouter from "./ontologyExport";
 import adminCinderellaRouter from "./adminCinderella";
+import adminSynastryRouter from "./adminSynastry";
 
 const router: IRouter = Router();
 
@@ -38,5 +39,6 @@ router.use(notepadRouter);
 router.use(adminOntologyRouter);
 router.use(ontologyExportRouter);
 router.use(adminCinderellaRouter);
+router.use(adminSynastryRouter);
 
 export default router;

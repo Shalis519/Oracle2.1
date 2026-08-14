@@ -112,6 +112,40 @@ function getCinderellaTitle(pairKey: string, mode: CinderellaMode) {
   return `${pair}: синастрия`;
 }
 
+const SYNastryBodies = [
+  { key: "sun", label: "Солнце" }, { key: "moon", label: "Луна" },
+  { key: "mercury", label: "Меркурий" }, { key: "venus", label: "Венера" },
+  { key: "mars", label: "Марс" }, { key: "jupiter", label: "Юпитер" },
+  { key: "saturn", label: "Сатурн" }, { key: "uranus", label: "Уран" },
+  { key: "neptune", label: "Нептун" }, { key: "pluto", label: "Плутон" },
+  { key: "chiron", label: "Хирон" }, { key: "lilith", label: "Лилит" },
+] as const;
+const SYNastryAspects = [
+  { key: "conjunction", label: "соединение" }, { key: "sextile", label: "секстиль" },
+  { key: "square", label: "квадрат" }, { key: "trine", label: "тригон" },
+  { key: "opposition", label: "оппозиция" },
+] as const;
+const SYNastryDirections = [
+  { key: "neutral", label: "Общая интерпретация" },
+  { key: "male-to-female", label: "Мужчина -> женщина" },
+  { key: "female-to-male", label: "Женщина -> мужчина" },
+] as const;
+
+interface SynastryInterpretation {
+  id: number;
+  categoryKey: string;
+  sourceBody: string;
+  targetBody: string;
+  aspectKey: string;
+  directionKey: string;
+  title: string;
+  text: string;
+  keywords: string[];
+  sourceNote?: string | null;
+  isActive: boolean;
+  updatedAt: string;
+}
+
 interface CinderellaInterpretation {
   id: number;
   pairKey: string;
@@ -853,6 +887,12 @@ export default function AdminStudioPage() {
   const [editingCinderella, setEditingCinderella] = useState<CinderellaInterpretation | null>(null);
   const [cinderellaForm, setCinderellaForm] = useState({ pairKey: "chiron-venus", mode: "natal" as CinderellaMode, aspectKey: "any", title: getCinderellaTitle("chiron-venus", "natal"), text: "В разработке", sourceNote: "Врата Золушки - презентация", isActive: true });
   const [cinderellaEditorOpen, setCinderellaEditorOpen] = useState(false);
+  const [synastryInterpretations, setSynastryInterpretations] = useState<SynastryInterpretation[]>([]);
+  const [synastryLoading, setSynastryLoading] = useState(false);
+  const [synastrySaving, setSynastrySaving] = useState(false);
+  const [editingSynastry, setEditingSynastry] = useState<SynastryInterpretation | null>(null);
+  const [synastryEditorOpen, setSynastryEditorOpen] = useState(false);
+  const [synastryForm, setSynastryForm] = useState({ categoryKey: "general", sourceBody: "sun", targetBody: "moon", aspectKey: "conjunction", directionKey: "neutral", text: "В разработке", sourceNote: "", isActive: true });
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -926,6 +966,7 @@ export default function AdminStudioPage() {
     loadThemes();
     loadPhrases();
     loadCinderella();
+    loadSynastryInterpretations();
   }, [loadEntities, loadThemes]);
 
   const loadPhrases = useCallback(async () => {
@@ -936,6 +977,41 @@ export default function AdminStudioPage() {
       setPhrases(Array.isArray(data) ? data : []);
     } catch { setPhrases([]); }
   }, []);
+
+  const loadSynastryInterpretations = useCallback(async () => {
+    setSynastryLoading(true);
+    try {
+      const res = await apiFetch("/admin/synastry-interpretations");
+      const data = await res.json();
+      setSynastryInterpretations(res.ok ? (data.interpretations ?? []) : []);
+    } catch { setSynastryInterpretations([]); }
+    finally { setSynastryLoading(false); }
+  }, []);
+
+  const saveSynastryInterpretation = async () => {
+    setSynastrySaving(true);
+    try {
+      const path = editingSynastry ? `/admin/synastry-interpretations/${editingSynastry.id}` : "/admin/synastry-interpretations";
+      const method = editingSynastry ? "PUT" : "POST";
+      const payload = editingSynastry
+        ? { text: synastryForm.text, sourceNote: synastryForm.sourceNote, isActive: synastryForm.isActive }
+        : synastryForm;
+      const res = await apiFetch(path, { method, body: JSON.stringify(payload) });
+      if (!res.ok) { const err = await res.json(); toast({ title: "Ошибка сохранения", description: err.error, variant: "destructive" }); return; }
+      setSynastryEditorOpen(false); setEditingSynastry(null); await loadSynastryInterpretations();
+      toast({ title: "Интерпретация синастрии сохранена" });
+    } finally { setSynastrySaving(false); }
+  };
+
+  const deleteSynastryInterpretation = async (id: number) => {
+    if (!confirm("Удалить интерпретацию?")) return;
+    const res = await apiFetch(`/admin/synastry-interpretations/${id}`, { method: "DELETE" });
+    if (res.ok) { await loadSynastryInterpretations(); toast({ title: "Интерпретация удалена" }); }
+  };
+
+  const getSynastryBodyLabel = (key: string) => SYNastryBodies.find((item) => item.key === key)?.label ?? key;
+  const getSynastryAspectLabel = (key: string) => SYNastryAspects.find((item) => item.key === key)?.label ?? key;
+  const getSynastryDirectionLabel = (key: string) => SYNastryDirections.find((item) => item.key === key)?.label ?? key;
 
   const loadCinderella = useCallback(async () => {
     setCinderellaLoading(true);
@@ -1352,12 +1428,13 @@ export default function AdminStudioPage() {
       </div>
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 md:w-auto">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 md:w-auto">
           <TabsTrigger value="entities"><Layers className="w-4 h-4 mr-2" />Сущности</TabsTrigger>
           <TabsTrigger value="themes"><BookOpen className="w-4 h-4 mr-2" />Жизненные темы</TabsTrigger>
           <TabsTrigger value="phrases"><MessageSquareQuote className="w-4 h-4 mr-2" />Фразы</TabsTrigger>
           <TabsTrigger value="backup"><Download className="w-4 h-4 mr-2" />Бэкап</TabsTrigger>
           <TabsTrigger value="cinderella"><Sparkles className="w-4 h-4 mr-2" />Врата Золушки</TabsTrigger>
+          <TabsTrigger value="synastry"><Link2 className="w-4 h-4 mr-2" />Общая синастрия</TabsTrigger>
         </TabsList>
 
         <TabsContent value="entities" className="space-y-6">
@@ -1653,6 +1730,56 @@ export default function AdminStudioPage() {
             </DialogContent>
           </Dialog>
         </TabsContent>
+        <TabsContent value="synastry" className="space-y-6">
+          <Card>
+            <CardHeader><CardTitle>Общая синастрия</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">Здесь редактируются интерпретации межпланетных аспектов в синастрии. Планеты и аспекты фиксированы формулой проекта, а тексты можно менять в любое время.</p>
+              <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">Орбисы: соединение 3,72°, секстиль 0,61°, квадрат 0,93°, тригон 1,23°, оппозиция 2,85°. Пустые тексты отображаются пользователю как «В разработке».</div>
+              <Button onClick={() => { setEditingSynastry(null); setSynastryForm({ categoryKey: "general", sourceBody: "sun", targetBody: "moon", aspectKey: "conjunction", directionKey: "neutral", text: "В разработке", sourceNote: "", isActive: true }); setSynastryEditorOpen(true); }}><Plus className="w-4 h-4 mr-2" />Добавить интерпретацию</Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6 space-y-3">
+              {synastryLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : synastryInterpretations.length === 0 ? <p className="text-sm text-muted-foreground">Записей пока нет. Добавьте первую интерпретацию.</p> : synastryInterpretations.map((item) => (
+                <div key={item.id} className="rounded-lg border border-border p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium">{getSynastryBodyLabel(item.sourceBody)} - {getSynastryBodyLabel(item.targetBody)}, {getSynastryAspectLabel(item.aspectKey)}</p>
+                      <p className="text-xs text-muted-foreground">{getSynastryDirectionLabel(item.directionKey)} · {item.categoryKey}</p>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <Button size="sm" variant="outline" onClick={() => { setEditingSynastry(item); setSynastryForm({ categoryKey: item.categoryKey, sourceBody: item.sourceBody, targetBody: item.targetBody, aspectKey: item.aspectKey, directionKey: item.directionKey, text: item.text || "В разработке", sourceNote: item.sourceNote ?? "", isActive: item.isActive }); setSynastryEditorOpen(true); }}><Pencil className="w-4 h-4 mr-1" />Изменить</Button>
+                      <Button size="sm" variant="ghost" onClick={() => deleteSynastryInterpretation(item.id)}><Trash2 className="w-4 h-4" /></Button>
+                    </div>
+                  </div>
+                  <p className={cn("whitespace-pre-wrap text-sm", !item.text?.trim() || item.text === "В разработке" ? "text-amber-200" : "text-muted-foreground")}>{item.text?.trim() || "В разработке"}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Dialog open={synastryEditorOpen} onOpenChange={(open) => { setSynastryEditorOpen(open); if (!open) setEditingSynastry(null); }}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader><DialogTitle>{editingSynastry ? "Изменить интерпретацию синастрии" : "Новая интерпретация синастрии"}</DialogTitle></DialogHeader>
+              <div className="space-y-4">
+                {!editingSynastry && <div className="grid gap-4 md:grid-cols-2">
+                  <div><Label>Планета карты A</Label><Select value={synastryForm.sourceBody} onValueChange={(value) => setSynastryForm((form) => ({ ...form, sourceBody: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{SYNastryBodies.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+                  <div><Label>Планета карты B</Label><Select value={synastryForm.targetBody} onValueChange={(value) => setSynastryForm((form) => ({ ...form, targetBody: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{SYNastryBodies.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+                  <div><Label>Аспект</Label><Select value={synastryForm.aspectKey} onValueChange={(value) => setSynastryForm((form) => ({ ...form, aspectKey: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{SYNastryAspects.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+                  <div><Label>Направление</Label><Select value={synastryForm.directionKey} onValueChange={(value) => setSynastryForm((form) => ({ ...form, directionKey: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{SYNastryDirections.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+                </div>}
+                {editingSynastry && <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">{getSynastryBodyLabel(editingSynastry.sourceBody)} - {getSynastryBodyLabel(editingSynastry.targetBody)}, {getSynastryAspectLabel(editingSynastry.aspectKey)} · {getSynastryDirectionLabel(editingSynastry.directionKey)}<br /><span className="text-muted-foreground">Формула фиксирована и не редактируется.</span></div>}
+                <div><Label>Категория / тема</Label><Input value={synastryForm.categoryKey} onChange={(e) => setSynastryForm((form) => ({ ...form, categoryKey: e.target.value }))} disabled={Boolean(editingSynastry)} placeholder="general, sensuality, conflict..." /></div>
+                <div><Label>Интерпретация</Label><Textarea value={synastryForm.text} onChange={(e) => setSynastryForm((form) => ({ ...form, text: e.target.value }))} rows={12} /></div>
+                <div><Label>Источник</Label><Input value={synastryForm.sourceNote} onChange={(e) => setSynastryForm((form) => ({ ...form, sourceNote: e.target.value }))} /></div>
+                <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setSynastryEditorOpen(false)}>Отмена</Button><Button onClick={saveSynastryInterpretation} disabled={synastrySaving}>{synastrySaving ? "Сохранение..." : "Сохранить"}</Button></div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </TabsContent>
+
         <TabsContent value="backup" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>

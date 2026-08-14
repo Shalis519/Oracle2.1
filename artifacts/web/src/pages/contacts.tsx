@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { Users, Plus, Trash2, Pencil, Calendar, Clock, User, MapPin, Phone, Mail, Search, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type FormData = {
   name: string;
@@ -23,6 +24,21 @@ type FormData = {
   email: string;
   synastryEnabled: boolean;
 };
+
+const SYNASTRY_BODY_NAMES: Record<string, string> = {
+  sun: "Солнце", moon: "Луна", mercury: "Меркурий", venus: "Венера", mars: "Марс",
+  jupiter: "Юпитер", saturn: "Сатурн", uranus: "Уран", neptune: "Нептун", pluto: "Плутон",
+  chiron: "Хирон", lilith: "Лилит",
+};
+
+function synastryPersonPhrase(sourcePerson: "user" | "contact", sourceLabel: string, targetPerson: "user" | "contact", targetLabel: string, sourceBody: string, targetBody: string, aspectType: string) {
+  const sourceBodyLabel = SYNASTRY_BODY_NAMES[sourceBody] ?? sourceBody;
+  const targetBodyLabel = SYNASTRY_BODY_NAMES[targetBody] ?? targetBody;
+  const aspect = aspectType.toLowerCase();
+  if (sourcePerson === "user" && targetPerson === "contact") return `Ваш ${sourceBodyLabel} образует ${aspect} к ${targetBodyLabel} контакта.`;
+  if (sourcePerson === "contact" && targetPerson === "user") return `${sourceBodyLabel} контакта образует ${aspect} к вашему ${targetBodyLabel}.`;
+  return `${sourceLabel}: ${sourceBodyLabel} образует ${aspect} к ${targetBodyLabel} (${targetLabel}).`;
+}
 
 const emptyForm: FormData = {
   name: "",
@@ -185,16 +201,21 @@ export default function ContactsPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Пол</label>
-                <select
+                <RadioGroup
                   required
                   value={formData.gender}
-                  onChange={e => setFormData(p => ({ ...p, gender: e.target.value as FormData["gender"] }))}
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  onValueChange={(value) => setFormData((p) => ({ ...p, gender: value as FormData["gender"] }))}
+                  className="flex gap-5 pt-1"
                 >
-                  <option value="">Выберите пол</option>
-                  <option value="женщина">Женщина</option>
-                  <option value="мужчина">Мужчина</option>
-                </select>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="мужчина" id="contact-gender-male" />
+                    <label htmlFor="contact-gender-male" className="text-sm cursor-pointer">Мужчина</label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="женщина" id="contact-gender-female" />
+                    <label htmlFor="contact-gender-female" className="text-sm cursor-pointer">Женщина</label>
+                  </div>
+                </RadioGroup>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Телефон (необязательно)</label>
@@ -232,9 +253,23 @@ export default function ContactsPage() {
             const contact = contacts?.find((c) => c.id === synastryContactId);
             if (!contact?.synastryData) return <p className="text-muted-foreground">Расчёт ещё не готов.</p>;
             try {
-              const result = JSON.parse(contact.synastryData) as { summary: string; cinderellaGates?: Array<{ sourceLabel: string; targetLabel: string; aspectType: string; orb: number; interpretation: string }> };
+              const result = JSON.parse(contact.synastryData) as {
+                summary: string;
+                cinderellaGates?: Array<{ pairKey?: string; sourcePerson?: "user" | "contact"; targetPerson?: "user" | "contact"; sourceLabel: string; targetLabel: string; aspectType: string; orb: number; interpretation: string }>;
+                aspects?: Array<{ sourcePerson?: "user" | "contact"; targetPerson?: "user" | "contact"; sourceLabel: string; targetLabel: string; sourceBody: string; targetBody: string; aspectType: string; aspectSymbol: string; orb: number; interpretation: string }>;
+                themes?: Array<{ key: string; label: string; aspects: Array<{ sourceLabel: string; targetLabel: string; sourceBody: string; targetBody: string; aspectType: string; aspectSymbol: string; orb: number; interpretation: string }> }>;
+              };
               const gates = result.cinderellaGates ?? [];
-              return <div className="space-y-5">{gates.length > 0 && <section><h3 className="font-semibold text-lg mb-2">Интерпретация:</h3>{gates.map((gate, index) => <article key={`${gate.sourceLabel}-${gate.targetLabel}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">Врата Золушки: Хирон - {gate.targetLabel}, {gate.aspectType}, орбис {gate.orb}°</div><div className="text-sm text-muted-foreground">{gate.sourceLabel} - Хирон - {gate.targetLabel}</div><p className="text-sm leading-relaxed">{gate.interpretation}</p></article>)}</section>}</div>;
+              const aspects = result.aspects ?? [];
+              const themes = result.themes ?? [];
+              const bodyNames = SYNASTRY_BODY_NAMES;
+              return <div className="space-y-5">
+                {(gates.length > 0 || aspects.length > 0) && <section><h3 className="font-semibold text-lg mb-2">Интерпретация:</h3><div className="space-y-3">
+                  {gates.map((gate, index) => <article key={`gate-${gate.sourceLabel}-${gate.targetLabel}-${index}`} className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-2"><div className="font-medium">{synastryPersonPhrase(gate.sourcePerson ?? "user", gate.sourceLabel, gate.targetPerson ?? "contact", gate.targetLabel, "chiron", gate.pairKey?.replace(/^chiron-/, "") ?? "venus", gate.aspectType)} Орбис {gate.orb}°</div><p className="text-sm leading-relaxed">{gate.interpretation}</p></article>)}
+                  {aspects.map((aspect, index) => <article key={`aspect-${aspect.sourceBody}-${aspect.targetBody}-${aspect.aspectType}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">{synastryPersonPhrase(aspect.sourcePerson ?? "user", aspect.sourceLabel, aspect.targetPerson ?? "contact", aspect.targetLabel, aspect.sourceBody, aspect.targetBody, aspect.aspectType)} Орбис {aspect.orb}°</div><p className="text-sm leading-relaxed">{aspect.interpretation}</p></article>)}
+                </div></section>}
+                {themes.length > 0 && <section className="space-y-3"><h3 className="font-semibold text-lg">Ключевые темы</h3>{themes.map((theme) => <article key={theme.key} className="rounded-lg border border-border p-3"><h4 className="font-medium">{theme.label}</h4><p className="mt-1 text-sm text-muted-foreground">Тема подтверждена тремя и более связанными аспектами.</p></article>)}</section>}
+              </div>;
             } catch { return <p className="text-destructive">Не удалось прочитать результат расчёта.</p>; }
           })()}
         </DialogContent>
