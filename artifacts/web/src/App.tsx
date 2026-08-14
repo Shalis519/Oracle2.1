@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import { setBaseUrl, setAuthTokenGetter } from "@workspace/api-client-react";
 import { ClerkProvider, SignIn, SignUp, Show, useClerk, useAuth } from "@clerk/react";
 import { ruRU } from "@clerk/localizations";
@@ -12,20 +12,20 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import LandingPage from "./pages/landing";
 import DashboardPage from "./pages/dashboard";
-import ProfilePage from "./pages/profile";
-import MatrixPage from "./pages/matrix";
-import BaziPage from "./pages/bazi";
-import QimenPage from "./pages/qimen";
-import AstrologyPage from "./pages/astrology";
-import FengShuiPage from "./pages/fengshui";
-import ContactsPage from "./pages/contacts";
-import DreamsPage from "./pages/dreams";
-import HabitsPage from "./pages/habits";
-import TravelPage from "./pages/travel";
-import TarotPage from "./pages/tarot";
-import JournalPage from "./pages/journal";
+const ProfilePage = lazy(() => import("./pages/profile"));
+const MatrixPage = lazy(() => import("./pages/matrix"));
+const BaziPage = lazy(() => import("./pages/bazi"));
+const QimenPage = lazy(() => import("./pages/qimen"));
+const AstrologyPage = lazy(() => import("./pages/astrology"));
+const FengShuiPage = lazy(() => import("./pages/fengshui"));
+const ContactsPage = lazy(() => import("./pages/contacts"));
+const DreamsPage = lazy(() => import("./pages/dreams"));
+const HabitsPage = lazy(() => import("./pages/habits"));
+const TravelPage = lazy(() => import("./pages/travel"));
+const TarotPage = lazy(() => import("./pages/tarot"));
+const JournalPage = lazy(() => import("./pages/journal"));
 import PrivacyPage from "./pages/privacy";
-import AdminStudioPage from "./pages/admin-studio";
+const AdminStudioPage = lazy(() => import("./pages/admin-studio"));
 import NotFound from "./pages/not-found";
 import AppLayout from "./components/layout/app-layout";
 
@@ -226,7 +226,7 @@ function ClerkProviderWithRoutes() {
             dividerText: "",
           },
         },
-      }}
+      } as any}
       routerPush={(to) => setLocation(stripBase(to))}
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
     >
@@ -234,7 +234,14 @@ function ClerkProviderWithRoutes() {
         <ClerkQueryClientCacheInvalidator />
         <ApiTokenInitializer />
         <TooltipProvider>
-          <Switch>
+          <Suspense
+            fallback={
+              <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
+                Загрузка раздела...
+              </div>
+            }
+          >
+            <Switch>
             <Route path="/" component={HomeRedirect} />
             <Route path="/sign-in/*?" component={SignInPage} />
             <Route path="/sign-up/*?" component={SignUpPage} />
@@ -255,8 +262,9 @@ function ClerkProviderWithRoutes() {
             <Route path="/travel" component={() => <ProtectedRoute component={TravelPage} />} />
             <Route path="/tarot" component={() => <ProtectedRoute component={TarotPage} />} />
             
-            <Route component={NotFound} />
-          </Switch>
+              <Route component={NotFound} />
+            </Switch>
+          </Suspense>
           <Toaster />
         </TooltipProvider>
       </QueryClientProvider>
