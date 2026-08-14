@@ -172,6 +172,9 @@ function findReturnInRange(
   return dateTimeFromOffset(startDate, Math.floor((low + high) / 2));
 }
 
+const lunarReturnCache = new Map<string, { expiresAt: number; result: LunarReturnResult | null }>();
+const LUNAR_CACHE_TTL_MS = 10 * 60 * 1000;
+
 function recommendations(signKey: string, houseNumber: number | null): { themes: string[]; texts: string[] } {
   const byHouse: Record<number, [string, string]> = {
     1: ["личность и самопрезентация", "Обратите внимание на личные решения, внешний образ и инициативу."],
@@ -300,5 +303,19 @@ export function computeLunarForProfile(
         timezone: profile.birthTimezone,
         source: "birth",
       };
-  return computeCurrentLunarReturn(natalChart, today, location, buildNatalChart);
+  const cacheKey = [
+    profile.birthDate,
+    profile.birthTime ?? "",
+    today,
+    location.source,
+    location.latitude,
+    location.longitude,
+    location.timezone ?? "",
+  ].join("|");
+  const cached = lunarReturnCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) return cached.result;
+
+  const result = computeCurrentLunarReturn(natalChart, today, location, buildNatalChart);
+  lunarReturnCache.set(cacheKey, { expiresAt: Date.now() + LUNAR_CACHE_TTL_MS, result });
+  return result;
 }

@@ -112,6 +112,22 @@ export default function BaziPage() {
   const vtalkivanie = bazi.vtalkivanieActivation;
   const vtalkivanieMoney = bazi.vtalkivanieMoneyActivation;
   const personalPostHorse = bazi.personalPostHorseActivation;
+  const daysFromToday = (iso: string | null | undefined) => {
+    if (!iso) return Number.MAX_SAFE_INTEGER;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(`${iso.slice(0, 10)}T00:00:00`);
+    return Math.max(0, Math.round((target.getTime() - today.getTime()) / 86400000));
+  };
+  const peachDate = peach?.favorableDays.flatMap((day) => day.pairs.map((pair) => pair.date)).sort()[0];
+  const activationOrder = {
+    vtalkivanie: vtalkivanie ? vtalkivanie.daysUntil : Number.MAX_SAFE_INTEGER,
+    money: vtalkivanieMoney ? vtalkivanieMoney.daysUntil : Number.MAX_SAFE_INTEGER,
+    horse: personalPostHorse ? personalPostHorse.daysUntil : Number.MAX_SAFE_INTEGER,
+    promo: promo ? daysFromToday(promo.periodStart) : Number.MAX_SAFE_INTEGER,
+    noble: noble ? noble.daysUntil : Number.MAX_SAFE_INTEGER,
+    peach: daysFromToday(peachDate),
+  };
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
@@ -254,8 +270,9 @@ export default function BaziPage() {
         )}
       </motion.div>
 
+      <div className="flex flex-col gap-6">
       {vtalkivanie && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div style={{ order: activationOrder.vtalkivanie }} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Card className="bg-card/40 backdrop-blur-md border-emerald-500/30">
             <CardHeader className="pb-2">
               <CardTitle className="font-serif text-lg flex items-center gap-2">
@@ -297,7 +314,7 @@ export default function BaziPage() {
       )}
 
       {vtalkivanieMoney && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div style={{ order: activationOrder.money }} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Card className="bg-card/40 backdrop-blur-md border-amber-500/30">
             <CardHeader className="pb-2">
               <CardTitle className="font-serif text-lg flex items-center gap-2">
@@ -344,7 +361,7 @@ export default function BaziPage() {
       )}
 
       {personalPostHorse && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div style={{ order: activationOrder.horse }} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Card className="bg-card/40 backdrop-blur-md border-sky-500/30">
             <CardHeader className="pb-2">
               <CardTitle className="font-serif text-lg flex items-center gap-2">
@@ -388,7 +405,7 @@ export default function BaziPage() {
       )}
 
       {promo && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div style={{ order: activationOrder.promo }} initial={{ opacity: 0, y: 0, x: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Card className="bg-card/40 backdrop-blur-md border-primary/30">
             <CardHeader className="pb-2">
               <CardTitle className="font-serif text-lg flex items-center gap-2">
@@ -440,7 +457,7 @@ export default function BaziPage() {
       )}
 
       {noble && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div style={{ order: activationOrder.noble }} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Card className="bg-card/40 backdrop-blur-md border-secondary/30">
             <CardHeader className="pb-2">
               <CardTitle className="font-serif text-lg flex items-center gap-2">
@@ -498,7 +515,7 @@ export default function BaziPage() {
 
       {peach && (
         <>
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <motion.div style={{ order: activationOrder.peach }} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="bg-card/40 backdrop-blur-md border-rose-500/30">
               <CardContent className="space-y-4 pt-6">
                 <Dialog>
@@ -600,6 +617,8 @@ export default function BaziPage() {
           </motion.div>
         </>
       )}
+
+      </div>
 
       <BaziHoursCalculator />
     </div>

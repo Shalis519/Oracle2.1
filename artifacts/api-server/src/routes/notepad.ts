@@ -20,6 +20,7 @@ import {
   todayString,
   isSpendingDay,
   computeNobleHelperActivation,
+  computePromotionActivation,
 } from "../lib/oracle";
 import { getActivationsForDate } from "../lib/data/activations";
 import { hasPeachActivationOnDate } from "../lib/peachBlossom";
@@ -88,6 +89,15 @@ async function buildAutoItems(
     }
 
     const reminderDate = new Date(`${date}T12:00:00`);
+    const promotion = computePromotionActivation(birthDate, birthTime, reminderDate, birthLocation);
+    if (promotion?.periodStart === date) {
+      auto.push({
+        source: "bazi-promotion",
+        refKey: `promotion:${promotion.periodStart}`,
+        text: "Активизация Удача продвижения началась, подробности во вкладке Бацзы",
+      });
+    }
+
     const noble = computeNobleHelperActivation(birthDate, birthTime, reminderDate, birthLocation);
     if (noble?.date === date) {
       auto.push({
@@ -204,6 +214,7 @@ async function reconcileAutoItems(
           "bazi-vtalkivanie",
           "bazi-vtalkivanie-money",
           "bazi-personal-post-horse",
+          "bazi-promotion",
           "western-lunar-return",
         ]),
       ),
