@@ -527,6 +527,24 @@ export async function seedOntology() {
       .onConflictDoNothing({ target: motivationPhrasesTable.phrase });
   }
 
+  // Render API currently builds without running drizzle-kit push. Create this additive
+  // table at startup so a new deployment cannot fail before the seed runs.
+  await db.execute(sql`CREATE TABLE IF NOT EXISTS cinderella_interpretations (
+    id SERIAL PRIMARY KEY,
+    pair_key TEXT NOT NULL,
+    mode TEXT NOT NULL,
+    aspect_key TEXT NOT NULL DEFAULT 'any',
+    title TEXT NOT NULL,
+    text TEXT NOT NULL DEFAULT 'В разработке',
+    keywords TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    source_note TEXT,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  )`);
+  await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS cinderella_interpretation_unique
+    ON cinderella_interpretations (pair_key, mode, aspect_key)`);
+
   const cinderellaInterpretations = [
     { pairKey: "chiron-venus", mode: "natal", aspectKey: "any", title: "Хирон - Венера: натальный аспект", text: "Супер-аспект и один из важнейших романтических аспектов. Любовь к семье и стремление к браку, карьера, приносящая деньги, деньги через брак или семейные связи. Влюбчивость." },
     { pairKey: "chiron-jupiter", mode: "natal", aspectKey: "any", title: "Хирон - Юпитер: натальный аспект", text: "Один из наиболее могущественных супер-аспектов. Прекрасный общественный имидж, естественные руководящие способности, уверенность в себе, доверие публики, большая судьба и блестящий успех." },
