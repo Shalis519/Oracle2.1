@@ -705,6 +705,17 @@ export async function seedOntology() {
   })));
   await db.insert(synastryHouseInterpretationsTable).values(completeNeutralHouseSeed).onConflictDoNothing();
   await db.insert(synastryHouseInterpretationsTable).values(completeReverseHouseSeed).onConflictDoNothing();
+  const completeMutualHouseSeed = completeHousePlanets.flatMap((planet) => completeHouseThemes.map((theme, index) => ({
+    planetBody: planet.key,
+    houseNumber: index + 1,
+    directionKey: "mutual",
+    categoryKey: "general",
+    title: `Взаимное ${planet.label} в ${index + 1} доме`,
+    text: `Вы взаимно усиливаете ${planet.effect} в сфере ${theme}. Вместе легче раскрывать эту сторону жизни, поддерживать друг друга и согласовывать личные границы, темп и способы самовыражения.`,
+    sourceNote: "Полный набор взаимных положений планет в домах",
+    isActive: true,
+  })));
+  await db.insert(synastryHouseInterpretationsTable).values(completeMutualHouseSeed).onConflictDoNothing();
   await db.execute(sql`UPDATE synastry_house_interpretations SET text = CASE planet_body
     WHEN 'sun' THEN 'Вы пробуждаете у контакта желание проявляться, творить, радоваться и чувствовать себя особенным. Ваше присутствие может усиливать романтический интерес и тягу к совместному творчеству.'
     WHEN 'moon' THEN 'Вы создаёте у контакта ощущение знакомости, домашнего тепла и эмоциональной причастности. Ваше влияние затрагивает его глубокие воспоминания и потребность в безопасности.'
