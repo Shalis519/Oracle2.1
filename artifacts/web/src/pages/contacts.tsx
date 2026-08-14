@@ -31,13 +31,53 @@ const SYNASTRY_BODY_NAMES: Record<string, string> = {
   chiron: "Хирон", lilith: "Лилит",
 };
 
+const SYNASTRY_BODY_ACCUSATIVE: Record<string, string> = {
+  sun: "Солнцу", moon: "Луне", mercury: "Меркурию", venus: "Венере", mars: "Марсу",
+  jupiter: "Юпитеру", saturn: "Сатурну", uranus: "Урану", neptune: "Нептуну", pluto: "Плутону",
+  chiron: "Хирону", lilith: "Лилит",
+};
+
+const SYNASTRY_ASPECT_PHRASES: Record<string, { text: string; preposition: "к" | "с" }> = {
+  соединение: { text: "соединение", preposition: "с" },
+  секстиль: { text: "секстиль", preposition: "к" },
+  квадрат: { text: "квадрат", preposition: "к" },
+  тригон: { text: "тригон", preposition: "к" },
+  оппозиция: { text: "оппозицию", preposition: "к" },
+};
+
+const SYNASTRY_BODY_INSTRUMENTAL: Record<string, string> = {
+  sun: "Солнцем", moon: "Луной", mercury: "Меркурием", venus: "Венерой", mars: "Марсом",
+  jupiter: "Юпитером", saturn: "Сатурном", uranus: "Ураном", neptune: "Нептуном", pluto: "Плутоном",
+  chiron: "Хироном", lilith: "Лилит",
+};
+
+const SYNASTRY_BODY_YOUR_DATIVE: Record<string, string> = {
+  sun: "вашему Солнцу", moon: "вашей Луне", mercury: "вашему Меркурию", venus: "вашей Венере", mars: "вашему Марсу",
+  jupiter: "вашему Юпитеру", saturn: "вашему Сатурну", uranus: "вашему Урану", neptune: "вашему Нептуну", pluto: "вашему Плутону",
+  chiron: "вашему Хирону", lilith: "вашей Лилит",
+};
+
+const SYNASTRY_BODY_YOUR_INSTRUMENTAL: Record<string, string> = {
+  sun: "вашим Солнцем", moon: "вашей Луной", mercury: "вашим Меркурием", venus: "вашей Венерой", mars: "вашим Марсом",
+  jupiter: "вашим Юпитером", saturn: "вашим Сатурном", uranus: "вашим Ураном", neptune: "вашим Нептуном", pluto: "вашим Плутоном",
+  chiron: "вашим Хироном", lilith: "вашей Лилит",
+};
+
 function synastryPersonPhrase(sourcePerson: "user" | "contact", sourceLabel: string, targetPerson: "user" | "contact", targetLabel: string, sourceBody: string, targetBody: string, aspectType: string) {
   const sourceBodyLabel = SYNASTRY_BODY_NAMES[sourceBody] ?? sourceBody;
-  const targetBodyLabel = SYNASTRY_BODY_NAMES[targetBody] ?? targetBody;
-  const aspect = aspectType.toLowerCase();
-  if (sourcePerson === "user" && targetPerson === "contact") return `Ваш ${sourceBodyLabel} образует ${aspect} к ${targetBodyLabel} контакта.`;
-  if (sourcePerson === "contact" && targetPerson === "user") return `${sourceBodyLabel} контакта образует ${aspect} к вашему ${targetBodyLabel}.`;
-  return `${sourceLabel}: ${sourceBodyLabel} образует ${aspect} к ${targetBodyLabel} (${targetLabel}).`;
+  const targetBodyLabel = SYNASTRY_BODY_ACCUSATIVE[targetBody] ?? SYNASTRY_BODY_NAMES[targetBody] ?? targetBody;
+  const aspect = SYNASTRY_ASPECT_PHRASES[aspectType.toLowerCase()] ?? { text: aspectType.toLowerCase(), preposition: "к" as const };
+  if (sourcePerson === "user" && targetPerson === "contact") {
+    return aspect.preposition === "с"
+      ? `Ваш ${sourceBodyLabel} образует ${aspect.text} с ${SYNASTRY_BODY_INSTRUMENTAL[targetBody] ?? targetBodyLabel} контакта.`
+      : `Ваш ${sourceBodyLabel} образует ${aspect.text} к ${targetBodyLabel} контакта.`;
+  }
+  if (sourcePerson === "contact" && targetPerson === "user") {
+    return aspect.preposition === "с"
+      ? `${sourceBodyLabel} контакта образует ${aspect.text} с ${SYNASTRY_BODY_YOUR_INSTRUMENTAL[targetBody] ?? `вашим ${targetBodyLabel}`}.`
+      : `${sourceBodyLabel} контакта образует ${aspect.text} к ${SYNASTRY_BODY_YOUR_DATIVE[targetBody] ?? `вашему ${targetBodyLabel}`}.`;
+  }
+  return `${sourceLabel}: ${sourceBodyLabel} образует ${aspect.text} ${aspect.preposition} ${targetBodyLabel} (${targetLabel}).`;
 }
 
 const emptyForm: FormData = {
