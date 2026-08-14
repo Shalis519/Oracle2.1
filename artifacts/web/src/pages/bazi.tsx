@@ -250,13 +250,13 @@ export default function BaziPage() {
               <div className="text-sm leading-relaxed">
                 <details>
                   <summary className="inline cursor-pointer font-semibold underline decoration-dotted underline-offset-4">
-                    Дни трат
+                    Дни трат:
                   </summary>
                   <p className="mt-2 rounded-md border border-amber-500/20 bg-amber-500/5 p-3 text-sm leading-relaxed text-muted-foreground">
                     Запланируйте добровольные траты: оплатите счета, совершайте покупки, займитесь благотворительностью, делайте подарки. Это подкармливает денежную энергию.
                   </p>
                 </details>
-                : {formatSpendingDays(bazi.spendingDays)}.
+                {formatSpendingDays(bazi.spendingDays)}.
               </div>
             </CardContent>
           </Card>
