@@ -215,10 +215,9 @@ export default function ContactsPage() {
             const contact = contacts?.find((c) => c.id === synastryContactId);
             if (!contact?.synastryData) return <p className="text-muted-foreground">Расчёт ещё не готов.</p>;
             try {
-              const result = JSON.parse(contact.synastryData) as { summary: string; cinderellaGates?: Array<{ sourceLabel: string; targetLabel: string; aspectType: string; orb: number; interpretation: string }>; aspects?: unknown[] };
+              const result = JSON.parse(contact.synastryData) as { summary: string; cinderellaGates?: Array<{ sourceLabel: string; targetLabel: string; aspectType: string; orb: number; interpretation: string }> };
               const gates = result.cinderellaGates ?? [];
-              const aspects = result.aspects ?? [];
-              return <div className="space-y-5">{gates.length > 0 && <section><h3 className="font-semibold text-lg mb-2">Интерпретация синастрии</h3>{gates.map((gate, index) => <article key={`${gate.sourceLabel}-${gate.targetLabel}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">Врата Золушки: Хирон - планета, {gate.aspectType}, орбис {gate.orb}°</div><div className="text-sm text-muted-foreground">{gate.sourceLabel} - Хирон - {gate.targetLabel}</div><p className="text-sm leading-relaxed">{gate.interpretation}</p></article>)}</section>}{aspects.length > 0 && <section><h3 className="font-semibold text-lg">Другие аспекты</h3>{aspects.map((aspect, index) => <article key={index} className="rounded-lg border border-border p-3">{JSON.stringify(aspect)}</article>)}</section>}</div>;
+              return <div className="space-y-5">{gates.length > 0 && <section><h3 className="font-semibold text-lg mb-2">Интерпретация:</h3>{gates.map((gate, index) => <article key={`${gate.sourceLabel}-${gate.targetLabel}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">Врата Золушки: Хирон - планета, {gate.aspectType}, орбис {gate.orb}°</div><div className="text-sm text-muted-foreground">{gate.sourceLabel} - Хирон - {gate.targetLabel}</div><p className="text-sm leading-relaxed">{gate.interpretation}</p></article>)}</section>}</div>;
             } catch { return <p className="text-destructive">Не удалось прочитать результат расчёта.</p>; }
           })()}
         </DialogContent>
