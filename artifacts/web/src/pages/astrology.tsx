@@ -188,7 +188,7 @@ export default function AstrologyPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+      <div className="grid grid-cols-1 gap-6 items-start">
         <Card className="bg-card/40 backdrop-blur-md h-fit self-start">
           <details>
             <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
