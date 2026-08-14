@@ -11,4 +11,5 @@ export * from "./lifeJournal";
 export * from "./notepad";
 export * from "./ontology";
 export * from "./motivationPhrases";
+export * from "./cinderella";
 

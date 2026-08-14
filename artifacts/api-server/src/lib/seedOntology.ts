@@ -8,6 +8,7 @@ import {
   ontologyEntityProfilesTable,
   ontologyEntityRelationsTable,
   motivationPhrasesTable,
+  cinderellaInterpretationsTable,
 } from "@workspace/db";
 import { logger } from "./logger";
 import { ARCANA } from "./data/arcana";
@@ -525,6 +526,25 @@ export async function seedOntology() {
       .values(phrases.map((phrase) => ({ id: randomUUID(), phrase, isActive: true })))
       .onConflictDoNothing({ target: motivationPhrasesTable.phrase });
   }
+
+  const cinderellaInterpretations = [
+    { pairKey: "chiron-venus", mode: "natal", aspectKey: "any", title: "Хирон - Венера: натальный аспект", text: "Супер-аспект и один из важнейших романтических аспектов. Любовь к семье и стремление к браку, карьера, приносящая деньги, деньги через брак или семейные связи. Влюбчивость." },
+    { pairKey: "chiron-jupiter", mode: "natal", aspectKey: "any", title: "Хирон - Юпитер: натальный аспект", text: "Один из наиболее могущественных супер-аспектов. Прекрасный общественный имидж, естественные руководящие способности, уверенность в себе, доверие публики, большая судьба и блестящий успех." },
+    { pairKey: "chiron-neptune", mode: "natal", aspectKey: "any", title: "Хирон - Нептун: натальный аспект", text: "Долговременная финансовая обеспеченность благодаря семейным связям или браку. Продолжительная харизма и благоприятный общественный имидж, вера в чудеса и интерес к эзотерике." },
+    { pairKey: "chiron-sun", mode: "natal", aspectKey: "any", title: "Солнце - Хирон: натальный аспект", text: "Помогает человеку быть харизматичным и популярным, оказывает гипнотическое воздействие на людей. У женщин может усиливать желание брака и детей." },
+    { pairKey: "chiron-pluto", mode: "natal", aspectKey: "any", title: "Плутон - Хирон: натальный аспект", text: "Супер-аспект. Заметный успех, высокоприбыльная карьера, власть благодаря браку или семейным связям. Человек обладает властью и видением." },
+    { pairKey: "chiron-venus", mode: "transit", aspectKey: "any", title: "Хирон - Венера: транзит Врат Золушки", text: "Время, когда вас видят в наилучшем свете. Подходит для знакомств, признания, презентации себя и идей, важных переговоров и романтических встреч." },
+    { pairKey: "chiron-jupiter", mode: "transit", aspectKey: "any", title: "Хирон - Юпитер: транзит Врат Золушки", text: "Время повышенной заметности, признания, доверия аудитории и благоприятного восприятия. Подходит для собеседования, повышения, нового дела или публичного запуска." },
+    { pairKey: "chiron-neptune", mode: "transit", aspectKey: "any", title: "Хирон - Нептун: транзит Врат Золушки", text: "Период длительной харизмы, вдохновения, защищённости и благоприятного общественного имиджа. Возможны романтические знакомства." },
+    { pairKey: "chiron-sun", mode: "transit", aspectKey: "any", title: "Солнце - Хирон: транзит Врат Золушки", text: "Период харизмы, популярности и способности быть замеченным. Подходит для публичных действий, важных знакомств и начала значимых дел." },
+    { pairKey: "chiron-pluto", mode: "transit", aspectKey: "any", title: "Плутон - Хирон: транзит Врат Золушки", text: "Период усиления влияния, карьерной реализации, власти и финансового потенциала." },
+    { pairKey: "chiron-venus", mode: "synastry", aspectKey: "any", title: "Хирон - Венера: синастрия", text: "Один из наилучших аспектов во взаимоотношениях: объединение судеб, общее будущее, возникновение семьи, любовь длиной в жизнь, совместное зарабатывание денег и взаимопомощь. Велики шансы заключения брака." },
+    { pairKey: "chiron-jupiter", mode: "synastry", aspectKey: "any", title: "Хирон - Юпитер: синастрия", text: "Один из наиболее желательных аспектов. Совместный блестящий, в том числе финансовый успех, благословенный брак, счастливая и успешная семья." },
+    { pairKey: "chiron-neptune", mode: "synastry", aspectKey: "any", title: "Хирон - Нептун: синастрия", text: "Романтические взаимоотношения длиной в жизнь. Один из наиболее часто встречающихся аспектов в продолжительных браках." },
+    { pairKey: "chiron-sun", mode: "synastry", aspectKey: "any", title: "Солнце - Хирон: синастрия", text: "Аспект доверия, особенно со стороны обладателя Хирона. Партнёры чувствуют себя друг с другом просто и естественно, как члены одной семьи." },
+    { pairKey: "chiron-pluto", mode: "synastry", aspectKey: "any", title: "Плутон - Хирон: синастрия", text: "Совместная власть и успех, особенно в финансовом отношении. Процветающий, могущественный брак и влиятельная семья." },
+  ];
+  await db.insert(cinderellaInterpretationsTable).values(cinderellaInterpretations).onConflictDoNothing();
 
   logger.info(
     "Seeded: %d entities (%d astrology + %d arcana), %d themes, %d profiles, %d entity-theme links, %d entity relations, %d phrases",

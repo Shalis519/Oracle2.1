@@ -70,8 +70,19 @@ export const exportMotivationPhraseSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+export const exportCinderellaInterpretationSchema = z.object({
+  pairKey: z.string().min(1),
+  mode: z.enum(["natal", "transit", "synastry"]),
+  aspectKey: z.string().min(1).default("any"),
+  title: z.string().min(1),
+  text: z.string().default("В разработке"),
+  keywords: z.array(z.string()).default([]),
+  sourceNote: z.string().nullable().optional(),
+  isActive: z.boolean().default(true),
+});
+
 export const ontologyExportSchema = z.object({
-  version: z.literal("2.0"),
+  version: z.union([z.literal("2.0"), z.literal("2.1")]),
   exportedAt: z.string().datetime(),
   entities: z.array(exportEntitySchema),
   themes: z.array(exportThemeSchema),
@@ -79,6 +90,7 @@ export const ontologyExportSchema = z.object({
   profiles: z.array(exportProfileSchema),
   relations: z.array(exportRelationSchema),
   motivationPhrases: z.array(exportMotivationPhraseSchema),
+  cinderellaInterpretations: z.array(exportCinderellaInterpretationSchema).default([]),
 });
 
 export const ontologyImportSchema = z.object({

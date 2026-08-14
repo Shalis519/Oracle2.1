@@ -25,6 +25,7 @@ import {
   type DailyForecastResult,
 } from "../lib/oracle";
 import { computeTransits, computeNatalChart, type NatalChart, type NatalChartInput } from "../lib/astrology";
+import { hydrateCinderellaGates } from "../lib/cinderellaGates";
 import { daysUntilBirthday } from "../lib/dates";
 
 const router: IRouter = Router();
@@ -125,10 +126,11 @@ async function getOrComputeToday(
   const result = await computeDailyForecast(birthDate, natalChart, transits, date);
   if (!result) return null;
 
+  const hydratedCinderellaGates = await hydrateCinderellaGates(result.cinderellaGates);
   const payload = {
     matrix: result.matrix,
     transits: result.transits,
-    cinderellaGates: result.cinderellaGates,
+    cinderellaGates: hydratedCinderellaGates,
     conflicts: result.conflicts,
     warnings: result.warnings,
   };

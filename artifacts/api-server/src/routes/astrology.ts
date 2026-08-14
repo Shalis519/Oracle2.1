@@ -3,6 +3,7 @@ import { GetNatalChartResponse } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
 import { computeNatalChart } from "../lib/astrology";
 import { computeLunarForProfile } from "../lib/lunarReturn";
+import { hydrateCinderellaGates } from "../lib/cinderellaGates";
 import { todayString } from "../lib/oracle";
 
 const router: IRouter = Router();
@@ -49,6 +50,9 @@ router.get("/astrology/natal", requireAuth, async (req, res): Promise<void> => {
     timezone: birthTimezone,
   });
 
+  const hydratedGates = await hydrateCinderellaGates(chart.cinderellaGates);
+  const chartWithInterpretations = { ...chart, cinderellaGates: hydratedGates };
+
   const lunarReturn = computeLunarForProfile(
     {
       birthDate: user.birthDate,
@@ -66,7 +70,7 @@ router.get("/astrology/natal", requireAuth, async (req, res): Promise<void> => {
     (input) => computeNatalChart(input),
   );
 
-  res.json(GetNatalChartResponse.parse({ ...chart, lunarReturn }));
+  res.json(GetNatalChartResponse.parse({ ...chartWithInterpretations, lunarReturn }));
 });
 
 export default router;

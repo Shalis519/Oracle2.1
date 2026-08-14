@@ -8,6 +8,7 @@ import {
   ontologyEntityProfilesTable,
   ontologyEntityRelationsTable,
   motivationPhrasesTable,
+  cinderellaInterpretationsTable,
   ontologyExportSchema,
   ontologyImportSchema,
   type OntologyExport,
@@ -22,20 +23,21 @@ const router: IRouter = Router();
 
 router.get("/admin/ontology/export", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
   try {
-    const [entities, themes, entityThemes, profiles, relations, phrases] = await Promise.all([
+    const [entities, themes, entityThemes, profiles, relations, phrases, cinderellaInterpretations] = await Promise.all([
       db.select().from(ontologyEntitiesTable),
       db.select().from(ontologyThemesTable),
       db.select().from(ontologyEntityThemesTable),
       db.select().from(ontologyEntityProfilesTable),
       db.select().from(ontologyEntityRelationsTable),
       db.select().from(motivationPhrasesTable),
+      db.select().from(cinderellaInterpretationsTable),
     ]);
 
     const entityMap = new Map(entities.map((e) => [e.id, e]));
     const themeMap = new Map(themes.map((t) => [t.id, t]));
 
     const exportData: OntologyExport = {
-      version: "2.0",
+      version: "2.1",
       exportedAt: new Date().toISOString(),
       entities: entities.map((e) => ({
         name: e.name,
@@ -94,6 +96,16 @@ router.get("/admin/ontology/export", requireAuth, requireAdmin, async (_req, res
       motivationPhrases: phrases.map((p) => ({
         phrase: p.phrase,
         isActive: p.isActive,
+      })),
+      cinderellaInterpretations: cinderellaInterpretations.map((item) => ({
+        pairKey: item.pairKey,
+        mode: item.mode as "natal" | "transit" | "synastry",
+        aspectKey: item.aspectKey,
+        title: item.title,
+        text: item.text,
+        keywords: item.keywords,
+        sourceNote: item.sourceNote,
+        isActive: item.isActive,
       })),
     };
 
@@ -161,6 +173,7 @@ router.post("/admin/ontology/import", requireAuth, requireAdmin, async (req, res
     if (mode === "replace") {
       // Wipe all ontology tables
       await client.query("DELETE FROM motivation_phrases");
+      await client.query("DELETE FROM cinderella_interpretations");
       await client.query("DELETE FROM ontology_entity_relations");
       await client.query("DELETE FROM ontology_entity_themes");
       await client.query("DELETE FROM ontology_entity_profiles");
@@ -250,6 +263,16 @@ router.post("/admin/ontology/import", requireAuth, requireAdmin, async (req, res
           r.futuristic ? JSON.stringify(r.futuristic) : null,
           r.keywords ?? null,
         ],
+      );
+    }
+
+    // Upsert Cinderella interpretations
+    for (const ci of data.cinderellaInterpretations ?? []) {
+      await client.query(
+        `INSERT INTO cinderella_interpretations (pair_key, mode, aspect_key, title, text, keywords, source_note, is_active, created_at, updated_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,NOW(),NOW())
+         ON CONFLICT (pair_key, mode, aspect_key) DO UPDATE SET title=$4, text=$5, keywords=$6, source_note=$7, is_active=$8, updated_at=NOW()`,
+        [ci.pairKey, ci.mode, ci.aspectKey, ci.title, ci.text || "В разработке", ci.keywords ?? [], ci.sourceNote ?? null, ci.isActive],
       );
     }
 

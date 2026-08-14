@@ -81,6 +81,19 @@ interface EntityRelation {
   keywords?: string[] | null;
 }
 
+interface CinderellaInterpretation {
+  id: number;
+  pairKey: string;
+  mode: "natal" | "transit" | "synastry";
+  aspectKey: string;
+  title: string;
+  text: string;
+  keywords: string[];
+  sourceNote?: string | null;
+  isActive: boolean;
+  updatedAt: string;
+}
+
 interface Profile {
   id: number;
   entityId: number;
@@ -803,6 +816,12 @@ export default function AdminStudioPage() {
   const [importError, setImportError] = useState("");
   const [importConfirmOpen, setImportConfirmOpen] = useState(false);
 
+  const [cinderella, setCinderella] = useState<CinderellaInterpretation[]>([]);
+  const [cinderellaLoading, setCinderellaLoading] = useState(false);
+  const [cinderellaSaving, setCinderellaSaving] = useState(false);
+  const [editingCinderella, setEditingCinderella] = useState<CinderellaInterpretation | null>(null);
+  const [cinderellaForm, setCinderellaForm] = useState({ pairKey: "chiron-venus", mode: "natal" as CinderellaInterpretation["mode"], aspectKey: "any", title: "", text: "В разработке", sourceNote: "Врата Золушки - презентация", isActive: true });
+
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn) {
@@ -874,6 +893,7 @@ export default function AdminStudioPage() {
     loadEntities();
     loadThemes();
     loadPhrases();
+    loadCinderella();
   }, [loadEntities, loadThemes]);
 
   const loadPhrases = useCallback(async () => {
@@ -884,6 +904,53 @@ export default function AdminStudioPage() {
       setPhrases(Array.isArray(data) ? data : []);
     } catch { setPhrases([]); }
   }, []);
+
+  const loadCinderella = useCallback(async () => {
+    setCinderellaLoading(true);
+    try {
+      const res = await apiFetch("/admin/cinderella-interpretations");
+      const data = await res.json();
+      setCinderella(res.ok ? (data.interpretations ?? []) : []);
+    } catch {
+      setCinderella([]);
+    } finally {
+      setCinderellaLoading(false);
+    }
+  }, []);
+
+  const saveCinderella = async () => {
+    if (!cinderellaForm.title.trim()) {
+      toast({ title: "Укажите название", variant: "destructive" });
+      return;
+    }
+    setCinderellaSaving(true);
+    try {
+      const path = editingCinderella
+        ? `/admin/cinderella-interpretations/${editingCinderella.id}`
+        : "/admin/cinderella-interpretations";
+      const res = await apiFetch(path, {
+        method: editingCinderella ? "PUT" : "POST",
+        body: JSON.stringify(cinderellaForm),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        toast({ title: "Ошибка сохранения", description: err.error, variant: "destructive" });
+        return;
+      }
+      setEditingCinderella(null);
+      setCinderellaForm({ pairKey: "chiron-venus", mode: "natal", aspectKey: "any", title: "", text: "В разработке", sourceNote: "Врата Золушки - презентация", isActive: true });
+      await loadCinderella();
+      toast({ title: "Интерпретация сохранена" });
+    } finally {
+      setCinderellaSaving(false);
+    }
+  };
+
+  const deleteCinderella = async (id: number) => {
+    if (!confirm("Удалить интерпретацию?")) return;
+    const res = await apiFetch(`/admin/cinderella-interpretations/${id}`, { method: "DELETE" });
+    if (res.ok) { await loadCinderella(); toast({ title: "Интерпретация удалена" }); }
+  };
 
   const handleAddPhrase = async () => {
     const text = phraseInput.trim();
@@ -1252,11 +1319,12 @@ export default function AdminStudioPage() {
       </div>
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 md:w-auto">
+        <TabsList className="grid w-full grid-cols-5 md:w-auto">
           <TabsTrigger value="entities"><Layers className="w-4 h-4 mr-2" />Сущности</TabsTrigger>
           <TabsTrigger value="themes"><BookOpen className="w-4 h-4 mr-2" />Жизненные темы</TabsTrigger>
           <TabsTrigger value="phrases"><MessageSquareQuote className="w-4 h-4 mr-2" />Фразы</TabsTrigger>
           <TabsTrigger value="backup"><Download className="w-4 h-4 mr-2" />Бэкап</TabsTrigger>
+          <TabsTrigger value="cinderella"><Sparkles className="w-4 h-4 mr-2" />Врата Золушки</TabsTrigger>
         </TabsList>
 
         <TabsContent value="entities" className="space-y-6">
@@ -1462,6 +1530,33 @@ export default function AdminStudioPage() {
           )}
         </TabsContent>
 
+        <TabsContent value="cinderella" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Интерпретации Врат Золушки</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Здесь отдельно хранятся трактовки для натальной карты, транзитов и будущей синастрии. Если текст не заполнен, пользователь увидит «В разработке».
+              </p>
+              <div className="grid gap-3 md:grid-cols-2">
+                <div><Label>Пара</Label><Select value={cinderellaForm.pairKey} onValueChange={(v) => setCinderellaForm((f) => ({ ...f, pairKey: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["chiron-venus", "chiron-jupiter", "chiron-neptune", "chiron-sun", "chiron-pluto"].map((v) => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent></Select></div>
+                <div><Label>Режим</Label><Select value={cinderellaForm.mode} onValueChange={(v) => setCinderellaForm((f) => ({ ...f, mode: v as CinderellaInterpretation["mode"] }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="natal">Натал</SelectItem><SelectItem value="transit">Транзит</SelectItem><SelectItem value="synastry">Синастрия</SelectItem></SelectContent></Select></div>
+                <div><Label>Аспект</Label><Input value={cinderellaForm.aspectKey} onChange={(e) => setCinderellaForm((f) => ({ ...f, aspectKey: e.target.value }))} placeholder="any или conjunction" /></div>
+                <div><Label>Название</Label><Input value={cinderellaForm.title} onChange={(e) => setCinderellaForm((f) => ({ ...f, title: e.target.value }))} placeholder="Хирон - Венера: натальный аспект" /></div>
+              </div>
+              <div><Label>Интерпретация</Label><Textarea value={cinderellaForm.text} onChange={(e) => setCinderellaForm((f) => ({ ...f, text: e.target.value }))} rows={8} /></div>
+              <div><Label>Источник</Label><Input value={cinderellaForm.sourceNote} onChange={(e) => setCinderellaForm((f) => ({ ...f, sourceNote: e.target.value }))} /></div>
+              <div className="flex gap-2"><Button onClick={saveCinderella} disabled={cinderellaSaving}>{cinderellaSaving ? "Сохранение..." : editingCinderella ? "Сохранить изменения" : "Добавить интерпретацию"}</Button>{editingCinderella && <Button variant="outline" onClick={() => { setEditingCinderella(null); setCinderellaForm({ pairKey: "chiron-venus", mode: "natal", aspectKey: "any", title: "", text: "В разработке", sourceNote: "Врата Золушки - презентация", isActive: true }); }}>Отмена</Button>}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle>Сохранённые интерпретации</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              {cinderellaLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : cinderella.length === 0 ? <p className="text-sm text-muted-foreground">Записей пока нет.</p> : cinderella.map((item) => <div key={item.id} className="rounded-lg border border-border p-3 space-y-2"><div className="flex items-center justify-between gap-3"><div><p className="font-medium">{item.title}</p><p className="text-xs text-muted-foreground">{item.pairKey} - {item.mode} - {item.aspectKey}</p></div><div className="flex gap-2"><Button size="sm" variant="outline" onClick={() => { setEditingCinderella(item); setCinderellaForm({ pairKey: item.pairKey, mode: item.mode, aspectKey: item.aspectKey, title: item.title, text: item.text, sourceNote: item.sourceNote ?? "", isActive: item.isActive }); }}>Изменить</Button><Button size="sm" variant="destructive" onClick={() => deleteCinderella(item.id)}>Удалить</Button></div></div><p className="whitespace-pre-wrap text-sm text-muted-foreground">{item.text || "В разработке"}</p></div>)}
+            </CardContent>
+          </Card>
+        </TabsContent>
         <TabsContent value="backup" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>

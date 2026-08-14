@@ -1,3 +1,6 @@
+import { and, eq, inArray } from "drizzle-orm";
+import { db, cinderellaInterpretationsTable } from "@workspace/db";
+
 export type CinderellaMode = "natal" | "transit";
 
 export interface CinderellaBody {
@@ -9,6 +12,7 @@ export interface CinderellaBody {
 
 export interface CinderellaGate {
   id: string;
+  pairKey: string;
   mode: CinderellaMode;
   transitBody: string | null;
   transitBodySymbol: string | null;
@@ -80,6 +84,7 @@ function createGate(
   const natalLabel = natalBody.name;
   return {
     id: `${mode}-${transitBody?.key ?? "natal"}-${natalBody.key}-${aspect.key}`,
+    pairKey: transitBody?.key === "chiron" ? `chiron-${natalBody.key}` : `chiron-${transitBody?.key ?? natalBody.key}`,
     mode,
     transitBody: transitLabel,
     transitBodySymbol: transitBody?.symbol ?? null,
@@ -92,7 +97,7 @@ function createGate(
     peakDate,
     activeFrom: peakDate ? dateShift(peakDate, -3) : null,
     activeTo: peakDate ? dateShift(peakDate, 3) : null,
-    interpretation: INTERPRETATIONS[targetKey] ?? "Время повышенной заметности, признания и благоприятного восприятия ваших идей.",
+    interpretation: INTERPRETATIONS[targetKey] ?? "В разработке",
   };
 }
 
@@ -142,6 +147,24 @@ export function detectTransitCinderellaGates(
     if (best) result.push(createGate("transit", best.transitBody, best.natalBody, best.aspect, best.date));
   }
   return result.filter((gate) => gate.activeFrom! <= today && today <= gate.activeTo!).sort((a, b) => a.orb - b.orb);
+}
+
+export async function hydrateCinderellaGates(gates: CinderellaGate[]): Promise<CinderellaGate[]> {
+  if (gates.length === 0) return gates;
+  const pairs = [...new Set(gates.map((gate) => gate.pairKey))];
+  const rows = await db
+    .select()
+    .from(cinderellaInterpretationsTable)
+    .where(and(
+      eq(cinderellaInterpretationsTable.isActive, true),
+      inArray(cinderellaInterpretationsTable.pairKey, pairs),
+    ));
+  const byKey = new Map(rows.map((row) => [`${row.pairKey}:${row.mode}:${row.aspectKey}`, row]));
+  return gates.map((gate) => {
+    const exact = byKey.get(`${gate.pairKey}:${gate.mode}:${gate.aspectKey}`)
+      ?? byKey.get(`${gate.pairKey}:${gate.mode}:any`);
+    return exact ? { ...gate, interpretation: exact.text } : { ...gate, interpretation: "В разработке" };
+  });
 }
 
 export function formatCinderellaTransitText(gate: CinderellaGate): string {
