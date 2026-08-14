@@ -185,11 +185,7 @@ export default function AstrologyPage() {
             </details>
           </Card>
 
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 items-start">
-        <Card className="bg-card/40 backdrop-blur-md h-fit self-start">
+          <Card className="bg-card/40 backdrop-blur-md h-fit self-start">
           <details>
             <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -271,6 +267,7 @@ export default function AstrologyPage() {
           </CardContent>
           </details>
         </Card>
+        </div>
       </div>
 
       {chart.cinderellaGates && chart.cinderellaGates.length > 0 && (
