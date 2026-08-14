@@ -21,6 +21,15 @@ const GENERAL_ASPECTS = [
 ] as const;
 const GENERAL_BODY_KEYS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith"] as const;
 const HOUSE_BODY_KEYS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"] as const;
+const OUTER_PLANETS = new Set(["uranus", "neptune", "pluto"]);
+const SOCIAL_PLANETS = new Set(["jupiter", "saturn"]);
+
+function isExcludedGeneralAspect(sourceBody: string, targetBody: string) {
+  const bothOuter = OUTER_PLANETS.has(sourceBody) && OUTER_PLANETS.has(targetBody);
+  const socialOuter = (SOCIAL_PLANETS.has(sourceBody) && OUTER_PLANETS.has(targetBody))
+    || (SOCIAL_PLANETS.has(targetBody) && OUTER_PLANETS.has(sourceBody));
+  return bothOuter || socialOuter;
+}
 const GENERAL_BODY_LABELS: Record<string, string> = {
   sun: "Солнце", moon: "Луна", mercury: "Меркурий", venus: "Венера", mars: "Марс", jupiter: "Юпитер",
   saturn: "Сатурн", uranus: "Уран", neptune: "Нептун", pluto: "Плутон", chiron: "Хирон", lilith: "Лилит",
@@ -53,6 +62,14 @@ export interface SynastryTheme {
   key: string;
   label: string;
   aspects: SynastryAspect[];
+}
+
+export interface SynastrySemanticBlock {
+  key: string;
+  title: string;
+  summary: string;
+  aspect: SynastryAspect;
+  relatedHousePlacements: SynastryHousePlacement[];
 }
 
 export interface SynastryHousePlacement {
@@ -90,6 +107,7 @@ export interface SynastryResult {
   aspects: SynastryAspect[];
   housePlacements: SynastryHousePlacement[];
   themes: SynastryTheme[];
+  semanticBlocks: SynastrySemanticBlock[];
   warnings: string[];
 }
 
@@ -177,6 +195,37 @@ function themeLabel(key: string) {
   return labels[key] ?? key;
 }
 
+function semanticTitle(aspect: SynastryAspect) {
+  if (aspect.categoryKey === "conflict") return "Напряжение между личными целями и способом развития";
+  if (aspect.categoryKey === "sensuality") return "Притяжение и различия в потребностях";
+  if (aspect.categoryKey === "communication") return "Общение и взаимное понимание";
+  if (aspect.categoryKey === "emotions") return "Эмоциональная связь и чувствительность";
+  if (aspect.categoryKey === "support") return "Взаимная поддержка и развитие";
+  return `${aspect.sourceLabel} и ${aspect.targetLabel}: ${aspect.aspectType.toLowerCase()}`;
+}
+
+function semanticSummary(aspect: SynastryAspect, placements: SynastryHousePlacement[]) {
+  const direction = aspect.aspectKey === "trine" || aspect.aspectKey === "sextile" || aspect.aspectKey === "conjunction"
+    ? "может помогать вам легче раскрывать потенциал друг друга"
+    : "может создавать различия во взглядах и требовать осознанного баланса";
+  const houseNumbers = [...new Set(placements.map((placement) => placement.houseNumber))].sort((a, b) => a - b);
+  const houseText = houseNumbers.length > 0
+    ? ` Взаимодействие проявляется в сферах, связанных с домами ${houseNumbers.join(", ")}.`
+    : "";
+  const sourcePlanet = GENERAL_BODY_LABELS[aspect.sourceBody] ?? aspect.sourceBody;
+  const targetPlanet = GENERAL_BODY_LABELS[aspect.targetBody] ?? aspect.targetBody;
+  const aspectMeaning = aspect.interpretation.trim() && aspect.interpretation.trim() !== "В разработке"
+    ? aspect.interpretation.trim()
+    : `${sourcePlanet} и ${targetPlanet} образуют аспект ${aspect.aspectType.toLowerCase()}. Эта связь ${direction}.`;
+  const houseMeanings = [...new Set(placements
+    .map((placement) => placement.interpretation.trim())
+    .filter((text) => text && text !== "В разработке"))];
+  const houseContext = houseMeanings.length > 0
+    ? ` В темах домов это может проявляться так: ${houseMeanings.join(" ")}`
+    : houseText;
+  return `${aspectMeaning}${houseContext} Важно учитывать различия в темпе, потребностях и способах выражать свои цели, сохраняя уважение к самостоятельности каждого.`;
+}
+
 function fallbackCategory(sourceBody: string, targetBody: string, aspectKey: string) {
   const bodies = new Set([sourceBody, targetBody]);
   if (bodies.has("venus") || bodies.has("mars") || bodies.has("pluto")) return "sensuality";
@@ -258,7 +307,7 @@ export async function calculateSynastry(params: {
   for (const source of userBodies) {
     for (const target of contactBodies) {
       const found = findGeneralAspect(source.longitude, target.longitude);
-      if (!found) continue;
+      if (!found || isExcludedGeneralAspect(source.key, target.key)) continue;
       const directionKey = directionFor("user", params.userGender, params.contactGender);
       const row = interpretationMap.get(`${source.key}:${target.key}:${found.key}:${directionKey}`)
         ?? interpretationMap.get(`${source.key}:${target.key}:${found.key}:neutral`);
@@ -307,6 +356,19 @@ export async function calculateSynastry(params: {
     .filter(([, items]) => items.length >= 3)
     .map(([key, items]) => ({ key, label: themeLabel(key), aspects: items.sort((a, b) => a.orb - b.orb) }));
 
+  const semanticBlocks: SynastrySemanticBlock[] = aspects
+    .map((aspect) => {
+      const relatedHousePlacements = housePlacements.filter((placement) => [aspect.sourceBody, aspect.targetBody].includes(placement.sourceBody));
+      return {
+        key: `${aspect.sourceBody}-${aspect.targetBody}-${aspect.aspectKey}`,
+        title: semanticTitle(aspect),
+        summary: semanticSummary(aspect, relatedHousePlacements),
+        aspect,
+        relatedHousePlacements,
+      };
+    })
+    .filter((block) => block.aspect.interpretation !== "В разработке" || block.relatedHousePlacements.some((placement) => placement.interpretation !== "В разработке"));
+
   const hash = inputHash(input);
   return {
     version: 1,
@@ -318,6 +380,7 @@ export async function calculateSynastry(params: {
     aspects: aspects.sort((a, b) => a.orb - b.orb),
     housePlacements,
     themes,
+    semanticBlocks,
     warnings: [],
   };
 }
