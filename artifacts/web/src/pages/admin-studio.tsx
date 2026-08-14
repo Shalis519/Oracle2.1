@@ -129,6 +129,7 @@ const SYNastryDirections = [
   { key: "neutral", label: "Общая интерпретация" },
   { key: "male-to-female", label: "Мужчина -> женщина" },
   { key: "female-to-male", label: "Женщина -> мужчина" },
+  { key: "mutual", label: "Взаимное положение" },
 ] as const;
 
 interface SynastryInterpretation {

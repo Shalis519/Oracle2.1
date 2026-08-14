@@ -33,7 +33,7 @@ const ASPECT_LABELS = new Map([
   ["trine", "тригон"],
   ["opposition", "оппозиция"],
 ]);
-const DIRECTIONS = new Set(["neutral", "male-to-female", "female-to-male"]);
+const DIRECTIONS = new Set(["neutral", "male-to-female", "female-to-male", "mutual"]);
 
 function canonicalTitle(row: Pick<SynastryInterpretation, "sourceBody" | "targetBody" | "aspectKey">) {
   const source = BODY_LABELS.get(row.sourceBody) ?? row.sourceBody;

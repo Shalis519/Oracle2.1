@@ -64,6 +64,7 @@ export interface SynastryHousePlacement {
   houseNumber: number;
   directionKey: string;
   interpretation: string;
+  isMutual?: boolean;
 }
 
 export interface SynastryGate {
@@ -268,19 +269,36 @@ export async function calculateSynastry(params: {
   const housePlacements: SynastryHousePlacement[] = [];
   const userHouseBodies = userChart.bodies.filter((body) => (HOUSE_BODY_KEYS as readonly string[]).includes(body.key));
   const contactHouseBodies = contactChart.bodies.filter((body) => (HOUSE_BODY_KEYS as readonly string[]).includes(body.key));
+  const rawHousePlacements: SynastryHousePlacement[] = [];
   for (const source of userHouseBodies) {
     const houseNumber = getHouseForLongitude(source.longitude, contactChart.houses);
     const directionKey = directionFor("user", params.userGender, params.contactGender);
     const row = houseInterpretationMap.get(`${source.key}:${houseNumber}:${directionKey}`)
       ?? houseInterpretationMap.get(`${source.key}:${houseNumber}:neutral`);
-    housePlacements.push({ sourcePerson: "user", sourceBody: source.key, sourceLabel: params.userLabel, targetPerson: "contact", targetLabel: params.contactLabel, houseNumber, directionKey, interpretation: row?.text?.trim() || "В разработке" });
+    rawHousePlacements.push({ sourcePerson: "user", sourceBody: source.key, sourceLabel: params.userLabel, targetPerson: "contact", targetLabel: params.contactLabel, houseNumber, directionKey, interpretation: row?.text?.trim() || "В разработке" });
   }
   for (const source of contactHouseBodies) {
     const houseNumber = getHouseForLongitude(source.longitude, userChart.houses);
     const directionKey = directionFor("contact", params.userGender, params.contactGender);
     const row = houseInterpretationMap.get(`${source.key}:${houseNumber}:${directionKey}`)
       ?? houseInterpretationMap.get(`${source.key}:${houseNumber}:neutral`);
-    housePlacements.push({ sourcePerson: "contact", sourceBody: source.key, sourceLabel: params.contactLabel, targetPerson: "user", targetLabel: params.userLabel, houseNumber, directionKey, interpretation: row?.text?.trim() || "В разработке" });
+    rawHousePlacements.push({ sourcePerson: "contact", sourceBody: source.key, sourceLabel: params.contactLabel, targetPerson: "user", targetLabel: params.userLabel, houseNumber, directionKey, interpretation: row?.text?.trim() || "В разработке" });
+  }
+  const consumedHousePlacements = new Set<SynastryHousePlacement>();
+  for (const placement of rawHousePlacements) {
+    if (consumedHousePlacements.has(placement)) continue;
+    const mirror = rawHousePlacements.find((candidate) => candidate !== placement && candidate.sourcePerson !== placement.sourcePerson && candidate.sourceBody === placement.sourceBody && candidate.houseNumber === placement.houseNumber);
+    if (mirror) {
+      const mutualRow = houseInterpretationMap.get(`${placement.sourceBody}:${placement.houseNumber}:mutual`);
+      if (mutualRow?.text?.trim() && mutualRow.text.trim() !== "В разработке") {
+        housePlacements.push({ ...placement, interpretation: mutualRow.text.trim(), directionKey: "mutual", isMutual: true });
+        consumedHousePlacements.add(placement);
+        consumedHousePlacements.add(mirror);
+        continue;
+      }
+    }
+    housePlacements.push(placement);
+    consumedHousePlacements.add(placement);
   }
 
   const grouped = new Map<string, SynastryAspect[]>();
