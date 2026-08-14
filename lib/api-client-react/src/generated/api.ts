@@ -23,6 +23,7 @@ import type {
   BaziHoursInput,
   BaziHoursResult,
   BaziSummary,
+  CalculateContactSynastry422,
   ChatMessage,
   ChatMessageInput,
   City,
@@ -55,6 +56,7 @@ import type {
   ProfileInput,
   QimenSummary,
   SearchCitiesParams,
+  SynastryCalculationResponse,
   Task,
   TaskInput,
   TaskUpdate,
@@ -1969,6 +1971,76 @@ export const useDeleteContact = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getDeleteContactMutationOptions(options));
+    }
+
+export const getCalculateContactSynastryUrl = (id: number,) => {
+
+
+
+
+  return `/api/contacts/${id}/synastry`
+}
+
+/**
+ * @summary Calculate and save synastry for a contact
+ */
+export const calculateContactSynastry = async (id: number, options?: RequestInit): Promise<SynastryCalculationResponse> => {
+
+  return customFetch<SynastryCalculationResponse>(getCalculateContactSynastryUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getCalculateContactSynastryMutationOptions = <TError = ErrorType<CalculateContactSynastry422>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof calculateContactSynastry>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof calculateContactSynastry>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['calculateContactSynastry'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof calculateContactSynastry>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  calculateContactSynastry(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CalculateContactSynastryMutationResult = NonNullable<Awaited<ReturnType<typeof calculateContactSynastry>>>
+
+    export type CalculateContactSynastryMutationError = ErrorType<CalculateContactSynastry422>
+
+    /**
+ * @summary Calculate and save synastry for a contact
+ */
+export const useCalculateContactSynastry = <TError = ErrorType<CalculateContactSynastry422>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof calculateContactSynastry>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof calculateContactSynastry>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getCalculateContactSynastryMutationOptions(options));
     }
 
 export const getListFamilyConnectionsUrl = () => {

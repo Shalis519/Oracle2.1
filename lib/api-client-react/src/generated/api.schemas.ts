@@ -714,6 +714,14 @@ export interface Contact {
   /** @nullable */
   notes?: string | null;
   notificationDays: number;
+  synastryEnabled?: boolean;
+  synastryStatus?: string;
+  /** @nullable */
+  synastryCalculatedAt?: string | null;
+  /** @nullable */
+  synastryInputHash?: string | null;
+  /** @nullable */
+  synastryData?: string | null;
   isActive: boolean;
   createdAt: string;
 }
@@ -741,6 +749,7 @@ export interface ContactInput {
   /** @nullable */
   notes?: string | null;
   notificationDays?: number;
+  synastryEnabled?: boolean;
 }
 
 export interface ContactUpdate {
@@ -766,7 +775,26 @@ export interface ContactUpdate {
   /** @nullable */
   notes?: string | null;
   notificationDays?: number;
+  synastryEnabled?: boolean;
   isActive?: boolean;
+}
+
+export type SynastryCalculationResponseResultCinderellaGatesItem = { [key: string]: unknown };
+
+export type SynastryCalculationResponseResult = {
+  version: number;
+  status: string;
+  calculatedAt: string;
+  inputHash: string;
+  summary: string;
+  cinderellaGates: SynastryCalculationResponseResultCinderellaGatesItem[];
+  aspects: unknown[];
+  warnings: string[];
+};
+
+export interface SynastryCalculationResponse {
+  contact: Contact;
+  result: SynastryCalculationResponseResult;
 }
 
 export interface UpcomingBirthday {
@@ -1043,6 +1071,10 @@ q: string;
 };
 
 export type GetNatalChart400 = {
+  error?: string;
+};
+
+export type CalculateContactSynastry422 = {
   error?: string;
 };
 
