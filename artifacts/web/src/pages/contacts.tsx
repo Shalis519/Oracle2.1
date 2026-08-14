@@ -76,7 +76,7 @@ function romanHouse(houseNumber: number) {
 function synastryHousePhrase(sourcePerson: "user" | "contact", sourceLabel: string, targetPerson: "user" | "contact", targetLabel: string, sourceBody: string, houseNumber: number) {
   const bodyLabel = SYNASTRY_BODY_NAMES[sourceBody] ?? sourceBody;
   const house = `${romanHouse(houseNumber)} доме`;
-  if (sourcePerson === "user" && targetPerson === "contact") return `Ваша ${bodyLabel} находится в ${house} контакта.`;
+  if (sourcePerson === "user" && targetPerson === "contact") return `${SYNASTRY_BODY_YOUR_NOMINATIVE[sourceBody] ?? `Ваша ${bodyLabel}`} находится в ${house} контакта.`;
   if (sourcePerson === "contact" && targetPerson === "user") return `${bodyLabel} контакта находится в ${house} вашей карты.`;
   return `${sourceLabel}: ${bodyLabel} находится в ${house} (${targetLabel}).`;
 }
