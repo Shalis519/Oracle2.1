@@ -186,7 +186,7 @@ router.post("/contacts/:id/synastry", requireAuth, async (req, res): Promise<voi
   ));
   if (!contact) { res.status(404).json({ error: "Контакт не найден." }); return; }
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.localUser!.id));
-  const contactLocation = resolveContactBirthLocation(contact.birthPlace ?? contact.city);
+  const contactLocation = resolveContactBirthLocation(contact.birthPlace);
   const missing = !user?.birthDate || !user.birthTime || user.birthLatitude == null || user.birthLongitude == null
     || !contact.birthDate || !contact.birthTime || !contactLocation;
   if (missing) {
@@ -197,7 +197,7 @@ router.post("/contacts/:id/synastry", requireAuth, async (req, res): Promise<voi
       synastryInputHash: null,
       synastryData: null,
     }).where(eq(contactsTable.id, contact.id)).returning();
-    res.status(422).json({ contact: serialize(updated), status: "insufficient_data", error: "Для синастрии нужны дата, точное время и место рождения пользователя и контакта." });
+    res.status(422).json({ contact: serialize(updated), status: "insufficient_data", error: "Для синастрии нужны дата, точное время и место рождения пользователя и контакта. Город проживания контакта не используется для построения карты." });
     return;
   }
   try {
