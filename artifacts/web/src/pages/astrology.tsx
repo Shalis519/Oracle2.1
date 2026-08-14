@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Sparkles, AlertCircle } from "lucide-react";
+import { Sparkles, AlertCircle, ChevronDown } from "lucide-react";
 import NatalWheel from "@/components/natal-wheel";
 
 const VS = "\uFE0E";
@@ -140,9 +140,13 @@ export default function AstrologyPage() {
 
         <div className="space-y-6">
           <Card className="bg-card/40 backdrop-blur-md">
-            <CardHeader className="pb-2">
-              <CardTitle className="font-serif text-lg">Планеты</CardTitle>
-            </CardHeader>
+            <details>
+              <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="font-serif text-lg">Планеты</CardTitle>
+                  <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform duration-200 [details[open]_&]:rotate-180" />
+                </CardHeader>
+              </summary>
             <CardContent className="p-0">
               <div className="divide-y divide-border">
                 {chart.bodies.map((b) => (
@@ -178,6 +182,7 @@ export default function AstrologyPage() {
                 ))}
               </div>
             </CardContent>
+            </details>
           </Card>
 
         </div>
@@ -185,9 +190,13 @@ export default function AstrologyPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <Card className="bg-card/40 backdrop-blur-md h-fit self-start">
-          <CardHeader className="pb-2">
-            <CardTitle className="font-serif text-lg">Дома (Плацидус)</CardTitle>
-          </CardHeader>
+          <details>
+            <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="font-serif text-lg">Дома (Плацидус)</CardTitle>
+                <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform duration-200 [details[open]_&]:rotate-180" />
+              </CardHeader>
+            </summary>
           <CardContent className="p-0">
             <div className="grid grid-cols-2 divide-y divide-border">
               {chart.houses.map((h) => {
@@ -217,12 +226,17 @@ export default function AstrologyPage() {
               })}
             </div>
           </CardContent>
+          </details>
         </Card>
 
         <Card className="bg-card/40 backdrop-blur-md">
-          <CardHeader className="pb-2">
-            <CardTitle className="font-serif text-lg">Аспекты</CardTitle>
-          </CardHeader>
+          <details>
+            <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="font-serif text-lg">Аспекты</CardTitle>
+                <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform duration-200 [details[open]_&]:rotate-180" />
+              </CardHeader>
+            </summary>
           <CardContent className="p-0">
             {displayedAspects.length === 0 ? (
               <p className="px-4 py-3 text-sm text-muted-foreground">
@@ -255,6 +269,7 @@ export default function AstrologyPage() {
               </div>
             )}
           </CardContent>
+          </details>
         </Card>
       </div>
 

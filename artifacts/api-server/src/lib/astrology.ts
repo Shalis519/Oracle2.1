@@ -194,6 +194,7 @@ export interface NatalChartInput {
   day: number;
   hour: number; // 0-23
   minute: number; // 0-59
+  second?: number; // 0-59
   latitude: number;
   longitude: number;
   timezone?: string | null;
@@ -443,9 +444,10 @@ export function computeNatalChart(input: NatalChartInput): NatalChart {
     date: input.day,
     hour: input.hour,
     minute: input.minute,
+    second: input.second ?? 0,
     latitude: input.latitude,
     longitude: input.longitude,
-  });
+  } as ConstructorParameters<typeof Origin>[0] & { second?: number });
 
   const horoscope = new Horoscope({
     origin,

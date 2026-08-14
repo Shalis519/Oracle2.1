@@ -51,6 +51,7 @@ type ChartBuilder = (input: {
   day: number;
   hour: number;
   minute: number;
+  second?: number;
   latitude: number;
   longitude: number;
   timezone?: string | null;
@@ -64,10 +65,10 @@ function signedDifference(value: number, target: number): number {
   return ((value - target + 540) % 360) - 180;
 }
 
-function dateTimeFromOffset(date: string, offsetMinutes: number): { date: string; hour: number; minute: number } {
+function dateTimeFromOffset(date: string, offsetSeconds: number): { date: string; hour: number; minute: number; second: number } {
   const d = new Date(`${date}T00:00:00Z`);
-  d.setUTCMinutes(offsetMinutes);
-  return { date: d.toISOString().slice(0, 10), hour: d.getUTCHours(), minute: d.getUTCMinutes() };
+  d.setUTCSeconds(offsetSeconds);
+  return { date: d.toISOString().slice(0, 10), hour: d.getUTCHours(), minute: d.getUTCMinutes(), second: d.getUTCSeconds() };
 }
 
 function formatDate(date: string): string {
@@ -89,11 +90,11 @@ function findReturnInRange(
   direction: 1 | -1,
   location: LunarReturnLocation,
   buildChart: ChartBuilder,
-): { date: string; hour: number; minute: number } | null {
+): { date: string; hour: number; minute: number; second: number } | null {
   const samples: { offset: number; longitude: number }[] = [];
-  const step = 360;
-  const minOffset = -40 * 24 * 60;
-  const maxOffset = 40 * 24 * 60;
+  const step = 6 * 60 * 60;
+  const minOffset = -40 * 24 * 60 * 60;
+  const maxOffset = 40 * 24 * 60 * 60;
 
   for (let offset = minOffset; offset <= maxOffset; offset += step) {
     const point = dateTimeFromOffset(startDate, offset);
@@ -103,6 +104,7 @@ function findReturnInRange(
       day: Number(point.date.slice(8, 10)),
       hour: point.hour,
       minute: point.minute,
+      second: point.second,
       latitude: location.latitude,
       longitude: location.longitude,
       timezone: location.timezone,
@@ -143,6 +145,7 @@ function findReturnInRange(
       day: Number(point.date.slice(8, 10)),
       hour: point.hour,
       minute: point.minute,
+      second: point.second,
       latitude: location.latitude,
       longitude: location.longitude,
       timezone: location.timezone,
@@ -152,12 +155,12 @@ function findReturnInRange(
   };
 
   const targetDistance = crossing.targetDistance;
-  for (let iteration = 0; iteration < 14; iteration += 1) {
+  for (let iteration = 0; iteration < 18; iteration += 1) {
     const middle = Math.floor((low + high) / 2);
     const middleLongitude = evaluateLongitude(middle);
     if (middleLongitude == null) break;
     const middleDistance = normalize(middleLongitude - crossing.baseLongitude);
-    if (Math.abs(middleDistance - targetDistance) <= 0.005) {
+    if (Math.abs(middleDistance - targetDistance) <= 0.00005) {
       low = middle;
       high = middle;
       break;
@@ -215,6 +218,7 @@ export function computeCurrentLunarReturn(
     day: Number(previous.date.slice(8, 10)),
     hour: previous.hour,
     minute: previous.minute,
+    second: previous.second,
     latitude: location.latitude,
     longitude: location.longitude,
     timezone: location.timezone,
@@ -225,7 +229,7 @@ export function computeCurrentLunarReturn(
   const ascendant = returnChart.angles.find((angle) => angle.key === "ascendant") ?? null;
   return {
     returnDate: previous.date,
-    returnTime: `${String(previous.hour).padStart(2, "0")}:${String(previous.minute).padStart(2, "0")}`,
+    returnTime: `${String(previous.hour).padStart(2, "0")}:${String(previous.minute).padStart(2, "0")}:${String(previous.second).padStart(2, "0")}`,
     periodStart: previous.date,
     periodEnd: next.date,
     location,
