@@ -168,7 +168,11 @@ export async function hydrateCinderellaGates(gates: CinderellaGate[]): Promise<C
 }
 
 export function formatCinderellaTransitText(gate: CinderellaGate): string {
-  return `${gate.transitBody} - натальный ${gate.natalBody}, ${gate.aspectType.toLowerCase()}, орбис ${gate.orb.toFixed(2)}°`;
+  const target = cinderellaTargetLabel(gate.pairKey.replace(/^chiron-/, ""));
+  const transitDescription = gate.transitBody === "Хирон"
+    ? "транзитный Хирон - натальная планета"
+    : `транзитная ${gate.transitBody ?? "планета"} - натальный Хирон`;
+  return `Хирон - ${target}, ${gate.aspectType.toLowerCase()}, орбис ${gate.orb.toFixed(2)}° (${transitDescription})`;
 }
 
 export function cinderellaTargetLabel(key: string): string {

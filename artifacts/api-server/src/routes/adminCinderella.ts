@@ -9,9 +9,26 @@ import { requireAuth, requireAdmin } from "../lib/auth";
 
 const router: IRouter = Router();
 
+const CINDERELLA_PAIRS = new Map([
+  ["chiron-venus", "Венера"],
+  ["chiron-jupiter", "Юпитер"],
+  ["chiron-neptune", "Нептун"],
+  ["chiron-sun", "Солнце"],
+  ["chiron-pluto", "Плутон"],
+]);
+const CINDERELLA_MODES = new Set(["natal", "transit", "synastry"]);
+
+function canonicalTitle(pairKey: string, mode: string) {
+  const pair = `Хирон - ${CINDERELLA_PAIRS.get(pairKey) ?? "планета"}`;
+  if (mode === "natal") return `${pair}: натальный аспект`;
+  if (mode === "transit") return `${pair}: транзит Врат Золушки`;
+  return `${pair}: синастрия`;
+}
+
 function serialize(row: CinderellaInterpretation) {
   return {
     ...row,
+    title: canonicalTitle(row.pairKey, row.mode),
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
@@ -29,8 +46,12 @@ router.get("/admin/cinderella-interpretations", requireAuth, async (req, res): P
 
 router.post("/admin/cinderella-interpretations", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const body = req.body as Record<string, unknown>;
-  if (typeof body.pairKey !== "string" || typeof body.mode !== "string" || typeof body.title !== "string") {
-    res.status(400).json({ error: "Нужны pairKey, mode и title" });
+  if (typeof body.pairKey !== "string" || typeof body.mode !== "string") {
+    res.status(400).json({ error: "Нужны pairKey и mode" });
+    return;
+  }
+  if (!CINDERELLA_PAIRS.has(body.pairKey) || !CINDERELLA_MODES.has(body.mode)) {
+    res.status(400).json({ error: "Поддерживаются только фиксированные пары Врат Золушки" });
     return;
   }
   const text = typeof body.text === "string" && body.text.trim() ? body.text : "В разработке";
@@ -38,8 +59,8 @@ router.post("/admin/cinderella-interpretations", requireAuth, requireAdmin, asyn
     const [row] = await db.insert(cinderellaInterpretationsTable).values({
       pairKey: body.pairKey,
       mode: body.mode,
-      aspectKey: typeof body.aspectKey === "string" ? body.aspectKey : "any",
-      title: body.title,
+      aspectKey: "any",
+      title: canonicalTitle(body.pairKey, body.mode),
       text,
       keywords: Array.isArray(body.keywords) ? body.keywords.filter((v): v is string => typeof v === "string") : [],
       sourceNote: typeof body.sourceNote === "string" ? body.sourceNote : null,
@@ -60,10 +81,14 @@ router.put("/admin/cinderella-interpretations/:id", requireAuth, requireAdmin, a
   if (!id) { res.status(400).json({ error: "Некорректный id" }); return; }
   const body = req.body as Record<string, unknown>;
   const updates: Partial<typeof cinderellaInterpretationsTable.$inferInsert> = { updatedAt: new Date() };
-  for (const field of ["pairKey", "mode", "aspectKey", "title", "sourceNote"] as const) {
-    if (typeof body[field] === "string") updates[field] = body[field];
-  }
+  if (typeof body.sourceNote === "string") updates.sourceNote = body.sourceNote;
   if (typeof body.text === "string") updates.text = body.text.trim() || "В разработке";
+  updates.aspectKey = "any";
+  if (typeof body.pairKey === "string" && CINDERELLA_PAIRS.has(body.pairKey)) updates.pairKey = body.pairKey;
+  if (typeof body.mode === "string" && CINDERELLA_MODES.has(body.mode)) updates.mode = body.mode;
+  const nextPair = (updates.pairKey as string | undefined) ?? "chiron-venus";
+  const nextMode = (updates.mode as string | undefined) ?? "natal";
+  updates.title = canonicalTitle(nextPair, nextMode);
   if (Array.isArray(body.keywords)) updates.keywords = body.keywords.filter((v): v is string => typeof v === "string");
   if (typeof body.isActive === "boolean") updates.isActive = body.isActive;
   const [row] = await db.update(cinderellaInterpretationsTable).set(updates).where(eq(cinderellaInterpretationsTable.id, id)).returning();

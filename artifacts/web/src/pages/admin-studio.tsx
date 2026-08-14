@@ -81,10 +81,41 @@ interface EntityRelation {
   keywords?: string[] | null;
 }
 
+const CINDERELLA_PAIRS = [
+  { key: "chiron-venus", label: "Хирон - Венера" },
+  { key: "chiron-jupiter", label: "Хирон - Юпитер" },
+  { key: "chiron-neptune", label: "Хирон - Нептун" },
+  { key: "chiron-sun", label: "Хирон - Солнце" },
+  { key: "chiron-pluto", label: "Хирон - Плутон" },
+] as const;
+
+const CINDERELLA_MODES = [
+  { key: "natal", label: "Натальные Врата Золушки", shortLabel: "Натал" },
+  { key: "transit", label: "Транзитные Врата Золушки", shortLabel: "Транзит" },
+  { key: "synastry", label: "Врата Золушки в синастрии", shortLabel: "Синастрия" },
+] as const;
+
+type CinderellaMode = (typeof CINDERELLA_MODES)[number]["key"];
+
+function getCinderellaPairLabel(pairKey: string) {
+  return CINDERELLA_PAIRS.find((pair) => pair.key === pairKey)?.label ?? "Хирон - планета";
+}
+
+function getCinderellaModeLabel(mode: CinderellaMode) {
+  return CINDERELLA_MODES.find((item) => item.key === mode)?.label ?? mode;
+}
+
+function getCinderellaTitle(pairKey: string, mode: CinderellaMode) {
+  const pair = getCinderellaPairLabel(pairKey);
+  if (mode === "natal") return `${pair}: натальный аспект`;
+  if (mode === "transit") return `${pair}: транзит Врат Золушки`;
+  return `${pair}: синастрия`;
+}
+
 interface CinderellaInterpretation {
   id: number;
   pairKey: string;
-  mode: "natal" | "transit" | "synastry";
+  mode: CinderellaMode;
   aspectKey: string;
   title: string;
   text: string;
@@ -820,7 +851,8 @@ export default function AdminStudioPage() {
   const [cinderellaLoading, setCinderellaLoading] = useState(false);
   const [cinderellaSaving, setCinderellaSaving] = useState(false);
   const [editingCinderella, setEditingCinderella] = useState<CinderellaInterpretation | null>(null);
-  const [cinderellaForm, setCinderellaForm] = useState({ pairKey: "chiron-venus", mode: "natal" as CinderellaInterpretation["mode"], aspectKey: "any", title: "", text: "В разработке", sourceNote: "Врата Золушки - презентация", isActive: true });
+  const [cinderellaForm, setCinderellaForm] = useState({ pairKey: "chiron-venus", mode: "natal" as CinderellaMode, aspectKey: "any", title: getCinderellaTitle("chiron-venus", "natal"), text: "В разработке", sourceNote: "Врата Золушки - презентация", isActive: true });
+  const [cinderellaEditorOpen, setCinderellaEditorOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -938,7 +970,8 @@ export default function AdminStudioPage() {
         return;
       }
       setEditingCinderella(null);
-      setCinderellaForm({ pairKey: "chiron-venus", mode: "natal", aspectKey: "any", title: "", text: "В разработке", sourceNote: "Врата Золушки - презентация", isActive: true });
+      setCinderellaEditorOpen(false);
+      setCinderellaForm({ pairKey: "chiron-venus", mode: "natal", aspectKey: "any", title: getCinderellaTitle("chiron-venus", "natal"), text: "В разработке", sourceNote: "Врата Золушки - презентация", isActive: true });
       await loadCinderella();
       toast({ title: "Интерпретация сохранена" });
     } finally {
@@ -1533,29 +1566,92 @@ export default function AdminStudioPage() {
         <TabsContent value="cinderella" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Интерпретации Врат Золушки</CardTitle>
+              <CardTitle>Врата Золушки</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <p className="text-sm text-muted-foreground">
-                Здесь отдельно хранятся трактовки для натальной карты, транзитов и будущей синастрии. Если текст не заполнен, пользователь увидит «В разработке».
+                Здесь хранятся отдельные интерпретации для натальной карты, транзитов и синастрии. Формула поддерживает только пять фиксированных аспектов от Хирона к планете: Хирон - Венера, Хирон - Юпитер, Хирон - Нептун, Хирон - Солнце и Хирон - Плутон. Если текст ещё не заполнен, отображается «В разработке».
               </p>
-              <div className="grid gap-3 md:grid-cols-2">
-                <div><Label>Пара</Label><Select value={cinderellaForm.pairKey} onValueChange={(v) => setCinderellaForm((f) => ({ ...f, pairKey: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["chiron-venus", "chiron-jupiter", "chiron-neptune", "chiron-sun", "chiron-pluto"].map((v) => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent></Select></div>
-                <div><Label>Режим</Label><Select value={cinderellaForm.mode} onValueChange={(v) => setCinderellaForm((f) => ({ ...f, mode: v as CinderellaInterpretation["mode"] }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="natal">Натал</SelectItem><SelectItem value="transit">Транзит</SelectItem><SelectItem value="synastry">Синастрия</SelectItem></SelectContent></Select></div>
-                <div><Label>Аспект</Label><Input value={cinderellaForm.aspectKey} onChange={(e) => setCinderellaForm((f) => ({ ...f, aspectKey: e.target.value }))} placeholder="any или conjunction" /></div>
-                <div><Label>Название</Label><Input value={cinderellaForm.title} onChange={(e) => setCinderellaForm((f) => ({ ...f, title: e.target.value }))} placeholder="Хирон - Венера: натальный аспект" /></div>
+            </CardContent>
+          </Card>
+
+          {CINDERELLA_MODES.map((mode) => {
+            const modeItems = cinderella.filter((item) => item.mode === mode.key);
+            return (
+              <Card key={mode.key}>
+                <CardHeader>
+                  <CardTitle>{mode.label}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {cinderellaLoading ? (
+                    <p className="text-sm text-muted-foreground">Загрузка...</p>
+                  ) : (
+                    CINDERELLA_PAIRS.map((pair) => {
+                      const item = modeItems.find((candidate) => candidate.pairKey === pair.key && candidate.aspectKey === "any");
+                      const text = item?.text?.trim() || "В разработке";
+                      return (
+                        <div key={`${mode.key}-${pair.key}`} className="rounded-lg border border-border p-4 space-y-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="font-medium">{getCinderellaTitle(pair.key, mode.key)}</p>
+                              <p className="text-xs text-muted-foreground">Аспект: соединение, тригон или квинконс по действующей формуле</p>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setEditingCinderella(item ?? null);
+                                setCinderellaForm({
+                                  pairKey: pair.key,
+                                  mode: mode.key,
+                                  aspectKey: "any",
+                                  title: getCinderellaTitle(pair.key, mode.key),
+                                  text,
+                                  sourceNote: item?.sourceNote ?? "Врата Золушки - презентация",
+                                  isActive: item?.isActive ?? true,
+                                });
+                                setCinderellaEditorOpen(true);
+                              }}
+                            >
+                              {item ? "Изменить" : "Заполнить"}
+                            </Button>
+                          </div>
+                          <p className={cn("whitespace-pre-wrap text-sm", !item || !item.text?.trim() ? "text-amber-200" : "text-muted-foreground")}>
+                            {text}
+                          </p>
+                        </div>
+                      );
+                    })
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+
+          <Dialog open={cinderellaEditorOpen} onOpenChange={(open) => { setCinderellaEditorOpen(open); if (!open) setEditingCinderella(null); }}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>{getCinderellaTitle(cinderellaForm.pairKey, cinderellaForm.mode)}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
+                  Режим: {getCinderellaModeLabel(cinderellaForm.mode)}. Аспект фиксирован формулой проекта и не редактируется.
+                </div>
+                <div>
+                  <Label>Интерпретация</Label>
+                  <Textarea value={cinderellaForm.text} onChange={(e) => setCinderellaForm((form) => ({ ...form, text: e.target.value }))} rows={12} />
+                </div>
+                <div>
+                  <Label>Источник</Label>
+                  <Input value={cinderellaForm.sourceNote} onChange={(e) => setCinderellaForm((form) => ({ ...form, sourceNote: e.target.value }))} />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => { setCinderellaEditorOpen(false); setEditingCinderella(null); }}>Отмена</Button>
+                  <Button onClick={saveCinderella} disabled={cinderellaSaving}>{cinderellaSaving ? "Сохранение..." : "Сохранить"}</Button>
+                </div>
               </div>
-              <div><Label>Интерпретация</Label><Textarea value={cinderellaForm.text} onChange={(e) => setCinderellaForm((f) => ({ ...f, text: e.target.value }))} rows={8} /></div>
-              <div><Label>Источник</Label><Input value={cinderellaForm.sourceNote} onChange={(e) => setCinderellaForm((f) => ({ ...f, sourceNote: e.target.value }))} /></div>
-              <div className="flex gap-2"><Button onClick={saveCinderella} disabled={cinderellaSaving}>{cinderellaSaving ? "Сохранение..." : editingCinderella ? "Сохранить изменения" : "Добавить интерпретацию"}</Button>{editingCinderella && <Button variant="outline" onClick={() => { setEditingCinderella(null); setCinderellaForm({ pairKey: "chiron-venus", mode: "natal", aspectKey: "any", title: "", text: "В разработке", sourceNote: "Врата Золушки - презентация", isActive: true }); }}>Отмена</Button>}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Сохранённые интерпретации</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              {cinderellaLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : cinderella.length === 0 ? <p className="text-sm text-muted-foreground">Записей пока нет.</p> : cinderella.map((item) => <div key={item.id} className="rounded-lg border border-border p-3 space-y-2"><div className="flex items-center justify-between gap-3"><div><p className="font-medium">{item.title}</p><p className="text-xs text-muted-foreground">{item.pairKey} - {item.mode} - {item.aspectKey}</p></div><div className="flex gap-2"><Button size="sm" variant="outline" onClick={() => { setEditingCinderella(item); setCinderellaForm({ pairKey: item.pairKey, mode: item.mode, aspectKey: item.aspectKey, title: item.title, text: item.text, sourceNote: item.sourceNote ?? "", isActive: item.isActive }); }}>Изменить</Button><Button size="sm" variant="destructive" onClick={() => deleteCinderella(item.id)}>Удалить</Button></div></div><p className="whitespace-pre-wrap text-sm text-muted-foreground">{item.text || "В разработке"}</p></div>)}
-            </CardContent>
-          </Card>
+            </DialogContent>
+          </Dialog>
         </TabsContent>
         <TabsContent value="backup" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
