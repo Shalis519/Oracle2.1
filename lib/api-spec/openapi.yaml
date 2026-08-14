@@ -2112,7 +2112,7 @@ components:
 
     ContactInput:
       type: object
-      required: [name]
+      required: [name, gender]
       properties:
         name:
           type: string
@@ -2131,7 +2131,8 @@ components:
         relationshipType:
           type: ["string", "null"]
         gender:
-          type: ["string", "null"]
+          type: string
+          enum: ["мужчина", "женщина"]
         birthPlace:
           type: ["string", "null"]
         notes:

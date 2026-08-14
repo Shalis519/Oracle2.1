@@ -726,6 +726,14 @@ export interface Contact {
   createdAt: string;
 }
 
+export type ContactInputGender = typeof ContactInputGender[keyof typeof ContactInputGender];
+
+
+export const ContactInputGender = {
+  мужчина: 'мужчина',
+  женщина: 'женщина',
+} as const;
+
 export interface ContactInput {
   name: string;
   /** @nullable */
@@ -742,8 +750,7 @@ export interface ContactInput {
   email?: string | null;
   /** @nullable */
   relationshipType?: string | null;
-  /** @nullable */
-  gender?: string | null;
+  gender: ContactInputGender;
   /** @nullable */
   birthPlace?: string | null;
   /** @nullable */

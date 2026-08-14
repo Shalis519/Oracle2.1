@@ -880,7 +880,7 @@ export const CreateContactBody = zod.object({
   "phone": zod.string().nullish(),
   "email": zod.string().nullish(),
   "relationshipType": zod.string().nullish(),
-  "gender": zod.string().nullish(),
+  "gender": zod.enum(['мужчина', 'женщина']),
   "birthPlace": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "notificationDays": zod.number().optional(),

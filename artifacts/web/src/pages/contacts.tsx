@@ -16,6 +16,7 @@ type FormData = {
   birthDate: string;
   birthTime: string;
   relationshipType: string;
+  gender: "" | "мужчина" | "женщина";
   city: string;
   birthPlace: string;
   phone: string;
@@ -28,6 +29,7 @@ const emptyForm: FormData = {
   birthDate: "",
   birthTime: "",
   relationshipType: "",
+  gender: "",
   city: "",
   birthPlace: "",
   phone: "",
@@ -74,6 +76,7 @@ export default function ContactsPage() {
       birthDate: contact.birthDate ?? "",
       birthTime: contact.birthTime?.slice(0, 5) ?? "",
       relationshipType: contact.relationshipType ?? "",
+      gender: contact.gender === "мужчина" || contact.gender === "женщина" ? contact.gender : "",
       city: contact.city ?? "",
       birthPlace: contact.birthPlace ?? "",
       phone: contact.phone ?? "",
@@ -85,13 +88,14 @@ export default function ContactsPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim()) return;
+    if (!formData.name.trim() || !formData.gender) return;
 
     const payload = {
       name: formData.name,
       birthDate: formData.birthDate || null,
       birthTime: formData.birthTime || null,
       relationshipType: formData.relationshipType || null,
+      gender: formData.gender,
       city: formData.city || null,
       birthPlace: formData.birthPlace || null,
       phone: formData.phone || null,
@@ -178,6 +182,19 @@ export default function ContactsPage() {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Кем приходится (необязательно)</label>
                 <Input placeholder="Например: Мама, Брат, Друг" value={formData.relationshipType} onChange={e => setFormData(p => ({...p, relationshipType: e.target.value}))} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Пол</label>
+                <select
+                  required
+                  value={formData.gender}
+                  onChange={e => setFormData(p => ({ ...p, gender: e.target.value as FormData["gender"] }))}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">Выберите пол</option>
+                  <option value="женщина">Женщина</option>
+                  <option value="мужчина">Мужчина</option>
+                </select>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Телефон (необязательно)</label>

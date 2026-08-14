@@ -5,6 +5,7 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ContactInputGender } from './contactInputGender';
 
 export interface ContactInput {
   name: string;
@@ -22,8 +23,7 @@ export interface ContactInput {
   email?: string | null;
   /** @nullable */
   relationshipType?: string | null;
-  /** @nullable */
-  gender?: string | null;
+  gender: ContactInputGender;
   /** @nullable */
   birthPlace?: string | null;
   /** @nullable */

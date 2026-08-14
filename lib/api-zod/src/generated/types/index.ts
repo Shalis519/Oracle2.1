@@ -25,6 +25,7 @@ export * from './computeNatalChart200';
 export * from './computeNatalChart200Chart';
 export * from './contact';
 export * from './contactInput';
+export * from './contactInputGender';
 export * from './contactUpdate';
 export * from './dailyForecast';
 export * from './dailyForecastTransitsItem';
