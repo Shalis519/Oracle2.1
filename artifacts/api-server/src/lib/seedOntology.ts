@@ -10,6 +10,7 @@ import {
   motivationPhrasesTable,
   cinderellaInterpretationsTable,
   synastryInterpretationsTable,
+  synastryHouseInterpretationsTable,
 } from "@workspace/db";
 import { logger } from "./logger";
 import { ARCANA } from "./data/arcana";
@@ -575,6 +576,42 @@ export async function seedOntology() {
     { categoryKey: "communication", sourceBody: "uranus", targetBody: "mercury", aspectKey: "square", directionKey: "neutral", title: "Уран - Меркурий: квадрат", text: "Общение отличается нестандартностью и высокой скоростью, но может быть нервным и непредсказуемым. Люди стимулируют друг друга мыслить иначе; для устойчивого диалога нужны паузы и договорённость о правилах общения.", keywords: ["идеи", "перемены", "диалог"], sourceNote: "Начальный набор общей синастрии" },
   ];
   await db.insert(synastryInterpretationsTable).values(generalSynastryInterpretations).onConflictDoNothing();
+
+  const extendedSynastryInterpretations = [
+    { categoryKey: "support", sourceBody: "sun", targetBody: "sun", aspectKey: "trine", directionKey: "neutral", title: "Солнце - Солнце: тригон", text: "Люди естественно признают индивидуальность друг друга и поддерживают стремление проявлять себя. Между ними легче сохранять уважение, тепло и чувство общей цели.", keywords: ["самовыражение", "уважение", "цель"], sourceNote: "Расширенный набор общей синастрии" },
+    { categoryKey: "emotions", sourceBody: "moon", targetBody: "moon", aspectKey: "conjunction", directionKey: "neutral", title: "Луна - Луна: соединение", text: "Эмоциональные реакции и потребность в заботе во многом совпадают. Люди быстро чувствуют настроение друг друга и могут создать атмосферу близости, но иногда одинаковая чувствительность усиливает переживания.", keywords: ["эмоции", "близость", "забота"], sourceNote: "Расширенный набор общей синастрии" },
+    { categoryKey: "relationships", sourceBody: "venus", targetBody: "mars", aspectKey: "trine", directionKey: "neutral", title: "Венера - Марс: тригон", text: "Между людьми возникает естественное притяжение, живой интерес и желание радовать друг друга. Чувства и действия поддерживают друг друга, поэтому отношения легче развиваются без лишнего давления.", keywords: ["притяжение", "чувства", "действие"], sourceNote: "Расширенный набор общей синастрии" },
+    { categoryKey: "conflict", sourceBody: "venus", targetBody: "mars", aspectKey: "square", directionKey: "neutral", title: "Венера - Марс: квадрат", text: "Сильное притяжение сочетается с различиями в темпе, желаниях и способах проявлять любовь. Искра отношений может быть яркой, если люди учатся говорить о потребностях и не превращают разницу в борьбу.", keywords: ["страсть", "различия", "желания"], sourceNote: "Расширенный набор общей синастрии" },
+    { categoryKey: "conflict", sourceBody: "mars", targetBody: "saturn", aspectKey: "square", directionKey: "neutral", title: "Марс - Сатурн: квадрат", text: "Действия одного человека могут сталкиваться с осторожностью, правилами или ограничениями другого. Аспект проверяет отношения на зрелость и помогает превратить напряжение в дисциплину, если ответственность распределена честно.", keywords: ["действие", "ограничения", "зрелость"], sourceNote: "Расширенный набор общей синастрии" },
+    { categoryKey: "support", sourceBody: "sun", targetBody: "jupiter", aspectKey: "trine", directionKey: "neutral", title: "Солнце - Юпитер: тригон", text: "Контакт помогает раскрывать уверенность, щедрость и веру в собственные возможности. Люди поддерживают рост друг друга, легче видят перспективу и способны радоваться успехам партнёра.", keywords: ["рост", "уверенность", "поддержка"], sourceNote: "Расширенный набор общей синастрии" },
+    { categoryKey: "relationships", sourceBody: "moon", targetBody: "venus", aspectKey: "sextile", directionKey: "neutral", title: "Луна - Венера: секстиль", text: "Чувства и проявления симпатии хорошо дополняют друг друга. В отношениях легче создавать мягкость, уют и эмоциональную поддержку, сохраняя при этом уважение к личным вкусам.", keywords: ["нежность", "уют", "гармония"], sourceNote: "Расширенный набор общей синастрии" },
+    { categoryKey: "relationships", sourceBody: "venus", targetBody: "jupiter", aspectKey: "conjunction", directionKey: "neutral", title: "Венера - Юпитер: соединение", text: "Связь усиливает доброжелательность, щедрость и удовольствие от совместной жизни. Людям проще видеть красоту друг в друге и поддерживать общие планы, однако важно сохранять меру в тратах и обещаниях.", keywords: ["радость", "щедрость", "ценности"], sourceNote: "Расширенный набор общей синастрии" },
+  ];
+  await db.insert(synastryInterpretationsTable).values(extendedSynastryInterpretations).onConflictDoNothing();
+
+  const houseSeed = [
+    { planetBody: "sun", houseNumber: 5, title: "Солнце в V доме", text: "Человек пробуждает в партнёре желание проявляться, творить, радоваться и чувствовать себя особенным. Связь может усиливать романтический интерес и совместное творчество." },
+    { planetBody: "moon", houseNumber: 4, title: "Луна в IV доме", text: "Возникает ощущение знакомости, домашнего тепла и эмоциональной причастности. Партнёр затрагивает глубокие воспоминания и потребность в безопасности." },
+    { planetBody: "mercury", houseNumber: 3, title: "Меркурий в III доме", text: "Общение становится естественной частью связи. Партнёры охотно обсуждают повседневные дела, учатся друг у друга и поддерживают постоянный обмен мыслями." },
+    { planetBody: "venus", houseNumber: 7, title: "Венера в VII доме", text: "Планета воспринимается как образ желанного партнёра. Положение усиливает симпатию, стремление к гармонии и желание строить отношения на взаимности." },
+    { planetBody: "mars", houseNumber: 8, title: "Марс в VIII доме", text: "Связь пробуждает сильное притяжение, смелость и желание глубокой вовлечённости. Важно бережно обращаться с темами ревности, контроля и личных границ." },
+    { planetBody: "jupiter", houseNumber: 9, title: "Юпитер в IX доме", text: "Партнёр расширяет мировоззрение, поддерживает обучение, путешествия и поиск смысла. Вместе легче смотреть дальше привычных рамок и строить большие планы." },
+    { planetBody: "saturn", houseNumber: 10, title: "Сатурн в X доме", text: "Партнёр влияет на цели, карьерный путь и чувство ответственности. Такая связь может давать опору и долговременность, но требует уважения к амбициям и темпу развития друг друга." },
+  ].map((item) => ({ ...item, directionKey: "neutral", categoryKey: "general", sourceNote: "Начальный набор планет в домах", isActive: true }));
+  await db.execute(sql`CREATE TABLE IF NOT EXISTS synastry_house_interpretations (
+    id SERIAL PRIMARY KEY,
+    planet_body TEXT NOT NULL,
+    house_number INTEGER NOT NULL,
+    direction_key TEXT NOT NULL DEFAULT 'neutral',
+    title TEXT NOT NULL,
+    text TEXT NOT NULL DEFAULT 'В разработке',
+    source_note TEXT,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  )`);
+  await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS synastry_house_interpretation_unique ON synastry_house_interpretations (planet_body, house_number, direction_key)`);
+  await db.insert(synastryHouseInterpretationsTable).values(houseSeed).onConflictDoNothing();
 
   logger.info(
     "Seeded: %d entities (%d astrology + %d arcana), %d themes, %d profiles, %d entity-theme links, %d entity relations, %d phrases",
