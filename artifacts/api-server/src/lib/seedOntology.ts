@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
+import { and, eq } from "drizzle-orm";
 import {
   db,
   ontologyEntitiesTable,
@@ -629,6 +630,16 @@ export async function seedOntology() {
     { planetBody: "saturn", houseNumber: 5, title: "Сатурн контакта в V доме", text: "Контакт влияет на ваше самовыражение, романтические чувства и отношение к творчеству. Он может помогать оформлять вдохновение в устойчивую форму, но иногда его сдержанность ощущается как ограничение спонтанности." },
   ].map((item) => ({ ...item, directionKey: "male-to-female", categoryKey: "general", sourceNote: "Обратный набор планет в домах", isActive: true }));
   await db.insert(synastryHouseInterpretationsTable).values(houseReverseSeed).onConflictDoNothing();
+  for (const item of houseReverseSeed) {
+    await db.update(synastryHouseInterpretationsTable)
+      .set({ text: item.text, title: item.title, updatedAt: new Date() })
+      .where(and(
+        eq(synastryHouseInterpretationsTable.planetBody, item.planetBody),
+        eq(synastryHouseInterpretationsTable.houseNumber, item.houseNumber),
+        eq(synastryHouseInterpretationsTable.directionKey, item.directionKey),
+        eq(synastryHouseInterpretationsTable.text, "В разработке"),
+      ));
+  }
   const houseMutualSeed = [
     { planetBody: "sun", houseNumber: 9, title: "Взаимное Солнце в IX доме", text: "Вы взаимно расширяете мировоззрение друг друга. Вместе легче учиться, путешествовать, посещать тренинги и курсы, обсуждать смысл происходящего и строить большие планы." },
     { planetBody: "moon", houseNumber: 4, title: "Взаимная Луна в IV доме", text: "Вы взаимно создаёте ощущение домашнего тепла, знакомости и эмоциональной защищённости. Вместе легче заботиться друг о друге и формировать пространство, где можно быть собой." },
