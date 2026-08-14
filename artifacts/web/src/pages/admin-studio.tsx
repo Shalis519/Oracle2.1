@@ -31,7 +31,6 @@ import {
   BrainCircuit,
   Sparkles,
   Link2,
-  Home,
   XCircle,
   RefreshCw,
   MessageSquareQuote,
@@ -1485,7 +1484,6 @@ export default function AdminStudioPage() {
           <TabsTrigger value="backup"><Download className="w-4 h-4 mr-2" />Бэкап</TabsTrigger>
           <TabsTrigger value="cinderella"><Sparkles className="w-4 h-4 mr-2" />Врата Золушки</TabsTrigger>
           <TabsTrigger value="synastry"><Link2 className="w-4 h-4 mr-2" />Общая синастрия</TabsTrigger>
-          <TabsTrigger value="synastry-houses"><Home className="w-4 h-4 mr-2" />Планеты в домах</TabsTrigger>
         </TabsList>
 
         <TabsContent value="entities" className="space-y-6">
@@ -1829,55 +1827,48 @@ export default function AdminStudioPage() {
               </div>
             </DialogContent>
           </Dialog>
-        </TabsContent>
-
-        <TabsContent value="synastry-houses" className="space-y-6">
-          <Card>
-            <CardHeader><CardTitle>Планеты в домах синастрии</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              <p className="text-sm text-muted-foreground">Здесь редактируются интерпретации положения планеты одного человека в доме другого. Дома рассчитываются по Плацидусу. Планета, дом и направление фиксируются формулой, а текст можно менять.</p>
-              <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">Первый этап включает Солнце, Луну, Меркурий, Венеру, Марс, Юпитер и Сатурн в домах I-XII. Если текста нет, пользователю отображается «В разработке».</div>
-              <Button onClick={() => { setEditingSynastryHouse(null); setSynastryHouseForm({ planetBody: "sun", houseNumber: 1, directionKey: "neutral", text: "В разработке", sourceNote: "", isActive: true }); setSynastryHouseEditorOpen(true); }}><Plus className="w-4 h-4 mr-2" />Добавить интерпретацию</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6 space-y-3">
-              {synastryHouseLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : synastryHouseInterpretations.length === 0 ? <p className="text-sm text-muted-foreground">Записей пока нет. Добавьте первую интерпретацию.</p> : synastryHouseInterpretations.map((item) => (
-                <div key={item.id} className="rounded-lg border border-border p-4 space-y-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-medium">{getSynastryBodyLabel(item.planetBody)} в {item.houseNumber} доме</p>
-                      <p className="text-xs text-muted-foreground">{getSynastryDirectionLabel(item.directionKey)}</p>
-                    </div>
-                    <div className="flex gap-2 shrink-0">
-                      <Button size="sm" variant="outline" onClick={() => { setEditingSynastryHouse(item); setSynastryHouseForm({ planetBody: item.planetBody, houseNumber: item.houseNumber, directionKey: item.directionKey, text: item.text || "В разработке", sourceNote: item.sourceNote ?? "", isActive: item.isActive }); setSynastryHouseEditorOpen(true); }}><Pencil className="w-4 h-4 mr-1" />Изменить</Button>
-                      <Button size="sm" variant="ghost" onClick={() => deleteSynastryHouseInterpretation(item.id)}><Trash2 className="w-4 h-4" /></Button>
-                    </div>
+                <section className="space-y-4 pt-4 border-t border-border">
+                  <div>
+                    <h3 className="font-semibold text-lg">Планеты в домах</h3>
+                    <p className="text-sm text-muted-foreground mt-1">Этот подраздел входит в общую синастрию. Дома рассчитываются по Плацидусу, а тексты редактируются здесь же в Oracle Studio.</p>
                   </div>
-                  <p className={cn("whitespace-pre-wrap text-sm", !item.text?.trim() || item.text === "В разработке" ? "text-amber-200" : "text-muted-foreground")}>{item.text?.trim() || "В разработке"}</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          <Dialog open={synastryHouseEditorOpen} onOpenChange={(open) => { setSynastryHouseEditorOpen(open); if (!open) setEditingSynastryHouse(null); }}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader><DialogTitle>{editingSynastryHouse ? "Изменить интерпретацию планеты в доме" : "Новая интерпретация планеты в доме"}</DialogTitle></DialogHeader>
-              <div className="space-y-4">
-                {!editingSynastryHouse && <div className="grid gap-4 md:grid-cols-2">
-                  <div><Label>Планета</Label><Select value={synastryHouseForm.planetBody} onValueChange={(value) => setSynastryHouseForm((form) => ({ ...form, planetBody: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{SYNastryBodies.filter((item) => ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"].includes(item.key)).map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}</SelectContent></Select></div>
-                  <div><Label>Дом</Label><Select value={String(synastryHouseForm.houseNumber)} onValueChange={(value) => setSynastryHouseForm((form) => ({ ...form, houseNumber: Number(value) }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{Array.from({ length: 12 }, (_, index) => index + 1).map((house) => <SelectItem key={house} value={String(house)}>{house} дом</SelectItem>)}</SelectContent></Select></div>
-                  <div><Label>Направление</Label><Select value={synastryHouseForm.directionKey} onValueChange={(value) => setSynastryHouseForm((form) => ({ ...form, directionKey: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{SYNastryDirections.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}</SelectContent></Select></div>
-                </div>}
-                {editingSynastryHouse && <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">{getSynastryBodyLabel(editingSynastryHouse.planetBody)} в {editingSynastryHouse.houseNumber} доме · {getSynastryDirectionLabel(editingSynastryHouse.directionKey)}<br /><span className="text-muted-foreground">Формула фиксирована и не редактируется.</span></div>}
-                <div><Label>Интерпретация</Label><Textarea value={synastryHouseForm.text} onChange={(e) => setSynastryHouseForm((form) => ({ ...form, text: e.target.value }))} rows={12} /></div>
-                <div><Label>Источник</Label><Input value={synastryHouseForm.sourceNote} onChange={(e) => setSynastryHouseForm((form) => ({ ...form, sourceNote: e.target.value }))} /></div>
-                <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setSynastryHouseEditorOpen(false)}>Отмена</Button><Button onClick={saveSynastryHouseInterpretation} disabled={synastryHouseSaving}>{synastryHouseSaving ? "Сохранение..." : "Сохранить"}</Button></div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </TabsContent>
+                  <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">Первый этап включает Солнце, Луну, Меркурий, Венеру, Марс, Юпитер и Сатурн в домах I-XII. Если текста нет, отображается «В разработке».</div>
+                  <Button onClick={() => { setEditingSynastryHouse(null); setSynastryHouseForm({ planetBody: "sun", houseNumber: 1, directionKey: "neutral", text: "В разработке", sourceNote: "", isActive: true }); setSynastryHouseEditorOpen(true); }}><Plus className="w-4 h-4 mr-2" />Добавить интерпретацию положения в доме</Button>
+                  <div className="space-y-3">
+                    {synastryHouseLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : synastryHouseInterpretations.length === 0 ? <p className="text-sm text-muted-foreground">Записей пока нет. Добавьте первую интерпретацию.</p> : synastryHouseInterpretations.map((item) => (
+                      <div key={item.id} className="rounded-lg border border-border p-4 space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="font-medium">{getSynastryBodyLabel(item.planetBody)} в {item.houseNumber} доме</p>
+                            <p className="text-xs text-muted-foreground">{getSynastryDirectionLabel(item.directionKey)}</p>
+                          </div>
+                          <div className="flex gap-2 shrink-0">
+                            <Button size="sm" variant="outline" onClick={() => { setEditingSynastryHouse(item); setSynastryHouseForm({ planetBody: item.planetBody, houseNumber: item.houseNumber, directionKey: item.directionKey, text: item.text || "В разработке", sourceNote: item.sourceNote ?? "", isActive: item.isActive }); setSynastryHouseEditorOpen(true); }}><Pencil className="w-4 h-4 mr-1" />Изменить</Button>
+                            <Button size="sm" variant="ghost" onClick={() => deleteSynastryHouseInterpretation(item.id)}><Trash2 className="w-4 h-4" /></Button>
+                          </div>
+                        </div>
+                        <p className={cn("whitespace-pre-wrap text-sm", !item.text?.trim() || item.text === "В разработке" ? "text-amber-200" : "text-muted-foreground")}>{item.text?.trim() || "В разработке"}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <Dialog open={synastryHouseEditorOpen} onOpenChange={(open) => { setSynastryHouseEditorOpen(open); if (!open) setEditingSynastryHouse(null); }}>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader><DialogTitle>{editingSynastryHouse ? "Изменить интерпретацию планеты в доме" : "Новая интерпретация планеты в доме"}</DialogTitle></DialogHeader>
+                      <div className="space-y-4">
+                        {!editingSynastryHouse && <div className="grid gap-4 md:grid-cols-2">
+                          <div><Label>Планета</Label><Select value={synastryHouseForm.planetBody} onValueChange={(value) => setSynastryHouseForm((form) => ({ ...form, planetBody: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{SYNastryBodies.filter((item) => ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"].includes(item.key)).map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+                          <div><Label>Дом</Label><Select value={String(synastryHouseForm.houseNumber)} onValueChange={(value) => setSynastryHouseForm((form) => ({ ...form, houseNumber: Number(value) }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{Array.from({ length: 12 }, (_, index) => index + 1).map((house) => <SelectItem key={house} value={String(house)}>{house} дом</SelectItem>)}</SelectContent></Select></div>
+                          <div><Label>Направление</Label><Select value={synastryHouseForm.directionKey} onValueChange={(value) => setSynastryHouseForm((form) => ({ ...form, directionKey: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{SYNastryDirections.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+                        </div>}
+                        {editingSynastryHouse && <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">{getSynastryBodyLabel(editingSynastryHouse.planetBody)} в {editingSynastryHouse.houseNumber} доме · {getSynastryDirectionLabel(editingSynastryHouse.directionKey)}<br /><span className="text-muted-foreground">Формула фиксирована и не редактируется.</span></div>}
+                        <div><Label>Интерпретация</Label><Textarea value={synastryHouseForm.text} onChange={(e) => setSynastryHouseForm((form) => ({ ...form, text: e.target.value }))} rows={12} /></div>
+                        <div><Label>Источник</Label><Input value={synastryHouseForm.sourceNote} onChange={(e) => setSynastryHouseForm((form) => ({ ...form, sourceNote: e.target.value }))} /></div>
+                        <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setSynastryHouseEditorOpen(false)}>Отмена</Button><Button onClick={saveSynastryHouseInterpretation} disabled={synastryHouseSaving}>{synastryHouseSaving ? "Сохранение..." : "Сохранить"}</Button></div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </section>
+            </TabsContent>
 
         <TabsContent value="backup" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
