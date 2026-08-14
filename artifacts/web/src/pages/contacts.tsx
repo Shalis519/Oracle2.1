@@ -63,6 +63,18 @@ const SYNASTRY_BODY_YOUR_INSTRUMENTAL: Record<string, string> = {
   chiron: "вашим Хироном", lilith: "вашей Лилит",
 };
 
+function romanHouse(houseNumber: number) {
+  return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][houseNumber - 1] ?? String(houseNumber);
+}
+
+function synastryHousePhrase(sourcePerson: "user" | "contact", sourceLabel: string, targetPerson: "user" | "contact", targetLabel: string, sourceBody: string, houseNumber: number) {
+  const bodyLabel = SYNASTRY_BODY_NAMES[sourceBody] ?? sourceBody;
+  const house = `${romanHouse(houseNumber)} доме`;
+  if (sourcePerson === "user" && targetPerson === "contact") return `Ваша ${bodyLabel} находится в ${house} контакта.`;
+  if (sourcePerson === "contact" && targetPerson === "user") return `${bodyLabel} контакта находится в ${house} вашей карты.`;
+  return `${sourceLabel}: ${bodyLabel} находится в ${house} (${targetLabel}).`;
+}
+
 function synastryPersonPhrase(sourcePerson: "user" | "contact", sourceLabel: string, targetPerson: "user" | "contact", targetLabel: string, sourceBody: string, targetBody: string, aspectType: string) {
   const sourceBodyLabel = SYNASTRY_BODY_NAMES[sourceBody] ?? sourceBody;
   const targetBodyLabel = SYNASTRY_BODY_ACCUSATIVE[targetBody] ?? SYNASTRY_BODY_NAMES[targetBody] ?? targetBody;
@@ -297,10 +309,12 @@ export default function ContactsPage() {
                 summary: string;
                 cinderellaGates?: Array<{ pairKey?: string; sourcePerson?: "user" | "contact"; targetPerson?: "user" | "contact"; sourceLabel: string; targetLabel: string; aspectType: string; orb: number; interpretation: string }>;
                 aspects?: Array<{ sourcePerson?: "user" | "contact"; targetPerson?: "user" | "contact"; sourceLabel: string; targetLabel: string; sourceBody: string; targetBody: string; aspectType: string; aspectSymbol: string; orb: number; interpretation: string }>;
+                housePlacements?: Array<{ sourcePerson?: "user" | "contact"; targetPerson?: "user" | "contact"; sourceLabel: string; targetLabel: string; sourceBody: string; houseNumber: number; interpretation: string }>;
                 themes?: Array<{ key: string; label: string; aspects: Array<{ sourceLabel: string; targetLabel: string; sourceBody: string; targetBody: string; aspectType: string; aspectSymbol: string; orb: number; interpretation: string }> }>;
               };
               const gates = result.cinderellaGates ?? [];
               const aspects = result.aspects ?? [];
+              const housePlacements = result.housePlacements ?? [];
               const themes = result.themes ?? [];
               const bodyNames = SYNASTRY_BODY_NAMES;
               return <div className="space-y-5">
@@ -308,6 +322,7 @@ export default function ContactsPage() {
                   {gates.map((gate, index) => <article key={`gate-${gate.sourceLabel}-${gate.targetLabel}-${index}`} className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-2"><div className="font-medium">{synastryPersonPhrase(gate.sourcePerson ?? "user", gate.sourceLabel, gate.targetPerson ?? "contact", gate.targetLabel, "chiron", gate.pairKey?.replace(/^chiron-/, "") ?? "venus", gate.aspectType)} Орбис {gate.orb}°</div><p className="text-sm leading-relaxed">{gate.interpretation}</p></article>)}
                   {aspects.map((aspect, index) => <article key={`aspect-${aspect.sourceBody}-${aspect.targetBody}-${aspect.aspectType}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">{synastryPersonPhrase(aspect.sourcePerson ?? "user", aspect.sourceLabel, aspect.targetPerson ?? "contact", aspect.targetLabel, aspect.sourceBody, aspect.targetBody, aspect.aspectType)} Орбис {aspect.orb}°</div><p className="text-sm leading-relaxed">{aspect.interpretation}</p></article>)}
                 </div></section>}
+                {housePlacements.length > 0 && <section className="space-y-3"><h3 className="font-semibold text-lg">Планеты в домах</h3>{housePlacements.map((placement, index) => <article key={`house-${placement.sourceBody}-${placement.houseNumber}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">{synastryHousePhrase(placement.sourcePerson ?? "user", placement.sourceLabel, placement.targetPerson ?? "contact", placement.targetLabel, placement.sourceBody, placement.houseNumber)}</div><p className="text-sm leading-relaxed">{placement.interpretation}</p></article>)}</section>}
                 {themes.length > 0 && <section className="space-y-3"><h3 className="font-semibold text-lg">Ключевые темы</h3>{themes.map((theme) => <article key={theme.key} className="rounded-lg border border-border p-3"><h4 className="font-medium">{theme.label}</h4><p className="mt-1 text-sm text-muted-foreground">Тема подтверждена тремя и более связанными аспектами.</p></article>)}</section>}
               </div>;
             } catch { return <p className="text-destructive">Не удалось прочитать результат расчёта.</p>; }

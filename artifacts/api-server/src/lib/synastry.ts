@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { and, eq, inArray } from "drizzle-orm";
-import { db, cinderellaInterpretationsTable, synastryInterpretationsTable } from "@workspace/db";
+import { db, cinderellaInterpretationsTable, synastryInterpretationsTable, synastryHouseInterpretationsTable } from "@workspace/db";
 import { computeNatalChart, type NatalChart, type NatalChartInput } from "./astrology";
 import { searchCities } from "./cities";
 
@@ -20,6 +20,7 @@ const GENERAL_ASPECTS = [
   { key: "opposition", label: "Оппозиция", symbol: "☍", angle: 180, orb: 2.85 },
 ] as const;
 const GENERAL_BODY_KEYS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith"] as const;
+const HOUSE_BODY_KEYS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"] as const;
 const GENERAL_BODY_LABELS: Record<string, string> = {
   sun: "Солнце", moon: "Луна", mercury: "Меркурий", venus: "Венера", mars: "Марс", jupiter: "Юпитер",
   saturn: "Сатурн", uranus: "Уран", neptune: "Нептун", pluto: "Плутон", chiron: "Хирон", lilith: "Лилит",
@@ -54,6 +55,17 @@ export interface SynastryTheme {
   aspects: SynastryAspect[];
 }
 
+export interface SynastryHousePlacement {
+  sourcePerson: SynastryPerson;
+  sourceBody: string;
+  sourceLabel: string;
+  targetPerson: SynastryPerson;
+  targetLabel: string;
+  houseNumber: number;
+  directionKey: string;
+  interpretation: string;
+}
+
 export interface SynastryGate {
   pairKey: string;
   aspectKey: string;
@@ -75,6 +87,7 @@ export interface SynastryResult {
   summary: string;
   cinderellaGates: SynastryGate[];
   aspects: SynastryAspect[];
+  housePlacements: SynastryHousePlacement[];
   themes: SynastryTheme[];
   warnings: string[];
 }
@@ -106,6 +119,18 @@ function findGeneralAspect(a: number, b: number) {
 
 function getBody(chart: NatalChart, key: string) {
   return chart.bodies.find((body) => body.key === key);
+}
+
+function getHouseForLongitude(longitude: number, houses: NatalChart["houses"]): number {
+  const ordered = [...houses].sort((a, b) => a.number - b.number);
+  for (let index = 0; index < ordered.length; index += 1) {
+    const current = ordered[index];
+    const next = ordered[(index + 1) % ordered.length];
+    const span = (next.longitude - current.longitude + 360) % 360;
+    const distance = (longitude - current.longitude + 360) % 360;
+    if (distance < span || (index === ordered.length - 1 && distance === span)) return current.number;
+  }
+  return 1;
 }
 
 function makeInput(date: string, time: string, latitude: number, longitude: number, timezone?: string | null): NatalChartInput {
@@ -220,8 +245,12 @@ export async function calculateSynastry(params: {
     }
   }
 
-  const interpretationRows = await db.select().from(synastryInterpretationsTable).where(eq(synastryInterpretationsTable.isActive, true));
+  const [interpretationRows, houseInterpretationRows] = await Promise.all([
+    db.select().from(synastryInterpretationsTable).where(eq(synastryInterpretationsTable.isActive, true)),
+    db.select().from(synastryHouseInterpretationsTable).where(eq(synastryHouseInterpretationsTable.isActive, true)),
+  ]);
   const interpretationMap = new Map(interpretationRows.map((row) => [`${row.sourceBody}:${row.targetBody}:${row.aspectKey}:${row.directionKey}`, row]));
+  const houseInterpretationMap = new Map(houseInterpretationRows.map((row) => [`${row.planetBody}:${row.houseNumber}:${row.directionKey}`, row]));
   const aspects: SynastryAspect[] = [];
   const userBodies = userChart.bodies.filter((body) => (GENERAL_BODY_KEYS as readonly string[]).includes(body.key));
   const contactBodies = contactChart.bodies.filter((body) => (GENERAL_BODY_KEYS as readonly string[]).includes(body.key));
@@ -247,6 +276,24 @@ export async function calculateSynastry(params: {
       aspects.push({ sourcePerson: "contact", sourceBody: source.key, sourceLabel: params.contactLabel, targetPerson: "user", targetBody: target.key, targetLabel: params.userLabel, aspectKey: found.key, aspectType: found.label, aspectSymbol: found.symbol, orb: Number(found.orbValue.toFixed(2)), directionKey, categoryKey, interpretation: row?.text?.trim() || "В разработке" });
     }
   }
+  const housePlacements: SynastryHousePlacement[] = [];
+  const userHouseBodies = userChart.bodies.filter((body) => (HOUSE_BODY_KEYS as readonly string[]).includes(body.key));
+  const contactHouseBodies = contactChart.bodies.filter((body) => (HOUSE_BODY_KEYS as readonly string[]).includes(body.key));
+  for (const source of userHouseBodies) {
+    const houseNumber = getHouseForLongitude(source.longitude, contactChart.houses);
+    const directionKey = directionFor("user", params.userGender, params.contactGender);
+    const row = houseInterpretationMap.get(`${source.key}:${houseNumber}:${directionKey}`)
+      ?? houseInterpretationMap.get(`${source.key}:${houseNumber}:neutral`);
+    housePlacements.push({ sourcePerson: "user", sourceBody: source.key, sourceLabel: params.userLabel, targetPerson: "contact", targetLabel: params.contactLabel, houseNumber, directionKey, interpretation: row?.text?.trim() || "В разработке" });
+  }
+  for (const source of contactHouseBodies) {
+    const houseNumber = getHouseForLongitude(source.longitude, userChart.houses);
+    const directionKey = directionFor("contact", params.userGender, params.contactGender);
+    const row = houseInterpretationMap.get(`${source.key}:${houseNumber}:${directionKey}`)
+      ?? houseInterpretationMap.get(`${source.key}:${houseNumber}:neutral`);
+    housePlacements.push({ sourcePerson: "contact", sourceBody: source.key, sourceLabel: params.contactLabel, targetPerson: "user", targetLabel: params.userLabel, houseNumber, directionKey, interpretation: row?.text?.trim() || "В разработке" });
+  }
+
   const grouped = new Map<string, SynastryAspect[]>();
   for (const aspect of aspects) grouped.set(aspect.categoryKey, [...(grouped.get(aspect.categoryKey) ?? []), aspect]);
   const themes = [...grouped.entries()]
@@ -262,6 +309,7 @@ export async function calculateSynastry(params: {
     summary: gates.length ? `Найдено связей Врат Золушки: ${gates.length}.` : "Значимые Врата Золушки не найдены.",
     cinderellaGates: gates.sort((a, b) => a.orb - b.orb),
     aspects: aspects.sort((a, b) => a.orb - b.orb),
+    housePlacements,
     themes,
     warnings: [],
   };

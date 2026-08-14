@@ -3,6 +3,7 @@ import {
   serial,
   text,
   boolean,
+  integer,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
@@ -58,3 +59,37 @@ export type InsertSynastryInterpretation = z.infer<
 >;
 export type SynastryInterpretation =
   typeof synastryInterpretationsTable.$inferSelect;
+
+/** Интерпретации положения планеты одной карты в доме другой карты. */
+export const synastryHouseInterpretationsTable = pgTable(
+  "synastry_house_interpretations",
+  {
+    id: serial("id").primaryKey(),
+    planetBody: text("planet_body").notNull(),
+    houseNumber: integer("house_number").notNull(),
+    directionKey: text("direction_key").notNull().default("neutral"),
+    title: text("title").notNull(),
+    text: text("text").notNull().default("В разработке"),
+    sourceNote: text("source_note"),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("synastry_house_interpretation_unique").on(
+      table.planetBody,
+      table.houseNumber,
+      table.directionKey,
+    ),
+  ],
+);
+
+export const insertSynastryHouseInterpretationSchema = createInsertSchema(
+  synastryHouseInterpretationsTable,
+).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type InsertSynastryHouseInterpretation = z.infer<
+  typeof insertSynastryHouseInterpretationSchema
+>;
+export type SynastryHouseInterpretation =
+  typeof synastryHouseInterpretationsTable.$inferSelect;
