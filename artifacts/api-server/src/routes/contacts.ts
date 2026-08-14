@@ -4,6 +4,7 @@ import {
   db,
   contactsTable,
   familyConnectionsTable,
+  usersTable,
   type Contact,
   type FamilyConnection,
 } from "@workspace/db";
@@ -25,6 +26,7 @@ import {
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
 import { daysUntilBirthday, turningAge } from "../lib/dates";
+import { calculateSynastry, resolveContactBirthLocation } from "../lib/synastry";
 
 const router: IRouter = Router();
 
@@ -43,6 +45,11 @@ function serialize(c: Contact) {
     birthPlace: c.birthPlace,
     notes: c.notes,
     notificationDays: c.notificationDays,
+    synastryEnabled: c.synastryEnabled,
+    synastryStatus: c.synastryStatus,
+    synastryCalculatedAt: c.synastryCalculatedAt?.toISOString() ?? null,
+    synastryInputHash: c.synastryInputHash,
+    synastryData: c.synastryData,
     isActive: c.isActive,
     createdAt: c.createdAt.toISOString(),
   };
@@ -139,21 +146,85 @@ router.patch("/contacts/:id", requireAuth, async (req, res): Promise<void> => {
     res.status(400).json({ error: body.error.message });
     return;
   }
+  const [existing] = await db
+    .select()
+    .from(contactsTable)
+    .where(and(
+      eq(contactsTable.id, params.data.id),
+      eq(contactsTable.userId, req.localUser!.id),
+    ));
+  if (!existing) {
+    res.status(404).json({ error: "Контакт не найден." });
+    return;
+  }
+  const sourceChanged = ["birthDate", "birthTime", "birthPlace", "city"].some((key) => key in body.data);
+  const synastryReset = body.data.synastryEnabled === false
+    ? { synastryStatus: "disabled", synastryCalculatedAt: null, synastryInputHash: null, synastryData: null }
+    : sourceChanged && existing.synastryEnabled
+      ? { synastryStatus: "stale", synastryCalculatedAt: null, synastryInputHash: null, synastryData: null }
+      : body.data.synastryEnabled === true && !existing.synastryEnabled
+        ? { synastryStatus: "pending" }
+        : {};
   const [row] = await db
     .update(contactsTable)
-    .set(body.data)
-    .where(
-      and(
-        eq(contactsTable.id, params.data.id),
-        eq(contactsTable.userId, req.localUser!.id),
-      ),
-    )
+    .set({ ...body.data, ...synastryReset })
+    .where(eq(contactsTable.id, params.data.id))
     .returning();
   if (!row) {
     res.status(404).json({ error: "Контакт не найден." });
     return;
   }
   res.json(UpdateContactResponse.parse(serialize(row)));
+});
+
+router.post("/contacts/:id/synastry", requireAuth, async (req, res): Promise<void> => {
+  const params = GetContactParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const [contact] = await db.select().from(contactsTable).where(and(
+    eq(contactsTable.id, params.data.id),
+    eq(contactsTable.userId, req.localUser!.id),
+  ));
+  if (!contact) { res.status(404).json({ error: "Контакт не найден." }); return; }
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.localUser!.id));
+  const contactLocation = resolveContactBirthLocation(contact.birthPlace ?? contact.city);
+  const missing = !user?.birthDate || !user.birthTime || user.birthLatitude == null || user.birthLongitude == null
+    || !contact.birthDate || !contact.birthTime || !contactLocation;
+  if (missing) {
+    const [updated] = await db.update(contactsTable).set({
+      synastryEnabled: true,
+      synastryStatus: "insufficient_data",
+      synastryCalculatedAt: null,
+      synastryInputHash: null,
+      synastryData: null,
+    }).where(eq(contactsTable.id, contact.id)).returning();
+    res.status(422).json({ contact: serialize(updated), status: "insufficient_data", error: "Для синастрии нужны дата, точное время и место рождения пользователя и контакта." });
+    return;
+  }
+  try {
+    const result = await calculateSynastry({
+      userInput: {
+        year: Number(user.birthDate!.slice(0, 4)), month: Number(user.birthDate!.slice(5, 7)), day: Number(user.birthDate!.slice(8, 10)),
+        hour: Number(user.birthTime!.slice(0, 2)), minute: Number(user.birthTime!.slice(3, 5)), latitude: user.birthLatitude!, longitude: user.birthLongitude!, timezone: user.birthTimezone,
+      },
+      contactInput: {
+        year: Number(contact.birthDate!.slice(0, 4)), month: Number(contact.birthDate!.slice(5, 7)), day: Number(contact.birthDate!.slice(8, 10)),
+        hour: Number(contact.birthTime!.slice(0, 2)), minute: Number(contact.birthTime!.slice(3, 5)), latitude: contactLocation!.latitude, longitude: contactLocation!.longitude, timezone: contactLocation!.timezone,
+      },
+      userLabel: user.name || "Пользователь",
+      contactLabel: contact.name,
+    });
+    const [updated] = await db.update(contactsTable).set({
+      synastryEnabled: true,
+      synastryStatus: "ready",
+      synastryCalculatedAt: new Date(result.calculatedAt),
+      synastryInputHash: result.inputHash,
+      synastryData: JSON.stringify(result),
+    }).where(eq(contactsTable.id, contact.id)).returning();
+    res.json({ contact: serialize(updated), result });
+  } catch (error) {
+    await db.update(contactsTable).set({ synastryEnabled: true, synastryStatus: "error" }).where(eq(contactsTable.id, contact.id));
+    res.status(500).json({ error: error instanceof Error ? error.message : "Не удалось рассчитать синастрию" });
+  }
 });
 
 router.delete("/contacts/:id", requireAuth, async (req, res): Promise<void> => {

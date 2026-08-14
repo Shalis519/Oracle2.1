@@ -29,5 +29,6 @@ export interface ContactUpdate {
   /** @nullable */
   notes?: string | null;
   notificationDays?: number;
+  synastryEnabled?: boolean;
   isActive?: boolean;
 }

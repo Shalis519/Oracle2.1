@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useListContacts, useCreateContact, useUpdateContact, useDeleteContact, useListUpcomingBirthdays, getListContactsQueryKey } from "@workspace/api-client-react";
+import { useListContacts, useCreateContact, useUpdateContact, useDeleteContact, useListUpcomingBirthdays, useCalculateContactSynastry, getListContactsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { Users, Plus, Trash2, Pencil, Calendar, Clock, User, MapPin, Phone, Mail, Search } from "lucide-react";
+import { Users, Plus, Trash2, Pencil, Calendar, Clock, User, MapPin, Phone, Mail, Search, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 
@@ -20,6 +20,7 @@ type FormData = {
   birthPlace: string;
   phone: string;
   email: string;
+  synastryEnabled: boolean;
 };
 
 const emptyForm: FormData = {
@@ -31,6 +32,7 @@ const emptyForm: FormData = {
   birthPlace: "",
   phone: "",
   email: "",
+  synastryEnabled: false,
 };
 
 export default function ContactsPage() {
@@ -39,6 +41,7 @@ export default function ContactsPage() {
   const createContact = useCreateContact();
   const updateContact = useUpdateContact();
   const deleteContact = useDeleteContact();
+  const calculateSynastry = useCalculateContactSynastry();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -46,6 +49,7 @@ export default function ContactsPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<FormData>(emptyForm);
   const [search, setSearch] = useState("");
+  const [synastryContactId, setSynastryContactId] = useState<number | null>(null);
 
   const query = search.trim().toLowerCase();
   const visibleContacts = (contacts ?? [])
@@ -74,6 +78,7 @@ export default function ContactsPage() {
       birthPlace: contact.birthPlace ?? "",
       phone: contact.phone ?? "",
       email: contact.email ?? "",
+      synastryEnabled: contact.synastryEnabled ?? false,
     });
     setIsOpen(true);
   };
@@ -91,14 +96,21 @@ export default function ContactsPage() {
       birthPlace: formData.birthPlace || null,
       phone: formData.phone || null,
       email: formData.email || null,
+      synastryEnabled: formData.synastryEnabled,
     };
 
-    const onSuccess = () => {
+    const onSuccess = (savedContact: { id: number }) => {
       setIsOpen(false);
       setEditingId(null);
       setFormData(emptyForm);
       toast({ title: editingId ? "Контакт обновлен" : "Контакт добавлен" });
       queryClient.invalidateQueries({ queryKey: getListContactsQueryKey() });
+      if (formData.synastryEnabled) {
+        calculateSynastry.mutate({ id: savedContact.id }, {
+          onSuccess: () => queryClient.invalidateQueries({ queryKey: getListContactsQueryKey() }),
+          onError: () => toast({ title: "Синастрия пока недоступна", description: "Проверьте дату, время и место рождения." }),
+        });
+      }
     };
 
     if (editingId) {
@@ -178,11 +190,32 @@ export default function ContactsPage() {
                 <label className="text-sm font-medium">Место рождения (необязательно)</label>
                 <Input placeholder="Город рождения" value={formData.birthPlace} onChange={e => setFormData(p => ({...p, birthPlace: e.target.value}))} />
               </div>
+              <label className="flex items-start gap-3 rounded-lg border border-border p-3 cursor-pointer">
+                <input type="checkbox" className="mt-1 accent-primary" checked={formData.synastryEnabled} onChange={e => setFormData(p => ({ ...p, synastryEnabled: e.target.checked }))} />
+                <span>
+                  <span className="block text-sm font-medium">Рассчитать синастрию</span>
+                  <span className="block text-xs text-muted-foreground mt-1">Для расчёта нужны дата, точное время и место рождения.</span>
+                </span>
+              </label>
               <Button type="submit" className="w-full" disabled={isSaving}>Сохранить</Button>
             </form>
           </DialogContent>
         </Dialog>
       </motion.div>
+
+      <Dialog open={synastryContactId !== null} onOpenChange={(open) => { if (!open) setSynastryContactId(null); }}>
+        <DialogContent className="bg-card border-border max-h-[90vh] overflow-y-auto max-w-2xl">
+          <DialogHeader><DialogTitle className="font-serif text-2xl">Синастрия с {contacts?.find((c) => c.id === synastryContactId)?.name ?? "контактом"}</DialogTitle></DialogHeader>
+          {(() => {
+            const contact = contacts?.find((c) => c.id === synastryContactId);
+            if (!contact?.synastryData) return <p className="text-muted-foreground">Расчёт ещё не готов.</p>;
+            try {
+              const result = JSON.parse(contact.synastryData) as { summary: string; cinderellaGates?: Array<{ sourceLabel: string; targetLabel: string; aspectType: string; orb: number; interpretation: string }> };
+              return <div className="space-y-5"><p>{result.summary}</p><section><h3 className="font-semibold text-lg mb-2">Интерпретация синастрии</h3>{result.cinderellaGates?.length ? result.cinderellaGates.map((gate, index) => <article key={`${gate.sourceLabel}-${gate.targetLabel}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">Врата Золушки: Хирон - планета, {gate.aspectType}, орбис {gate.orb}°</div><div className="text-sm text-muted-foreground">{gate.sourceLabel} - Хирон - {gate.targetLabel}</div><p className="text-sm leading-relaxed">{gate.interpretation}</p></article>) : <p className="text-muted-foreground">Значимые Врата Золушки не найдены.</p>}</section><section><h3 className="font-semibold text-lg">Другие аспекты</h3><p className="text-sm text-muted-foreground">Раздел подготовлен для следующих аспектов синастрии.</p></section></div>;
+            } catch { return <p className="text-destructive">Не удалось прочитать результат расчёта.</p>; }
+          })()}
+        </DialogContent>
+      </Dialog>
 
       {birthdays && birthdays.length > 0 && (
         <Card className="bg-secondary/10 border-secondary/30 mb-8">
@@ -274,6 +307,12 @@ export default function ContactsPage() {
                         <span>Место рождения: {contact.birthPlace}</span>
                       )}
                     </div>
+                    {contact.synastryEnabled && (
+                      <div className="mt-2 flex items-center gap-2 text-xs">
+                        <Sparkles className="w-3 h-3 text-primary" />
+                        {contact.synastryStatus === "ready" ? <button type="button" className="text-primary hover:underline" onClick={() => setSynastryContactId(contact.id)}>Открыть синастрию</button> : <span className="text-muted-foreground">{contact.synastryStatus === "insufficient_data" ? "Недостаточно данных для синастрии" : contact.synastryStatus === "error" ? "Ошибка расчёта синастрии" : "Синастрия готовится"}</span>}
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(contact)}>

@@ -29,4 +29,5 @@ export interface ContactInput {
   /** @nullable */
   notes?: string | null;
   notificationDays?: number;
+  synastryEnabled?: boolean;
 }

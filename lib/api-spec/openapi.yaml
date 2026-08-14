@@ -429,6 +429,34 @@ paths:
         "204":
           description: Deleted
 
+  /contacts/{id}/synastry:
+    post:
+      operationId: calculateContactSynastry
+      tags: [contacts]
+      summary: Calculate and save synastry for a contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Calculated synastry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SynastryCalculationResponse"
+        "422":
+          description: Not enough birth data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
   /connections:
     get:
       operationId: listFamilyConnections
@@ -2067,6 +2095,16 @@ components:
           type: ["string", "null"]
         notificationDays:
           type: integer
+        synastryEnabled:
+          type: boolean
+        synastryStatus:
+          type: string
+        synastryCalculatedAt:
+          type: [string, "null"]
+        synastryInputHash:
+          type: [string, "null"]
+        synastryData:
+          type: [string, "null"]
         isActive:
           type: boolean
         createdAt:
@@ -2100,7 +2138,8 @@ components:
           type: ["string", "null"]
         notificationDays:
           type: integer
-
+        synastryEnabled:
+          type: boolean
     ContactUpdate:
       type: object
       properties:
@@ -2128,9 +2167,41 @@ components:
           type: ["string", "null"]
         notificationDays:
           type: integer
+        synastryEnabled:
+          type: boolean
         isActive:
           type: boolean
-
+    SynastryCalculationResponse:
+      type: object
+      required: [contact, result]
+      properties:
+        contact:
+          $ref: "#/components/schemas/Contact"
+        result:
+          type: object
+          required: [version, status, calculatedAt, inputHash, summary, cinderellaGates, aspects, warnings]
+          properties:
+            version:
+              type: integer
+            status:
+              type: string
+            calculatedAt:
+              type: string
+            inputHash:
+              type: string
+            summary:
+              type: string
+            cinderellaGates:
+              type: array
+              items:
+                type: object
+            aspects:
+              type: array
+              items: {}
+            warnings:
+              type: array
+              items:
+                type: string
     UpcomingBirthday:
       type: object
       required: [contactId, name, birthDate, daysUntil]

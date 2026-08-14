@@ -30,6 +30,11 @@ export const contactsTable = pgTable("contacts", {
   birthTimezone: text("birth_timezone"),
   notes: text("notes"),
   notificationDays: integer("notification_days").notNull().default(1),
+  synastryEnabled: boolean("synastry_enabled").notNull().default(false),
+  synastryStatus: text("synastry_status").notNull().default("disabled"),
+  synastryCalculatedAt: timestamp("synastry_calculated_at", { withTimezone: true }),
+  synastryInputHash: text("synastry_input_hash"),
+  synastryData: text("synastry_data"),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()

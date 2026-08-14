@@ -30,6 +30,14 @@ export interface Contact {
   /** @nullable */
   notes?: string | null;
   notificationDays: number;
+  synastryEnabled?: boolean;
+  synastryStatus?: string;
+  /** @nullable */
+  synastryCalculatedAt?: string | null;
+  /** @nullable */
+  synastryInputHash?: string | null;
+  /** @nullable */
+  synastryData?: string | null;
   isActive: boolean;
   createdAt: string;
 }

@@ -857,6 +857,11 @@ export const ListContactsResponseItem = zod.object({
   "birthPlace": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "notificationDays": zod.number(),
+  "synastryEnabled": zod.boolean().optional(),
+  "synastryStatus": zod.string().optional(),
+  "synastryCalculatedAt": zod.string().nullish(),
+  "synastryInputHash": zod.string().nullish(),
+  "synastryData": zod.string().nullish(),
   "isActive": zod.boolean(),
   "createdAt": zod.string()
 })
@@ -878,7 +883,8 @@ export const CreateContactBody = zod.object({
   "gender": zod.string().nullish(),
   "birthPlace": zod.string().nullish(),
   "notes": zod.string().nullish(),
-  "notificationDays": zod.number().optional()
+  "notificationDays": zod.number().optional(),
+  "synastryEnabled": zod.boolean().optional()
 })
 
 export const CreateContactResponse = zod.object({
@@ -895,6 +901,11 @@ export const CreateContactResponse = zod.object({
   "birthPlace": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "notificationDays": zod.number(),
+  "synastryEnabled": zod.boolean().optional(),
+  "synastryStatus": zod.string().optional(),
+  "synastryCalculatedAt": zod.string().nullish(),
+  "synastryInputHash": zod.string().nullish(),
+  "synastryData": zod.string().nullish(),
   "isActive": zod.boolean(),
   "createdAt": zod.string()
 })
@@ -934,6 +945,11 @@ export const GetContactResponse = zod.object({
   "birthPlace": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "notificationDays": zod.number(),
+  "synastryEnabled": zod.boolean().optional(),
+  "synastryStatus": zod.string().optional(),
+  "synastryCalculatedAt": zod.string().nullish(),
+  "synastryInputHash": zod.string().nullish(),
+  "synastryData": zod.string().nullish(),
   "isActive": zod.boolean(),
   "createdAt": zod.string()
 })
@@ -959,6 +975,7 @@ export const UpdateContactBody = zod.object({
   "birthPlace": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "notificationDays": zod.number().optional(),
+  "synastryEnabled": zod.boolean().optional(),
   "isActive": zod.boolean().optional()
 })
 
@@ -976,6 +993,11 @@ export const UpdateContactResponse = zod.object({
   "birthPlace": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "notificationDays": zod.number(),
+  "synastryEnabled": zod.boolean().optional(),
+  "synastryStatus": zod.string().optional(),
+  "synastryCalculatedAt": zod.string().nullish(),
+  "synastryInputHash": zod.string().nullish(),
+  "synastryData": zod.string().nullish(),
   "isActive": zod.boolean(),
   "createdAt": zod.string()
 })
@@ -989,6 +1011,51 @@ export const DeleteContactParams = zod.object({
 })
 
 export const DeleteContactResponse = zod.void()
+
+
+/**
+ * @summary Calculate and save synastry for a contact
+ */
+export const CalculateContactSynastryParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const CalculateContactSynastryResponse = zod.object({
+  "contact": zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "city": zod.string().nullish(),
+  "birthDate": zod.string().nullish(),
+  "birthTime": zod.string().nullish(),
+  "deathDate": zod.string().nullish(),
+  "phone": zod.string().nullish(),
+  "email": zod.string().nullish(),
+  "relationshipType": zod.string().nullish(),
+  "gender": zod.string().nullish(),
+  "birthPlace": zod.string().nullish(),
+  "notes": zod.string().nullish(),
+  "notificationDays": zod.number(),
+  "synastryEnabled": zod.boolean().optional(),
+  "synastryStatus": zod.string().optional(),
+  "synastryCalculatedAt": zod.string().nullish(),
+  "synastryInputHash": zod.string().nullish(),
+  "synastryData": zod.string().nullish(),
+  "isActive": zod.boolean(),
+  "createdAt": zod.string()
+}),
+  "result": zod.object({
+  "version": zod.number(),
+  "status": zod.string(),
+  "calculatedAt": zod.string(),
+  "inputHash": zod.string(),
+  "summary": zod.string(),
+  "cinderellaGates": zod.array(zod.object({
+
+}).passthrough()),
+  "aspects": zod.array(zod.unknown()),
+  "warnings": zod.array(zod.string())
+})
+})
 
 
 /**
