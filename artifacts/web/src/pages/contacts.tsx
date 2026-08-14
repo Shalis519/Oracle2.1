@@ -72,6 +72,10 @@ const SYNASTRY_BODY_YOUR_INSTRUMENTAL: Record<string, string> = {
 const SYNASTRY_OUTER_PLANETS = new Set(["uranus", "neptune", "pluto"]);
 const SYNASTRY_SOCIAL_PLANETS = new Set(["jupiter", "saturn"]);
 
+function normalizeSynastryText(text: string) {
+  return text.replace(/\bвы\b/gi, "Вы").replace(/\bвам\b/gi, "Вам").replace(/\bвас\b/gi, "Вас");
+}
+
 function isExcludedSynastryAspect(sourceBody: string, targetBody: string) {
   const bothOuter = SYNASTRY_OUTER_PLANETS.has(sourceBody) && SYNASTRY_OUTER_PLANETS.has(targetBody);
   const socialOuter = (SYNASTRY_SOCIAL_PLANETS.has(sourceBody) && SYNASTRY_OUTER_PLANETS.has(targetBody))
@@ -349,7 +353,7 @@ export default function ContactsPage() {
                 return {
                   key: `legacy-${aspect.sourceBody}-${aspect.targetBody}-${aspect.aspectType}-${index}`,
                   title: "Связь планет и домов",
-                  summary: `${aspectText}${houseText.length > 0 ? ` В темах домов это может проявляться так: ${[...new Set(houseText)].join(" ")}` : ""}`,
+                  summary: normalizeSynastryText(`${aspectText}${houseText.length > 0 ? ` В темах домов это может проявляться так: ${[...new Set(houseText)].join(" ")}` : ""}`),
                   aspect,
                   relatedHousePlacements,
                 };
@@ -358,7 +362,7 @@ export default function ContactsPage() {
                 {gates.length > 0 && <section><h3 className="font-semibold text-lg mb-2">Интерпретация:</h3><div className="space-y-3">
                   {gates.map((gate, index) => <article key={`gate-${gate.sourceLabel}-${gate.targetLabel}-${index}`} className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-2"><div className="font-medium">{synastryPersonPhrase(gate.sourcePerson ?? "user", gate.sourceLabel, gate.targetPerson ?? "contact", gate.targetLabel, "chiron", gate.pairKey?.replace(/^chiron-/, "") ?? "venus", gate.aspectType)} Орбис {gate.orb}°</div><p className="text-sm leading-relaxed">{gate.interpretation}</p></article>)}
                 </div></section>}
-                {semanticBlocks.length > 0 && <section className="space-y-3"><h3 className="font-semibold text-lg">Интерпретация синастрии</h3>{semanticBlocks.map((block) => <article key={block.key} className="rounded-lg border border-border p-4 space-y-3"><h4 className="font-medium text-base">{block.title}</h4><p className="text-sm leading-relaxed">{block.summary}</p><p className="text-xs leading-relaxed text-muted-foreground/70">{synastryPersonPhrase(block.aspect.sourcePerson ?? "user", block.aspect.sourceLabel, block.aspect.targetPerson ?? "contact", block.aspect.targetLabel, block.aspect.sourceBody, block.aspect.targetBody, block.aspect.aspectType)} Орбис {block.aspect.orb}°.</p>{block.relatedHousePlacements.length > 0 && <div className="space-y-1 text-xs text-muted-foreground/70">{block.relatedHousePlacements.map((placement, index) => <p key={`${block.key}-house-${placement.sourceBody}-${placement.houseNumber}-${index}`}>{synastryHousePhrase(placement.sourcePerson ?? "user", placement.sourceLabel, placement.targetPerson ?? "contact", placement.targetLabel, placement.sourceBody, placement.houseNumber, placement.isMutual)}</p>)}</div>}</article>)}</section>}
+                {semanticBlocks.length > 0 && <section className="space-y-3"><h3 className="font-semibold text-lg">Интерпретация синастрии</h3>{semanticBlocks.map((block) => <article key={block.key} className="rounded-lg border border-border p-4 space-y-3"><h4 className="font-medium text-base">{block.title}</h4><p className="text-sm leading-relaxed text-justify">{normalizeSynastryText(block.summary)}</p><p className="text-xs leading-relaxed text-muted-foreground/70">{synastryPersonPhrase(block.aspect.sourcePerson ?? "user", block.aspect.sourceLabel, block.aspect.targetPerson ?? "contact", block.aspect.targetLabel, block.aspect.sourceBody, block.aspect.targetBody, block.aspect.aspectType)} Орбис {block.aspect.orb}°.</p>{block.relatedHousePlacements.length > 0 && <div className="space-y-1 text-xs text-muted-foreground/70">{block.relatedHousePlacements.map((placement, index) => <p key={`${block.key}-house-${placement.sourceBody}-${placement.houseNumber}-${index}`}>{synastryHousePhrase(placement.sourcePerson ?? "user", placement.sourceLabel, placement.targetPerson ?? "contact", placement.targetLabel, placement.sourceBody, placement.houseNumber, placement.isMutual)}</p>)}</div>}</article>)}</section>}
                 {gates.length === 0 && semanticBlocks.length === 0 && <p className="text-muted-foreground">Для этой пары пока нет заполненных интерпретаций.</p>}
               </div>;
             } catch { return <p className="text-destructive">Не удалось прочитать результат расчёта.</p>; }

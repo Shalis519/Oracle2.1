@@ -195,13 +195,33 @@ function themeLabel(key: string) {
   return labels[key] ?? key;
 }
 
+const HOUSE_THEME_LABELS: Record<number, string> = {
+  1: "самовыражение и личную инициативу", 2: "ресурсы и чувство ценности", 3: "общение и ближайшее окружение",
+  4: "дом и эмоциональную опору", 5: "творчество, романтику и удовольствие", 6: "повседневные обязанности и рабочий ритм",
+  7: "партнёрство и ожидания от отношений", 8: "доверие, общие ресурсы и глубокие перемены",
+  9: "мировоззрение, обучение и расширение горизонтов", 10: "цели, статус и профессиональную реализацию",
+  11: "дружбу, общие планы и будущее", 12: "скрытые переживания и внутренние ресурсы",
+};
+
 function semanticTitle(aspect: SynastryAspect) {
-  if (aspect.categoryKey === "conflict") return "Напряжение между личными целями и способом развития";
-  if (aspect.categoryKey === "sensuality") return "Притяжение и различия в потребностях";
-  if (aspect.categoryKey === "communication") return "Общение и взаимное понимание";
-  if (aspect.categoryKey === "emotions") return "Эмоциональная связь и чувствительность";
-  if (aspect.categoryKey === "support") return "Взаимная поддержка и развитие";
-  return `${aspect.sourceLabel} и ${aspect.targetLabel}: ${aspect.aspectType.toLowerCase()}`;
+  const pair = new Set([aspect.sourceBody, aspect.targetBody]);
+  if (pair.has("jupiter") && pair.has("sun") && aspect.aspectKey === "opposition") return "Разные взгляды на путь и самореализацию";
+  if (pair.has("sun") && pair.has("saturn") && ["square", "opposition"].includes(aspect.aspectKey)) return "Самовыражение и требования ответственности";
+  if (pair.has("mars") && pair.has("uranus")) return "Импульсивность и потребность в свободе";
+  if (pair.has("mercury") && pair.has("uranus")) return "Неожиданность в общении и мышлении";
+  if (pair.has("jupiter") && pair.has("lilith")) return "Убеждения и независимое самовыражение";
+  if (aspect.sourceBody === "jupiter" && aspect.targetBody === "jupiter") return "Общие взгляды и планы";
+  if (aspect.sourceBody === "saturn" && aspect.targetBody === "saturn") return "Сходное чувство ответственности";
+  if (aspect.categoryKey === "conflict") return "Различия в целях и жизненных установках";
+  if (aspect.categoryKey === "sensuality") return "Притяжение и различия в желаниях";
+  if (aspect.categoryKey === "communication") return "Общение и обмен идеями";
+  if (aspect.categoryKey === "emotions") return "Эмоциональная близость и чувствительность";
+  if (aspect.categoryKey === "support") return "Общие ориентиры и взаимная поддержка";
+  return "Взаимодействие планет и жизненных тем";
+}
+
+function normalizeFormalAddress(text: string) {
+  return text.replace(/\bвы\b/gi, "Вы").replace(/\bвам\b/gi, "Вам").replace(/\bвас\b/gi, "Вас");
 }
 
 function semanticSummary(aspect: SynastryAspect, placements: SynastryHousePlacement[]) {
@@ -209,21 +229,16 @@ function semanticSummary(aspect: SynastryAspect, placements: SynastryHousePlacem
     ? "может помогать вам легче раскрывать потенциал друг друга"
     : "может создавать различия во взглядах и требовать осознанного баланса";
   const houseNumbers = [...new Set(placements.map((placement) => placement.houseNumber))].sort((a, b) => a - b);
-  const houseText = houseNumbers.length > 0
-    ? ` Взаимодействие проявляется в сферах, связанных с домами ${houseNumbers.join(", ")}.`
+  const houseThemes = houseNumbers.map((number) => HOUSE_THEME_LABELS[number]).filter(Boolean);
+  const houseContext = houseThemes.length > 0
+    ? ` Эта тема затрагивает ${houseThemes.join(", ")}.`
     : "";
   const sourcePlanet = GENERAL_BODY_LABELS[aspect.sourceBody] ?? aspect.sourceBody;
   const targetPlanet = GENERAL_BODY_LABELS[aspect.targetBody] ?? aspect.targetBody;
   const aspectMeaning = aspect.interpretation.trim() && aspect.interpretation.trim() !== "В разработке"
-    ? aspect.interpretation.trim()
+    ? normalizeFormalAddress(aspect.interpretation.trim())
     : `${sourcePlanet} и ${targetPlanet} образуют аспект ${aspect.aspectType.toLowerCase()}. Эта связь ${direction}.`;
-  const houseMeanings = [...new Set(placements
-    .map((placement) => placement.interpretation.trim())
-    .filter((text) => text && text !== "В разработке"))];
-  const houseContext = houseMeanings.length > 0
-    ? ` В темах домов это может проявляться так: ${houseMeanings.join(" ")}`
-    : houseText;
-  return `${aspectMeaning}${houseContext} Важно учитывать различия в темпе, потребностях и способах выражать свои цели, сохраняя уважение к самостоятельности каждого.`;
+  return `${aspectMeaning}${houseContext}`;
 }
 
 function fallbackCategory(sourceBody: string, targetBody: string, aspectKey: string) {
