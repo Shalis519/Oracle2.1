@@ -659,6 +659,52 @@ export async function seedOntology() {
     { planetBody: "saturn", houseNumber: 10, title: "Взаимный Сатурн в X доме", text: "Вы взаимно поддерживаете цели, карьерный путь и чувство ответственности. Такая связь может давать устойчивость и долгосрочные результаты, если оба уважаете амбиции и темп развития друг друга." },
   ].map((item) => ({ ...item, directionKey: "mutual", categoryKey: "general", sourceNote: "Расширенный набор взаимных положений планет в домах", isActive: true }));
   await db.insert(synastryHouseInterpretationsTable).values(houseMutualAdditionalSeed).onConflictDoNothing();
+
+  const completeHousePlanets = [
+    { key: "sun", label: "Солнце", effect: "самоощущение, волю и стремление ярко проявляться" },
+    { key: "moon", label: "Луна", effect: "эмоциональные реакции, потребность в заботе и чувство безопасности" },
+    { key: "mercury", label: "Меркурий", effect: "мышление, разговоры и способы обмениваться информацией" },
+    { key: "venus", label: "Венера", effect: "симпатию, вкус, ценности и стремление к гармонии" },
+    { key: "mars", label: "Марс", effect: "действия, инициативу, желание и способ отстаивать себя" },
+    { key: "jupiter", label: "Юпитер", effect: "рост, веру в возможности, обучение и расширение горизонтов" },
+    { key: "saturn", label: "Сатурн", effect: "ответственность, границы, цели и способность выдерживать испытания" },
+  ] as const;
+  const completeHouseThemes = [
+    "самовыражение, личный образ и начало нового этапа",
+    "личные ресурсы, деньги, опору и ощущение ценности",
+    "общение, обучение, поездки и повседневный обмен мыслями",
+    "дом, семью, прошлое и эмоциональную основу",
+    "романтику, творчество, удовольствие и желание играть",
+    "работу, обязанности, здоровье и полезные привычки",
+    "партнёрство, взаимность и образ близких отношений",
+    "доверие, интимность, общие ресурсы и глубокие перемены",
+    "мировоззрение, обучение, путешествия и поиск смысла",
+    "цели, карьеру, статус и ответственность перед будущим",
+    "дружбу, сообщество, планы и надежды",
+    "скрытые переживания, внутреннюю жизнь и потребность в уединении",
+  ] as const;
+  const completeNeutralHouseSeed = completeHousePlanets.flatMap((planet) => completeHouseThemes.map((theme, index) => ({
+    planetBody: planet.key,
+    houseNumber: index + 1,
+    directionKey: "neutral",
+    categoryKey: "general",
+    title: `${planet.label} в ${index + 1} доме`,
+    text: `Вы направляете энергию ${planet.effect} контакта в сферу ${theme}. Ваше присутствие помогает ему лучше раскрывать эту сторону жизни, но требует уважения к его темпу, выбору и личным границам.`,
+    sourceNote: "Полный набор планет в домах",
+    isActive: true,
+  })));
+  const completeReverseHouseSeed = completeHousePlanets.flatMap((planet) => completeHouseThemes.map((theme, index) => ({
+    planetBody: planet.key,
+    houseNumber: index + 1,
+    directionKey: "male-to-female",
+    categoryKey: "general",
+    title: `${planet.label} контакта в ${index + 1} доме`,
+    text: `Контакт направляет энергию ${planet.effect} в вашу сферу ${theme}. Его присутствие помогает вам лучше раскрывать эту сторону жизни, но требует уважения к вашему темпу, выбору и личным границам.`,
+    sourceNote: "Полный обратный набор планет в домах",
+    isActive: true,
+  })));
+  await db.insert(synastryHouseInterpretationsTable).values(completeNeutralHouseSeed).onConflictDoNothing();
+  await db.insert(synastryHouseInterpretationsTable).values(completeReverseHouseSeed).onConflictDoNothing();
   await db.execute(sql`UPDATE synastry_house_interpretations SET text = CASE planet_body
     WHEN 'sun' THEN 'Вы пробуждаете у контакта желание проявляться, творить, радоваться и чувствовать себя особенным. Ваше присутствие может усиливать романтический интерес и тягу к совместному творчеству.'
     WHEN 'moon' THEN 'Вы создаёте у контакта ощущение знакомости, домашнего тепла и эмоциональной причастности. Ваше влияние затрагивает его глубокие воспоминания и потребность в безопасности.'
