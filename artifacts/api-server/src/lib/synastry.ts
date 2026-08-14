@@ -265,17 +265,6 @@ export async function calculateSynastry(params: {
       aspects.push({ sourcePerson: "user", sourceBody: source.key, sourceLabel: params.userLabel, targetPerson: "contact", targetBody: target.key, targetLabel: params.contactLabel, aspectKey: found.key, aspectType: found.label, aspectSymbol: found.symbol, orb: Number(found.orbValue.toFixed(2)), directionKey, categoryKey, interpretation: row?.text?.trim() || "В разработке" });
     }
   }
-  for (const source of contactBodies) {
-    for (const target of userBodies) {
-      const found = findGeneralAspect(source.longitude, target.longitude);
-      if (!found) continue;
-      const directionKey = directionFor("contact", params.userGender, params.contactGender);
-      const row = interpretationMap.get(`${source.key}:${target.key}:${found.key}:${directionKey}`)
-        ?? interpretationMap.get(`${source.key}:${target.key}:${found.key}:neutral`);
-      const categoryKey = row?.categoryKey ?? fallbackCategory(source.key, target.key, found.key);
-      aspects.push({ sourcePerson: "contact", sourceBody: source.key, sourceLabel: params.contactLabel, targetPerson: "user", targetBody: target.key, targetLabel: params.userLabel, aspectKey: found.key, aspectType: found.label, aspectSymbol: found.symbol, orb: Number(found.orbValue.toFixed(2)), directionKey, categoryKey, interpretation: row?.text?.trim() || "В разработке" });
-    }
-  }
   const housePlacements: SynastryHousePlacement[] = [];
   const userHouseBodies = userChart.bodies.filter((body) => (HOUSE_BODY_KEYS as readonly string[]).includes(body.key));
   const contactHouseBodies = contactChart.bodies.filter((body) => (HOUSE_BODY_KEYS as readonly string[]).includes(body.key));

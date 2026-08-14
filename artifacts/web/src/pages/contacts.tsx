@@ -45,6 +45,12 @@ const SYNASTRY_ASPECT_PHRASES: Record<string, { text: string; preposition: "к" 
   оппозиция: { text: "оппозицию", preposition: "к" },
 };
 
+const SYNASTRY_BODY_YOUR_NOMINATIVE: Record<string, string> = {
+  sun: "Ваше Солнце", moon: "Ваша Луна", mercury: "Ваш Меркурий", venus: "Ваша Венера", mars: "Ваш Марс",
+  jupiter: "Ваш Юпитер", saturn: "Ваш Сатурн", uranus: "Ваш Уран", neptune: "Ваш Нептун", pluto: "Ваш Плутон",
+  chiron: "Ваш Хирон", lilith: "Ваша Лилит",
+};
+
 const SYNASTRY_BODY_INSTRUMENTAL: Record<string, string> = {
   sun: "Солнцем", moon: "Луной", mercury: "Меркурием", venus: "Венерой", mars: "Марсом",
   jupiter: "Юпитером", saturn: "Сатурном", uranus: "Ураном", neptune: "Нептуном", pluto: "Плутоном",
@@ -81,8 +87,8 @@ function synastryPersonPhrase(sourcePerson: "user" | "contact", sourceLabel: str
   const aspect = SYNASTRY_ASPECT_PHRASES[aspectType.toLowerCase()] ?? { text: aspectType.toLowerCase(), preposition: "к" as const };
   if (sourcePerson === "user" && targetPerson === "contact") {
     return aspect.preposition === "с"
-      ? `Ваш ${sourceBodyLabel} образует ${aspect.text} с ${SYNASTRY_BODY_INSTRUMENTAL[targetBody] ?? targetBodyLabel} контакта.`
-      : `Ваш ${sourceBodyLabel} образует ${aspect.text} к ${targetBodyLabel} контакта.`;
+      ? `${SYNASTRY_BODY_YOUR_NOMINATIVE[sourceBody] ?? `Ваш ${sourceBodyLabel}`} образует ${aspect.text} с ${SYNASTRY_BODY_INSTRUMENTAL[targetBody] ?? targetBodyLabel} контакта.`
+      : `${SYNASTRY_BODY_YOUR_NOMINATIVE[sourceBody] ?? `Ваш ${sourceBodyLabel}`} образует ${aspect.text} к ${targetBodyLabel} контакта.`;
   }
   if (sourcePerson === "contact" && targetPerson === "user") {
     return aspect.preposition === "с"
