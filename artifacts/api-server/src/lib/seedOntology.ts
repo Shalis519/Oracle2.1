@@ -9,6 +9,7 @@ import {
   ontologyEntityRelationsTable,
   motivationPhrasesTable,
   cinderellaInterpretationsTable,
+  synastryInterpretationsTable,
 } from "@workspace/db";
 import { logger } from "./logger";
 import { ARCANA } from "./data/arcana";
@@ -563,6 +564,17 @@ export async function seedOntology() {
     { pairKey: "chiron-pluto", mode: "synastry", aspectKey: "any", title: "Плутон - Хирон: синастрия", text: "Совместная власть и успех, особенно в финансовом отношении. Процветающий, могущественный брак и влиятельная семья." },
   ];
   await db.insert(cinderellaInterpretationsTable).values(cinderellaInterpretations).onConflictDoNothing();
+
+  const generalSynastryInterpretations = [
+    { categoryKey: "support", sourceBody: "sun", targetBody: "saturn", aspectKey: "square", directionKey: "neutral", title: "Солнце - Сатурн: квадрат", text: "Связь требует зрелости и терпения. Сатурн контакта может задавать вашему Солнцу высокую планку, а вы помогаете отношениям сохранять живость и направление. При уважении границ аспект даёт устойчивость и способность вместе проходить испытания.", keywords: ["ответственность", "границы", "устойчивость"], sourceNote: "Начальный набор общей синастрии" },
+    { categoryKey: "conflict", sourceBody: "mars", targetBody: "uranus", aspectKey: "square", directionKey: "neutral", title: "Марс - Уран: квадрат", text: "Аспект усиливает напряжение, импульсивность и стремление действовать по-своему. Между людьми возможны резкие реакции и неожиданные повороты. Энергия аспекта лучше раскрывается через совместные активные задачи и уважение к свободе друг друга.", keywords: ["напряжение", "свобода", "импульсивность"], sourceNote: "Начальный набор общей синастрии" },
+    { categoryKey: "communication", sourceBody: "mercury", targetBody: "mercury", aspectKey: "conjunction", directionKey: "neutral", title: "Меркурий - Меркурий: соединение", text: "Людям легко обмениваться мыслями, замечать общие интересы и быстро подхватывать идеи друг друга. Слова оказывают сильное влияние на отношения, поэтому особенно важны ясность, уважительный тон и готовность слышать собеседника.", keywords: ["общение", "мышление", "понимание"], sourceNote: "Начальный набор общей синастрии" },
+    { categoryKey: "conflict", sourceBody: "jupiter", targetBody: "sun", aspectKey: "opposition", directionKey: "neutral", title: "Юпитер - Солнце: оппозиция", text: "Контакт расширяет горизонты, но одновременно может усиливать различия во взглядах, амбициях и представлениях о правильном пути. Важно не превращать убеждения и советы в соревнование за лидерство.", keywords: ["убеждения", "рост", "лидерство"], sourceNote: "Начальный набор общей синастрии" },
+    { categoryKey: "support", sourceBody: "jupiter", targetBody: "jupiter", aspectKey: "trine", directionKey: "neutral", title: "Юпитер - Юпитер: тригон", text: "Людей объединяют сходные представления о развитии, знаниях, справедливости и будущем. Аспект поддерживает взаимное вдохновение, совместные планы, путешествия и расширение возможностей.", keywords: ["развитие", "вдохновение", "будущее"], sourceNote: "Начальный набор общей синастрии" },
+    { categoryKey: "conflict", sourceBody: "jupiter", targetBody: "lilith", aspectKey: "opposition", directionKey: "neutral", title: "Юпитер - Лилит: оппозиция", text: "Аспект сталкивает убеждения и стремление к расширению с сильными, не всегда признанными желаниями и независимой позицией. Отношения могут провоцировать честный пересмотр моральных установок и личных границ.", keywords: ["убеждения", "границы", "искушение"], sourceNote: "Начальный набор общей синастрии" },
+    { categoryKey: "communication", sourceBody: "uranus", targetBody: "mercury", aspectKey: "square", directionKey: "neutral", title: "Уран - Меркурий: квадрат", text: "Общение отличается нестандартностью и высокой скоростью, но может быть нервным и непредсказуемым. Люди стимулируют друг друга мыслить иначе; для устойчивого диалога нужны паузы и договорённость о правилах общения.", keywords: ["идеи", "перемены", "диалог"], sourceNote: "Начальный набор общей синастрии" },
+  ];
+  await db.insert(synastryInterpretationsTable).values(generalSynastryInterpretations).onConflictDoNothing();
 
   logger.info(
     "Seeded: %d entities (%d astrology + %d arcana), %d themes, %d profiles, %d entity-theme links, %d entity relations, %d phrases",
