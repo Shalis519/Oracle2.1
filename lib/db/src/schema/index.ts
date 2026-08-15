@@ -16,4 +16,5 @@ export * from "./cinderella";
 export * from "./synastry";
 export * from "./lunar";
 export * from "./forecastTemplates";
+export * from "./longTermForecasts";
 

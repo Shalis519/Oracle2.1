@@ -1,0 +1,141 @@
+import { Router, type IRouter } from "express";
+import { desc, eq } from "drizzle-orm";
+import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
+import { db } from "@workspace/db";
+import { longTermForecastsTable } from "@workspace/db/schema";
+import { requireAdmin, requireAuth } from "../lib/auth";
+import { computeSecondaryProgressions, computeSolarArcDirections } from "../lib/progressions";
+import { computeNatalChart, computeTransits, type NatalChartInput } from "../lib/astrology";
+
+const router: IRouter = Router();
+
+function parseDate(value: unknown, field: string): Date {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new Error(`Некорректное поле ${field}`);
+  const date = new Date(`${value}T12:00:00.000Z`);
+  if (Number.isNaN(date.getTime())) throw new Error(`Некорректное поле ${field}`);
+  return date;
+}
+
+function parseInput(body: Record<string, unknown>): NatalChartInput {
+  const birth = body.birthSnapshot as Record<string, unknown> | undefined;
+  if (!birth || typeof birth !== "object") throw new Error("Нужны данные рождения клиента");
+  const required = ["year", "month", "day", "hour", "minute", "latitude", "longitude"];
+  for (const key of required) if (typeof birth[key] !== "number" || !Number.isFinite(birth[key])) throw new Error(`Некорректное поле рождения: ${key}`);
+  return {
+    year: Number(birth.year), month: Number(birth.month), day: Number(birth.day),
+    hour: Number(birth.hour), minute: Number(birth.minute), second: typeof birth.second === "number" ? birth.second : 0,
+    latitude: Number(birth.latitude), longitude: Number(birth.longitude),
+    timezone: typeof birth.timezone === "string" ? birth.timezone : null,
+  };
+}
+
+function serialize(row: typeof longTermForecastsTable.$inferSelect) {
+  return { ...row, createdAt: row.createdAt.toISOString(), updatedAt: row.updatedAt.toISOString() };
+}
+
+router.get("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const userId = typeof req.query.userId === "string" ? Number(req.query.userId) : undefined;
+  const rows = await db.select().from(longTermForecastsTable)
+    .where(userId ? eq(longTermForecastsTable.userId, userId) : undefined)
+    .orderBy(desc(longTermForecastsTable.updatedAt));
+  res.json({ forecasts: rows.map(serialize) });
+});
+
+router.post("/admin/long-term-forecasts/calculate", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  try {
+    const body = req.body as Record<string, unknown>;
+    const input = parseInput(body);
+    const dateFrom = parseDate(body.dateFrom, "dateFrom");
+    const dateTo = parseDate(body.dateTo, "dateTo");
+    if (dateTo < dateFrom) throw new Error("Дата окончания не может быть раньше даты начала");
+    const natal = computeNatalChart(input);
+    const progressions = computeSecondaryProgressions(input, dateFrom);
+    const directions = computeSolarArcDirections(input, dateFrom);
+    const transit = computeTransits(natal, String(body.dateFrom), input.latitude, input.longitude, input.timezone);
+    res.json({ dateFrom: String(body.dateFrom), dateTo: String(body.dateTo), natal, progressions, directions, transit, blocks: [] });
+  } catch (error) {
+    res.status(400).json({ error: error instanceof Error ? error.message : "Не удалось выполнить расчёт" });
+  }
+});
+
+router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  try {
+    const body = req.body as Record<string, unknown>;
+    const dateFrom = String(body.dateFrom ?? "");
+    const dateTo = String(body.dateTo ?? "");
+    parseDate(dateFrom, "dateFrom"); parseDate(dateTo, "dateTo");
+    if (typeof body.clientName !== "string" || !body.clientName.trim()) throw new Error("Нужно имя клиента");
+    if (!["1m", "3m", "6m"].includes(String(body.periodType))) throw new Error("Период должен быть 1m, 3m или 6m");
+    const input = parseInput(body);
+    const natal = computeNatalChart(input);
+    const progressions = computeSecondaryProgressions(input, parseDate(dateFrom, "dateFrom"));
+    const directions = computeSolarArcDirections(input, parseDate(dateFrom, "dateFrom"));
+    const transit = computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone);
+    const [row] = await db.insert(longTermForecastsTable).values({
+      userId: typeof body.userId === "number" ? body.userId : null,
+      clientName: body.clientName.trim(), periodType: String(body.periodType), dateFrom, dateTo,
+      status: "draft", title: typeof body.title === "string" && body.title.trim() ? body.title.trim() : `Долгосрочный прогноз для ${body.clientName.trim()}`,
+      introText: typeof body.introText === "string" ? body.introText : "",
+      birthSnapshot: body.birthSnapshot,
+      calculationPayload: { natal, progressions, directions, transit },
+      blocks: Array.isArray(body.blocks) ? body.blocks : [
+        { id: "transits", method: "Транзиты", title: "Внешние триггеры периода", text: "В разработке", dateFrom, dateTo, isVisible: true },
+        { id: "secondary", method: "Прогрессии", title: "Внутренняя динамика и развитие", text: "В разработке", dateFrom, dateTo, isVisible: true },
+        { id: "solar-arc", method: "Дирекции", title: "Символические поворотные точки", text: "В разработке", dateFrom, dateTo, isVisible: true },
+      ],
+      version: 1, createdBy: req.clerkUserId ?? "admin", updatedBy: req.clerkUserId ?? "admin",
+    }).returning();
+    res.status(201).json(serialize(row));
+  } catch (error) {
+    res.status(400).json({ error: error instanceof Error ? error.message : "Не удалось сохранить прогноз" });
+  }
+});
+
+router.get("/admin/long-term-forecasts/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  const [row] = await db.select().from(longTermForecastsTable).where(eq(longTermForecastsTable.id, id));
+  if (!row) { res.status(404).json({ error: "Прогноз не найден" }); return; }
+  res.json(serialize(row));
+});
+
+router.put("/admin/long-term-forecasts/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  const body = req.body as Record<string, unknown>;
+  const updates: Partial<typeof longTermForecastsTable.$inferInsert> = { updatedAt: new Date(), updatedBy: req.clerkUserId ?? "admin" };
+  if (typeof body.title === "string") updates.title = body.title.trim();
+  if (typeof body.introText === "string") updates.introText = body.introText;
+  if (Array.isArray(body.blocks)) updates.blocks = body.blocks;
+  if (["draft", "edited", "final"].includes(String(body.status))) updates.status = String(body.status);
+  const [row] = await db.update(longTermForecastsTable).set(updates).where(eq(longTermForecastsTable.id, id)).returning();
+  if (!row) { res.status(404).json({ error: "Прогноз не найден" }); return; }
+  res.json(serialize(row));
+});
+
+router.get("/admin/long-term-forecasts/:id/export", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  const [row] = await db.select().from(longTermForecastsTable).where(eq(longTermForecastsTable.id, id));
+  if (!row) { res.status(404).json({ error: "Прогноз не найден" }); return; }
+  const blocks = Array.isArray(row.blocks) ? row.blocks as Array<Record<string, unknown>> : [];
+  const children: Paragraph[] = [
+    new Paragraph({ text: row.title, heading: HeadingLevel.TITLE }),
+    new Paragraph({ children: [new TextRun({ text: `Клиент: ${row.clientName}`, bold: true })] }),
+    new Paragraph(`Период: ${row.dateFrom} — ${row.dateTo}`),
+  ];
+  if (row.introText.trim()) children.push(new Paragraph(row.introText));
+  for (const block of blocks) {
+    if (block.isVisible === false) continue;
+    const title = typeof block.title === "string" && block.title.trim() ? block.title : "Прогнозный период";
+    const text = typeof block.text === "string" ? block.text.trim() : "";
+    if (!text) continue;
+    children.push(new Paragraph({ text: String(title), heading: HeadingLevel.HEADING_2 }));
+    children.push(new Paragraph(text));
+    if (typeof block.method === "string" && block.method.trim()) children.push(new Paragraph({ children: [new TextRun({ text: `Источник: ${block.method}`, italics: true, color: "777777" })] }));
+  }
+  const buffer = await Packer.toBuffer(new Document({ sections: [{ children }] }));
+  const safeName = row.clientName.toLowerCase().replace(/[^a-zа-я0-9]+/gi, "-").replace(/^-|-$/g, "") || "klient";
+  res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+  res.setHeader("Content-Disposition", `attachment; filename*=UTF-8''aether-oracle-prognoz-${encodeURIComponent(safeName)}-${row.dateFrom}-${row.dateTo}.docx`);
+  res.send(buffer);
+});
+
+export default router;

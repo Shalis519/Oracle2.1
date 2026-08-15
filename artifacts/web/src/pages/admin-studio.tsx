@@ -85,6 +85,20 @@ interface EntityRelation {
   keywords?: string[] | null;
 }
 
+interface LongTermForecast {
+  id: number;
+  clientName: string;
+  periodType: string;
+  dateFrom: string;
+  dateTo: string;
+  status: string;
+  title: string;
+  introText: string;
+  blocks: Array<{ id?: string; method?: string; title?: string; text?: string; dateFrom?: string; dateTo?: string; isVisible?: boolean; indicators?: unknown[] }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface ForecastTextTemplate {
   id: number;
   category: string;
@@ -971,6 +985,11 @@ export default function AdminStudioPage() {
   const [editingForecastTemplate, setEditingForecastTemplate] = useState<ForecastTextTemplate | null>(null);
   const [forecastTemplateEditorOpen, setForecastTemplateEditorOpen] = useState(false);
   const [forecastTemplateForm, setForecastTemplateForm] = useState({ category: "entity", context: "transit", key: "mercury", title: "Меркурий в транзитном контексте", text: "В разработке", sourceNote: "", isActive: true });
+  const [longTermForecasts, setLongTermForecasts] = useState<LongTermForecast[]>([]);
+  const [longTermLoading, setLongTermLoading] = useState(false);
+  const [longTermSaving, setLongTermSaving] = useState(false);
+  const [longTermForm, setLongTermForm] = useState({ clientName: "", periodType: "1m", dateFrom: new Date().toISOString().slice(0, 10), dateTo: new Date().toISOString().slice(0, 10), title: "", introText: "", birthSnapshot: { year: 1980, month: 1, day: 1, hour: 12, minute: 0, latitude: 0, longitude: 0, timezone: "UTC" } });
+  const [editingLongTerm, setEditingLongTerm] = useState<LongTermForecast | null>(null);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -1048,6 +1067,7 @@ export default function AdminStudioPage() {
     loadSynastryHouseInterpretations();
     loadLunarInterpretations();
     loadForecastTemplates();
+    loadLongTermForecasts();
   }, [loadEntities, loadThemes]);
 
   const loadPhrases = useCallback(async () => {
@@ -1177,6 +1197,46 @@ export default function AdminStudioPage() {
       toast({ title: "Шаблон прогноза сохранён" });
     } finally { setForecastTemplatesSaving(false); }
   };
+  const loadLongTermForecasts = useCallback(async () => {
+    setLongTermLoading(true);
+    try {
+      const res = await apiFetch("/admin/long-term-forecasts");
+      const data = await res.json();
+      setLongTermForecasts(res.ok ? (data.forecasts ?? []) : []);
+    } catch { setLongTermForecasts([]); }
+    finally { setLongTermLoading(false); }
+  }, []);
+
+  const saveLongTermForecast = async () => {
+    if (!longTermForm.clientName.trim()) { toast({ title: "Укажите имя клиента", variant: "destructive" }); return; }
+    setLongTermSaving(true);
+    try {
+      const payload = { ...longTermForm, birthSnapshot: longTermForm.birthSnapshot, title: longTermForm.title || `Долгосрочный прогноз для ${longTermForm.clientName}` };
+      const res = await apiFetch("/admin/long-term-forecasts", { method: "POST", body: JSON.stringify(payload) });
+      if (!res.ok) { const err = await res.json(); toast({ title: "Ошибка расчёта", description: err.error, variant: "destructive" }); return; }
+      await loadLongTermForecasts();
+      toast({ title: "Прогноз рассчитан и сохранён в черновиках" });
+    } finally { setLongTermSaving(false); }
+  };
+
+  const saveLongTermBlock = async (forecast: LongTermForecast, index: number, text: string) => {
+    const blocks = forecast.blocks.map((block, blockIndex) => blockIndex === index ? { ...block, text } : block);
+    const res = await apiFetch(`/admin/long-term-forecasts/${forecast.id}`, { method: "PUT", body: JSON.stringify({ blocks, status: "edited" }) });
+    if (res.ok) { await loadLongTermForecasts(); toast({ title: "Текст блока сохранён" }); }
+  };
+
+  const exportLongTermForecast = async (forecast: LongTermForecast) => {
+    const res = await apiFetch(`/admin/long-term-forecasts/${forecast.id}/export`);
+    if (!res.ok) { toast({ title: "Не удалось подготовить Word-файл", variant: "destructive" }); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `aether-oracle-prognoz-${forecast.dateFrom}-${forecast.dateTo}.docx`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const deleteForecastTemplate = async (id: number) => {
     if (!confirm("Удалить шаблон прогноза?")) return;
     const res = await apiFetch(`/admin/forecast-text-templates/${id}`, { method: "DELETE" });
@@ -1624,6 +1684,7 @@ export default function AdminStudioPage() {
           <TabsTrigger value="synastry"><Link2 className="w-4 h-4 mr-2" />Общая синастрия</TabsTrigger>
           <TabsTrigger value="lunar"><span className="mr-2">☾</span>Лунар</TabsTrigger>
           <TabsTrigger value="forecastTemplates"><BrainCircuit className="w-4 h-4 mr-2" />Шаблоны прогноза</TabsTrigger>
+          <TabsTrigger value="longTerm"><RefreshCw className="w-4 h-4 mr-2" />Долгосрочный прогноз</TabsTrigger>
         </TabsList>
 
         <TabsContent value="entities" className="space-y-6">
@@ -2052,6 +2113,50 @@ export default function AdminStudioPage() {
             </DialogContent>
           </Dialog>
         </TabsContent>
+        <TabsContent value="longTerm" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Создание долгосрочного прогноза</CardTitle>
+              <p className="text-sm text-muted-foreground">Расчёт объединяет транзиты, вторичные прогрессии и солнечные дуги. Перед отправкой клиенту текст можно отредактировать.</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div><Label>Имя клиента</Label><Input value={longTermForm.clientName} onChange={(e) => setLongTermForm((form) => ({ ...form, clientName: e.target.value }))} placeholder="Имя клиента" /></div>
+                <div><Label>Период</Label><Select value={longTermForm.periodType} onValueChange={(value) => setLongTermForm((form) => ({ ...form, periodType: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="1m">1 месяц</SelectItem><SelectItem value="3m">3 месяца</SelectItem><SelectItem value="6m">6 месяцев</SelectItem></SelectContent></Select></div>
+                <div><Label>Заголовок</Label><Input value={longTermForm.title} onChange={(e) => setLongTermForm((form) => ({ ...form, title: e.target.value }))} placeholder="Долгосрочный прогноз" /></div>
+                <div><Label>Дата начала</Label><Input type="date" value={longTermForm.dateFrom} onChange={(e) => setLongTermForm((form) => ({ ...form, dateFrom: e.target.value }))} /></div>
+                <div><Label>Дата окончания</Label><Input type="date" value={longTermForm.dateTo} onChange={(e) => setLongTermForm((form) => ({ ...form, dateTo: e.target.value }))} /></div>
+              </div>
+              <div className="rounded-md border border-border p-4 space-y-3">
+                <p className="font-medium">Данные рождения</p>
+                <div className="grid gap-4 md:grid-cols-4">
+                  <div><Label>Год</Label><Input type="number" value={longTermForm.birthSnapshot.year} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, year: Number(e.target.value) } }))} /></div>
+                  <div><Label>Месяц</Label><Input type="number" min="1" max="12" value={longTermForm.birthSnapshot.month} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, month: Number(e.target.value) } }))} /></div>
+                  <div><Label>День</Label><Input type="number" min="1" max="31" value={longTermForm.birthSnapshot.day} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, day: Number(e.target.value) } }))} /></div>
+                  <div><Label>Время</Label><Input type="time" value={`${String(longTermForm.birthSnapshot.hour).padStart(2, "0")}:${String(longTermForm.birthSnapshot.minute).padStart(2, "0")}`} onChange={(e) => { const [hour, minute] = e.target.value.split(":").map(Number); setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, hour, minute } })); }} /></div>
+                  <div><Label>Широта</Label><Input type="number" step="0.0001" value={longTermForm.birthSnapshot.latitude} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, latitude: Number(e.target.value) } }))} /></div>
+                  <div><Label>Долгота</Label><Input type="number" step="0.0001" value={longTermForm.birthSnapshot.longitude} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, longitude: Number(e.target.value) } }))} /></div>
+                  <div><Label>Часовой пояс</Label><Input value={longTermForm.birthSnapshot.timezone} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, timezone: e.target.value } }))} /></div>
+                </div>
+              </div>
+              <div><Label>Вступление</Label><Textarea rows={4} value={longTermForm.introText} onChange={(e) => setLongTermForm((form) => ({ ...form, introText: e.target.value }))} placeholder="Дополнительное вступление к прогнозу" /></div>
+              <Button onClick={saveLongTermForecast} disabled={longTermSaving}>{longTermSaving ? "Расчёт..." : "Рассчитать и сохранить черновик"}</Button>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle>Сохранённые прогнозы</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              {longTermLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : longTermForecasts.length === 0 ? <p className="text-sm text-muted-foreground">Сохранённых прогнозов пока нет.</p> : longTermForecasts.map((forecast) => (
+                <div key={forecast.id} className="rounded-lg border border-border p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-3"><div><p className="font-medium">{forecast.title}</p><p className="text-xs text-muted-foreground">{forecast.clientName} · {forecast.dateFrom} — {forecast.dateTo} · {forecast.status}</p></div><div className="flex items-center gap-2"><Badge variant="outline">{forecast.periodType}</Badge><Button size="sm" variant="outline" onClick={() => exportLongTermForecast(forecast)}><Download className="w-4 h-4 mr-1" />Word</Button></div></div>
+                  {forecast.introText && <p className="whitespace-pre-wrap text-sm text-muted-foreground">{forecast.introText}</p>}
+                  {forecast.blocks?.map((block, index) => <div key={block.id ?? index} className="rounded-md bg-muted/30 p-3 space-y-2"><p className="font-medium">{block.title || `Блок ${index + 1}`} <span className="text-xs text-muted-foreground">{block.method || ""}</span></p><Textarea defaultValue={block.text || ""} rows={5} onBlur={(e) => saveLongTermBlock(forecast, index, e.target.value)} /><p className="text-xs text-muted-foreground">Изменения сохраняются при выходе из поля.</p></div>)}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="forecastTemplates" className="space-y-6">
           <Card>
             <CardHeader>

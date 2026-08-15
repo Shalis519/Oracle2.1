@@ -20,6 +20,7 @@ import adminCinderellaRouter from "./adminCinderella";
 import adminSynastryRouter from "./adminSynastry";
 import adminLunarRouter from "./adminLunar";
 import adminForecastTemplatesRouter from "./adminForecastTemplates";
+import adminLongTermForecastsRouter from "./adminLongTermForecasts";
 
 const router: IRouter = Router();
 
@@ -44,5 +45,6 @@ router.use(adminCinderellaRouter);
 router.use(adminSynastryRouter);
 router.use(adminLunarRouter);
 router.use(adminForecastTemplatesRouter);
+router.use(adminLongTermForecastsRouter);
 
 export default router;
