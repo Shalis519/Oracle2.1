@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db, forecastTextTemplatesTable } from "@workspace/db";
 import { type TransitAspect } from "./astrology";
 import { ensureForecastTemplateSeeds } from "./runtimeSchema";
+import { FORECAST_TEMPLATE_DEFAULTS_BY_KEY, forecastTemplateKey } from "./forecastTemplateDefaults";
 import {
   getEntity,
   getEntityThemes,
@@ -93,6 +94,7 @@ interface ForecastTemplateRow {
   context: string;
   key: string;
   text: string;
+  sourceNote: string | null;
   isActive: boolean;
 }
 
@@ -247,7 +249,7 @@ async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTempla
   const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()] ?? t.typeKey?.toLowerCase();
   if (!aspectKey || !t.transitHouse || !t.natalHouse) return null;
   const rows = await db
-    .select({ category: forecastTextTemplatesTable.category, context: forecastTextTemplatesTable.context, key: forecastTextTemplatesTable.key, text: forecastTextTemplatesTable.text, isActive: forecastTextTemplatesTable.isActive })
+    .select({ category: forecastTextTemplatesTable.category, context: forecastTextTemplatesTable.context, key: forecastTextTemplatesTable.key, text: forecastTextTemplatesTable.text, sourceNote: forecastTextTemplatesTable.sourceNote, isActive: forecastTextTemplatesTable.isActive })
     .from(forecastTextTemplatesTable)
     .where(eq(forecastTextTemplatesTable.isActive, true));
   const required = [
@@ -258,8 +260,16 @@ async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTempla
     ["house", "natal", String(t.natalHouse)],
     ["composition", aspectKey, "default"],
   ] as const;
-  const byKey = new Map(rows.map((row) => [`${row.category}:${row.context}:${row.key}`, row]));
-  const selected = required.map(([category, context, key]) => byKey.get(`${category}:${context}:${key}`)).filter((row): row is ForecastTemplateRow => Boolean(row && row.text.trim() && row.text.trim() !== "В разработке"));
+  const byKey = new Map(rows.map((row) => [forecastTemplateKey(row.category, row.context, row.key), row]));
+  const selected = required.map(([category, context, key]) => {
+    const dbRow = byKey.get(forecastTemplateKey(category, context, key));
+    const fallback = FORECAST_TEMPLATE_DEFAULTS_BY_KEY.get(forecastTemplateKey(category, context, key));
+    const isOldSeed = dbRow?.sourceNote === "Начальный литературный шаблон";
+    if ((!dbRow || isOldSeed || !dbRow.text.trim() || dbRow.text.trim() === "В разработке") && fallback) {
+      return { ...fallback, sourceNote: null, isActive: true } satisfies ForecastTemplateRow;
+    }
+    return dbRow ?? null;
+  }).filter((row): row is ForecastTemplateRow => Boolean(row && row.text.trim() && row.text.trim() !== "В разработке"));
   return selected.length === required.length ? selected : null;
 }
 
