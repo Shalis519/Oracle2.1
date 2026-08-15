@@ -24,4 +24,41 @@ export async function ensureRuntimeSchema(): Promise<void> {
       ADD COLUMN IF NOT EXISTS crystals JSONB NOT NULL DEFAULT '[]'::jsonb,
       ADD COLUMN IF NOT EXISTS jewelry JSONB NOT NULL DEFAULT '[]'::jsonb
   `);
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS lunar_interpretations (
+      id SERIAL PRIMARY KEY,
+      category TEXT NOT NULL,
+      key TEXT NOT NULL,
+      title TEXT NOT NULL,
+      text TEXT NOT NULL DEFAULT 'В разработке',
+      source_note TEXT,
+      is_active BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      CONSTRAINT lunar_interpretation_category_key_unique UNIQUE (category, key)
+    )
+  `);
+  await db.execute(sql`
+    INSERT INTO lunar_interpretations (category, key, title, text)
+    SELECT 'house', gs::text, gs::text || '-й дом лунара', 'В разработке'
+    FROM generate_series(1, 12) AS gs
+    ON CONFLICT (category, key) DO NOTHING
+  `);
+  await db.execute(sql`
+    INSERT INTO lunar_interpretations (category, key, title, text)
+    VALUES
+      ('sign', 'aries', 'Луна в Овне', 'В разработке'),
+      ('sign', 'taurus', 'Луна в Тельце', 'В разработке'),
+      ('sign', 'gemini', 'Луна в Близнецах', 'В разработке'),
+      ('sign', 'cancer', 'Луна в Раке', 'В разработке'),
+      ('sign', 'leo', 'Луна во Льве', 'В разработке'),
+      ('sign', 'virgo', 'Луна в Деве', 'В разработке'),
+      ('sign', 'libra', 'Луна в Весах', 'В разработке'),
+      ('sign', 'scorpio', 'Луна в Скорпионе', 'В разработке'),
+      ('sign', 'sagittarius', 'Луна в Стрельце', 'В разработке'),
+      ('sign', 'capricorn', 'Луна в Козероге', 'В разработке'),
+      ('sign', 'aquarius', 'Луна в Водолее', 'В разработке'),
+      ('sign', 'pisces', 'Луна в Рыбах', 'В разработке')
+    ON CONFLICT (category, key) DO NOTHING
+  `);
 }

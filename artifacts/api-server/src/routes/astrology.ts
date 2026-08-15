@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { GetNatalChartResponse } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
 import { computeNatalChart } from "../lib/astrology";
-import { computeLunarForProfile } from "../lib/lunarReturn";
+import { computeLunarForProfile, hydrateLunarRecommendations } from "../lib/lunarReturn";
 import { hydrateCinderellaGates } from "../lib/cinderellaGates";
 import { todayString } from "../lib/oracle";
 
@@ -70,7 +70,8 @@ router.get("/astrology/natal", requireAuth, async (req, res): Promise<void> => {
     (input) => computeNatalChart(input),
   );
 
-  res.json(GetNatalChartResponse.parse({ ...chartWithInterpretations, lunarReturn }));
+  const hydratedLunarReturn = await hydrateLunarRecommendations(lunarReturn);
+  res.json(GetNatalChartResponse.parse({ ...chartWithInterpretations, lunarReturn: hydratedLunarReturn }));
 });
 
 export default router;

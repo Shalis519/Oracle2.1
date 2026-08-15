@@ -9,6 +9,7 @@ import {
   ontologyEntityRelationsTable,
   motivationPhrasesTable,
   cinderellaInterpretationsTable,
+  lunarInterpretationsTable,
   ontologyExportSchema,
   ontologyImportSchema,
   type OntologyExport,
@@ -23,7 +24,7 @@ const router: IRouter = Router();
 
 router.get("/admin/ontology/export", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
   try {
-    const [entities, themes, entityThemes, profiles, relations, phrases, cinderellaInterpretations] = await Promise.all([
+    const [entities, themes, entityThemes, profiles, relations, phrases, cinderellaInterpretations, lunarInterpretations] = await Promise.all([
       db.select().from(ontologyEntitiesTable),
       db.select().from(ontologyThemesTable),
       db.select().from(ontologyEntityThemesTable),
@@ -31,6 +32,7 @@ router.get("/admin/ontology/export", requireAuth, requireAdmin, async (_req, res
       db.select().from(ontologyEntityRelationsTable),
       db.select().from(motivationPhrasesTable),
       db.select().from(cinderellaInterpretationsTable),
+      db.select().from(lunarInterpretationsTable),
     ]);
 
     const entityMap = new Map(entities.map((e) => [e.id, e]));
@@ -107,6 +109,14 @@ router.get("/admin/ontology/export", requireAuth, requireAdmin, async (_req, res
         sourceNote: item.sourceNote,
         isActive: item.isActive,
       })),
+      lunarInterpretations: lunarInterpretations.map((item) => ({
+        category: item.category as "house" | "sign",
+        key: item.key,
+        title: item.title,
+        text: item.text,
+        sourceNote: item.sourceNote,
+        isActive: item.isActive,
+      })),
     };
 
     res.json({ success: true, data: exportData });
@@ -174,6 +184,7 @@ router.post("/admin/ontology/import", requireAuth, requireAdmin, async (req, res
       // Wipe all ontology tables
       await client.query("DELETE FROM motivation_phrases");
       await client.query("DELETE FROM cinderella_interpretations");
+      await client.query("DELETE FROM lunar_interpretations");
       await client.query("DELETE FROM ontology_entity_relations");
       await client.query("DELETE FROM ontology_entity_themes");
       await client.query("DELETE FROM ontology_entity_profiles");
@@ -273,6 +284,16 @@ router.post("/admin/ontology/import", requireAuth, requireAdmin, async (req, res
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,NOW(),NOW())
          ON CONFLICT (pair_key, mode, aspect_key) DO UPDATE SET title=$4, text=$5, keywords=$6, source_note=$7, is_active=$8, updated_at=NOW()`,
         [ci.pairKey, ci.mode, ci.aspectKey, ci.title, ci.text || "В разработке", ci.keywords ?? [], ci.sourceNote ?? null, ci.isActive],
+      );
+    }
+
+    // Upsert lunar interpretations
+    for (const li of data.lunarInterpretations ?? []) {
+      await client.query(
+        `INSERT INTO lunar_interpretations (category, key, title, text, source_note, is_active, created_at, updated_at)
+         VALUES ($1,$2,$3,$4,$5,$6,NOW(),NOW())
+         ON CONFLICT (category, key) DO UPDATE SET title=$3, text=$4, source_note=$5, is_active=$6, updated_at=NOW()`,
+        [li.category, li.key, li.title, li.text || "В разработке", li.sourceNote ?? null, li.isActive],
       );
     }
 

@@ -14,4 +14,5 @@ export * from "./ontology";
 export * from "./motivationPhrases";
 export * from "./cinderella";
 export * from "./synastry";
+export * from "./lunar";
 

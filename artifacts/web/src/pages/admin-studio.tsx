@@ -176,6 +176,16 @@ interface CinderellaInterpretation {
   updatedAt: string;
 }
 
+interface LunarInterpretation {
+  id: number;
+  category: "house" | "sign";
+  key: string;
+  title: string;
+  text: string;
+  sourceNote?: string | null;
+  isActive: boolean;
+  updatedAt: string;
+}
 interface Profile {
   id: number;
   entityId: number;
@@ -936,6 +946,12 @@ export default function AdminStudioPage() {
   const [editingSynastryHouse, setEditingSynastryHouse] = useState<SynastryHouseInterpretation | null>(null);
   const [synastryHouseEditorOpen, setSynastryHouseEditorOpen] = useState(false);
   const [synastryHouseForm, setSynastryHouseForm] = useState({ planetBody: "sun", houseNumber: 1, directionKey: "neutral", text: "В разработке", sourceNote: "", isActive: true });
+  const [lunarInterpretations, setLunarInterpretations] = useState<LunarInterpretation[]>([]);
+  const [lunarLoading, setLunarLoading] = useState(false);
+  const [lunarSaving, setLunarSaving] = useState(false);
+  const [editingLunar, setEditingLunar] = useState<LunarInterpretation | null>(null);
+  const [lunarEditorOpen, setLunarEditorOpen] = useState(false);
+  const [lunarForm, setLunarForm] = useState({ category: "house" as "house" | "sign", key: "1", title: "1-й дом лунара", text: "В разработке", sourceNote: "", isActive: true });
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -1011,6 +1027,7 @@ export default function AdminStudioPage() {
     loadCinderella();
     loadSynastryInterpretations();
     loadSynastryHouseInterpretations();
+    loadLunarInterpretations();
   }, [loadEntities, loadThemes]);
 
   const loadPhrases = useCallback(async () => {
@@ -1083,6 +1100,39 @@ export default function AdminStudioPage() {
     if (res.ok) { await loadSynastryHouseInterpretations(); toast({ title: "Интерпретация удалена" }); }
   };
 
+  const loadLunarInterpretations = useCallback(async () => {
+    setLunarLoading(true);
+    try {
+      const res = await apiFetch("/admin/lunar-interpretations");
+      const data = await res.json();
+      setLunarInterpretations(res.ok ? (data.interpretations ?? []) : []);
+    } catch { setLunarInterpretations([]); }
+    finally { setLunarLoading(false); }
+  }, []);
+
+  const saveLunarInterpretation = async () => {
+    setLunarSaving(true);
+    try {
+      const path = editingLunar ? `/admin/lunar-interpretations/${editingLunar.id}` : "/admin/lunar-interpretations";
+      const payload = editingLunar
+        ? { text: lunarForm.text, sourceNote: lunarForm.sourceNote, isActive: lunarForm.isActive, title: lunarForm.title }
+        : lunarForm;
+      const res = await apiFetch(path, { method: editingLunar ? "PUT" : "POST", body: JSON.stringify(payload) });
+      if (!res.ok) { const err = await res.json(); toast({ title: "Ошибка сохранения", description: err.error, variant: "destructive" }); return; }
+      setLunarEditorOpen(false);
+      setEditingLunar(null);
+      await loadLunarInterpretations();
+      toast({ title: "Рекомендация лунара сохранена" });
+    } finally { setLunarSaving(false); }
+  };
+
+  const deleteLunarInterpretation = async (id: number) => {
+    if (!confirm("Удалить запись лунара?")) return;
+    const res = await apiFetch(`/admin/lunar-interpretations/${id}`, { method: "DELETE" });
+    if (res.ok) { await loadLunarInterpretations(); toast({ title: "Запись лунара удалена" }); }
+  };
+
+  const getLunarSignLabel = (key: string) => ({ aries: "Овен", taurus: "Телец", gemini: "Близнецы", cancer: "Рак", leo: "Лев", virgo: "Дева", libra: "Весы", scorpio: "Скорпион", sagittarius: "Стрелец", capricorn: "Козерог", aquarius: "Водолей", pisces: "Рыбы" } as Record<string, string>)[key] ?? key;
   const getSynastryBodyLabel = (key: string) => SYNastryBodies.find((item) => item.key === key)?.label ?? key;
   const getSynastryAspectLabel = (key: string) => SYNastryAspects.find((item) => item.key === key)?.label ?? key;
   const getSynastryDirectionLabel = (key: string) => SYNastryDirections.find((item) => item.key === key)?.label ?? key;
@@ -1256,6 +1306,7 @@ export default function AdminStudioPage() {
       loadEntities();
       loadThemes();
       loadPhrases();
+      loadLunarInterpretations();
       setImportFile(null);
       setImportConfirmOpen(false);
     } catch (e: unknown) {
@@ -1513,13 +1564,14 @@ export default function AdminStudioPage() {
       )}
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 md:w-auto">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-8 md:w-auto">
           <TabsTrigger value="entities"><Layers className="w-4 h-4 mr-2" />Сущности</TabsTrigger>
           <TabsTrigger value="themes"><BookOpen className="w-4 h-4 mr-2" />Жизненные темы</TabsTrigger>
           <TabsTrigger value="phrases"><MessageSquareQuote className="w-4 h-4 mr-2" />Фразы</TabsTrigger>
           <TabsTrigger value="backup"><Download className="w-4 h-4 mr-2" />Бэкап</TabsTrigger>
           <TabsTrigger value="cinderella"><Sparkles className="w-4 h-4 mr-2" />Врата Золушки</TabsTrigger>
           <TabsTrigger value="synastry"><Link2 className="w-4 h-4 mr-2" />Общая синастрия</TabsTrigger>
+          <TabsTrigger value="lunar"><span className="mr-2">☾</span>Лунар</TabsTrigger>
         </TabsList>
 
         <TabsContent value="entities" className="space-y-6">
@@ -1906,6 +1958,48 @@ export default function AdminStudioPage() {
                 </section>
             </TabsContent>
 
+        <TabsContent value="lunar" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-serif">Рекомендации лунара</CardTitle>
+              <p className="text-sm text-muted-foreground">Здесь хранятся тексты по 12 домам и 12 знакам Луны. Пустые записи отмечаются как «В разработке».</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {(["house", "sign"] as const).map((category) => (
+                <section key={category} className="space-y-3">
+                  <h3 className="text-lg font-medium">{category === "house" ? "Луна в домах" : "Луна в знаках"}</h3>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {lunarInterpretations.filter((item) => item.category === category).map((item) => (
+                      <div key={item.id} className="rounded-lg border border-border p-4 space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="font-medium">{category === "house" ? `${item.key}-й дом лунара` : item.title}</p>
+                            <p className="text-xs text-muted-foreground">{item.title}</p>
+                          </div>
+                          {isAdmin && <div className="flex gap-1 shrink-0"><Button size="sm" variant="outline" onClick={() => { setEditingLunar(item); setLunarForm({ category: item.category, key: item.key, title: item.title, text: item.text || "В разработке", sourceNote: item.sourceNote ?? "", isActive: item.isActive }); setLunarEditorOpen(true); }}><Pencil className="w-4 h-4 mr-1" />Изменить</Button><Button size="sm" variant="ghost" onClick={() => deleteLunarInterpretation(item.id)}><Trash2 className="w-4 h-4" /></Button></div>}
+                        </div>
+                        <p className={cn("whitespace-pre-wrap text-sm", item.text === "В разработке" ? "text-amber-200" : "text-muted-foreground")}>{item.text || "В разработке"}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+              {lunarLoading && <p className="text-sm text-muted-foreground">Загрузка записей лунара...</p>}
+            </CardContent>
+          </Card>
+          <Dialog open={lunarEditorOpen} onOpenChange={(open) => { setLunarEditorOpen(open); if (!open) setEditingLunar(null); }}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader><DialogTitle>Редактирование рекомендации лунара</DialogTitle></DialogHeader>
+              <div className="space-y-4">
+                <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">{lunarForm.category === "house" ? `${lunarForm.key}-й дом лунара` : `Луна в ${getLunarSignLabel(lunarForm.key)}`}<br /><span className="text-muted-foreground">Формула и ключ записи фиксированы, редактируется текст.</span></div>
+                <div><Label>Заголовок</Label><Input value={lunarForm.title} onChange={(e) => setLunarForm((form) => ({ ...form, title: e.target.value }))} /></div>
+                <div><Label>Рекомендация</Label><Textarea value={lunarForm.text} onChange={(e) => setLunarForm((form) => ({ ...form, text: e.target.value }))} rows={12} /></div>
+                <div><Label>Источник</Label><Input value={lunarForm.sourceNote} onChange={(e) => setLunarForm((form) => ({ ...form, sourceNote: e.target.value }))} placeholder="Например: книга по лунару" /></div>
+                <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setLunarEditorOpen(false)}>Отмена</Button><Button onClick={saveLunarInterpretation} disabled={lunarSaving}>{lunarSaving ? "Сохранение..." : "Сохранить"}</Button></div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </TabsContent>
         <TabsContent value="backup" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>

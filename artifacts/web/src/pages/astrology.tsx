@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   useGetNatalChart,
   getGetNatalChartQueryKey,
@@ -29,6 +30,7 @@ const ROMAN = [
 const toRoman = (n: number) => ROMAN[n - 1] ?? String(n);
 
 export default function AstrologyPage() {
+  const [lunarRecommendationsOpen, setLunarRecommendationsOpen] = useState(false);
   const {
     data: chart,
     isLoading,
@@ -312,11 +314,23 @@ export default function AstrologyPage() {
             )}
             <p><span className="font-medium">Луна лунара:</span> {chart.lunarReturn.moon.sign}, {chart.lunarReturn.moon.degreeInSign}, {chart.lunarReturn.moon.house ? `${chart.lunarReturn.moon.house} дом` : "дом не определён"}</p>
             <p><span className="font-medium">Главные темы месяца:</span> {chart.lunarReturn.keyThemes.join(", ")}</p>
-            <div>
-              <p className="font-medium">Рекомендации:</p>
-              {chart.lunarReturn.recommendations.map((recommendation, index) => (
-                <p key={index} className="mt-1 leading-relaxed text-muted-foreground">{recommendation}</p>
-              ))}
+            <div className="rounded-md border border-primary/15 bg-primary/5">
+              <button
+                type="button"
+                className="flex w-full items-center justify-between gap-3 p-3 text-left font-medium"
+                onClick={() => setLunarRecommendationsOpen((open) => !open)}
+                aria-expanded={lunarRecommendationsOpen}
+              >
+                <span>Рекомендации лунара</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${lunarRecommendationsOpen ? "rotate-180" : ""}`} />
+              </button>
+              {lunarRecommendationsOpen && (
+                <div className="space-y-2 border-t border-primary/10 px-3 pb-3 pt-3">
+                  {chart.lunarReturn.recommendations.map((recommendation, index) => (
+                    <p key={index} className={recommendation === "В разработке" ? "text-amber-200" : "leading-relaxed text-muted-foreground"}>{recommendation}</p>
+                  ))}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

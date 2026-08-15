@@ -1,4 +1,6 @@
-import type { NatalChart } from "./astrology";
+import { computeNatalChart, type NatalChart } from "./astrology";
+import { asc, eq } from "drizzle-orm";
+import { db, lunarInterpretationsTable } from "@workspace/db";
 
 export interface LunarReturnLocation {
   city: string | null;
@@ -247,6 +249,26 @@ export function computeCurrentLunarReturn(
 
 export function lunarReturnStartsToday(lunar: LunarReturnResult | null, today: string): boolean {
   return Boolean(lunar?.returnDate === today);
+}
+
+export async function hydrateLunarRecommendations(result: LunarReturnResult | null): Promise<LunarReturnResult | null> {
+  if (!result) return null;
+  const rows = await db
+    .select()
+    .from(lunarInterpretationsTable)
+    .where(eq(lunarInterpretationsTable.isActive, true))
+    .orderBy(asc(lunarInterpretationsTable.category), asc(lunarInterpretationsTable.key));
+  const signText = rows.find((row) => row.category === "sign" && row.key === result.moon.signKey)?.text?.trim();
+  const houseText = result.moon.house
+    ? rows.find((row) => row.category === "house" && row.key === String(result.moon.house))?.text?.trim()
+    : null;
+  const available = [signText, houseText].filter((text): text is string => Boolean(text && text !== "В разработке"));
+  return {
+    ...result,
+    recommendations: available.length > 0
+      ? [`В этом лунном месяце особенно важны темы, связанные с Луной ${result.moon.sign} и ${result.moon.house ? `${result.moon.house}-м домом. ` : "текущим эмоциональным фокусом. "}${available.join(" ")}`]
+      : ["В разработке"],
+  };
 }
 
 export function lunarReturnSummaryText(): string {
