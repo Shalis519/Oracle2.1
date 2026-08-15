@@ -7,6 +7,26 @@ import {
   type EntityRelation,
   type EntityProfile,
 } from "./semanticEngine";
+import {
+  aspectAccusative,
+  buildHouseThemes,
+  buildPersonalInfluence,
+  buildPrimaryFocus,
+  buildSignThemes,
+  buildTransitOpening,
+  bodyInstrumental,
+  ensureSentence,
+  firstSentence,
+  formatList,
+  lowerFirst,
+  profileListText,
+  plantForTea,
+  relationToPersonalInfluence,
+  renderParagraphs,
+  signInPrepositional,
+  toAccusativeThemes,
+  toPersonalThemes,
+} from "./forecastLanguage";
 
 /*
  * Генератор прогноза СТРОГО из сущностей онтологии (Oracle Studio).
@@ -16,67 +36,12 @@ import {
  * знаков и домов (keyMeanings, emotions, recommendations, warnings),
  * темы с весами. В коде остаются только:
  *  - грамматическая механика русского языка (падежи имён, предлог «в/во»);
- *  - соединительные конструкции («Сегодня…», «Одновременно…») для склейки.
- * Никаких зашитых описательных шаблонов, советов или эмоций.
+ *  - типизированные русские шаблоны предложений и грамматический адаптер;
+ *  - соединительные конструкции для переходов между смысловыми блоками.
+ * Описания, темы, советы и эмоции не зашиваются в генератор и приходят из Oracle Studio.
  */
 
 /* ─── Грамматическая механика (не контент) ─── */
-
-/** Предлог «в» / «во» для предложного падежа знака (во Льве, в Раке). */
-function inSignPrep(sign: string): string {
-  if (sign.toLowerCase().startsWith("ль")) return `во ${sign}`;
-  return `в ${sign}`;
-}
-
-/** Предложный падеж знаков зодиака (в Овне, во Льве). */
-const SIGN_PREPOSITIONAL: Record<string, string> = {
-  "Овен": "Овне",
-  "Телец": "Тельце",
-  "Близнецы": "Близнецах",
-  "Рак": "Раке",
-  "Лев": "Льве",
-  "Дева": "Деве",
-  "Весы": "Весах",
-  "Скорпион": "Скорпионе",
-  "Стрелец": "Стрельце",
-  "Козерог": "Козероге",
-  "Водолей": "Водолее",
-  "Рыбы": "Рыбах",
-};
-
-function signInPrepositional(sign: string): string {
-  const p = SIGN_PREPOSITIONAL[sign];
-  if (!p) return `в ${sign}`;
-  return p.toLowerCase().startsWith("ль") ? `во ${p}` : `в ${p}`;
-}
-
-/** Творительный падеж имён небесных тел (с Ураном, с Венерой). */
-const BODY_INSTRUMENTAL: Record<string, string> = {
-  "северный узел": "Северным узлом",
-  "южный узел": "Южным узлом",
-  "хирон": "Хироном",
-  "плутон": "Плутоном",
-  "нептун": "Нептуном",
-  "уран": "Ураном",
-  "сатурн": "Сатурном",
-  "юпитер": "Юпитером",
-  "марс": "Марсом",
-  "венера": "Венерой",
-  "меркурий": "Меркурием",
-  "луна": "Луной",
-  "солнце": "Солнцем",
-};
-
-function bodyInstrumental(name: string): string {
-  return BODY_INSTRUMENTAL[name.toLowerCase()] ?? name;
-}
-
-/** Винительный падеж названий аспектов (образует оппозицию). */
-function aspectAccusative(aspect: string): string {
-  const a = aspect.toLowerCase();
-  if (a === "оппозиция") return "оппозицию";
-  return a;
-}
 
 /* ─── Астрологическая механика аспектов (не контент) ─── */
 
@@ -141,46 +106,6 @@ function pickByDate<T>(arr: T[], date: Date, salt = 0): T | null {
   if (!arr || arr.length === 0) return null;
   const seed = date.getUTCFullYear() * 372 + (date.getUTCMonth() + 1) * 31 + date.getUTCDate() + salt;
   return arr[seed % arr.length] ?? null;
-}
-
-/** Первое предложение (или весь текст, если одно) — для кратких вторичных упоминаний. */
-function firstSentence(text: string): string {
-  const trimmed = text.trim();
-  const m = /^[^.!?]+[.!?]/.exec(trimmed);
-  return m ? m[0].trim() : trimmed;
-}
-
-/** Завершить фрагмент точкой, если админ не поставил знак конца предложения. */
-function ensureSentence(text: string): string {
-  const t = text.trim();
-  if (!t) return t;
-  return /[.!?…]$/.test(t) ? t : `${t}.`;
-}
-
-/** Строчная первая буква (для вставки после двоеточия/тире). */
-function lowerFirst(text: string): string {
-  return text.charAt(0).toLowerCase() + text.slice(1);
-}
-
-/** Список после двоеточия: без искусственного склонения и с естественным «и». */
-function formatList(items: string[], limit = 4): string {
-  const clean = items
-    .map((item) => item.trim().replace(/[.!?]+$/g, ""))
-    .filter(Boolean)
-    .slice(0, limit);
-  if (clean.length === 0) return "";
-  if (clean.length === 1) return clean[0];
-  if (clean.length === 2) return `${clean[0]} и ${clean[1]}`;
-  return `${clean.slice(0, -1).join(", ")} и ${clean[clean.length - 1]}`;
-}
-
-function profileListText(profile: EntityProfile | null): string[] {
-  if (!profile) return [];
-  if (profile.keyMeaningsArr?.length) return profile.keyMeaningsArr;
-  return profile.keyMeanings
-    ?.split(/[,;]+/)
-    .map((item) => item.trim())
-    .filter(Boolean) ?? [];
 }
 
 /* ─── Сбор семантики транзита из онтологии ─── */
@@ -293,29 +218,27 @@ function contradicts(a: TransitSemantics, b: TransitSemantics): boolean {
 /* ─── Построение текста ─── */
 
 function normalizeRelationDescription(description: string): string {
-  const cleaned = description.trim();
-  const themesMatch = cleaned.match(/(?:это\s+)?затрагивает\s+темы?\s*:?\s*(.+?)(?:[.!?]|$)/i);
-  if (themesMatch?.[1]) {
-    return `Этот транзит в первую очередь влияет на ${toPersonalThemes(themesMatch[1].trim())}.`;
-  }
-  return ensureSentence(cleaned);
+  return relationToPersonalInfluence(description) ?? ensureSentence(description);
 }
 
 function describeMainTransit(s: TransitSemantics, date: Date): string[] {
   const t = s.transit;
   const parts: string[] = [];
-  const transitHouseText = t.transitHouse ? ` Транзит проходит через Ваш ${t.transitHouse}-й дом.` : "";
-  const natalHouseText = t.natalHouse ? ` Натальная планета расположена в Вашем ${t.natalHouse}-м доме.` : "";
-
-  parts.push(
-    `Сегодня ${t.transitBody} находится ${signInPrepositional(t.transitSign)} и образует ${aspectAccusative(t.type)} с ${bodyInstrumental(t.natalBody)} ${signInPrepositional(t.natalSign)}.${transitHouseText}${natalHouseText}`,
-  );
+  parts.push(buildTransitOpening({
+    transitBody: t.transitBody,
+    transitSign: t.transitSign,
+    aspect: t.type,
+    natalBody: t.natalBody,
+    natalSign: t.natalSign,
+    transitHouse: t.transitHouse,
+    natalHouse: t.natalHouse,
+  }));
 
   if (s.relation?.description?.trim()) {
     parts.push(normalizeRelationDescription(s.relation.description));
   } else {
     const fallback = formatList(profileListText(s.planetProfile));
-    if (fallback) parts.push(`Этот транзит в первую очередь влияет на ${toPersonalThemes(fallback)}.`);
+    if (fallback) parts.push(buildPersonalInfluence(fallback));
   }
 
   const topEvidence = s.themeEvidence.slice(0, 2);
@@ -325,24 +248,20 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
       .filter((theme) => theme.sources.length > 1)
       .map((theme) => `${theme.name} (${theme.sources.slice(0, 3).join(", ")})`)
       .join("; ");
-    parts.push(
-      sourceText
-        ? `Основной акцент дня - ${focus}. Он подтверждается несколькими факторами: ${sourceText}.`
-        : `Основной акцент дня - ${focus}.`,
-    );
+    parts.push(buildPrimaryFocus(focus, sourceText || undefined));
   }
 
   const signThemes = profileListText(s.signProfile);
   const houseTexts: string[] = [];
   if (t.transitHouse && s.houseProfile) {
     const themes = formatList(profileListText(s.houseProfile));
-    if (themes) houseTexts.push(`В ${t.transitHouse}-м доме усиливаются темы: ${themes}`);
+    if (themes) houseTexts.push(buildHouseThemes(t.transitHouse, themes));
   }
   if (t.natalHouse && s.natalHouseProfile && t.natalHouse !== t.transitHouse) {
     const themes = formatList(profileListText(s.natalHouseProfile));
     if (themes) houseTexts.push(`Это также связывает транзит с темами ${t.natalHouse}-го дома: ${themes}`);
   }
-  if (signThemes.length > 0) houseTexts.push(`Положение в знаке направляет внимание на ${toAccusativeThemes(formatList(signThemes))}`);
+  if (signThemes.length > 0) houseTexts.push(buildSignThemes(formatList(signThemes)));
   if (houseTexts.length > 0) parts.push(`${houseTexts.join(". ")}.`);
 
   const emotions = s.polarity === "negative" ? s.planetProfile?.negativeEmotions : s.planetProfile?.positiveEmotions;
@@ -371,46 +290,6 @@ function describeSecondaryTransit(s: TransitSemantics, index: number): string | 
 }
 
 /** Совет дня из профилей доминирующего транзита (по полярности). */
-function toPersonalThemes(text: string): string {
-  return text
-    .replace(/\bмышление\b/g, "Ваше мышление")
-    .replace(/\bречь\b/g, "Вашу речь")
-    .replace(/\bанализ\b/g, "Ваш анализ")
-    .replace(/\bкоммуникация\b/g, "Вашу коммуникацию")
-    .replace(/\bсила воли\b/g, "Вашу силу воли")
-    .replace(/\bтворчество\b/g, "Ваше творчество")
-    .replace(/\bсамовыражение\b/g, "Ваше самовыражение")
-    .replace(/\bучёба\b/g, "Вашу учёбу")
-    .replace(/\bобщение\b/g, "Ваше общение");
-}
-
-function toAccusativeThemes(text: string): string {
-  return text
-    .replace(/\bмышление\b/g, "мышление")
-    .replace(/\bречь\b/g, "речь")
-    .replace(/\bанализ\b/g, "анализ")
-    .replace(/\bкоммуникация\b/g, "коммуникацию")
-    .replace(/\bсила воли\b/g, "силу воли")
-    .replace(/\bтворчество\b/g, "творчество")
-    .replace(/\bсамовыражение\b/g, "самовыражение")
-    .replace(/\bучёба\b/g, "учёбу")
-    .replace(/\bобщение\b/g, "общение");
-}
-
-function plantForTea(plant: string): string {
-  const normalized = plant.trim().toLowerCase();
-  const forms: Record<string, string> = {
-    "мята": "мятой",
-    "ромашка": "ромашкой",
-    "мелисса": "мелиссой",
-    "лаванда": "лавандой",
-    "шалфей": "шалфеем",
-    "чабрец": "чабрецом",
-    "розмарин": "розмарином",
-  };
-  return forms[normalized] ?? plant;
-}
-
 function buildSoftRecommendation(main: TransitSemantics, date: Date): string | null {
   const profile = main.planetProfile;
   if (!profile) return null;
@@ -513,7 +392,7 @@ export class FuturisticGenerator {
         paragraphs.push(`Фраза дня: ${lowerFirst(ensureSentence(motivationPhrase))}`);
       }
 
-      return paragraphs.join("\n\n");
+      return renderParagraphs(paragraphs);
     } catch (error) {
       logger.error({ error }, "error generating forecast");
       return null;
