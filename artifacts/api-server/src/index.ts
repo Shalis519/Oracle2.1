@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { seedOntology } from "./lib/seedOntology";
+import { ensureRuntimeSchema } from "./lib/runtimeSchema";
 
 const rawPort = process.env["PORT"];
 
@@ -19,7 +20,9 @@ if (Number.isNaN(port) || port <= 0) {
 /** Start server after seeding skeleton. Cache is lazy-loaded on first request. */
 async function start(): Promise<void> {
   try {
+    await ensureRuntimeSchema();
     await seedOntology();
+    logger.info("Runtime schema ready");
     logger.info("Ontology seeded -- Studio UI is the source of truth for relations & profiles");
   } catch (err) {
     logger.error({ err }, "Ontology seed failed -- aborting startup");
