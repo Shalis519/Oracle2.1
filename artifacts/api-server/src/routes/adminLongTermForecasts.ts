@@ -53,6 +53,45 @@ function serialize(row: typeof longTermForecastsTable.$inferSelect) {
   return { ...row, createdAt: row.createdAt.toISOString(), updatedAt: row.updatedAt.toISOString() };
 }
 
+function isoDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function buildForecastTimeline(
+  input: NatalChartInput,
+  natal: ReturnType<typeof computeNatalChart>,
+  dateFrom: Date,
+  dateTo: Date,
+) {
+  const timeline: Array<Record<string, unknown>> = [];
+  const cursor = new Date(dateFrom);
+  const end = new Date(dateTo);
+  while (cursor <= end && timeline.length < 32) {
+    const date = isoDate(cursor);
+    const transit = computeTransits(natal, date, input.latitude, input.longitude, input.timezone);
+    const progressions = computeSecondaryProgressions(input, cursor);
+    const directions = computeSolarArcDirections(input, cursor);
+    timeline.push({
+      date,
+      transit,
+      progressions: {
+        targetDate: progressions.targetDate,
+        progressedDate: progressions.progressedDate,
+        ageYears: progressions.ageYears,
+        solarArc: progressions.solarArc,
+        aspects: progressions.aspects.slice(0, 12),
+      },
+      directions: {
+        targetDate: directions.targetDate,
+        solarArc: directions.solarArc,
+        aspects: directions.aspects.slice(0, 12),
+      },
+    });
+    cursor.setUTCDate(cursor.getUTCDate() + 7);
+  }
+  return timeline;
+}
+
 router.get("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const userId = typeof req.query.userId === "string" ? Number(req.query.userId) : undefined;
   const rows = await db.select().from(longTermForecastsTable)
@@ -72,7 +111,8 @@ router.post("/admin/long-term-forecasts/calculate", requireAuth, requireAdmin, a
     const progressions = computeSecondaryProgressions(input, dateFrom);
     const directions = computeSolarArcDirections(input, dateFrom);
     const transit = computeTransits(natal, String(body.dateFrom), input.latitude, input.longitude, input.timezone);
-    res.json({ dateFrom: String(body.dateFrom), dateTo: String(body.dateTo), natal, progressions, directions, transit, blocks: [] });
+    const timeline = buildForecastTimeline(input, natal, dateFrom, dateTo);
+    res.json({ dateFrom: String(body.dateFrom), dateTo: String(body.dateTo), natal, progressions, directions, transit, timeline, blocks: [] });
   } catch (error) {
     res.status(400).json({ error: error instanceof Error ? error.message : "Не удалось выполнить расчёт" });
   }
@@ -91,13 +131,14 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
     const progressions = computeSecondaryProgressions(input, parseDate(dateFrom, "dateFrom"));
     const directions = computeSolarArcDirections(input, parseDate(dateFrom, "dateFrom"));
     const transit = computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone);
+    const timeline = buildForecastTimeline(input, natal, parseDate(dateFrom, "dateFrom"), parseDate(dateTo, "dateTo"));
     const [row] = await db.insert(longTermForecastsTable).values({
       userId: typeof body.userId === "number" ? body.userId : null,
       clientName: body.clientName.trim(), periodType: String(body.periodType), dateFrom, dateTo,
       status: "draft", title: typeof body.title === "string" && body.title.trim() ? body.title.trim() : `Долгосрочный прогноз для ${body.clientName.trim()}`,
       introText: typeof body.introText === "string" ? body.introText : "",
       birthSnapshot,
-      calculationPayload: { natal, progressions, directions, transit },
+      calculationPayload: { natal, progressions, directions, transit, timeline },
       blocks: Array.isArray(body.blocks) ? body.blocks : [
         { id: "transits", method: "Транзиты", title: "Внешние триггеры периода", text: "В разработке", dateFrom, dateTo, isVisible: true },
         { id: "secondary", method: "Прогрессии", title: "Внутренняя динамика и развитие", text: "В разработке", dateFrom, dateTo, isVisible: true },
