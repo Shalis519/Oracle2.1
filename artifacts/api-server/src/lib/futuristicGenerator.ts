@@ -295,11 +295,11 @@ function contradicts(a: TransitSemantics, b: TransitSemantics): boolean {
 function describeMainTransit(s: TransitSemantics, date: Date): string[] {
   const t = s.transit;
   const parts: string[] = [];
-  const transitPath = t.transitHouse ? ` и активирует темы Вашего ${t.transitHouse}-го дома` : "";
-  const natalPlace = t.natalHouse ? ` в ${t.natalHouse}-м доме` : "";
+  const transitHouseText = t.transitHouse ? ` Транзит проходит через Ваш ${t.transitHouse}-й дом.` : "";
+  const natalHouseText = t.natalHouse ? ` Натальная планета расположена в Вашем ${t.natalHouse}-м доме.` : "";
 
   parts.push(
-    `Сегодня ${t.transitBody} ${signInPrepositional(t.transitSign)}${transitPath} образует ${aspectAccusative(t.type)} с ${bodyInstrumental(t.natalBody)} ${signInPrepositional(t.natalSign)}${natalPlace}.`,
+    `Сегодня ${t.transitBody} находится ${signInPrepositional(t.transitSign)} и образует ${aspectAccusative(t.type)} с ${bodyInstrumental(t.natalBody)} ${signInPrepositional(t.natalSign)}.${transitHouseText}${natalHouseText}`,
   );
 
   if (s.relation?.description?.trim()) {
