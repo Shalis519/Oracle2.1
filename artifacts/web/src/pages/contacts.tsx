@@ -87,12 +87,49 @@ function romanHouse(houseNumber: number) {
   return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][houseNumber - 1] ?? String(houseNumber);
 }
 
+type ContactNameForms = { nominative: string; genitive: string; dative: string; instrumental: string };
+
+function declineContactName(name: string): ContactNameForms {
+  const clean = name.trim() || "контакт";
+  if (clean === "контакт") return { nominative: clean, genitive: "контакта", dative: "контакту", instrumental: "контактом" };
+  const parts = clean.split(/(\s+)/);
+  const first = parts[0];
+  const rest = parts.slice(1).join("");
+  let forms: ContactNameForms;
+  if (/(ый|ий|ой)$/i.test(first)) {
+    const ending = /ий$/i.test(first) ? "им" : "ым";
+    forms = { nominative: first, genitive: first.replace(/(ый|ий|ой)$/i, "ого"), dative: first.replace(/(ый|ий|ой)$/i, "ому"), instrumental: first.replace(/(ый|ий|ой)$/i, ending) };
+  } else if (/ия$/i.test(first)) {
+    forms = { nominative: first, genitive: first.replace(/ия$/i, "ии"), dative: first.replace(/ия$/i, "ии"), instrumental: first.replace(/ия$/i, "ией") };
+  } else if (/я$/i.test(first)) {
+    forms = { nominative: first, genitive: first.replace(/я$/i, "и"), dative: first.replace(/я$/i, "е"), instrumental: first.replace(/я$/i, "ей") };
+  } else if (/а$/i.test(first)) {
+    const genitiveEnding = /га$|ка$|ха$|жа$|ча$|ша$/i.test(first) ? "и" : "ы";
+    forms = { nominative: first, genitive: first.slice(0, -1) + genitiveEnding, dative: first.slice(0, -1) + "е", instrumental: first.slice(0, -1) + "ой" };
+  } else if (/ь$/i.test(first)) {
+    forms = { nominative: first, genitive: first.slice(0, -1) + "я", dative: first.slice(0, -1) + "ю", instrumental: first.slice(0, -1) + "ем" };
+  } else {
+    forms = { nominative: first, genitive: first + "а", dative: first + "у", instrumental: first + "ом" };
+  }
+  return { ...forms, genitive: forms.genitive + rest, dative: forms.dative + rest, instrumental: forms.instrumental + rest };
+}
+
+function personalizeContactText(text: string, contactName: string) {
+  const forms = declineContactName(contactName);
+  return text
+    .replace(/\bконтакта\b/gi, forms.genitive)
+    .replace(/\bконтакту\b/gi, forms.dative)
+    .replace(/\bконтактом\b/gi, forms.instrumental)
+    .replace(/\bконтакт\b/gi, forms.nominative);
+}
+
 function synastryHousePhrase(sourcePerson: "user" | "contact", sourceLabel: string, targetPerson: "user" | "contact", targetLabel: string, sourceBody: string, houseNumber: number, isMutual = false) {
   const bodyLabel = SYNASTRY_BODY_NAMES[sourceBody] ?? sourceBody;
   const house = `${romanHouse(houseNumber)} доме`;
-  if (isMutual) return `Взаимное положение: ваше ${bodyLabel} и ${bodyLabel} контакта находятся в ${house} друг друга.`;
-  if (sourcePerson === "user" && targetPerson === "contact") return `${SYNASTRY_BODY_YOUR_NOMINATIVE[sourceBody] ?? `Ваша ${bodyLabel}`} находится в ${house} контакта.`;
-  if (sourcePerson === "contact" && targetPerson === "user") return `${bodyLabel} контакта находится в ${house} вашей карты.`;
+  const contactForms = declineContactName(targetPerson === "contact" ? targetLabel : sourceLabel);
+  if (isMutual) return `Взаимное положение: ваше ${bodyLabel} и ${bodyLabel} ${contactForms.genitive} находятся в ${house} друг друга.`;
+  if (sourcePerson === "user" && targetPerson === "contact") return `${SYNASTRY_BODY_YOUR_NOMINATIVE[sourceBody] ?? `Ваше ${bodyLabel}`} находится в ${house} ${contactForms.genitive}.`;
+  if (sourcePerson === "contact" && targetPerson === "user") return `${bodyLabel} ${declineContactName(sourceLabel).genitive} находится в ${house} вашей карты.`;
   return `${sourceLabel}: ${bodyLabel} находится в ${house} (${targetLabel}).`;
 }
 
@@ -100,15 +137,17 @@ function synastryPersonPhrase(sourcePerson: "user" | "contact", sourceLabel: str
   const sourceBodyLabel = SYNASTRY_BODY_NAMES[sourceBody] ?? sourceBody;
   const targetBodyLabel = SYNASTRY_BODY_ACCUSATIVE[targetBody] ?? SYNASTRY_BODY_NAMES[targetBody] ?? targetBody;
   const aspect = SYNASTRY_ASPECT_PHRASES[aspectType.toLowerCase()] ?? { text: aspectType.toLowerCase(), preposition: "к" as const };
+  const contactForms = declineContactName(targetLabel);
   if (sourcePerson === "user" && targetPerson === "contact") {
     return aspect.preposition === "с"
-      ? `${SYNASTRY_BODY_YOUR_NOMINATIVE[sourceBody] ?? `Ваш ${sourceBodyLabel}`} образует ${aspect.text} с ${SYNASTRY_BODY_INSTRUMENTAL[targetBody] ?? targetBodyLabel} контакта.`
-      : `${SYNASTRY_BODY_YOUR_NOMINATIVE[sourceBody] ?? `Ваш ${sourceBodyLabel}`} образует ${aspect.text} к ${targetBodyLabel} контакта.`;
+      ? `${SYNASTRY_BODY_YOUR_NOMINATIVE[sourceBody] ?? `Ваш ${sourceBodyLabel}`} образует ${aspect.text} с ${SYNASTRY_BODY_INSTRUMENTAL[targetBody] ?? targetBodyLabel} ${contactForms.genitive}.`
+      : `${SYNASTRY_BODY_YOUR_NOMINATIVE[sourceBody] ?? `Ваш ${sourceBodyLabel}`} образует ${aspect.text} к ${targetBodyLabel} ${contactForms.genitive}.`;
   }
   if (sourcePerson === "contact" && targetPerson === "user") {
+    const sourceForms = declineContactName(sourceLabel);
     return aspect.preposition === "с"
-      ? `${sourceBodyLabel} контакта образует ${aspect.text} с ${SYNASTRY_BODY_YOUR_INSTRUMENTAL[targetBody] ?? `вашим ${targetBodyLabel}`}.`
-      : `${sourceBodyLabel} контакта образует ${aspect.text} к ${SYNASTRY_BODY_YOUR_DATIVE[targetBody] ?? `вашему ${targetBodyLabel}`}.`;
+      ? `${sourceBodyLabel} ${sourceForms.genitive} образует ${aspect.text} с ${SYNASTRY_BODY_YOUR_INSTRUMENTAL[targetBody] ?? `вашим ${targetBodyLabel}`}.`
+      : `${sourceBodyLabel} ${sourceForms.genitive} образует ${aspect.text} к ${SYNASTRY_BODY_YOUR_DATIVE[targetBody] ?? `вашему ${targetBodyLabel}`}.`;
   }
   return `${sourceLabel}: ${sourceBodyLabel} образует ${aspect.text} ${aspect.preposition} ${targetBodyLabel} (${targetLabel}).`;
 }
@@ -321,9 +360,10 @@ export default function ContactsPage() {
 
       <Dialog open={synastryContactId !== null} onOpenChange={(open) => { if (!open) setSynastryContactId(null); }}>
         <DialogContent className="bg-card border-border max-h-[90vh] overflow-y-auto max-w-2xl">
-          <DialogHeader><DialogTitle className="font-serif text-2xl">Синастрия с {contacts?.find((c) => c.id === synastryContactId)?.name ?? "контактом"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="font-serif text-2xl">Синастрия с {declineContactName(contacts?.find((c) => c.id === synastryContactId)?.name ?? "контакт").instrumental}</DialogTitle></DialogHeader>
           {(() => {
             const contact = contacts?.find((c) => c.id === synastryContactId);
+            const contactName = contact?.name?.trim() || "контакт";
             if (!contact?.synastryData) return <p className="text-muted-foreground">Расчёт ещё не готов.</p>;
             try {
               const result = JSON.parse(contact.synastryData) as {
@@ -339,13 +379,13 @@ export default function ContactsPage() {
               const themes = result.themes ?? [];
               return <div className="space-y-5">
                 {gates.length > 0 && <section className="space-y-3"><h3 className="font-semibold text-lg">Врата Золушки</h3><div className="space-y-3">
-                  {gates.map((gate, index) => <article key={`gate-${gate.sourceLabel}-${gate.targetLabel}-${index}`} className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-2"><div className="font-medium">{synastryPersonPhrase(gate.sourcePerson ?? "user", gate.sourceLabel, gate.targetPerson ?? "contact", gate.targetLabel, "chiron", gate.pairKey?.replace(/^chiron-/, "") ?? "venus", gate.aspectType)} Орбис {gate.orb}°</div><p className="text-sm leading-relaxed text-justify">{normalizeSynastryText(gate.interpretation)}</p></article>)}
+                  {gates.map((gate, index) => <article key={`gate-${gate.sourceLabel}-${gate.targetLabel}-${index}`} className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-2"><div className="font-medium">{synastryPersonPhrase(gate.sourcePerson ?? "user", gate.sourceLabel, gate.targetPerson ?? "contact", gate.targetLabel, "chiron", gate.pairKey?.replace(/^chiron-/, "") ?? "venus", gate.aspectType)} Орбис {gate.orb}°</div><p className="text-sm leading-relaxed text-justify">{personalizeContactText(normalizeSynastryText(gate.interpretation), contactName)}</p></article>)}
                 </div></section>}
                 {aspects.length > 0 && <section className="space-y-3"><h3 className="font-semibold text-lg">Аспекты</h3><div className="space-y-3">
-                  {aspects.map((aspect, index) => <article key={`aspect-${aspect.sourceBody}-${aspect.targetBody}-${aspect.aspectType}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">{synastryPersonPhrase(aspect.sourcePerson ?? "user", aspect.sourceLabel, "contact", aspect.targetLabel, aspect.sourceBody, aspect.targetBody, aspect.aspectType)} Орбис {aspect.orb}°</div><p className="text-sm leading-relaxed text-justify">{normalizeSynastryText(aspect.interpretation)}</p></article>)}
+                  {aspects.map((aspect, index) => <article key={`aspect-${aspect.sourceBody}-${aspect.targetBody}-${aspect.aspectType}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">{synastryPersonPhrase(aspect.sourcePerson ?? "user", aspect.sourceLabel, "contact", aspect.targetLabel || contactName, aspect.sourceBody, aspect.targetBody, aspect.aspectType)} Орбис {aspect.orb}°</div><p className="text-sm leading-relaxed text-justify">{personalizeContactText(normalizeSynastryText(aspect.interpretation), contactName)}</p></article>)}
                 </div></section>}
                 {housePlacements.length > 0 && <section className="space-y-3"><h3 className="font-semibold text-lg">Планеты в домах</h3><div className="space-y-3">
-                  {housePlacements.map((placement, index) => <article key={`house-${placement.sourcePerson}-${placement.sourceBody}-${placement.houseNumber}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">{synastryHousePhrase(placement.sourcePerson ?? "user", placement.sourceLabel, placement.targetPerson ?? "contact", placement.targetLabel, placement.sourceBody, placement.houseNumber, placement.isMutual)}</div><p className="text-sm leading-relaxed text-justify">{normalizeSynastryText(placement.interpretation)}</p></article>)}
+                  {housePlacements.map((placement, index) => <article key={`house-${placement.sourcePerson}-${placement.sourceBody}-${placement.houseNumber}-${index}`} className="rounded-lg border border-border p-3 space-y-2"><div className="font-medium">{synastryHousePhrase(placement.sourcePerson ?? "user", placement.sourceLabel, placement.targetPerson ?? "contact", placement.targetLabel, placement.sourceBody, placement.houseNumber, placement.isMutual)}</div><p className="text-sm leading-relaxed text-justify">{personalizeContactText(normalizeSynastryText(placement.interpretation), contactName)}</p></article>)}
                 </div></section>}
                 {themes.length > 0 && <section className="space-y-3"><h3 className="font-semibold text-lg">Ключевые темы</h3><div className="space-y-2">
                   {themes.map((theme) => <article key={theme.key} className="rounded-lg border border-primary/20 bg-primary/5 p-3"><h4 className="font-medium">{theme.label}</h4><p className="text-xs text-muted-foreground/80 mt-1">Тема подтверждается несколькими показателями: {theme.aspects.map((aspect) => `${SYNASTRY_BODY_NAMES[aspect.sourceBody] ?? aspect.sourceBody} - ${aspect.aspectType.toLowerCase()} - ${SYNASTRY_BODY_NAMES[aspect.targetBody] ?? aspect.targetBody}`).join("; ")}.</p></article>)}
