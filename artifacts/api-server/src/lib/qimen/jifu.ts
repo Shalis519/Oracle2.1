@@ -3,20 +3,13 @@
 // per-double-hour "strength" = how many of {год, месяц, день, час} Ji Fu land in
 // the same sector as the hour's Ji Fu (1 hour itself .. max 4).
 //
-// Definitions were reverse-engineered and validated against the user's source:
-//   - ЧАС:  def A — palace of the hour stem (甲 hides as 旬首仪) on the 置闰 earth
-//           plate = where 甲 / 值符 lands on the heaven plate. Validated against a
-//           full July-2026 hourly table (341/341 cells). Computed by buildChart.
-//   - ДЕНЬ: def A — palace of the day stem; continuous 日家 ju = ((-index) mod 9)
-//           in the 阴 (post-夏至) half. Validated: 30.06.2026→СВ, 08.07.2026→Восток.
-//   - МЕСЯЦ:def B — palace of the month 旬首仪; 月家 ju calibrated for the 子午卯酉
-//           (中元) year group, e.g. 2026. Validated: 午月→Север, 未月→ЮЗ.
-//   - ГОД:  def B — palace of the year 旬首仪; 年家 always 阴遁, ju cycle [7,4,1].
-//           Validated: 2026 丙午 阴7 → Восток.
-//
-// NOTE (calibration scope): ЧАС and ДЕНЬ(阴 half) are general; МЕСЯЦ is calibrated
-// for 中元 years (子午卯酉, incl. 2026) and ГОД for the current 三元 cycle. The 阳
-// half (after 冬至) of the daily model is mirrored but not yet anchored to a source.
+// Джи Фу извлекается из общего построителя карт Ци Мэнь:
+//   - ЧАС: карта текущего двойного часа через buildChart.
+//   - ДЕНЬ: дневная карта через buildPeriodMap и 日家 Цзюй.
+//   - МЕСЯЦ: месячная карта через buildPeriodMap и 月家 Цзюй.
+//   - ГОД: годовая карта через buildPeriodMap и 年家 Цзюй.
+// В computeJiFuWishes эти четыре сектора сравниваются для каждого часа дня;
+// выводятся только двойные, тройные и четверные совпадения.
 import { Solar } from "lunar-typescript";
 import {
   BRANCH_ANIMAL_RU_GEN,
@@ -27,24 +20,9 @@ import {
   XUN_YI_STEM,
   parseGanZhi,
 } from "./constants";
-import { buildChart } from "./chart";
+import { buildChart, buildPeriodMap } from "./chart";
 import { juForDate } from "./ju";
 import { dateToIso } from "./calendar";
-
-// 戊己庚辛壬癸丁丙乙 placement sequence (stem indices) around the Luo Shu earth plate.
-const SEQ = [4, 5, 6, 7, 8, 9, 3, 2, 1];
-const seqIdx: Record<number, number> = {};
-SEQ.forEach((s, i) => (seqIdx[s] = i));
-
-// 寄宫: center (5) lodges with 坤 (2).
-const adjust = (p: number): number => (p === 5 ? 2 : p);
-
-// Palace (1..9, center→2) carrying a given stem on an earth plate of (ju, dun).
-function palaceOfStem(ju: number, yin: boolean, stemIdx: number): number {
-  const k = seqIdx[stemIdx];
-  const p = yin ? ((((ju - 1 - k) % 9) + 9) % 9) + 1 : ((ju - 1 + k) % 9) + 1;
-  return adjust(p);
-}
 
 // 旬首仪 stem (戊己庚辛壬癸) for a sexagenary index 0..59.
 const yiStemOf = (index: number): number => XUN_YI_STEM[Math.floor(index / 10)];
@@ -109,9 +87,23 @@ function yearNumberFor(date: Date, yearIndex: number): number {
 export function yearJiFuPalace(date: Date): number {
   const { year } = pillarsOf(date);
   const solarYear = yearNumberFor(date, year.index);
-  const yuan = Math.floor(((((solarYear - 1984) % 180) + 180) % 180) / 60);
+  const yuan = Math.floor(((((solarYear - 1984) % 180) + 180) % 180) / 60) as
+    | 0
+    | 1
+    | 2;
   const ju = [7, 1, 4][yuan]; // 1984-2043: 下元, 2044-2103: 上元, 2104-2163: 中元
-  return palaceOfStem(ju, true, yiStemOf(year.index));
+  return buildPeriodMap(
+    date,
+    "year",
+    {
+      stem: year.stem,
+      effectiveStem: yiStemOf(year.index),
+      branch: year.branch,
+      index: year.index,
+      label: STEMS[year.stem] + BRANCHES[year.branch],
+    },
+    { yin: true, ju, term: "年家", yuan },
+  ).zhiFuPalace;
 }
 
 /**
@@ -140,8 +132,20 @@ export function monthJiFuPalace(date: Date): number {
     1: 2, // 丑
     7: 2, // 未
   };
-  const ju = [1, 7, 4][yuanByBranch[year.branch]];
-  return palaceOfStem(ju, true, yiStemOf(month.index));
+  const yuan = yuanByBranch[year.branch];
+  const ju = [1, 7, 4][yuan];
+  return buildPeriodMap(
+    date,
+    "month",
+    {
+      stem: month.stem,
+      effectiveStem: yiStemOf(month.index),
+      branch: month.branch,
+      index: month.index,
+      label: STEMS[month.stem] + BRANCHES[month.branch],
+    },
+    { yin: true, ju, term: "月家", yuan },
+  ).zhiFuPalace;
 }
 
 function nearestJiaZiAnchor(date: Date, yin: boolean): Date {
@@ -179,8 +183,17 @@ export function dayJiFuPalace(date: Date): number {
   const diffDays = Math.floor((date.getTime() - anchor.getTime()) / 86400000);
   const yuan = ((Math.floor(diffDays / 60) % 3) + 3) % 3;
   const ju = yin ? [9, 3, 6][yuan] : [1, 7, 4][yuan];
-  const eff = day.stem === 0 ? yiStemOf(day.index) : day.stem;
-  return palaceOfStem(ju, yin, eff);
+  return buildPeriodMap(
+    date,
+    "day",
+    {
+      stem: day.stem,
+      branch: day.branch,
+      index: day.index,
+      label: STEMS[day.stem] + BRANCHES[day.branch],
+    },
+    { yin, ju, term: "日家", yuan: yuan as 0 | 1 | 2 },
+  ).zhiFuPalace;
 }
 
 /** Часовой Джи Фу — где 甲 / 值符 на небесной тарелке (def A, 置闰 движок). */

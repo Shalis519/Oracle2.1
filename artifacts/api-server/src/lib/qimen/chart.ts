@@ -48,25 +48,39 @@ export interface PalaceCell {
 
 export interface Chart {
   day: DayInfo;
-  hourBranch: number; // 0..11
-  hourStem: number; // 0..9
-  hourGz: string;
+  hourBranch: number; // 0..11 for an hourly chart; -1 for year/month/day maps
+  hourStem: number; // effective period stem 0..9
+  hourGz: string; // period Gan-Zhi label
   ju: JuResult;
   fuYin: boolean;
   zhiFuStar: string; // 值符 (Дух Джи Фу)
   zhiShiDoor: string; // 值使
-  zhiFuPalace: number; // palace carrying 值符 star (= 时干 palace)
+  zhiFuPalace: number; // palace carrying 值符 star (= period stem palace)
   cells: Record<number, PalaceCell>; // outer palaces 1,2,3,4,6,7,8,9 (+5 minimal)
 }
 
-export function buildChart(date: Date, hourBranch: number): Chart {
+export type QimenPeriod = "year" | "month" | "day" | "hour";
+
+interface PeriodPillar {
+  stem: number;
+  effectiveStem?: number;
+  branch: number;
+  index: number;
+  label: string;
+}
+
+function buildPeriodChart(
+  date: Date,
+  period: QimenPeriod,
+  pillar: PeriodPillar,
+  ju: JuResult,
+): Chart {
   const day = dayInfo(date);
-  const ju = juForDate(date);
   const yin = ju.yin;
-  const hs = hourStem(day.stem, hourBranch);
-  const hourGz = STEMS[hs] + BRANCHES[hourBranch];
-  const hourIdx = hourGanZhiIndex(day.stem, hourBranch);
-  const xun = xunInfo(hourIdx);
+  const hs = pillar.effectiveStem ?? pillar.stem;
+  const hourBranch = period === "hour" ? pillar.branch : -1;
+  const hourGz = pillar.label;
+  const xun = xunInfo(pillar.index);
 
   // Earth plate stems by palace (1..9).
   const earthStem: number[] = Array(10).fill(-1);
@@ -150,6 +164,33 @@ export function buildChart(date: Date, hourBranch: number): Chart {
     zhiFuPalace: pHour,
     cells,
   };
+}
+
+export function buildChart(date: Date, hourBranch: number): Chart {
+  const day = dayInfo(date);
+  const ju = juForDate(date);
+  const hs = hourStem(day.stem, hourBranch);
+  const hourIdx = hourGanZhiIndex(day.stem, hourBranch);
+  return buildPeriodChart(
+    date,
+    "hour",
+    {
+      stem: hs,
+      branch: hourBranch,
+      index: hourIdx,
+      label: STEMS[hs] + BRANCHES[hourBranch],
+    },
+    ju,
+  );
+}
+
+export function buildPeriodMap(
+  date: Date,
+  period: Exclude<QimenPeriod, "hour">,
+  pillar: PeriodPillar,
+  ju: JuResult,
+): Chart {
+  return buildPeriodChart(date, period, pillar, ju);
 }
 
 /**
