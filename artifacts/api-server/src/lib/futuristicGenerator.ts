@@ -296,7 +296,7 @@ function normalizeRelationDescription(description: string): string {
   const cleaned = description.trim();
   const themesMatch = cleaned.match(/(?:это\s+)?затрагивает\s+темы?\s*:?\s*(.+?)(?:[.!?]|$)/i);
   if (themesMatch?.[1]) {
-    return `Этот транзит затрагивает ${toAccusativeThemes(themesMatch[1].trim())}.`;
+    return `Этот транзит в первую очередь влияет на ${toPersonalThemes(themesMatch[1].trim())}.`;
   }
   return ensureSentence(cleaned);
 }
@@ -315,7 +315,7 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
     parts.push(normalizeRelationDescription(s.relation.description));
   } else {
     const fallback = formatList(profileListText(s.planetProfile));
-    if (fallback) parts.push(`Этот транзит затрагивает ${toAccusativeThemes(fallback)}.`);
+    if (fallback) parts.push(`Этот транзит в первую очередь влияет на ${toPersonalThemes(fallback)}.`);
   }
 
   const topEvidence = s.themeEvidence.slice(0, 2);
@@ -327,8 +327,8 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
       .join("; ");
     parts.push(
       sourceText
-        ? `Главная тема дня - ${focus}. Она подтверждается несколькими факторами: ${sourceText}.`
-        : `Главная тема дня - ${focus}.`,
+        ? `Основной акцент дня - ${focus}. Он подтверждается несколькими факторами: ${sourceText}.`
+        : `Основной акцент дня - ${focus}.`,
     );
   }
 
@@ -371,6 +371,19 @@ function describeSecondaryTransit(s: TransitSemantics, index: number): string | 
 }
 
 /** Совет дня из профилей доминирующего транзита (по полярности). */
+function toPersonalThemes(text: string): string {
+  return text
+    .replace(/\bмышление\b/g, "Ваше мышление")
+    .replace(/\bречь\b/g, "Вашу речь")
+    .replace(/\bанализ\b/g, "Ваш анализ")
+    .replace(/\bкоммуникация\b/g, "Вашу коммуникацию")
+    .replace(/\bсила воли\b/g, "Вашу силу воли")
+    .replace(/\bтворчество\b/g, "Ваше творчество")
+    .replace(/\bсамовыражение\b/g, "Ваше самовыражение")
+    .replace(/\bучёба\b/g, "Вашу учёбу")
+    .replace(/\bобщение\b/g, "Ваше общение");
+}
+
 function toAccusativeThemes(text: string): string {
   return text
     .replace(/\bмышление\b/g, "мышление")
