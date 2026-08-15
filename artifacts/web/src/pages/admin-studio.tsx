@@ -241,22 +241,23 @@ function ChipListEditor({
 }) {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const safeItems = Array.isArray(items) ? items : [];
 
   const addItem = () => {
     const s = input.trim();
     if (!s) return;
-    if (items.includes(s)) {
+    if (safeItems.includes(s)) {
       setInput("");
       return;
     }
-    if (items.length >= max) return;
-    onChange([...items, s]);
+    if (safeItems.length >= max) return;
+    onChange([...safeItems, s]);
     setInput("");
     inputRef.current?.focus();
   };
 
   const removeItem = (idx: number) => {
-    onChange(items.filter((_, i) => i !== idx));
+    onChange(safeItems.filter((_, i) => i !== idx));
   };
 
   return (
@@ -264,7 +265,7 @@ function ChipListEditor({
       <Label>{label}</Label>
       <div className="flex flex-wrap gap-2">
         <AnimatePresence>
-          {items.map((item, idx) => (
+          {safeItems.map((item, idx) => (
             <motion.span
               key={`${item}-${idx}`}
               initial={{ opacity: 0, scale: 0.9 }}
@@ -442,6 +443,9 @@ function ProfileForm({
       archetypes: profile?.archetypes ?? [],
       professions: profile?.professions ?? [],
       objects: profile?.objects ?? [],
+      plants: profile?.plants ?? [],
+      crystals: profile?.crystals ?? [],
+      jewelry: profile?.jewelry ?? [],
       colors: profile?.colors ?? [],
       numbers: profile?.numbers ?? [],
       days: profile?.days ?? [],
