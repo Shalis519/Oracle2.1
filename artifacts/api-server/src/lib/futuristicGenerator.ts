@@ -16,6 +16,7 @@ import {
   buildPrimaryFocus,
   buildSignThemes,
   buildTransitOpening,
+  bodyDative,
   bodyInstrumental,
   ensureSentence,
   firstSentence,
@@ -269,7 +270,8 @@ async function describeContextualMainTransit(s: TransitSemantics): Promise<strin
   const composition = get("composition", aspectKey, "default");
   const rendered = renderForecastTemplate(composition, {
     transitEntity: get("entity", "transit", t.transitBody.toLowerCase()),
-    natalEntity: bodyInstrumental(t.natalBody),
+    natalPlanet: bodyDative(t.natalBody),
+    natalEntity: get("entity", "natal", t.natalBody.toLowerCase()),
     aspectName: t.type,
     aspectMeaning: get("aspect", aspectKey, "default"),
     transitHouse: get("house", "transit", String(t.transitHouse)),

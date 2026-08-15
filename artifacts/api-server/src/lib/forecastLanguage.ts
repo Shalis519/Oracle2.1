@@ -13,6 +13,22 @@ const SIGN_PREPOSITIONAL: Record<string, string> = {
   Рыбы: "Рыбах",
 };
 
+const BODY_DATIVE: Record<string, string> = {
+  "северный узел": "Северному узлу",
+  "южный узел": "Южному узлу",
+  хирон: "Хирону",
+  плутон: "Плутону",
+  нептун: "Нептуну",
+  уран: "Урану",
+  сатурн: "Сатурну",
+  юпитер: "Юпитеру",
+  марс: "Марсу",
+  венера: "Венере",
+  меркурий: "Меркурию",
+  луна: "Луне",
+  солнце: "Солнцу",
+};
+
 const BODY_INSTRUMENTAL: Record<string, string> = {
   "северный узел": "Северным узлом",
   "южный узел": "Южным узлом",
@@ -32,6 +48,10 @@ const BODY_INSTRUMENTAL: Record<string, string> = {
 export function signInPrepositional(sign: string): string {
   const form = SIGN_PREPOSITIONAL[sign] ?? sign;
   return form.toLowerCase().startsWith("ль") ? `во ${form}` : `в ${form}`;
+}
+
+export function bodyDative(name: string): string {
+  return BODY_DATIVE[name.toLowerCase()] ?? name;
 }
 
 export function bodyInstrumental(name: string): string {
