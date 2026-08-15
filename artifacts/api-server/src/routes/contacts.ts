@@ -26,9 +26,18 @@ import {
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
 import { daysUntilBirthday, turningAge } from "../lib/dates";
-import { calculateSynastry, resolveContactBirthLocation } from "../lib/synastry";
+import { calculateSynastry } from "../lib/synastry";
 
 const router: IRouter = Router();
+
+function validateBirthLocation(data: { birthPlace?: string | null; birthLatitude?: number | null; birthLongitude?: number | null; birthTimezone?: string | null }): string | null {
+  const hasAny = Boolean(data.birthPlace?.trim()) || data.birthLatitude != null || data.birthLongitude != null || Boolean(data.birthTimezone);
+  if (!hasAny) return null;
+  if (!data.birthPlace?.trim() || data.birthLatitude == null || data.birthLongitude == null || !data.birthTimezone) {
+    return "Выберите город рождения из встроенной базы: должны быть сохранены город, координаты и часовой пояс";
+  }
+  return null;
+}
 
 function serialize(c: Contact) {
   return {
@@ -81,6 +90,11 @@ router.post("/contacts", requireAuth, async (req, res): Promise<void> => {
   const parsed = CreateContactBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
+    return;
+  }
+  const locationError = validateBirthLocation(parsed.data);
+  if (locationError) {
+    res.status(400).json({ error: locationError });
     return;
   }
   const [row] = await db
@@ -160,6 +174,17 @@ router.patch("/contacts/:id", requireAuth, async (req, res): Promise<void> => {
     res.status(404).json({ error: "Контакт не найден." });
     return;
   }
+  const mergedLocation = {
+    birthPlace: body.data.birthPlace !== undefined ? body.data.birthPlace : existing.birthPlace,
+    birthLatitude: body.data.birthLatitude !== undefined ? body.data.birthLatitude : existing.birthLatitude,
+    birthLongitude: body.data.birthLongitude !== undefined ? body.data.birthLongitude : existing.birthLongitude,
+    birthTimezone: body.data.birthTimezone !== undefined ? body.data.birthTimezone : existing.birthTimezone,
+  };
+  const locationError = validateBirthLocation(mergedLocation);
+  if (locationError) {
+    res.status(400).json({ error: locationError });
+    return;
+  }
   const sourceChanged = ["birthDate", "birthTime", "birthPlace", "birthLatitude", "birthLongitude", "birthTimezone", "city"].some((key) => key in body.data);
   const synastryReset = body.data.synastryEnabled === false
     ? { synastryStatus: "disabled", synastryCalculatedAt: null, synastryInputHash: null, synastryData: null }
@@ -189,10 +214,10 @@ router.post("/contacts/:id/synastry", requireAuth, async (req, res): Promise<voi
   ));
   if (!contact) { res.status(404).json({ error: "Контакт не найден." }); return; }
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.localUser!.id));
-  const contactLocation = contact.birthLatitude != null && contact.birthLongitude != null
-    ? { latitude: contact.birthLatitude, longitude: contact.birthLongitude, timezone: contact.birthTimezone ?? "UTC" }
-    : resolveContactBirthLocation(contact.birthPlace);
-  const missing = !user?.birthDate || !user.birthTime || user.birthLatitude == null || user.birthLongitude == null
+  const contactLocation = contact.birthLatitude != null && contact.birthLongitude != null && contact.birthTimezone
+    ? { latitude: contact.birthLatitude, longitude: contact.birthLongitude, timezone: contact.birthTimezone }
+    : null;
+  const missing = !user?.birthDate || !user.birthTime || user.birthLatitude == null || user.birthLongitude == null || !user.birthTimezone
     || !contact.birthDate || !contact.birthTime || !contactLocation;
   if (missing) {
     const [updated] = await db.update(contactsTable).set({
@@ -202,7 +227,7 @@ router.post("/contacts/:id/synastry", requireAuth, async (req, res): Promise<voi
       synastryInputHash: null,
       synastryData: null,
     }).where(eq(contactsTable.id, contact.id)).returning();
-    res.status(422).json({ contact: serialize(updated), status: "insufficient_data", error: "Для синастрии нужны дата, точное время и место рождения пользователя и контакта. Город проживания контакта не используется для построения карты." });
+    res.status(422).json({ contact: serialize(updated), status: "insufficient_data", error: "Для синастрии нужны дата, точное время и город рождения пользователя и контакта. Город должен быть выбран из встроенной базы городов." });
     return;
   }
   try {

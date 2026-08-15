@@ -2,7 +2,6 @@ import { createHash } from "node:crypto";
 import { and, eq, inArray } from "drizzle-orm";
 import { db, cinderellaInterpretationsTable, synastryInterpretationsTable, synastryHouseInterpretationsTable } from "@workspace/db";
 import { computeNatalChart, type NatalChart, type NatalChartInput } from "./astrology";
-import { searchCities } from "./cities";
 
 const TARGETS = ["venus", "jupiter", "neptune", "sun", "pluto"] as const;
 const TARGET_LABELS: Record<(typeof TARGETS)[number], string> = {
@@ -249,11 +248,6 @@ function fallbackCategory(sourceBody: string, targetBody: string, aspectKey: str
   if (bodies.has("mercury")) return "communication";
   if (bodies.has("jupiter") || bodies.has("sun")) return "support";
   return "general";
-}
-
-export function resolveContactBirthLocation(place: string | null | undefined) {
-  const city = place ? searchCities(place, 1)[0] : undefined;
-  return city ? { latitude: city.lat, longitude: city.lng, timezone: city.timezone, name: city.name } : null;
 }
 
 export async function calculateSynastry(params: {

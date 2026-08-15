@@ -6,7 +6,6 @@ import { longTermForecastsTable } from "@workspace/db/schema";
 import { requireAdmin, requireAuth } from "../lib/auth";
 import { computeSecondaryProgressions, computeSolarArcDirections } from "../lib/progressions";
 import { computeNatalChart, computeTransits, type NatalChartInput } from "../lib/astrology";
-import { searchCities } from "../lib/cities";
 
 const router: IRouter = Router();
 
@@ -23,14 +22,13 @@ async function parseInput(body: Record<string, unknown>, userId: number): Promis
   if (Number.isInteger(contactId) && contactId > 0) {
     const [contact] = await db.select().from(contactsTable).where(and(eq(contactsTable.id, contactId), eq(contactsTable.userId, userId)));
     if (!contact) throw new Error("Выбранный контакт не найден");
-    if (!contact.birthDate || !contact.birthTime || !contact.birthPlace) throw new Error("У контакта должны быть указаны дата, точное время и город рождения");
-    const legacyCity = contact.birthLatitude == null || contact.birthLongitude == null
-      ? searchCities(contact.birthPlace, 1)[0]
-      : null;
-    const latitude = contact.birthLatitude ?? legacyCity?.lat;
-    const longitude = contact.birthLongitude ?? legacyCity?.lng;
-    const timezone = contact.birthTimezone ?? legacyCity?.timezone;
-    if (latitude == null || longitude == null || !timezone) throw new Error(`Город «${contact.birthPlace}» не связан со встроенной базой городов`);
+    if (!contact.birthDate || !contact.birthTime || !contact.birthPlace) throw new Error("Заполните в карточке контакта дату, точное время и город рождения");
+    if (contact.birthLatitude == null || contact.birthLongitude == null || !contact.birthTimezone) {
+      throw new Error("Город контакта не выбран из встроенной базы. Откройте карточку контакта и заново выберите город рождения");
+    }
+    const latitude = contact.birthLatitude;
+    const longitude = contact.birthLongitude;
+    const timezone = contact.birthTimezone;
     const [year, month, day] = contact.birthDate.split("-").map(Number);
     const [hour, minute] = contact.birthTime.slice(0, 5).split(":").map(Number);
     birth = { year, month, day, hour, minute, latitude, longitude, timezone, city: contact.birthPlace, birthPlace: contact.birthPlace };
