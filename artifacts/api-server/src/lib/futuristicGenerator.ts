@@ -24,6 +24,7 @@ import {
   relationToPersonalInfluence,
   renderParagraphs,
   signInPrepositional,
+  transitBodyPhrase,
   toAccusativeThemes,
   toPersonalThemes,
 } from "./forecastLanguage";
@@ -231,7 +232,6 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
     natalBody: t.natalBody,
     natalSign: t.natalSign,
     transitHouse: t.transitHouse,
-    natalHouse: t.natalHouse,
   }));
 
   if (s.relation?.description?.trim()) {
@@ -266,7 +266,7 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
 
   const emotions = s.polarity === "negative" ? s.planetProfile?.negativeEmotions : s.planetProfile?.positiveEmotions;
   const emotion = emotions && emotions.length > 0 ? pickByDate(emotions, date, 1) : null;
-  if (emotion) parts.push(`Поэтому сегодня важно учитывать своё состояние. Вы можете ощутить: ${emotion.toLowerCase()}.`);
+  if (emotion) parts.push(`Важно учитывать своё состояние. Вы можете ощутить: ${emotion.toLowerCase()}.`);
 
   return parts;
 }
@@ -274,7 +274,7 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
 function describeSecondaryTransit(s: TransitSemantics, index: number): string | null {
   const t = s.transit;
   const connective = index === 0 ? "Одновременно" : "Кроме того,";
-  const head = `${connective} ${t.transitBody} образует ${aspectAccusative(t.type)} с ${bodyInstrumental(t.natalBody)}`;
+  const head = `${connective} ${transitBodyPhrase(t.transitBody)} образует ${aspectAccusative(t.type)} с ${bodyInstrumental(t.natalBody)}`;
 
   if (s.relation?.description?.trim()) {
     return `${head}: ${lowerFirst(firstSentence(s.relation.description))}`;
@@ -301,21 +301,20 @@ function buildSoftRecommendation(main: TransitSemantics, date: Date): string | n
   if (!plant && !crystal && !jewelry && !color) return null;
 
   const parts: string[] = [];
-  if (plant) parts.push(`приготовить чай с ${plantForTea(plant)}`);
-  if (crystal) parts.push(`выбрать кристалл «${lowerFirst(crystal)}»`);
-  if (jewelry) parts.push(`надеть украшение «${lowerFirst(jewelry)}»`);
-  if (color) parts.push(`добавить в образ цвет «${lowerFirst(color)}»`);
+  if (plant) parts.push(`приготовьте чай с ${plantForTea(plant)}`);
+  if (crystal) parts.push(`выберите кристалл «${lowerFirst(crystal)}»`);
+  if (jewelry) parts.push(`наденьте украшение «${lowerFirst(jewelry)}»`);
+  if (color) parts.push(`добавьте в образ ${lowerFirst(color)} оттенки`);
 
-  return `Мягкая рекомендация дня: если Вам откликается символическая практика, ${parts.join(" или ")}. Это не обязательное действие и не медицинская рекомендация, а способ обозначить тему дня через небольшой личный ритуал.`;
+  return `Мягкая рекомендация дня: ${parts.join(" или ")}.`;
 }
 
 function buildAdvice(main: TransitSemantics): string | null {
   const candidates =
     main.polarity === "negative"
       ? [
-          main.planetProfile?.warnings,
-          main.natalPlanetProfile?.warnings,
           main.planetProfile?.recommendations,
+          main.natalPlanetProfile?.recommendations,
         ]
       : [
           main.planetProfile?.recommendations,
@@ -324,7 +323,7 @@ function buildAdvice(main: TransitSemantics): string | null {
         ];
 
   for (const c of candidates) {
-      if (typeof c === "string" && c.trim()) return `Практический акцент дня: ${lowerFirst(ensureSentence(c))}`;
+      if (typeof c === "string" && c.trim()) return `Можно поддержать себя так: ${lowerFirst(ensureSentence(c))}`;
   }
   return null;
 }
