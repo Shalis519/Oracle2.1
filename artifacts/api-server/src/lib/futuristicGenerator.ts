@@ -162,6 +162,27 @@ function lowerFirst(text: string): string {
   return text.charAt(0).toLowerCase() + text.slice(1);
 }
 
+/** Список после двоеточия: без искусственного склонения и с естественным «и». */
+function formatList(items: string[], limit = 4): string {
+  const clean = items
+    .map((item) => item.trim().replace(/[.!?]+$/g, ""))
+    .filter(Boolean)
+    .slice(0, limit);
+  if (clean.length === 0) return "";
+  if (clean.length === 1) return clean[0];
+  if (clean.length === 2) return `${clean[0]} и ${clean[1]}`;
+  return `${clean.slice(0, -1).join(", ")} и ${clean[clean.length - 1]}`;
+}
+
+function profileListText(profile: EntityProfile | null): string[] {
+  if (!profile) return [];
+  if (profile.keyMeaningsArr?.length) return profile.keyMeaningsArr;
+  return profile.keyMeanings
+    ?.split(/[,;]+/)
+    .map((item) => item.trim())
+    .filter(Boolean) ?? [];
+}
+
 /* ─── Сбор семантики транзита из онтологии ─── */
 
 async function resolveTransitThemes(t: TransitAspect): Promise<ThemeEvidence[]> {
@@ -284,41 +305,40 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
   if (s.relation?.description?.trim()) {
     parts.push(ensureSentence(s.relation.description));
   } else {
-    const km = s.planetProfile?.keyMeanings?.trim();
-    const fallback = km || s.planetProfile?.keyMeaningsArr?.slice(0, 3).join(", ");
-    if (fallback) parts.push(`Это затрагивает темы ${lowerFirst(firstSentence(fallback))}`);
+    const fallback = formatList(profileListText(s.planetProfile));
+    if (fallback) parts.push(`В центре влияния находятся темы: ${fallback}.`);
   }
 
   const topEvidence = s.themeEvidence.slice(0, 2);
   if (topEvidence.length > 0) {
-    const focus = topEvidence.map((theme) => theme.name.toLowerCase()).join(" и ");
+    const focus = formatList(topEvidence.map((theme) => theme.name));
     const sourceText = topEvidence
       .filter((theme) => theme.sources.length > 1)
-      .map((theme) => `${theme.name.toLowerCase()} (${theme.sources.slice(0, 3).join(", ")})`)
+      .map((theme) => `${theme.name} (${theme.sources.slice(0, 3).join(", ")})`)
       .join("; ");
     parts.push(
       sourceText
-        ? `Главный фокус дня - ${focus}; эта тема подтверждается несколькими факторами: ${sourceText}.`
-        : `Главный фокус дня - ${focus}.`,
+        ? `Главный фокус дня: ${focus}. Эта тема подтверждается несколькими факторами: ${sourceText}.`
+        : `Главный фокус дня: ${focus}.`,
     );
   }
 
-  const signKm = s.signProfile?.keyMeanings?.trim();
+  const signThemes = profileListText(s.signProfile);
   const houseTexts: string[] = [];
   if (t.transitHouse && s.houseProfile) {
-    const text = s.houseProfile.keyMeanings?.trim() || s.houseProfile.lifeThemes?.[0];
-    if (text) houseTexts.push(`сфера ${t.transitHouse}-го дома связана с ${lowerFirst(firstSentence(text))}`);
+    const themes = formatList(profileListText(s.houseProfile));
+    if (themes) houseTexts.push(`В ${t.transitHouse}-м доме активируются темы: ${themes}`);
   }
   if (t.natalHouse && s.natalHouseProfile && t.natalHouse !== t.transitHouse) {
-    const text = s.natalHouseProfile.keyMeanings?.trim() || s.natalHouseProfile.lifeThemes?.[0];
-    if (text) houseTexts.push(`дополнительно затрагивается сфера ${t.natalHouse}-го дома, ${lowerFirst(firstSentence(text))}`);
+    const themes = formatList(profileListText(s.natalHouseProfile));
+    if (themes) houseTexts.push(`Дополнительно затронута сфера ${t.natalHouse}-го дома; темы: ${themes}`);
   }
-  if (signKm) houseTexts.push(`знак задаёт оттенок: ${lowerFirst(firstSentence(signKm))}`);
-  if (houseTexts.length > 0) parts.push(`${houseTexts.join("; ")}.`);
+  if (signThemes.length > 0) houseTexts.push(`В знаке проявляются темы: ${formatList(signThemes)}`);
+  if (houseTexts.length > 0) parts.push(`${houseTexts.join(". ")}.`);
 
   const emotions = s.polarity === "negative" ? s.planetProfile?.negativeEmotions : s.planetProfile?.positiveEmotions;
   const emotion = emotions && emotions.length > 0 ? pickByDate(emotions, date, 1) : null;
-  if (emotion) parts.push(`Поэтому сегодня важно учитывать своё состояние: Вы можете почувствовать ${emotion.toLowerCase()}.`);
+  if (emotion) parts.push(`Поэтому сегодня важно учитывать своё состояние. Вы можете ощутить: ${emotion.toLowerCase()}.`);
 
   return parts;
 }
@@ -331,15 +351,12 @@ function describeSecondaryTransit(s: TransitSemantics, index: number): string | 
   if (s.relation?.description?.trim()) {
     return `${head}: ${lowerFirst(firstSentence(s.relation.description))}`;
   }
-  const km = s.planetProfile?.keyMeanings?.trim();
-  if (km) {
-    return `${head} — в игру вступает ${lowerFirst(firstSentence(km))}`;
-  }
-  if (s.planetProfile?.keyMeaningsArr?.length) {
-    return `${head} — акцент на: ${s.planetProfile.keyMeaningsArr.slice(0, 2).join(", ").toLowerCase()}.`;
+  const profileThemes = formatList(profileListText(s.planetProfile), 3);
+  if (profileThemes) {
+    return `${head} — в центре внимания темы: ${profileThemes}.`;
   }
   if (s.themes.length > 0) {
-    return `${head} — в фокусе ${s.themes[0].toLowerCase()}.`;
+    return `${head} — в центре внимания тема: ${s.themes[0]}.`;
   }
   return null;
 }
@@ -356,10 +373,10 @@ function buildSoftRecommendation(main: TransitSemantics, date: Date): string | n
   if (!plant && !crystal && !jewelry && !color) return null;
 
   const parts: string[] = [];
-  if (plant) parts.push(`можно приготовить чай с ${plant.toLowerCase()}`);
+  if (plant) parts.push(`выбрать растение «${plant}» для чая`);
   if (crystal) parts.push(`выбрать кристалл «${crystal}»`);
   if (jewelry) parts.push(`надеть украшение «${jewelry}»`);
-  if (color) parts.push(`добавить в образ ${color.toLowerCase()} цвет`);
+  if (color) parts.push(`добавить в образ цвет «${color}»`);
 
   return `Мягкая рекомендация дня: если Вам откликается символическая практика, ${parts.join(" или ")}. Это не обязательное действие и не медицинская рекомендация, а способ обозначить тему дня через небольшой личный ритуал.`;
 }
