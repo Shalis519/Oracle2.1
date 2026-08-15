@@ -244,20 +244,30 @@ function renderForecastTemplate(text: string, values: Record<string, string>): s
   return text.replace(/\{([a-zA-Z0-9_]+)\}/g, (full, key: string) => values[key] ?? full);
 }
 
+function resolveTemplateHouses(t: TransitAspect): { transitHouse: number | null; natalHouse: number | null } {
+  return { transitHouse: t.transitHouse, natalHouse: t.natalHouse };
+}
+
 async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTemplateRow[] | null> {
-  await ensureForecastTemplateSeeds();
   const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()] ?? t.typeKey?.toLowerCase();
-  if (!aspectKey || !t.transitHouse || !t.natalHouse) return null;
-  const rows = await db
-    .select({ category: forecastTextTemplatesTable.category, context: forecastTextTemplatesTable.context, key: forecastTextTemplatesTable.key, text: forecastTextTemplatesTable.text, sourceNote: forecastTextTemplatesTable.sourceNote, isActive: forecastTextTemplatesTable.isActive })
-    .from(forecastTextTemplatesTable)
-    .where(eq(forecastTextTemplatesTable.isActive, true));
+  const houses = resolveTemplateHouses(t);
+  if (!aspectKey || !houses.transitHouse || !houses.natalHouse) return null;
+  let rows: ForecastTemplateRow[] = [];
+  try {
+    await ensureForecastTemplateSeeds();
+    rows = await db
+      .select({ category: forecastTextTemplatesTable.category, context: forecastTextTemplatesTable.context, key: forecastTextTemplatesTable.key, text: forecastTextTemplatesTable.text, sourceNote: forecastTextTemplatesTable.sourceNote, isActive: forecastTextTemplatesTable.isActive })
+      .from(forecastTextTemplatesTable)
+      .where(eq(forecastTextTemplatesTable.isActive, true));
+  } catch (error) {
+    logger.warn({ error }, "forecast templates unavailable; using embedded defaults");
+  }
   const required = [
     ["entity", "transit", t.transitBody.toLowerCase()],
     ["entity", "natal", t.natalBody.toLowerCase()],
     ["aspect", aspectKey, "default"],
-    ["house", "transit", String(t.transitHouse)],
-    ["house", "natal", String(t.natalHouse)],
+    ["house", "transit", String(houses.transitHouse)],
+    ["house", "natal", String(houses.natalHouse)],
     ["composition", aspectKey, "default"],
   ] as const;
   const byKey = new Map(rows.map((row) => [forecastTemplateKey(row.category, row.context, row.key), row]));
@@ -275,6 +285,7 @@ async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTempla
 
 async function describeContextualMainTransit(s: TransitSemantics): Promise<string[] | null> {
   const t = s.transit;
+  const houses = resolveTemplateHouses(t);
   const rows = await loadForecastTemplateSet(t);
   if (!rows) return null;
   const get = (category: string, context: string, key: string) => rows.find((row) => row.category === category && row.context === context && row.key === key)?.text ?? "";
@@ -286,11 +297,11 @@ async function describeContextualMainTransit(s: TransitSemantics): Promise<strin
     natalEntity: get("entity", "natal", t.natalBody.toLowerCase()),
     aspectName: t.type,
     aspectMeaning: get("aspect", aspectKey, "default"),
-    transitHouse: get("house", "transit", String(t.transitHouse)),
-    natalHouse: get("house", "natal", String(t.natalHouse)),
+    transitHouse: get("house", "transit", String(houses.transitHouse)),
+    natalHouse: get("house", "natal", String(houses.natalHouse)),
   });
   return [
-    buildTransitOpening({ transitBody: t.transitBody, transitSign: t.transitSign, aspect: t.type, natalBody: t.natalBody, natalSign: t.natalSign, transitHouse: t.transitHouse }),
+    buildTransitOpening({ transitBody: t.transitBody, transitSign: t.transitSign, aspect: t.type, natalBody: t.natalBody, natalSign: t.natalSign, transitHouse: houses.transitHouse }),
     ensureSentence(rendered),
   ];
 }
