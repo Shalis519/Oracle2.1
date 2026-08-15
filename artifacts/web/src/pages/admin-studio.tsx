@@ -85,6 +85,19 @@ interface EntityRelation {
   keywords?: string[] | null;
 }
 
+interface ForecastTextTemplate {
+  id: number;
+  category: string;
+  context: string;
+  key: string;
+  title: string;
+  text: string;
+  sourceNote?: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const CINDERELLA_PAIRS = [
   { key: "chiron-venus", label: "Хирон - Венера" },
   { key: "chiron-jupiter", label: "Хирон - Юпитер" },
@@ -952,6 +965,12 @@ export default function AdminStudioPage() {
   const [editingLunar, setEditingLunar] = useState<LunarInterpretation | null>(null);
   const [lunarEditorOpen, setLunarEditorOpen] = useState(false);
   const [lunarForm, setLunarForm] = useState({ category: "house" as "house" | "sign", key: "1", title: "1-й дом лунара", text: "В разработке", sourceNote: "", isActive: true });
+  const [forecastTemplates, setForecastTemplates] = useState<ForecastTextTemplate[]>([]);
+  const [forecastTemplatesLoading, setForecastTemplatesLoading] = useState(false);
+  const [forecastTemplatesSaving, setForecastTemplatesSaving] = useState(false);
+  const [editingForecastTemplate, setEditingForecastTemplate] = useState<ForecastTextTemplate | null>(null);
+  const [forecastTemplateEditorOpen, setForecastTemplateEditorOpen] = useState(false);
+  const [forecastTemplateForm, setForecastTemplateForm] = useState({ category: "entity", context: "transit", key: "mercury", title: "Меркурий в транзитном контексте", text: "В разработке", sourceNote: "", isActive: true });
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -1028,6 +1047,7 @@ export default function AdminStudioPage() {
     loadSynastryInterpretations();
     loadSynastryHouseInterpretations();
     loadLunarInterpretations();
+    loadForecastTemplates();
   }, [loadEntities, loadThemes]);
 
   const loadPhrases = useCallback(async () => {
@@ -1133,6 +1153,37 @@ export default function AdminStudioPage() {
   };
 
   const getLunarSignLabel = (key: string) => ({ aries: "Овен", taurus: "Телец", gemini: "Близнецы", cancer: "Рак", leo: "Лев", virgo: "Дева", libra: "Весы", scorpio: "Скорпион", sagittarius: "Стрелец", capricorn: "Козерог", aquarius: "Водолей", pisces: "Рыбы" } as Record<string, string>)[key] ?? key;
+  const loadForecastTemplates = useCallback(async () => {
+    setForecastTemplatesLoading(true);
+    try {
+      const res = await apiFetch("/admin/forecast-text-templates");
+      const data = await res.json();
+      setForecastTemplates(res.ok ? (data.templates ?? []) : []);
+    } catch { setForecastTemplates([]); }
+    finally { setForecastTemplatesLoading(false); }
+  }, []);
+  const saveForecastTemplate = async () => {
+    setForecastTemplatesSaving(true);
+    try {
+      const path = editingForecastTemplate ? `/admin/forecast-text-templates/${editingForecastTemplate.id}` : "/admin/forecast-text-templates";
+      const payload = editingForecastTemplate
+        ? { text: forecastTemplateForm.text, sourceNote: forecastTemplateForm.sourceNote, isActive: forecastTemplateForm.isActive, title: forecastTemplateForm.title }
+        : forecastTemplateForm;
+      const res = await apiFetch(path, { method: editingForecastTemplate ? "PUT" : "POST", body: JSON.stringify(payload) });
+      if (!res.ok) { const err = await res.json(); toast({ title: "Ошибка сохранения", description: err.error, variant: "destructive" }); return; }
+      setForecastTemplateEditorOpen(false);
+      setEditingForecastTemplate(null);
+      await loadForecastTemplates();
+      toast({ title: "Шаблон прогноза сохранён" });
+    } finally { setForecastTemplatesSaving(false); }
+  };
+  const deleteForecastTemplate = async (id: number) => {
+    if (!confirm("Удалить шаблон прогноза?")) return;
+    const res = await apiFetch(`/admin/forecast-text-templates/${id}`, { method: "DELETE" });
+    if (res.ok) { await loadForecastTemplates(); toast({ title: "Шаблон прогноза удалён" }); }
+  };
+  const forecastCategoryLabel = (category: string) => ({ entity: "Сущность", aspect: "Аспект", house: "Дом", composition: "Сборка" } as Record<string, string>)[category] ?? category;
+  const forecastContextLabel = (context: string) => ({ transit: "Транзит", natal: "Натал", square: "Квадрат", trine: "Тригон", opposition: "Оппозиция", conjunction: "Соединение" } as Record<string, string>)[context] ?? context;
   const getSynastryBodyLabel = (key: string) => SYNastryBodies.find((item) => item.key === key)?.label ?? key;
   const getSynastryAspectLabel = (key: string) => SYNastryAspects.find((item) => item.key === key)?.label ?? key;
   const getSynastryDirectionLabel = (key: string) => SYNastryDirections.find((item) => item.key === key)?.label ?? key;
@@ -1572,6 +1623,7 @@ export default function AdminStudioPage() {
           <TabsTrigger value="cinderella"><Sparkles className="w-4 h-4 mr-2" />Врата Золушки</TabsTrigger>
           <TabsTrigger value="synastry"><Link2 className="w-4 h-4 mr-2" />Общая синастрия</TabsTrigger>
           <TabsTrigger value="lunar"><span className="mr-2">☾</span>Лунар</TabsTrigger>
+          <TabsTrigger value="forecastTemplates"><BrainCircuit className="w-4 h-4 mr-2" />Шаблоны прогноза</TabsTrigger>
         </TabsList>
 
         <TabsContent value="entities" className="space-y-6">
@@ -2000,6 +2052,57 @@ export default function AdminStudioPage() {
             </DialogContent>
           </Dialog>
         </TabsContent>
+        <TabsContent value="forecastTemplates" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Литературные шаблоны прогноза</CardTitle>
+              <p className="text-sm text-muted-foreground">Здесь хранятся готовые смысловые фрагменты для сборки прогноза. Веса и выбор факторов остаются в онтологии, а эти тексты отвечают за связное изложение.</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
+                Каждый шаблон имеет контекст: транзитная или натальная сущность, аспект или дом. Пустые записи показываются как «В разработке» и не перезаписывают Ваши изменения.
+              </div>
+              <Button onClick={() => { setEditingForecastTemplate(null); setForecastTemplateForm({ category: "entity", context: "transit", key: "mercury", title: "Новый шаблон", text: "В разработке", sourceNote: "", isActive: true }); setForecastTemplateEditorOpen(true); }}><Plus className="w-4 h-4 mr-2" />Добавить шаблон</Button>
+              {forecastTemplatesLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : forecastTemplates.length === 0 ? <p className="text-sm text-muted-foreground">Шаблонов пока нет.</p> : (
+                <div className="space-y-3">
+                  {forecastTemplates.map((item) => (
+                    <div key={item.id} className="rounded-lg border border-border p-4 space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-medium">{item.title}</p>
+                          <p className="text-xs text-muted-foreground">{forecastCategoryLabel(item.category)} · {forecastContextLabel(item.context)} · {item.key}</p>
+                        </div>
+                        <div className="flex gap-2 shrink-0">
+                          <Button size="sm" variant="outline" onClick={() => { setEditingForecastTemplate(item); setForecastTemplateForm({ category: item.category, context: item.context, key: item.key, title: item.title, text: item.text || "В разработке", sourceNote: item.sourceNote ?? "", isActive: item.isActive }); setForecastTemplateEditorOpen(true); }}><Pencil className="w-4 h-4 mr-1" />Изменить</Button>
+                          <Button size="sm" variant="ghost" onClick={() => deleteForecastTemplate(item.id)}><Trash2 className="w-4 h-4" /></Button>
+                        </div>
+                      </div>
+                      <p className={cn("whitespace-pre-wrap text-sm", !item.text?.trim() || item.text === "В разработке" ? "text-amber-200" : "text-muted-foreground")}>{item.text?.trim() || "В разработке"}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          <Dialog open={forecastTemplateEditorOpen} onOpenChange={(open) => { setForecastTemplateEditorOpen(open); if (!open) setEditingForecastTemplate(null); }}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader><DialogTitle>{editingForecastTemplate ? "Изменить шаблон прогноза" : "Новый шаблон прогноза"}</DialogTitle></DialogHeader>
+              <div className="space-y-4">
+                {editingForecastTemplate && <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">{forecastCategoryLabel(editingForecastTemplate.category)} · {forecastContextLabel(editingForecastTemplate.context)} · {editingForecastTemplate.key}<br /><span className="text-muted-foreground">Контекст и ключ фиксированы для существующей записи.</span></div>}
+                {!editingForecastTemplate && <div className="grid gap-4 md:grid-cols-3">
+                  <div><Label>Категория</Label><Select value={forecastTemplateForm.category} onValueChange={(value) => setForecastTemplateForm((form) => ({ ...form, category: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{[["entity", "Сущность"], ["aspect", "Аспект"], ["house", "Дом"], ["composition", "Сборка"]].map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></div>
+                  <div><Label>Контекст</Label><Input value={forecastTemplateForm.context} onChange={(e) => setForecastTemplateForm((form) => ({ ...form, context: e.target.value }))} placeholder="transit, natal, square" /></div>
+                  <div><Label>Ключ</Label><Input value={forecastTemplateForm.key} onChange={(e) => setForecastTemplateForm((form) => ({ ...form, key: e.target.value }))} placeholder="mercury, 1, default" /></div>
+                </div>}
+                <div><Label>Название</Label><Input value={forecastTemplateForm.title} onChange={(e) => setForecastTemplateForm((form) => ({ ...form, title: e.target.value }))} /></div>
+                <div><Label>Литературный фрагмент</Label><Textarea value={forecastTemplateForm.text} onChange={(e) => setForecastTemplateForm((form) => ({ ...form, text: e.target.value }))} rows={10} /></div>
+                <div><Label>Источник или примечание</Label><Input value={forecastTemplateForm.sourceNote} onChange={(e) => setForecastTemplateForm((form) => ({ ...form, sourceNote: e.target.value }))} /></div>
+                <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setForecastTemplateEditorOpen(false)}>Отмена</Button><Button onClick={saveForecastTemplate} disabled={forecastTemplatesSaving}>{forecastTemplatesSaving ? "Сохранение..." : "Сохранить"}</Button></div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </TabsContent>
+
         <TabsContent value="backup" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>

@@ -1,4 +1,6 @@
 import { logger } from "./logger";
+import { eq } from "drizzle-orm";
+import { db, forecastTextTemplatesTable } from "@workspace/db";
 import { type TransitAspect } from "./astrology";
 import {
   getEntity,
@@ -82,6 +84,14 @@ interface ThemeEvidence {
   name: string;
   score: number;
   sources: string[];
+}
+
+interface ForecastTemplateRow {
+  category: string;
+  context: string;
+  key: string;
+  text: string;
+  isActive: boolean;
 }
 
 interface TransitSemantics {
@@ -218,12 +228,67 @@ function contradicts(a: TransitSemantics, b: TransitSemantics): boolean {
 
 /* ─── Построение текста ─── */
 
+const ASPECT_TEMPLATE_KEYS: Record<string, string> = {
+  "соединение": "conjunction",
+  "секстиль": "sextile",
+  "квадрат": "square",
+  "тригон": "trine",
+  "оппозиция": "opposition",
+};
+
+function renderForecastTemplate(text: string, values: Record<string, string>): string {
+  return text.replace(/\{([a-zA-Z0-9_]+)\}/g, (full, key: string) => values[key] ?? full);
+}
+
+async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTemplateRow[] | null> {
+  const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()];
+  if (!aspectKey || !t.transitHouse || !t.natalHouse) return null;
+  const rows = await db
+    .select({ category: forecastTextTemplatesTable.category, context: forecastTextTemplatesTable.context, key: forecastTextTemplatesTable.key, text: forecastTextTemplatesTable.text, isActive: forecastTextTemplatesTable.isActive })
+    .from(forecastTextTemplatesTable)
+    .where(eq(forecastTextTemplatesTable.isActive, true));
+  const required = [
+    ["entity", "transit", t.transitBody.toLowerCase()],
+    ["entity", "natal", t.natalBody.toLowerCase()],
+    ["aspect", aspectKey, "default"],
+    ["house", "transit", String(t.transitHouse)],
+    ["house", "natal", String(t.natalHouse)],
+    ["composition", aspectKey, "default"],
+  ] as const;
+  const byKey = new Map(rows.map((row) => [`${row.category}:${row.context}:${row.key}`, row]));
+  const selected = required.map(([category, context, key]) => byKey.get(`${category}:${context}:${key}`)).filter((row): row is ForecastTemplateRow => Boolean(row && row.text.trim() && row.text.trim() !== "В разработке"));
+  return selected.length === required.length ? selected : null;
+}
+
+async function describeContextualMainTransit(s: TransitSemantics): Promise<string[] | null> {
+  const t = s.transit;
+  const rows = await loadForecastTemplateSet(t);
+  if (!rows) return null;
+  const get = (category: string, context: string, key: string) => rows.find((row) => row.category === category && row.context === context && row.key === key)?.text ?? "";
+  const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()];
+  const composition = get("composition", aspectKey, "default");
+  const rendered = renderForecastTemplate(composition, {
+    transitEntity: get("entity", "transit", t.transitBody.toLowerCase()),
+    natalEntity: bodyInstrumental(t.natalBody),
+    aspectName: t.type,
+    aspectMeaning: get("aspect", aspectKey, "default"),
+    transitHouse: get("house", "transit", String(t.transitHouse)),
+    natalHouse: get("house", "natal", String(t.natalHouse)),
+  });
+  return [
+    buildTransitOpening({ transitBody: t.transitBody, transitSign: t.transitSign, aspect: t.type, natalBody: t.natalBody, natalSign: t.natalSign, transitHouse: t.transitHouse }),
+    ensureSentence(rendered),
+  ];
+}
+
 function normalizeRelationDescription(description: string): string {
   return relationToPersonalInfluence(description) ?? ensureSentence(description);
 }
 
-function describeMainTransit(s: TransitSemantics, date: Date): string[] {
+async function describeMainTransit(s: TransitSemantics, date: Date): Promise<string[]> {
   const t = s.transit;
+  const contextual = await describeContextualMainTransit(s);
+  if (contextual) return contextual;
   const parts: string[] = [];
   parts.push(buildTransitOpening({
     transitBody: t.transitBody,
@@ -370,7 +435,7 @@ export class FuturisticGenerator {
       const paragraphs: string[] = [];
 
       // Абзац 1: главный транзит.
-      paragraphs.push(describeMainTransit(main, date).join(" "));
+      paragraphs.push((await describeMainTransit(main, date)).join(" "));
 
       // Абзацы 2-3: дополнительные транзиты, коротко.
       picked.slice(1).forEach((s, i) => {

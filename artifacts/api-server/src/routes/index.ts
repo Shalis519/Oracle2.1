@@ -19,6 +19,7 @@ import ontologyExportRouter from "./ontologyExport";
 import adminCinderellaRouter from "./adminCinderella";
 import adminSynastryRouter from "./adminSynastry";
 import adminLunarRouter from "./adminLunar";
+import adminForecastTemplatesRouter from "./adminForecastTemplates";
 
 const router: IRouter = Router();
 
@@ -42,5 +43,6 @@ router.use(ontologyExportRouter);
 router.use(adminCinderellaRouter);
 router.use(adminSynastryRouter);
 router.use(adminLunarRouter);
+router.use(adminForecastTemplatesRouter);
 
 export default router;

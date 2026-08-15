@@ -10,6 +10,7 @@ import {
   motivationPhrasesTable,
   cinderellaInterpretationsTable,
   lunarInterpretationsTable,
+  forecastTextTemplatesTable,
   ontologyExportSchema,
   ontologyImportSchema,
   type OntologyExport,
@@ -24,7 +25,7 @@ const router: IRouter = Router();
 
 router.get("/admin/ontology/export", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
   try {
-    const [entities, themes, entityThemes, profiles, relations, phrases, cinderellaInterpretations, lunarInterpretations] = await Promise.all([
+    const [entities, themes, entityThemes, profiles, relations, phrases, cinderellaInterpretations, lunarInterpretations, forecastTextTemplates] = await Promise.all([
       db.select().from(ontologyEntitiesTable),
       db.select().from(ontologyThemesTable),
       db.select().from(ontologyEntityThemesTable),
@@ -33,6 +34,7 @@ router.get("/admin/ontology/export", requireAuth, requireAdmin, async (_req, res
       db.select().from(motivationPhrasesTable),
       db.select().from(cinderellaInterpretationsTable),
       db.select().from(lunarInterpretationsTable),
+      db.select().from(forecastTextTemplatesTable),
     ]);
 
     const entityMap = new Map(entities.map((e) => [e.id, e]));
@@ -117,6 +119,15 @@ router.get("/admin/ontology/export", requireAuth, requireAdmin, async (_req, res
         sourceNote: item.sourceNote,
         isActive: item.isActive,
       })),
+      forecastTextTemplates: forecastTextTemplates.map((item) => ({
+        category: item.category,
+        context: item.context,
+        key: item.key,
+        title: item.title,
+        text: item.text,
+        sourceNote: item.sourceNote,
+        isActive: item.isActive,
+      })),
     };
 
     res.json({ success: true, data: exportData });
@@ -185,6 +196,7 @@ router.post("/admin/ontology/import", requireAuth, requireAdmin, async (req, res
       await client.query("DELETE FROM motivation_phrases");
       await client.query("DELETE FROM cinderella_interpretations");
       await client.query("DELETE FROM lunar_interpretations");
+      await client.query("DELETE FROM forecast_text_templates");
       await client.query("DELETE FROM ontology_entity_relations");
       await client.query("DELETE FROM ontology_entity_themes");
       await client.query("DELETE FROM ontology_entity_profiles");
@@ -294,6 +306,16 @@ router.post("/admin/ontology/import", requireAuth, requireAdmin, async (req, res
          VALUES ($1,$2,$3,$4,$5,$6,NOW(),NOW())
          ON CONFLICT (category, key) DO UPDATE SET title=$3, text=$4, source_note=$5, is_active=$6, updated_at=NOW()`,
         [li.category, li.key, li.title, li.text || "В разработке", li.sourceNote ?? null, li.isActive],
+      );
+    }
+
+    // Upsert forecast text templates
+    for (const ft of data.forecastTextTemplates ?? []) {
+      await client.query(
+        `INSERT INTO forecast_text_templates (category, context, key, title, text, source_note, is_active, created_at, updated_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,NOW(),NOW())
+         ON CONFLICT (category, context, key) DO UPDATE SET title=$4, text=$5, source_note=$6, is_active=$7, updated_at=NOW()`,
+        [ft.category, ft.context, ft.key, ft.title, ft.text || "В разработке", ft.sourceNote ?? null, ft.isActive],
       );
     }
 
