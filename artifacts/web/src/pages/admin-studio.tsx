@@ -1675,16 +1675,16 @@ export default function AdminStudioPage() {
       )}
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-8 md:w-auto">
-          <TabsTrigger value="entities"><Layers className="w-4 h-4 mr-2" />Сущности</TabsTrigger>
-          <TabsTrigger value="themes"><BookOpen className="w-4 h-4 mr-2" />Жизненные темы</TabsTrigger>
-          <TabsTrigger value="phrases"><MessageSquareQuote className="w-4 h-4 mr-2" />Фразы</TabsTrigger>
-          <TabsTrigger value="backup"><Download className="w-4 h-4 mr-2" />Бэкап</TabsTrigger>
-          <TabsTrigger value="cinderella"><Sparkles className="w-4 h-4 mr-2" />Врата Золушки</TabsTrigger>
-          <TabsTrigger value="synastry"><Link2 className="w-4 h-4 mr-2" />Общая синастрия</TabsTrigger>
-          <TabsTrigger value="lunar"><span className="mr-2">☾</span>Лунар</TabsTrigger>
-          <TabsTrigger value="forecastTemplates"><BrainCircuit className="w-4 h-4 mr-2" />Шаблоны прогноза</TabsTrigger>
-          <TabsTrigger value="longTerm"><RefreshCw className="w-4 h-4 mr-2" />Долгосрочный прогноз</TabsTrigger>
+        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0 md:w-auto">
+          <TabsTrigger value="entities" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><Layers className="w-4 h-4 mr-2" />Сущности</TabsTrigger>
+          <TabsTrigger value="themes" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><BookOpen className="w-4 h-4 mr-2" />Жизненные темы</TabsTrigger>
+          <TabsTrigger value="phrases" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><MessageSquareQuote className="w-4 h-4 mr-2" />Фразы</TabsTrigger>
+          <TabsTrigger value="backup" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><Download className="w-4 h-4 mr-2" />Бэкап</TabsTrigger>
+          <TabsTrigger value="cinderella" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><Sparkles className="w-4 h-4 mr-2" />Врата Золушки</TabsTrigger>
+          <TabsTrigger value="synastry" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><Link2 className="w-4 h-4 mr-2" />Общая синастрия</TabsTrigger>
+          <TabsTrigger value="lunar" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><span className="mr-2">☾</span>Лунар</TabsTrigger>
+          <TabsTrigger value="forecastTemplates" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><BrainCircuit className="w-4 h-4 mr-2" />Шаблоны прогноза</TabsTrigger>
+          <TabsTrigger value="longTerm" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><RefreshCw className="w-4 h-4 mr-2" />Долгосрочный прогноз</TabsTrigger>
         </TabsList>
 
         <TabsContent value="entities" className="space-y-6">
