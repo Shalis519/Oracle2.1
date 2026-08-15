@@ -38,6 +38,15 @@ export function bodyInstrumental(name: string): string {
   return BODY_INSTRUMENTAL[name.toLowerCase()] ?? name;
 }
 
+export function natalBodyInHouse(name: string, house: number): string {
+  const lower = name.toLowerCase();
+  const feminine = new Set(["венера", "луна"]);
+  const neuter = new Set(["солнце"]);
+  const adjective = feminine.has(lower) ? "Натальная" : neuter.has(lower) ? "Натальное" : "Натальный";
+  const verb = feminine.has(lower) ? "расположена" : neuter.has(lower) ? "расположено" : "расположен";
+  return `${adjective} ${name} ${verb} в Вашем ${house}-м доме.`;
+}
+
 export function aspectAccusative(aspect: string): string {
   return aspect.toLowerCase() === "оппозиция" ? "оппозицию" : aspect.toLowerCase();
 }
@@ -60,7 +69,7 @@ export function lowerFirst(text: string): string {
 
 export function formatList(items: string[], limit = 4): string {
   const clean = items
-    .map((item) => item.trim().replace(/[.!?]+$/g, ""))
+    .map((item) => lowerFirst(item.trim().replace(/[.!?]+$/g, "")))
     .filter(Boolean)
     .slice(0, limit);
   if (clean.length === 0) return "";
@@ -70,29 +79,29 @@ export function formatList(items: string[], limit = 4): string {
 }
 
 export function toPersonalThemes(text: string): string {
-  return text
-    .replace(/\bмышление\b/g, "Ваше мышление")
-    .replace(/\bречь\b/g, "Вашу речь")
-    .replace(/\bанализ\b/g, "Ваш анализ")
-    .replace(/\bкоммуникация\b/g, "Вашу коммуникацию")
-    .replace(/\bсила воли\b/g, "Вашу силу воли")
-    .replace(/\bтворчество\b/g, "Ваше творчество")
-    .replace(/\bсамовыражение\b/g, "Ваше самовыражение")
-    .replace(/\bучёба\b/g, "Вашу учёбу")
-    .replace(/\bобщение\b/g, "Ваше общение");
+  return lowerFirst(text.trim())
+    .replace(/\bмышление\b/gi, "Ваше мышление")
+    .replace(/\bречь\b/gi, "Вашу речь")
+    .replace(/\bанализ\b/gi, "Ваш анализ")
+    .replace(/\bкоммуникация\b/gi, "Вашу коммуникацию")
+    .replace(/\bсила воли\b/gi, "Вашу силу воли")
+    .replace(/\bтворчество\b/gi, "Ваше творчество")
+    .replace(/\bсамовыражение\b/gi, "Ваше самовыражение")
+    .replace(/\bучёба\b/gi, "Вашу учёбу")
+    .replace(/\bобщение\b/gi, "Ваше общение");
 }
 
 export function toAccusativeThemes(text: string): string {
   return text
-    .replace(/\bмышление\b/g, "мышление")
-    .replace(/\bречь\b/g, "речь")
-    .replace(/\bанализ\b/g, "анализ")
-    .replace(/\bкоммуникация\b/g, "коммуникацию")
-    .replace(/\bсила воли\b/g, "силу воли")
-    .replace(/\bтворчество\b/g, "творчество")
-    .replace(/\bсамовыражение\b/g, "самовыражение")
-    .replace(/\bучёба\b/g, "учёбу")
-    .replace(/\bобщение\b/g, "общение");
+    .replace(/\bмышление\b/gi, "мышление")
+    .replace(/\bречь\b/gi, "речь")
+    .replace(/\bанализ\b/gi, "анализ")
+    .replace(/\bкоммуникация\b/gi, "коммуникацию")
+    .replace(/\bсила воли\b/gi, "силу воли")
+    .replace(/\bтворчество\b/gi, "творчество")
+    .replace(/\bсамовыражение\b/gi, "самовыражение")
+    .replace(/\bучёба\b/gi, "учёбу")
+    .replace(/\bобщение\b/gi, "общение");
 }
 
 export function plantForTea(plant: string): string {
@@ -110,8 +119,8 @@ export function plantForTea(plant: string): string {
 
 export function profileListText(profile: { keyMeaningsArr?: string[]; keyMeanings?: string | null } | null): string[] {
   if (!profile) return [];
-  if (profile.keyMeaningsArr?.length) return profile.keyMeaningsArr;
-  return Array.from(new Set(profile.keyMeanings?.split(/[,;]+/).map((item) => item.trim()).filter(Boolean) ?? []));
+  if (profile.keyMeaningsArr?.length) return Array.from(new Set(profile.keyMeaningsArr.map((item) => lowerFirst(item.trim())).filter(Boolean)));
+  return Array.from(new Set(profile.keyMeanings?.split(/[,;]+/).map((item) => lowerFirst(item.trim())).filter(Boolean) ?? []));
 }
 
 export function buildTransitOpening(input: {
@@ -124,7 +133,7 @@ export function buildTransitOpening(input: {
   natalHouse?: number | null;
 }): string {
   const housePart = input.transitHouse ? ` Транзит проходит через Ваш ${input.transitHouse}-й дом.` : "";
-  const natalHousePart = input.natalHouse ? ` Натальная планета расположена в Вашем ${input.natalHouse}-м доме.` : "";
+  const natalHousePart = input.natalHouse ? ` ${natalBodyInHouse(input.natalBody, input.natalHouse)}` : "";
   return `Сегодня ${input.transitBody} находится ${signInPrepositional(input.transitSign)} и образует ${aspectAccusative(input.aspect)} с ${bodyInstrumental(input.natalBody)} ${signInPrepositional(input.natalSign)}.${housePart}${natalHousePart}`;
 }
 

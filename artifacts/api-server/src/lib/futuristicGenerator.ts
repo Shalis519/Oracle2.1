@@ -302,9 +302,9 @@ function buildSoftRecommendation(main: TransitSemantics, date: Date): string | n
 
   const parts: string[] = [];
   if (plant) parts.push(`приготовить чай с ${plantForTea(plant)}`);
-  if (crystal) parts.push(`выбрать кристалл «${crystal}»`);
-  if (jewelry) parts.push(`надеть украшение «${jewelry}»`);
-  if (color) parts.push(`добавить в образ цвет «${color}»`);
+  if (crystal) parts.push(`выбрать кристалл «${lowerFirst(crystal)}»`);
+  if (jewelry) parts.push(`надеть украшение «${lowerFirst(jewelry)}»`);
+  if (color) parts.push(`добавить в образ цвет «${lowerFirst(color)}»`);
 
   return `Мягкая рекомендация дня: если Вам откликается символическая практика, ${parts.join(" или ")}. Это не обязательное действие и не медицинская рекомендация, а способ обозначить тему дня через небольшой личный ритуал.`;
 }
