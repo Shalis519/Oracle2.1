@@ -190,6 +190,33 @@ export async function seedOntology() {
 
   const allDefs = [...allAstrologyEntities, ...arcanaDefs];
 
+  // Подтверждённые соответствия из Obsidian/Hermes. Кристаллы и украшения
+  // намеренно не заполняются: в источнике нет прямой планетарной таблицы.
+  const planetaryPlants: Record<string, string[]> = {
+    sun: ["Акация", "Ангелика", "Ясень", "Лавр", "Голубой лотос", "Календула", "Гвоздика", "Кедр", "Ромашка", "Корица", "Ладан", "Лимон", "Ноготки", "Апельсин", "Розмарин", "Подсолнух"],
+    moon: ["Алоэ", "Анис", "Мелисса", "Аир", "Кизил", "Шалфей садовый", "Жасмин", "Мирра", "Валериана", "Ива"],
+    mercury: ["Миндаль", "Бергамот", "Кофе", "Фенхель", "Лаванда", "Лимонная трава", "Мандрагора", "Мята", "Валериана"],
+    venus: ["Африканская фиалка", "Алтей", "Яблоня", "Авокадо", "Берёза", "Ежевика", "Кардамон", "Котовник", "Водосбор", "Первоцвет", "Бузина", "Вереск", "Гибискус", "Пустырник", "Полынь", "Барвинок", "Роза", "Пижма", "Тимьян", "Валериана", "Вербена", "Тысячелистник"],
+    mars: ["Душистый перец", "Анемона", "Базилик", "Дрок", "Кактус", "Корица", "Кориандр", "Драконова кровь", "Гибискус", "Падуб", "Крапива", "Рута", "Табак", "Горчица", "Перец чёрный", "Сосна"],
+    jupiter: ["Репейник", "Огуречная трава", "Одуванчик", "Шалфей садовый", "Жимолость", "Валериана"],
+    saturn: ["Аконит", "Белладонна", "Горец змеиный", "Окопник", "Чертовы башмачки", "Конопля", "Пачули", "Тис", "Коровяк", "Хвощ", "Кипарис"],
+    uranus: ["Кофе"],
+    neptune: ["Ольха", "Жасмин", "Лаванда"],
+    pluto: ["Кизил"],
+  };
+  const planetaryColors: Record<string, string[]> = {
+    sun: ["Жёлтый", "Золотой"],
+    moon: ["Белый", "Серебряный", "Серый"],
+    mercury: ["Оранжевый", "Синий", "Белый"],
+    venus: ["Зелёный", "Розовый"],
+    mars: ["Красный", "Оранжевый", "Зелёный"],
+    jupiter: ["Зелёный", "Фиолетовый"],
+    saturn: ["Чёрный"],
+    uranus: [],
+    neptune: ["Синий"],
+    pluto: [],
+  };
+
   await db
     .insert(ontologyEntitiesTable)
     .values(
@@ -239,7 +266,10 @@ export async function seedOntology() {
         archetypes: d.archetypes,
         professions: d.professions,
         objects: d.objects,
-        colors: d.colors,
+        plants: planetaryPlants[d.code] ?? [],
+        crystals: [],
+        jewelry: [],
+        colors: planetaryColors[d.code] ?? d.colors,
         numbers: d.numbers,
         days: d.days,
         animals: d.animals,
@@ -253,7 +283,13 @@ export async function seedOntology() {
     await db
       .insert(ontologyEntityProfilesTable)
       .values(profileInserts)
-      .onConflictDoNothing();
+      .onConflictDoUpdate({
+        target: ontologyEntityProfilesTable.entityId,
+        set: {
+          plants: sql`CASE WHEN jsonb_array_length(${ontologyEntityProfilesTable.plants}) = 0 THEN excluded.plants ELSE ${ontologyEntityProfilesTable.plants} END`,
+          colors: sql`CASE WHEN jsonb_array_length(${ontologyEntityProfilesTable.colors}) = 0 THEN excluded.colors ELSE ${ontologyEntityProfilesTable.colors} END`,
+        },
+      });
   }
 
   // Связи сущностей с темами

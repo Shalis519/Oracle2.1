@@ -345,6 +345,25 @@ function describeSecondaryTransit(s: TransitSemantics, index: number): string | 
 }
 
 /** Совет дня из профилей доминирующего транзита (по полярности). */
+function buildSoftRecommendation(main: TransitSemantics, date: Date): string | null {
+  const profile = main.planetProfile;
+  if (!profile) return null;
+
+  const plant = pickByDate(profile.plants ?? [], date, 11);
+  const crystal = pickByDate(profile.crystals ?? [], date, 12);
+  const jewelry = pickByDate(profile.jewelry ?? [], date, 13);
+  const color = pickByDate(profile.colors ?? [], date, 14);
+  if (!plant && !crystal && !jewelry && !color) return null;
+
+  const parts: string[] = [];
+  if (plant) parts.push(`можно приготовить чай с ${plant.toLowerCase()}`);
+  if (crystal) parts.push(`выбрать кристалл «${crystal}»`);
+  if (jewelry) parts.push(`надеть украшение «${jewelry}»`);
+  if (color) parts.push(`добавить в образ ${color.toLowerCase()} цвет`);
+
+  return `Мягкая рекомендация дня: если Вам откликается символическая практика, ${parts.join(" или ")}. Это не обязательное действие и не медицинская рекомендация, а способ обозначить тему дня через небольшой личный ритуал.`;
+}
+
 function buildAdvice(main: TransitSemantics): string | null {
   const candidates =
     main.polarity === "negative"
@@ -418,6 +437,10 @@ export class FuturisticGenerator {
       // Совет дня из профилей.
       const advice = buildAdvice(main);
       if (advice) paragraphs.push(advice);
+
+      // Мягкая символическая рекомендация из соответствий главной планеты.
+      const softRecommendation = buildSoftRecommendation(main, date);
+      if (softRecommendation) paragraphs.push(softRecommendation);
 
       // Мотивационная фраза из Studio — последним предложением.
       if (motivationPhrase?.trim()) {

@@ -57,6 +57,9 @@ export interface EntityProfile {
   archetypes: string[];
   professions: string[];
   objects: string[];
+  plants: string[];
+  crystals: string[];
+  jewelry: string[];
   colors: string[];
   numbers: string[];
   days: string[];
@@ -149,6 +152,9 @@ async function buildEntityMap(): Promise<Map<string, OntologyEntity>> {
           archetypes: (entityProfile.archetypes as string[]) ?? [],
           professions: (entityProfile.professions as string[]) ?? [],
           objects: (entityProfile.objects as string[]) ?? [],
+          plants: (entityProfile.plants as string[]) ?? [],
+          crystals: (entityProfile.crystals as string[]) ?? [],
+          jewelry: (entityProfile.jewelry as string[]) ?? [],
           colors: (entityProfile.colors as string[]) ?? [],
           numbers: (entityProfile.numbers as string[]) ?? [],
           days: (entityProfile.days as string[]) ?? [],

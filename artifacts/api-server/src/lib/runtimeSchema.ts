@@ -18,4 +18,10 @@ export async function ensureRuntimeSchema(): Promise<void> {
     CREATE UNIQUE INDEX IF NOT EXISTS chat_read_state_user_id_idx
     ON chat_read_state (user_id)
   `);
+  await db.execute(sql`
+    ALTER TABLE ontology_entity_profiles
+      ADD COLUMN IF NOT EXISTS plants JSONB NOT NULL DEFAULT '[]'::jsonb,
+      ADD COLUMN IF NOT EXISTS crystals JSONB NOT NULL DEFAULT '[]'::jsonb,
+      ADD COLUMN IF NOT EXISTS jewelry JSONB NOT NULL DEFAULT '[]'::jsonb
+  `);
 }

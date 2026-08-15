@@ -197,6 +197,9 @@ interface Profile {
   archetypes?: string[];
   professions?: string[];
   objects?: string[];
+  plants?: string[];
+  crystals?: string[];
+  jewelry?: string[];
   colors?: string[];
   numbers?: string[];
   days?: string[];
@@ -405,6 +408,9 @@ function ProfileForm({
     archetypes: profile?.archetypes ?? [],
     professions: profile?.professions ?? [],
     objects: profile?.objects ?? [],
+    plants: profile?.plants ?? [],
+    crystals: profile?.crystals ?? [],
+    jewelry: profile?.jewelry ?? [],
     colors: profile?.colors ?? [],
     numbers: profile?.numbers ?? [],
     days: profile?.days ?? [],
@@ -508,6 +514,9 @@ function ProfileForm({
         <ChipListEditor label="Архетипы" items={arrValues.archetypes} onChange={(v) => handleArrChange("archetypes", v)} />
         <ChipListEditor label="Профессии" items={arrValues.professions} onChange={(v) => handleArrChange("professions", v)} />
         <ChipListEditor label="Предметы" items={arrValues.objects} onChange={(v) => handleArrChange("objects", v)} />
+        <ChipListEditor label="Растения" items={arrValues.plants} onChange={(v) => handleArrChange("plants", v)} />
+        <ChipListEditor label="Кристаллы" items={arrValues.crystals} onChange={(v) => handleArrChange("crystals", v)} />
+        <ChipListEditor label="Украшения" items={arrValues.jewelry} onChange={(v) => handleArrChange("jewelry", v)} />
         <ChipListEditor label="Цвета" items={arrValues.colors} onChange={(v) => handleArrChange("colors", v)} />
         <ChipListEditor label="Числа" items={arrValues.numbers} onChange={(v) => handleArrChange("numbers", v)} />
         <ChipListEditor label="Дни недели" items={arrValues.days} onChange={(v) => handleArrChange("days", v)} />
