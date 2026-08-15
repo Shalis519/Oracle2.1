@@ -232,6 +232,9 @@ function contradicts(a: TransitSemantics, b: TransitSemantics): boolean {
 
 /* ─── Построение текста ─── */
 
+// Временный флаг: шаблоны проверяются отдельно и пока не вмешиваются в основной live-прогноз.
+const ENABLE_CONTEXTUAL_FORECAST_TEMPLATES = false;
+
 const ASPECT_TEMPLATE_KEYS: Record<string, string> = {
   "соединение": "conjunction",
   "секстиль": "sextile",
@@ -312,7 +315,7 @@ function normalizeRelationDescription(description: string): string {
 
 async function describeMainTransit(s: TransitSemantics, date: Date): Promise<string[]> {
   const t = s.transit;
-  const contextual = await describeContextualMainTransit(s);
+  const contextual = ENABLE_CONTEXTUAL_FORECAST_TEMPLATES ? await describeContextualMainTransit(s) : null;
   if (contextual) return contextual;
   const parts: string[] = [];
   parts.push(buildTransitOpening({
