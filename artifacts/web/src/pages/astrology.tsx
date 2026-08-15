@@ -296,7 +296,17 @@ export default function AstrologyPage() {
       {chart.lunarReturn && (
         <Card className="bg-card/40 backdrop-blur-md border-primary/20">
           <CardHeader className="pb-2">
-            <CardTitle className="font-serif text-lg">Лунар</CardTitle>
+            <CardTitle className="font-serif text-lg">
+              <button
+                type="button"
+                className="flex w-full items-center justify-between gap-3 text-left"
+                onClick={() => setLunarRecommendationsOpen((open) => !open)}
+                aria-expanded={lunarRecommendationsOpen}
+              >
+                <span>Лунар</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${lunarRecommendationsOpen ? "rotate-180" : ""}`} />
+              </button>
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <p>
@@ -314,24 +324,16 @@ export default function AstrologyPage() {
             )}
             <p><span className="font-medium">Луна лунара:</span> {chart.lunarReturn.moon.sign}, {chart.lunarReturn.moon.degreeInSign}, {chart.lunarReturn.moon.house ? `${chart.lunarReturn.moon.house} дом` : "дом не определён"}</p>
             <p><span className="font-medium">Главные темы месяца:</span> {chart.lunarReturn.keyThemes.join(", ")}</p>
-            <div className="rounded-md border border-primary/15 bg-primary/5">
-              <button
-                type="button"
-                className="flex w-full items-center justify-between gap-3 p-3 text-left font-medium"
-                onClick={() => setLunarRecommendationsOpen((open) => !open)}
-                aria-expanded={lunarRecommendationsOpen}
-              >
-                <span>Рекомендации лунара</span>
-                <ChevronDown className={`h-4 w-4 transition-transform ${lunarRecommendationsOpen ? "rotate-180" : ""}`} />
-              </button>
-              {lunarRecommendationsOpen && (
-                <div className="space-y-2 border-t border-primary/10 px-3 pb-3 pt-3">
-                  {chart.lunarReturn.recommendations.map((recommendation, index) => (
+            {lunarRecommendationsOpen && (
+              <div className="rounded-md border border-primary/15 bg-primary/5 px-3 pb-3 pt-3">
+                <p className="mb-2 font-medium">Рекомендации лунара</p>
+                <div className="space-y-2">
+                  {(chart.lunarReturn.recommendations ?? ["В разработке"]).map((recommendation, index) => (
                     <p key={index} className={recommendation === "В разработке" ? "text-amber-200" : "leading-relaxed text-muted-foreground"}>{recommendation}</p>
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

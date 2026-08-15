@@ -292,6 +292,15 @@ function contradicts(a: TransitSemantics, b: TransitSemantics): boolean {
 
 /* ─── Построение текста ─── */
 
+function normalizeRelationDescription(description: string): string {
+  const cleaned = description.trim();
+  const themesMatch = cleaned.match(/(?:это\s+)?затрагивает\s+темы?\s*:?\s*(.+?)(?:[.!?]|$)/i);
+  if (themesMatch?.[1]) {
+    return `Этот транзит затрагивает ${toAccusativeThemes(themesMatch[1].trim())}.`;
+  }
+  return ensureSentence(cleaned);
+}
+
 function describeMainTransit(s: TransitSemantics, date: Date): string[] {
   const t = s.transit;
   const parts: string[] = [];
@@ -303,10 +312,10 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
   );
 
   if (s.relation?.description?.trim()) {
-    parts.push(ensureSentence(s.relation.description));
+    parts.push(normalizeRelationDescription(s.relation.description));
   } else {
     const fallback = formatList(profileListText(s.planetProfile));
-    if (fallback) parts.push(`В центре влияния находятся темы: ${fallback}.`);
+    if (fallback) parts.push(`Этот транзит затрагивает ${toAccusativeThemes(fallback)}.`);
   }
 
   const topEvidence = s.themeEvidence.slice(0, 2);
@@ -318,8 +327,8 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
       .join("; ");
     parts.push(
       sourceText
-        ? `Главный фокус дня: ${focus}. Эта тема подтверждается несколькими факторами: ${sourceText}.`
-        : `Главный фокус дня: ${focus}.`,
+        ? `Главная тема дня - ${focus}. Она подтверждается несколькими факторами: ${sourceText}.`
+        : `Главная тема дня - ${focus}.`,
     );
   }
 
@@ -327,13 +336,13 @@ function describeMainTransit(s: TransitSemantics, date: Date): string[] {
   const houseTexts: string[] = [];
   if (t.transitHouse && s.houseProfile) {
     const themes = formatList(profileListText(s.houseProfile));
-    if (themes) houseTexts.push(`В ${t.transitHouse}-м доме активируются темы: ${themes}`);
+    if (themes) houseTexts.push(`В ${t.transitHouse}-м доме усиливаются темы: ${themes}`);
   }
   if (t.natalHouse && s.natalHouseProfile && t.natalHouse !== t.transitHouse) {
     const themes = formatList(profileListText(s.natalHouseProfile));
-    if (themes) houseTexts.push(`Дополнительно затронута сфера ${t.natalHouse}-го дома; темы: ${themes}`);
+    if (themes) houseTexts.push(`Это также связывает транзит с темами ${t.natalHouse}-го дома: ${themes}`);
   }
-  if (signThemes.length > 0) houseTexts.push(`В знаке проявляются темы: ${formatList(signThemes)}`);
+  if (signThemes.length > 0) houseTexts.push(`Положение в знаке направляет внимание на ${toAccusativeThemes(formatList(signThemes))}`);
   if (houseTexts.length > 0) parts.push(`${houseTexts.join(". ")}.`);
 
   const emotions = s.polarity === "negative" ? s.planetProfile?.negativeEmotions : s.planetProfile?.positiveEmotions;
@@ -362,6 +371,33 @@ function describeSecondaryTransit(s: TransitSemantics, index: number): string | 
 }
 
 /** Совет дня из профилей доминирующего транзита (по полярности). */
+function toAccusativeThemes(text: string): string {
+  return text
+    .replace(/\bмышление\b/g, "мышление")
+    .replace(/\bречь\b/g, "речь")
+    .replace(/\bанализ\b/g, "анализ")
+    .replace(/\bкоммуникация\b/g, "коммуникацию")
+    .replace(/\bсила воли\b/g, "силу воли")
+    .replace(/\bтворчество\b/g, "творчество")
+    .replace(/\bсамовыражение\b/g, "самовыражение")
+    .replace(/\bучёба\b/g, "учёбу")
+    .replace(/\bобщение\b/g, "общение");
+}
+
+function plantForTea(plant: string): string {
+  const normalized = plant.trim().toLowerCase();
+  const forms: Record<string, string> = {
+    "мята": "мятой",
+    "ромашка": "ромашкой",
+    "мелисса": "мелиссой",
+    "лаванда": "лавандой",
+    "шалфей": "шалфеем",
+    "чабрец": "чабрецом",
+    "розмарин": "розмарином",
+  };
+  return forms[normalized] ?? plant;
+}
+
 function buildSoftRecommendation(main: TransitSemantics, date: Date): string | null {
   const profile = main.planetProfile;
   if (!profile) return null;
@@ -373,7 +409,7 @@ function buildSoftRecommendation(main: TransitSemantics, date: Date): string | n
   if (!plant && !crystal && !jewelry && !color) return null;
 
   const parts: string[] = [];
-  if (plant) parts.push(`выбрать растение «${plant}» для чая`);
+  if (plant) parts.push(`приготовить чай с ${plantForTea(plant)}`);
   if (crystal) parts.push(`выбрать кристалл «${crystal}»`);
   if (jewelry) parts.push(`надеть украшение «${jewelry}»`);
   if (color) parts.push(`добавить в образ цвет «${color}»`);

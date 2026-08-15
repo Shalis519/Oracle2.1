@@ -285,13 +285,15 @@ export function ChatWidget() {
         aria-label="Открыть Болталку"
         className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3 shadow-xl shadow-primary/20 hover:bg-primary/90 transition-colors"
       >
-        <MessageCircle className="w-5 h-5" />
+        <span className="relative inline-flex h-5 w-5 items-center justify-center">
+          <MessageCircle className="h-5 w-5" />
+          {unread > 0 && (
+            <span className="absolute -right-2 -top-2 min-w-[1.1rem] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] leading-none font-bold flex items-center justify-center shadow-md">
+              {unread > 99 ? "99+" : unread}
+            </span>
+          )}
+        </span>
         <span className="font-serif font-medium">Болталка</span>
-        {unread > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 min-w-[1.25rem] h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-xs font-bold flex items-center justify-center shadow-md">
-            {unread > 99 ? "99+" : unread}
-          </span>
-        )}
       </button>
     );
   }
