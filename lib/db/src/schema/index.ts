@@ -7,6 +7,7 @@ export * from "./dreams";
 export * from "./tasks";
 export * from "./travels";
 export * from "./messages";
+export * from "./chatReadState";
 export * from "./lifeJournal";
 export * from "./notepad";
 export * from "./ontology";

@@ -1,12 +1,12 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { db, usersTable } from "@workspace/db";
 import {
   GetProfileResponse,
   UpdateProfileBody,
   UpdateProfileResponse,
 } from "@workspace/api-zod";
-import { requireAuth } from "../lib/auth";
+import { requireAdmin, requireAuth } from "../lib/auth";
 import { logger } from "../lib/logger";
 import { computeNatalChart, type NatalChartInput, type NatalChart } from "../lib/astrology";
 
@@ -57,6 +57,13 @@ function serialize(user: {
     createdAt: user.createdAt.toISOString(),
   };
 }
+
+router.get("/admin/users/statistics", requireAuth, requireAdmin, async (_req, res) => {
+  const [result] = await db
+    .select({ registeredUsers: count(usersTable.id) })
+    .from(usersTable);
+  return res.json({ registeredUsers: Number(result?.registeredUsers ?? 0) });
+});
 
 router.get("/profile", requireAuth, async (req, res) => {
   return res.json(GetProfileResponse.parse(serialize(req.localUser!)));

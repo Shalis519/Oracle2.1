@@ -41,6 +41,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { ONTOLOGY_WEIGHTS, WEIGHT_LEVELS, getWeightLabel } from "@workspace/db/weights";
+import {
+  getGetAdminUserStatisticsQueryKey,
+  useGetAdminUserStatistics,
+} from "@workspace/api-client-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Entity {
@@ -881,6 +885,13 @@ export default function AdminStudioPage() {
   const [secretCode, setSecretCode] = useState("");
   const [gateError, setGateError] = useState("");
   const [gateLoading, setGateLoading] = useState(false);
+  const { data: userStatistics } = useGetAdminUserStatistics({
+    query: {
+      queryKey: getGetAdminUserStatisticsQueryKey(),
+      enabled: isAdmin,
+      refetchInterval: 60_000,
+    },
+  });
 
   // Motivation phrases state
   const [phrases, setPhrases] = useState<{ id: string; phrase: string; isActive: boolean }[]>([]);
@@ -1476,6 +1487,17 @@ export default function AdminStudioPage() {
           </Link>
         </div>
       </div>
+
+      {isAdmin && (
+        <Card className="max-w-xs">
+          <CardContent className="p-4">
+            <p className="text-sm text-muted-foreground">Зарегистрированные пользователи</p>
+            <p className="text-2xl font-semibold mt-1">
+              {userStatistics?.registeredUsers ?? "—"}
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 md:w-auto">

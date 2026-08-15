@@ -1354,6 +1354,50 @@ export const DeleteTravelResponse = zod.void()
 
 
 /**
+ * @summary Get aggregate registered user statistics
+ */
+export const getAdminUserStatisticsResponseRegisteredUsersMin = 0;
+
+
+
+export const GetAdminUserStatisticsResponse = zod.object({
+  "registeredUsers": zod.number().min(getAdminUserStatisticsResponseRegisteredUsersMin)
+})
+
+
+/**
+ * @summary Get unread global chat message count
+ */
+export const getChatUnreadResponseUnreadCountMin = 0;
+
+
+
+export const GetChatUnreadResponse = zod.object({
+  "unreadCount": zod.number().min(getChatUnreadResponseUnreadCountMin)
+})
+
+
+/**
+ * @summary Mark global chat messages as read
+ */
+export const markChatReadBodyMessageIdMin = 0;
+
+
+
+export const MarkChatReadBody = zod.object({
+  "messageId": zod.number().min(markChatReadBodyMessageIdMin)
+})
+
+export const markChatReadResponseUnreadCountMin = 0;
+
+
+
+export const MarkChatReadResponse = zod.object({
+  "unreadCount": zod.number().min(markChatReadResponseUnreadCountMin)
+})
+
+
+/**
  * @summary List global chat messages in chronological order
  */
 export const ListChatMessagesResponseItem = zod.object({

@@ -3,7 +3,10 @@ import {
   useListChatMessages,
   useSendChatMessage,
   getListChatMessagesQueryKey,
+  getGetChatUnreadQueryKey,
   type ChatMessage,
+  useGetChatUnread,
+  useMarkChatRead,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { MessageCircle, X, Send, Smile, Bell, BellOff } from "lucide-react";
@@ -130,7 +133,6 @@ export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [emojiOpen, setEmojiOpen] = useState(false);
-  const [unread, setUnread] = useState(0);
   const [muted, setMuted] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -138,8 +140,8 @@ export function ChatWidget() {
   const endRef = useRef<HTMLDivElement>(null);
   const openRef = useRef(open);
   const mutedRef = useRef(muted);
-  // Highest message id already accounted for (seen or notified). null = not yet initialized.
-  const lastSeenIdRef = useRef<number | null>(null);
+  const previousUnreadRef = useRef<number | null>(null);
+  const lastMarkedReadIdRef = useRef(0);
 
   useEffect(() => {
     try {
@@ -164,31 +166,40 @@ export function ChatWidget() {
     },
   });
 
-  // Detect new messages from other users and raise notifications.
+  const { data: unreadData } = useGetChatUnread({
+    query: {
+      queryKey: getGetChatUnreadQueryKey(),
+      refetchInterval: open ? 5000 : 20000,
+    },
+  });
+  const unread = unreadData?.unreadCount ?? 0;
+  const markChatRead = useMarkChatRead();
+
   useEffect(() => {
-    if (!messages) return;
+    if (previousUnreadRef.current === null) {
+      previousUnreadRef.current = unread;
+      return;
+    }
+    if (unread > previousUnreadRef.current && !openRef.current && !mutedRef.current) {
+      playNotificationSound();
+    }
+    previousUnreadRef.current = unread;
+  }, [unread]);
+
+  useEffect(() => {
+    if (!open || !messages || messages.length === 0) return;
     const maxId = messages.reduce((acc, m) => (m.id > acc ? m.id : acc), 0);
-
-    // First load: establish a baseline without notifying for the backlog.
-    if (lastSeenIdRef.current === null) {
-      lastSeenIdRef.current = maxId;
-      return;
-    }
-
-    if (openRef.current) {
-      lastSeenIdRef.current = maxId;
-      return;
-    }
-
-    const newFromOthers = messages.filter(
-      (m) => m.id > (lastSeenIdRef.current ?? 0) && !m.mine,
+    if (maxId <= lastMarkedReadIdRef.current) return;
+    lastMarkedReadIdRef.current = maxId;
+    markChatRead.mutate(
+      { data: { messageId: maxId } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetChatUnreadQueryKey() });
+        },
+      },
     );
-    if (newFromOthers.length > 0) {
-      setUnread((c) => c + newFromOthers.length);
-      if (!mutedRef.current) playNotificationSound();
-    }
-    lastSeenIdRef.current = maxId;
-  }, [messages]);
+  }, [messages, open, markChatRead, queryClient]);
 
   useEffect(() => {
     if (open && messages) {
@@ -198,13 +209,6 @@ export function ChatWidget() {
 
   const openWidget = () => {
     setOpen(true);
-    setUnread(0);
-    if (messages) {
-      lastSeenIdRef.current = messages.reduce(
-        (acc, m) => (m.id > acc ? m.id : acc),
-        0,
-      );
-    }
   };
 
   const toggleMute = () => {

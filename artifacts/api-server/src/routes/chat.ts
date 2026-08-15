@@ -1,7 +1,12 @@
 import { Router, type IRouter } from "express";
-import { desc } from "drizzle-orm";
+import { and, desc, eq, gt, max, sql } from "drizzle-orm";
 import { clerkClient } from "@clerk/express";
-import { db, messagesTable, type Message } from "@workspace/db";
+import {
+  db,
+  chatReadStateTable,
+  messagesTable,
+  type Message,
+} from "@workspace/db";
 import {
   ListChatMessagesResponse,
   SendChatMessageBody,
@@ -59,6 +64,58 @@ router.get("/chat/messages", requireAuth, async (req, res): Promise<void> => {
       rows.map((m) => serialize(m, req.localUser!.id)),
     ),
   );
+});
+
+router.get("/chat/unread", requireAuth, async (req, res): Promise<void> => {
+  const [state] = await db
+    .select({ lastReadMessageId: chatReadStateTable.lastReadMessageId })
+    .from(chatReadStateTable)
+    .where(eq(chatReadStateTable.userId, req.localUser!.id));
+
+  if (!state) {
+    const [latest] = await db
+      .select({ id: max(messagesTable.id) })
+      .from(messagesTable);
+    await db
+      .insert(chatReadStateTable)
+      .values({ userId: req.localUser!.id, lastReadMessageId: Number(latest?.id ?? 0) })
+      .onConflictDoNothing({ target: chatReadStateTable.userId });
+    res.json({ unreadCount: 0 });
+    return;
+  }
+
+  const [result] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(messagesTable)
+    .where(
+      and(
+        gt(messagesTable.id, state?.lastReadMessageId ?? 0),
+        sql`${messagesTable.userId} <> ${req.localUser!.id}`,
+      ),
+    );
+
+  res.json({ unreadCount: Number(result?.count ?? 0) });
+});
+
+router.post("/chat/read", requireAuth, async (req, res): Promise<void> => {
+  const messageId = Number((req.body as Record<string, unknown>)?.messageId);
+  if (!Number.isInteger(messageId) || messageId < 0) {
+    res.status(400).json({ error: "Invalid messageId" });
+    return;
+  }
+
+  await db
+    .insert(chatReadStateTable)
+    .values({ userId: req.localUser!.id, lastReadMessageId: messageId })
+    .onConflictDoUpdate({
+      target: chatReadStateTable.userId,
+      set: {
+        lastReadMessageId: sql`GREATEST(${chatReadStateTable.lastReadMessageId}, ${messageId})`,
+        updatedAt: new Date(),
+      },
+    });
+
+  res.json({ unreadCount: 0 });
 });
 
 router.post("/chat/messages", requireAuth, async (req, res): Promise<void> => {

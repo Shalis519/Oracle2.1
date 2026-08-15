@@ -20,12 +20,15 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AdminUserStatistics,
   BaziHoursInput,
   BaziHoursResult,
   BaziSummary,
   CalculateContactSynastry422,
   ChatMessage,
   ChatMessageInput,
+  ChatReadInput,
+  ChatUnreadResponse,
   City,
   ComputeNatalChart200,
   Contact,
@@ -3353,6 +3356,230 @@ export const useDeleteTravel = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getDeleteTravelMutationOptions(options));
+    }
+
+export const getGetAdminUserStatisticsUrl = () => {
+
+
+
+
+  return `/api/admin/users/statistics`
+}
+
+/**
+ * @summary Get aggregate registered user statistics
+ */
+export const getAdminUserStatistics = async ( options?: RequestInit): Promise<AdminUserStatistics> => {
+
+  return customFetch<AdminUserStatistics>(getGetAdminUserStatisticsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAdminUserStatisticsQueryKey = () => {
+    return [
+    `/api/admin/users/statistics`
+    ] as const;
+    }
+
+
+export const getGetAdminUserStatisticsQueryOptions = <TData = Awaited<ReturnType<typeof getAdminUserStatistics>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminUserStatistics>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdminUserStatisticsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminUserStatistics>>> = ({ signal }) => getAdminUserStatistics({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminUserStatistics>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetAdminUserStatisticsQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminUserStatistics>>>
+export type GetAdminUserStatisticsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get aggregate registered user statistics
+ */
+
+export function useGetAdminUserStatistics<TData = Awaited<ReturnType<typeof getAdminUserStatistics>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminUserStatistics>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetAdminUserStatisticsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetChatUnreadUrl = () => {
+
+
+
+
+  return `/api/chat/unread`
+}
+
+/**
+ * @summary Get unread global chat message count
+ */
+export const getChatUnread = async ( options?: RequestInit): Promise<ChatUnreadResponse> => {
+
+  return customFetch<ChatUnreadResponse>(getGetChatUnreadUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetChatUnreadQueryKey = () => {
+    return [
+    `/api/chat/unread`
+    ] as const;
+    }
+
+
+export const getGetChatUnreadQueryOptions = <TData = Awaited<ReturnType<typeof getChatUnread>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getChatUnread>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetChatUnreadQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getChatUnread>>> = ({ signal }) => getChatUnread({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getChatUnread>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetChatUnreadQueryResult = NonNullable<Awaited<ReturnType<typeof getChatUnread>>>
+export type GetChatUnreadQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get unread global chat message count
+ */
+
+export function useGetChatUnread<TData = Awaited<ReturnType<typeof getChatUnread>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getChatUnread>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetChatUnreadQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getMarkChatReadUrl = () => {
+
+
+
+
+  return `/api/chat/read`
+}
+
+/**
+ * @summary Mark global chat messages as read
+ */
+export const markChatRead = async (chatReadInput: ChatReadInput, options?: RequestInit): Promise<ChatUnreadResponse> => {
+
+  return customFetch<ChatUnreadResponse>(getMarkChatReadUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(chatReadInput)
+  }
+);}
+
+
+
+
+export const getMarkChatReadMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markChatRead>>, TError,{data: BodyType<ChatReadInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof markChatRead>>, TError,{data: BodyType<ChatReadInput>}, TContext> => {
+
+const mutationKey = ['markChatRead'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof markChatRead>>, {data: BodyType<ChatReadInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  markChatRead(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MarkChatReadMutationResult = NonNullable<Awaited<ReturnType<typeof markChatRead>>>
+    export type MarkChatReadMutationBody = BodyType<ChatReadInput>
+    export type MarkChatReadMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Mark global chat messages as read
+ */
+export const useMarkChatRead = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markChatRead>>, TError,{data: BodyType<ChatReadInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof markChatRead>>,
+        TError,
+        {data: BodyType<ChatReadInput>},
+        TContext
+      > => {
+      return useMutation(getMarkChatReadMutationOptions(options));
     }
 
 export const getListChatMessagesUrl = () => {

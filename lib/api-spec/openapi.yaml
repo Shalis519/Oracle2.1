@@ -769,6 +769,51 @@ paths:
         "204":
           description: Deleted
 
+  /admin/users/statistics:
+    get:
+      operationId: getAdminUserStatistics
+      tags: [admin]
+      summary: Get aggregate registered user statistics
+      responses:
+        "200":
+          description: Aggregate user statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUserStatistics"
+
+  /chat/unread:
+    get:
+      operationId: getChatUnread
+      tags: [chat]
+      summary: Get unread global chat message count
+      responses:
+        "200":
+          description: Unread chat count
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatUnreadResponse"
+
+  /chat/read:
+    post:
+      operationId: markChatRead
+      tags: [chat]
+      summary: Mark global chat messages as read
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatReadInput"
+      responses:
+        "200":
+          description: Updated unread count
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatUnreadResponse"
+
   /chat/messages:
     get:
       operationId: listChatMessages
@@ -2447,6 +2492,30 @@ components:
           type: string
         mine:
           type: boolean
+
+    AdminUserStatistics:
+      type: object
+      required: [registeredUsers]
+      properties:
+        registeredUsers:
+          type: integer
+          minimum: 0
+
+    ChatUnreadResponse:
+      type: object
+      required: [unreadCount]
+      properties:
+        unreadCount:
+          type: integer
+          minimum: 0
+
+    ChatReadInput:
+      type: object
+      required: [messageId]
+      properties:
+        messageId:
+          type: integer
+          minimum: 0
 
     ChatMessageInput:
       type: object

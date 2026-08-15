@@ -1125,27 +1125,10 @@ export async function computeDailyForecast(
 
   const transitAspects = transits?.aspects ?? [];
 
+  // Предупреждения и конфликты теперь формируются только из семантических
+  // данных выбранных факторов, а не из жёстко заданных абзацев.
   const conflicts: string[] = [];
   const warnings: string[] = [];
-
-  // Detect challenging transits
-  const hardTransits = transitAspects.filter(
-    (t) => t.typeKey === "square" || t.typeKey === "opposition",
-  );
-  if (hardTransits.length > 0) {
-    const names = hardTransits.map((t) => `${t.transitBody} — ${t.natalBody}`).join(", ");
-    conflicts.push(
-      `Сегодня активны тяжёлые транзиты: ${names}. Не торопите события, дайте себе время на рефлексию.`
-    );
-  }
-
-  // Detect negative arcana days
-  const negativeArcana = [13, 15, 16, 18].includes(arcanaNum);
-  if (negativeArcana) {
-    conflicts.push(
-      "Аркан дня несёт энергию трансформации. Используйте её осознанно: отпускайте старое, но не торопите события."
-    );
-  }
 
   // ===== SEMANTIC FORECAST (up to 3 compatible transits, ontology-only) =====
   const rankedTransits = selectTopTransits(transitAspects);

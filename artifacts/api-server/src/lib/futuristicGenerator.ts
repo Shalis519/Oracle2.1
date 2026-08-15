@@ -112,11 +112,19 @@ function getAspectModifier(aspect: string): number {
 
 /* ─── Внутренние структуры ─── */
 
+interface ThemeEvidence {
+  name: string;
+  score: number;
+  sources: string[];
+}
+
 interface TransitSemantics {
   transit: TransitAspect;
   polarity: "positive" | "negative" | "neutral";
   /** Темы транзита по убыванию веса (планета + знак + дом). */
   themes: string[];
+  /** Источники, которые подтверждают каждую ведущую тему. */
+  themeEvidence: ThemeEvidence[];
   relation: EntityRelation | null;
   planetProfile: EntityProfile | null;
   natalPlanetProfile: EntityProfile | null;
@@ -156,7 +164,7 @@ function lowerFirst(text: string): string {
 
 /* ─── Сбор семантики транзита из онтологии ─── */
 
-async function resolveTransitThemes(t: TransitAspect): Promise<string[]> {
+async function resolveTransitThemes(t: TransitAspect): Promise<ThemeEvidence[]> {
   const [planetThemes, signThemes, transitHouseThemes, natalHouseThemes] = await Promise.all([
     getEntityThemes(t.transitBody),
     getEntityThemes(t.transitSign),
@@ -167,24 +175,24 @@ async function resolveTransitThemes(t: TransitAspect): Promise<string[]> {
   ]);
 
   const modifier = getAspectModifier(t.type);
-  const scoreMap = new Map<string, number>();
-  for (const th of planetThemes) {
-    scoreMap.set(th.themeName, (scoreMap.get(th.themeName) ?? 0) + th.weight * 1.0 * modifier);
+  const evidenceMap = new Map<string, ThemeEvidence>();
+  const addEvidence = (themeName: string, weight: number, source: string) => {
+    const existing = evidenceMap.get(themeName) ?? { name: themeName, score: 0, sources: [] };
+    existing.score += weight * modifier;
+    if (!existing.sources.includes(source)) existing.sources.push(source);
+    evidenceMap.set(themeName, existing);
+  };
+
+  for (const th of planetThemes) addEvidence(th.themeName, th.weight, t.transitBody);
+  for (const th of signThemes) addEvidence(th.themeName, th.weight * 0.5, t.transitSign);
+  if (t.transitHouse) {
+    for (const th of transitHouseThemes) addEvidence(th.themeName, th.weight * 0.8, `Дом ${t.transitHouse}`);
   }
-  for (const th of signThemes) {
-    scoreMap.set(th.themeName, (scoreMap.get(th.themeName) ?? 0) + th.weight * 0.5 * modifier);
-  }
-  // Дом, по которому идёт транзитная планета, — главная сфера проявления.
-  for (const th of transitHouseThemes) {
-    scoreMap.set(th.themeName, (scoreMap.get(th.themeName) ?? 0) + th.weight * 0.8 * modifier);
-  }
-  for (const th of natalHouseThemes) {
-    scoreMap.set(th.themeName, (scoreMap.get(th.themeName) ?? 0) + th.weight * 0.7 * modifier);
+  if (t.natalHouse && t.natalHouse !== t.transitHouse) {
+    for (const th of natalHouseThemes) addEvidence(th.themeName, th.weight * 0.7, `Дом ${t.natalHouse}`);
   }
 
-  return Array.from(scoreMap.entries())
-    .sort((a, b) => b[1] - a[1])
-    .map(([name]) => name);
+  return Array.from(evidenceMap.values()).sort((a, b) => b.score - a.score);
 }
 
 async function loadTransitSemantics(t: TransitAspect): Promise<TransitSemantics> {
@@ -231,7 +239,8 @@ async function loadTransitSemantics(t: TransitAspect): Promise<TransitSemantics>
   return {
     transit: t,
     polarity: getAspectPolarity(t.type),
-    themes,
+    themes: themes.map((theme) => theme.name),
+    themeEvidence: themes,
     relation,
     planetProfile,
     natalPlanetProfile: natalPlanetEntity?.profile ?? null,
@@ -265,74 +274,51 @@ function contradicts(a: TransitSemantics, b: TransitSemantics): boolean {
 function describeMainTransit(s: TransitSemantics, date: Date): string[] {
   const t = s.transit;
   const parts: string[] = [];
-
-  // Фактическое астрономическое вступление — полная цепочка связи (механика, не контент):
-  // транзитная планета в знаке → идёт по натальному дому → аспект → натальная планета в знаке → в её доме.
-  const transitPath = t.transitHouse ? `, проходя по Вашему ${t.transitHouse}-му дому,` : "";
+  const transitPath = t.transitHouse ? ` и активирует темы Вашего ${t.transitHouse}-го дома` : "";
   const natalPlace = t.natalHouse ? ` в ${t.natalHouse}-м доме` : "";
+
   parts.push(
     `Сегодня ${t.transitBody} ${signInPrepositional(t.transitSign)}${transitPath} образует ${aspectAccusative(t.type)} с ${bodyInstrumental(t.natalBody)} ${signInPrepositional(t.natalSign)}${natalPlace}.`,
   );
 
-  // Ядро смысла — описание связи, внесённое администратором.
   if (s.relation?.description?.trim()) {
     parts.push(ensureSentence(s.relation.description));
-  }
-
-  // Ключевые значения транзитной планеты (если связь не описана — это ядро).
-  if (!s.relation?.description?.trim()) {
+  } else {
     const km = s.planetProfile?.keyMeanings?.trim();
-    if (km) {
-      parts.push(`${t.transitBody} приносит: ${ensureSentence(lowerFirst(km))}`);
-    } else if (s.planetProfile?.keyMeaningsArr?.length) {
-      parts.push(`${t.transitBody} приносит: ${s.planetProfile.keyMeaningsArr.slice(0, 3).join(", ").toLowerCase()}.`);
-    }
+    const fallback = km || s.planetProfile?.keyMeaningsArr?.slice(0, 3).join(", ");
+    if (fallback) parts.push(`Это затрагивает темы ${lowerFirst(firstSentence(fallback))}`);
   }
 
-  // Топ-темы транзита по весам (планета + знак + дом) — фокус дня.
-  const topThemes = s.themes.slice(0, 2);
-  if (topThemes.length > 0) {
-    const focus = topThemes.map((th) => th.toLowerCase()).join(" и ");
-    parts.push(`В фокусе дня — ${focus}.`);
+  const topEvidence = s.themeEvidence.slice(0, 2);
+  if (topEvidence.length > 0) {
+    const focus = topEvidence.map((theme) => theme.name.toLowerCase()).join(" и ");
+    const sourceText = topEvidence
+      .filter((theme) => theme.sources.length > 1)
+      .map((theme) => `${theme.name.toLowerCase()} (${theme.sources.slice(0, 3).join(", ")})`)
+      .join("; ");
+    parts.push(
+      sourceText
+        ? `Главный фокус дня - ${focus}; эта тема подтверждается несколькими факторами: ${sourceText}.`
+        : `Главный фокус дня - ${focus}.`,
+    );
   }
 
-  // Окраска знака транзитной планеты.
   const signKm = s.signProfile?.keyMeanings?.trim();
-  if (signKm) {
-    parts.push(`Знак придаёт этому влиянию свой оттенок: ${ensureSentence(lowerFirst(signKm))}`);
-  }
-
-  // Сфера, по которой идёт транзитная планета, — натальный дом транзита.
+  const houseTexts: string[] = [];
   if (t.transitHouse && s.houseProfile) {
-    const thKm = s.houseProfile.keyMeanings?.trim();
-    const thTheme = s.houseProfile.lifeThemes?.[0];
-    if (thKm) {
-      parts.push(`Транзит проходит через сферу ${t.transitHouse}-го дома: ${ensureSentence(lowerFirst(thKm))}`);
-    } else if (thTheme) {
-      parts.push(`Транзит активирует сферу ${t.transitHouse}-го дома — ${thTheme.toLowerCase()}.`);
-    }
+    const text = s.houseProfile.keyMeanings?.trim() || s.houseProfile.lifeThemes?.[0];
+    if (text) houseTexts.push(`сфера ${t.transitHouse}-го дома связана с ${lowerFirst(firstSentence(text))}`);
   }
-
-  // Сфера жизни — дом натальной планеты (если это другой дом).
   if (t.natalHouse && s.natalHouseProfile && t.natalHouse !== t.transitHouse) {
-    const houseKm = s.natalHouseProfile.keyMeanings?.trim();
-    const houseTheme = s.natalHouseProfile.lifeThemes?.[0];
-    if (houseKm) {
-      parts.push(`События разворачиваются в сфере ${t.natalHouse}-го дома: ${ensureSentence(lowerFirst(houseKm))}`);
-    } else if (houseTheme) {
-      parts.push(`Затронута сфера ${t.natalHouse}-го дома — ${houseTheme.toLowerCase()}.`);
-    }
+    const text = s.natalHouseProfile.keyMeanings?.trim() || s.natalHouseProfile.lifeThemes?.[0];
+    if (text) houseTexts.push(`дополнительно затрагивается сфера ${t.natalHouse}-го дома, ${lowerFirst(firstSentence(text))}`);
   }
+  if (signKm) houseTexts.push(`знак задаёт оттенок: ${lowerFirst(firstSentence(signKm))}`);
+  if (houseTexts.length > 0) parts.push(`${houseTexts.join("; ")}.`);
 
-  // Эмоциональный слой из профиля планеты, по полярности аспекта.
-  const emotions =
-    s.polarity === "negative"
-      ? s.planetProfile?.negativeEmotions
-      : s.planetProfile?.positiveEmotions;
+  const emotions = s.polarity === "negative" ? s.planetProfile?.negativeEmotions : s.planetProfile?.positiveEmotions;
   const emotion = emotions && emotions.length > 0 ? pickByDate(emotions, date, 1) : null;
-  if (emotion) {
-    parts.push(`Сегодня Вы можете почувствовать ${emotion.toLowerCase()}.`);
-  }
+  if (emotion) parts.push(`Поэтому сегодня важно учитывать своё состояние: Вы можете почувствовать ${emotion.toLowerCase()}.`);
 
   return parts;
 }

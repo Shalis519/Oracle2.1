@@ -946,6 +946,21 @@ export interface ChatMessage {
   mine: boolean;
 }
 
+export interface AdminUserStatistics {
+  /** @minimum 0 */
+  registeredUsers: number;
+}
+
+export interface ChatUnreadResponse {
+  /** @minimum 0 */
+  unreadCount: number;
+}
+
+export interface ChatReadInput {
+  /** @minimum 0 */
+  messageId: number;
+}
+
 export interface ChatMessageInput {
   /** @maxLength 8192 */
   body: string;
