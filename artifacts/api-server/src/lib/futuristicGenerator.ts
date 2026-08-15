@@ -396,7 +396,7 @@ function buildAdvice(main: TransitSemantics): string | null {
         ];
 
   for (const c of candidates) {
-    if (typeof c === "string" && c.trim()) return ensureSentence(c);
+      if (typeof c === "string" && c.trim()) return `Практический акцент дня: ${lowerFirst(ensureSentence(c))}`;
   }
   return null;
 }
@@ -461,7 +461,7 @@ export class FuturisticGenerator {
 
       // Мотивационная фраза из Studio — последним предложением.
       if (motivationPhrase?.trim()) {
-        paragraphs.push(ensureSentence(motivationPhrase));
+        paragraphs.push(`Фраза дня: ${lowerFirst(ensureSentence(motivationPhrase))}`);
       }
 
       return paragraphs.join("\n\n");
