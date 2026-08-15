@@ -242,7 +242,7 @@ function renderForecastTemplate(text: string, values: Record<string, string>): s
 }
 
 async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTemplateRow[] | null> {
-  const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()];
+  const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()] ?? t.typeKey?.toLowerCase();
   if (!aspectKey || !t.transitHouse || !t.natalHouse) return null;
   const rows = await db
     .select({ category: forecastTextTemplatesTable.category, context: forecastTextTemplatesTable.context, key: forecastTextTemplatesTable.key, text: forecastTextTemplatesTable.text, isActive: forecastTextTemplatesTable.isActive })
@@ -266,7 +266,7 @@ async function describeContextualMainTransit(s: TransitSemantics): Promise<strin
   const rows = await loadForecastTemplateSet(t);
   if (!rows) return null;
   const get = (category: string, context: string, key: string) => rows.find((row) => row.category === category && row.context === context && row.key === key)?.text ?? "";
-  const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()];
+  const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()] ?? t.typeKey?.toLowerCase();
   const composition = get("composition", aspectKey, "default");
   const rendered = renderForecastTemplate(composition, {
     transitEntity: get("entity", "transit", t.transitBody.toLowerCase()),

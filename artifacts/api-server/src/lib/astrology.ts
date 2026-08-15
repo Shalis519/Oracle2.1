@@ -641,7 +641,7 @@ export function computeTransits(
           natalBodySymbol: natalBody.symbol,
           natalSign: natalBody.sign,
           natalSignSymbol: natalBody.signSymbol,
-          natalHouse: natalBody.house,
+          natalHouse: natalBody.house ?? getHouseForLongitude(natalBody.longitude, natalChart.houses),
           type: info.label,
           typeKey: best.key,
           typeSymbol: info.symbol,
