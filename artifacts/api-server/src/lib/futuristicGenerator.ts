@@ -2,6 +2,7 @@ import { logger } from "./logger";
 import { eq } from "drizzle-orm";
 import { db, forecastTextTemplatesTable } from "@workspace/db";
 import { type TransitAspect } from "./astrology";
+import { ensureForecastTemplateSeeds } from "./runtimeSchema";
 import {
   getEntity,
   getEntityThemes,
@@ -242,6 +243,7 @@ function renderForecastTemplate(text: string, values: Record<string, string>): s
 }
 
 async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTemplateRow[] | null> {
+  await ensureForecastTemplateSeeds();
   const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()] ?? t.typeKey?.toLowerCase();
   if (!aspectKey || !t.transitHouse || !t.natalHouse) return null;
   const rows = await db

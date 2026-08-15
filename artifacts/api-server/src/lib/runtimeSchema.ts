@@ -97,3 +97,27 @@ export async function ensureRuntimeSchema(): Promise<void> {
       )
   `);
 }
+
+/** Ensures the first book-based forecast templates exist without overwriting Studio edits. */
+export async function ensureForecastTemplateSeeds(): Promise<void> {
+  await db.execute(sql`
+    INSERT INTO forecast_text_templates (category, context, key, title, text, source_note)
+    VALUES
+      ('entity', 'transit', 'mercury', 'Меркурий в транзитном контексте', 'Вашему мышлению, речи и способам обмена информацией', 'Адаптация по книгам о транзитах, v1'),
+      ('entity', 'natal', 'chiron', 'Хирон в натальном контексте', 'чувствительности к оценке, необходимости соединить разные стороны опыта и поиску выхода из внутреннего противоречия', 'Адаптация по книгам о транзитах, v1'),
+      ('aspect', 'square', 'default', 'Квадрат', 'создаёт напряжение между двумя способами реагировать и требует найти более устойчивый способ их согласовать', 'Адаптация по книгам о транзитах, v1'),
+      ('house', 'transit', '1', 'Транзитная планета в 1-м доме', 'личными желаниями, самовыражением и готовностью заявлять о себе', 'Адаптация по книгам о транзитах, v1'),
+      ('house', 'natal', '10', 'Натальная планета в 10-м доме', 'карьерой, статусом, профессиональными целями и общественной оценкой', 'Адаптация по книгам о транзитах, v1'),
+      ('composition', 'square', 'default', 'Сборка напряжённого аспекта', 'Транзит усиливает внимание к {transitEntity}. Эта активность связана с {transitHouse}. Квадрат к натальному {natalPlanet} затрагивает {natalEntity}; {aspectMeaning}. В натальном доме тема связана с {natalHouse}.', 'Адаптация по книгам о транзитах, v1')
+    ON CONFLICT (category, context, key) DO UPDATE
+      SET title = EXCLUDED.title, text = EXCLUDED.text, source_note = EXCLUDED.source_note, updated_at = NOW()
+      WHERE forecast_text_templates.text IN (
+        'Ваш мыслительный процесс, речь и способы обмена информацией',
+        'чувствительность к оценке и болезненные точки самовыражения',
+        'создаёт напряжение и требует найти более устойчивый способ действовать',
+        'личными желаниями, самовыражением и готовностью проявляться по-своему',
+        'карьеру, статус, цели и ответственность перед будущим',
+        'Этот транзит делает особенно заметными {transitEntity}, связывая их с {transitHouse}. {aspectName} между этой темой и натальным {natalEntity} {aspectMeaning}; связь проявляется через {natalHouse}.'
+      )
+  `);
+}
