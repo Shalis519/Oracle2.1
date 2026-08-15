@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, lt, sql } from "drizzle-orm";
 import {
   db,
   forecastsTable,
@@ -29,6 +29,33 @@ import { hydrateCinderellaGates } from "../lib/cinderellaGates";
 import { daysUntilBirthday } from "../lib/dates";
 
 const router: IRouter = Router();
+const forecastCleanupByUser = new Map<number, string>();
+
+function ninetyDaysAgoDate(): string {
+  const cutoff = new Date();
+  cutoff.setUTCDate(cutoff.getUTCDate() - 90);
+  return cutoff.toISOString().slice(0, 10);
+}
+
+async function cleanupOldForecasts(userId: number): Promise<void> {
+  const cutoffDate = ninetyDaysAgoDate();
+  if (forecastCleanupByUser.get(userId) === cutoffDate) return;
+
+  // Сначала удаляем отзывы, связанные с истекающими прогнозами, чтобы не оставлять
+  // осиротевшие записи и не нарушать будущие внешние ограничения целостности.
+  await db.delete(feedbackTable).where(
+    sql`${feedbackTable.userId} = ${userId} AND ${feedbackTable.forecastId} IN (
+      SELECT ${forecastsTable.id}
+      FROM ${forecastsTable}
+      WHERE ${forecastsTable.userId} = ${userId}
+        AND ${forecastsTable.date} < ${cutoffDate}
+    )`,
+  );
+  await db.delete(forecastsTable).where(
+    and(eq(forecastsTable.userId, userId), lt(forecastsTable.date, cutoffDate)),
+  );
+  forecastCleanupByUser.set(userId, cutoffDate);
+}
 
 function serializeFeedback(fb: { id: number; forecastId: number; date: string; accuracy: string; comment: string | null; createdAt: Date }) {
   return {
@@ -75,8 +102,10 @@ async function getOrComputeToday(
   birthLatitude: number | null,
   birthLongitude: number | null,
   birthTimezone: string | null,
-): Promise<typeof forecastsTable.$inferSelect | null> {
+ ): Promise<typeof forecastsTable.$inferSelect | null> {
+  await cleanupOldForecasts(userId);
   const date = todayString();
+
   const [existing] = await db
     .select()
     .from(forecastsTable)
