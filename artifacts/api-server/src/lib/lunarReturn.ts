@@ -82,24 +82,6 @@ function formatDate(date: string): string {
   });
 }
 
-function signInLocativeCase(sign: string): string {
-  const forms: Record<string, string> = {
-    Овен: "Овне",
-    Телец: "Тельце",
-    Близнецы: "Близнецах",
-    Рак: "Раке",
-    Лев: "Льве",
-    Дева: "Деве",
-    Весы: "Весах",
-    Скорпион: "Скорпионе",
-    Стрелец: "Стрельце",
-    Козерог: "Козероге",
-    Водолей: "Водолее",
-    Рыбы: "Рыбах",
-  };
-  return forms[sign] ?? sign;
-}
-
 function findMoon(chart: ChartSnapshot): LunarChartBody | null {
   return chart.bodies.find((body) => body.key === "moon") ?? null;
 }
@@ -276,15 +258,14 @@ export async function hydrateLunarRecommendations(result: LunarReturnResult | nu
     .from(lunarInterpretationsTable)
     .where(eq(lunarInterpretationsTable.isActive, true))
     .orderBy(asc(lunarInterpretationsTable.category), asc(lunarInterpretationsTable.key));
-  const signText = rows.find((row) => row.category === "sign" && row.key === result.moon.signKey)?.text?.trim();
   const houseText = result.moon.house
     ? rows.find((row) => row.category === "house" && row.key === String(result.moon.house))?.text?.trim()
     : null;
-  const available = [signText, houseText].filter((text): text is string => Boolean(text && text !== "В разработке"));
+  const available = [houseText].filter((text): text is string => Boolean(text && text !== "В разработке"));
   return {
     ...result,
     recommendations: available.length > 0
-      ? [`В этом лунном месяце особенно важны темы Луны в ${signInLocativeCase(result.moon.sign)}${result.moon.house ? ` и ${result.moon.house}-го дома. ` : ". "}${available.join(" ")}`]
+      ? [`В этом лунном месяце на первый план выходят темы ${result.moon.house}-го дома. ${available.join(" ")}`]
       : ["В разработке"],
   };
 }
