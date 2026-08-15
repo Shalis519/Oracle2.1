@@ -82,6 +82,24 @@ function formatDate(date: string): string {
   });
 }
 
+function signInLocativeCase(sign: string): string {
+  const forms: Record<string, string> = {
+    Овен: "Овне",
+    Телец: "Тельце",
+    Близнецы: "Близнецах",
+    Рак: "Раке",
+    Лев: "Льве",
+    Дева: "Деве",
+    Весы: "Весах",
+    Скорпион: "Скорпионе",
+    Стрелец: "Стрельце",
+    Козерог: "Козероге",
+    Водолей: "Водолее",
+    Рыбы: "Рыбах",
+  };
+  return forms[sign] ?? sign;
+}
+
 function findMoon(chart: ChartSnapshot): LunarChartBody | null {
   return chart.bodies.find((body) => body.key === "moon") ?? null;
 }
@@ -266,7 +284,7 @@ export async function hydrateLunarRecommendations(result: LunarReturnResult | nu
   return {
     ...result,
     recommendations: available.length > 0
-      ? [`В этом лунном месяце особенно важны темы, связанные с Луной ${result.moon.sign} и ${result.moon.house ? `${result.moon.house}-м домом. ` : "текущим эмоциональным фокусом. "}${available.join(" ")}`]
+      ? [`В этом лунном месяце особенно важны темы Луны в ${signInLocativeCase(result.moon.sign)}${result.moon.house ? ` и ${result.moon.house}-го дома. ` : ". "}${available.join(" ")}`]
       : ["В разработке"],
   };
 }
