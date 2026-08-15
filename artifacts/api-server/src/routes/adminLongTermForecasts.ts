@@ -92,6 +92,42 @@ function buildForecastTimeline(
   return timeline;
 }
 
+const ASPECT_LABELS: Record<string, string> = {
+  conjunction: "соединение",
+  opposition: "оппозиция",
+  trine: "тригон",
+  square: "квадрат",
+  sextile: "секстиль",
+  quincunx: "квинконс",
+};
+
+function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>) {
+  const transitLines: string[] = [];
+  const progressionLines: string[] = [];
+  const directionLines: string[] = [];
+  for (const point of timeline) {
+    const date = String(point.date);
+    const transit = point.transit as { aspects?: Array<Record<string, unknown>> } | null;
+    for (const aspect of transit?.aspects ?? []) {
+      transitLines.push(`${date}: транзитный ${String(aspect.transitBody)} образует ${String(aspect.type).toLowerCase()} с ${String(aspect.natalBody)}; дом транзита — ${String(aspect.transitHouse ?? "не указан")}, орбис — ${String(aspect.orb)}°.`);
+    }
+    const progressions = point.progressions as { aspects?: Array<Record<string, unknown>> } | undefined;
+    for (const aspect of progressions?.aspects ?? []) {
+      progressionLines.push(`${date}: прогрессивный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`);
+    }
+    const directions = point.directions as { aspects?: Array<Record<string, unknown>> } | undefined;
+    for (const aspect of directions?.aspects ?? []) {
+      directionLines.push(`${date}: направленный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`);
+    }
+  }
+  const draft = (lines: string[], empty: string) => lines.length ? lines.slice(0, 24).join("\\n") : empty;
+  return {
+    transits: draft(transitLines, "За выбранный период значимые транзитные аспекты не выделены."),
+    progressions: draft(progressionLines, "За выбранный период точные аспекты вторичных прогрессий не выделены."),
+    directions: draft(directionLines, "За выбранный период точные аспекты солнечных дуг не выделены."),
+  };
+}
+
 router.get("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const userId = typeof req.query.userId === "string" ? Number(req.query.userId) : undefined;
   const rows = await db.select().from(longTermForecastsTable)
@@ -132,6 +168,7 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
     const directions = computeSolarArcDirections(input, parseDate(dateFrom, "dateFrom"));
     const transit = computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone);
     const timeline = buildForecastTimeline(input, natal, parseDate(dateFrom, "dateFrom"), parseDate(dateTo, "dateTo"));
+    const draftTexts = buildDraftBlockTexts(timeline);
     const [row] = await db.insert(longTermForecastsTable).values({
       userId: typeof body.userId === "number" ? body.userId : null,
       clientName: body.clientName.trim(), periodType: String(body.periodType), dateFrom, dateTo,
@@ -140,9 +177,9 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
       birthSnapshot,
       calculationPayload: { natal, progressions, directions, transit, timeline },
       blocks: Array.isArray(body.blocks) ? body.blocks : [
-        { id: "transits", method: "Транзиты", title: "Внешние триггеры периода", text: "В разработке", dateFrom, dateTo, isVisible: true },
-        { id: "secondary", method: "Прогрессии", title: "Внутренняя динамика и развитие", text: "В разработке", dateFrom, dateTo, isVisible: true },
-        { id: "solar-arc", method: "Дирекции", title: "Символические поворотные точки", text: "В разработке", dateFrom, dateTo, isVisible: true },
+        { id: "transits", method: "Транзиты", title: "Внешние триггеры периода", text: draftTexts.transits, dateFrom, dateTo, isVisible: true },
+        { id: "secondary", method: "Прогрессии", title: "Внутренняя динамика и развитие", text: draftTexts.progressions, dateFrom, dateTo, isVisible: true },
+        { id: "solar-arc", method: "Дирекции", title: "Символические поворотные точки", text: draftTexts.directions, dateFrom, dateTo, isVisible: true },
       ],
       version: 1, createdBy: req.clerkUserId ?? "admin", updatedBy: req.clerkUserId ?? "admin",
     }).returning();
