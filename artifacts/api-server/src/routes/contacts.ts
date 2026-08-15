@@ -43,6 +43,9 @@ function serialize(c: Contact) {
     relationshipType: c.relationshipType,
     gender: c.gender,
     birthPlace: c.birthPlace,
+    birthLatitude: c.birthLatitude,
+    birthLongitude: c.birthLongitude,
+    birthTimezone: c.birthTimezone,
     notes: c.notes,
     notificationDays: c.notificationDays,
     synastryEnabled: c.synastryEnabled,
@@ -157,7 +160,7 @@ router.patch("/contacts/:id", requireAuth, async (req, res): Promise<void> => {
     res.status(404).json({ error: "Контакт не найден." });
     return;
   }
-  const sourceChanged = ["birthDate", "birthTime", "birthPlace", "city"].some((key) => key in body.data);
+  const sourceChanged = ["birthDate", "birthTime", "birthPlace", "birthLatitude", "birthLongitude", "birthTimezone", "city"].some((key) => key in body.data);
   const synastryReset = body.data.synastryEnabled === false
     ? { synastryStatus: "disabled", synastryCalculatedAt: null, synastryInputHash: null, synastryData: null }
     : sourceChanged && existing.synastryEnabled
@@ -186,7 +189,9 @@ router.post("/contacts/:id/synastry", requireAuth, async (req, res): Promise<voi
   ));
   if (!contact) { res.status(404).json({ error: "Контакт не найден." }); return; }
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.localUser!.id));
-  const contactLocation = resolveContactBirthLocation(contact.birthPlace);
+  const contactLocation = contact.birthLatitude != null && contact.birthLongitude != null
+    ? { latitude: contact.birthLatitude, longitude: contact.birthLongitude, timezone: contact.birthTimezone ?? "UTC" }
+    : resolveContactBirthLocation(contact.birthPlace);
   const missing = !user?.birthDate || !user.birthTime || user.birthLatitude == null || user.birthLongitude == null
     || !contact.birthDate || !contact.birthTime || !contactLocation;
   if (missing) {

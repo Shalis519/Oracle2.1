@@ -612,7 +612,15 @@ export type DailyForecastTransitsItem = {
   natalBody?: string;
   type?: string;
   orb?: number;
-  house?: number;
+  /** @nullable */
+  transitHouse?: number | null;
+  /** @nullable */
+  natalHouse?: number | null;
+  /**
+     * Backward-compatible alias for transitHouse.
+     * @nullable
+     */
+  house?: number | null;
   durationDays?: number;
 };
 
@@ -712,6 +720,12 @@ export interface Contact {
   /** @nullable */
   birthPlace?: string | null;
   /** @nullable */
+  birthLatitude?: number | null;
+  /** @nullable */
+  birthLongitude?: number | null;
+  /** @nullable */
+  birthTimezone?: string | null;
+  /** @nullable */
   notes?: string | null;
   notificationDays: number;
   synastryEnabled?: boolean;
@@ -754,6 +768,12 @@ export interface ContactInput {
   /** @nullable */
   birthPlace?: string | null;
   /** @nullable */
+  birthLatitude?: number | null;
+  /** @nullable */
+  birthLongitude?: number | null;
+  /** @nullable */
+  birthTimezone?: string | null;
+  /** @nullable */
   notes?: string | null;
   notificationDays?: number;
   synastryEnabled?: boolean;
@@ -779,6 +799,12 @@ export interface ContactUpdate {
   gender?: string | null;
   /** @nullable */
   birthPlace?: string | null;
+  /** @nullable */
+  birthLatitude?: number | null;
+  /** @nullable */
+  birthLongitude?: number | null;
+  /** @nullable */
+  birthTimezone?: string | null;
   /** @nullable */
   notes?: string | null;
   notificationDays?: number;

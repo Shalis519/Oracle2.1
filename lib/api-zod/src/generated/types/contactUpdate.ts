@@ -27,6 +27,12 @@ export interface ContactUpdate {
   /** @nullable */
   birthPlace?: string | null;
   /** @nullable */
+  birthLatitude?: number | null;
+  /** @nullable */
+  birthLongitude?: number | null;
+  /** @nullable */
+  birthTimezone?: string | null;
+  /** @nullable */
   notes?: string | null;
   notificationDays?: number;
   synastryEnabled?: boolean;

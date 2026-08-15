@@ -94,7 +94,24 @@ export interface ComputeOptions {
   birthDate?: string | null; // ISO yyyy-mm-dd
   birthTime?: string | null; // "HH:MM" (affects 立春 year-pillar boundary)
   from?: Date;
+  timezone?: string | null; // user's current location timezone
   days?: number;
+}
+
+function localCalendarNoon(timezone?: string | null, instant = new Date()): Date {
+  if (!timezone) return new Date(instant.getFullYear(), instant.getMonth(), instant.getDate(), 12, 0, 0);
+  try {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(instant);
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return new Date(Number(values.year), Number(values.month) - 1, Number(values.day), 12, 0, 0);
+  } catch {
+    return new Date(instant.getFullYear(), instant.getMonth(), instant.getDate(), 12, 0, 0);
+  }
 }
 
 function hourLabel(hourBranch: number): string {
@@ -107,7 +124,7 @@ function hourLabel(hourBranch: number): string {
  */
 export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const days = opts.days ?? 14;
-  const from = opts.from ?? new Date();
+  const from = localCalendarNoon(opts.timezone, opts.from ?? new Date());
   const hasBirthDate = !!opts.birthDate;
   const yearBranch = hasBirthDate ? birthYearBranch(opts.birthDate!, opts.birthTime) : -1;
 

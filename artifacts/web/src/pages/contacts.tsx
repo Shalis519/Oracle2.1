@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useListContacts, useCreateContact, useUpdateContact, useDeleteContact, useListUpcomingBirthdays, useCalculateContactSynastry, getListContactsQueryKey } from "@workspace/api-client-react";
+import { useEffect, useState } from "react";
+import { useListContacts, useCreateContact, useUpdateContact, useDeleteContact, useListUpcomingBirthdays, useCalculateContactSynastry, getListContactsQueryKey, useSearchCities, getSearchCitiesQueryKey, type City } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import { Users, Plus, Trash2, Pencil, Calendar, Clock, User, MapPin, Phone, Mail
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 type FormData = {
   name: string;
@@ -20,6 +22,9 @@ type FormData = {
   gender: "" | "мужчина" | "женщина";
   city: string;
   birthPlace: string;
+  birthLatitude: number | null;
+  birthLongitude: number | null;
+  birthTimezone: string | null;
   phone: string;
   email: string;
   synastryEnabled: boolean;
@@ -152,6 +157,14 @@ function synastryPersonPhrase(sourcePerson: "user" | "contact", sourceLabel: str
   return `${sourceLabel}: ${sourceBodyLabel} образует ${aspect.text} ${aspect.preposition} ${targetBodyLabel} (${targetLabel}).`;
 }
 
+const regionNames = typeof Intl !== "undefined" && "DisplayNames" in Intl
+  ? new Intl.DisplayNames(["ru"], { type: "region" })
+  : null;
+
+function countryRu(cc: string): string {
+  try { return regionNames?.of(cc) ?? cc; } catch { return cc; }
+}
+
 const emptyForm: FormData = {
   name: "",
   birthDate: "",
@@ -160,6 +173,9 @@ const emptyForm: FormData = {
   gender: "",
   city: "",
   birthPlace: "",
+  birthLatitude: null,
+  birthLongitude: null,
+  birthTimezone: null,
   phone: "",
   email: "",
   synastryEnabled: false,
@@ -178,8 +194,43 @@ export default function ContactsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<FormData>(emptyForm);
+  const [birthCityOpen, setBirthCityOpen] = useState(false);
+  const [birthCityQuery, setBirthCityQuery] = useState("");
+  const [birthCityDebounced, setBirthCityDebounced] = useState("");
+  const [cityOpen, setCityOpen] = useState(false);
+  const [cityQuery, setCityQuery] = useState("");
+  const [cityDebounced, setCityDebounced] = useState("");
   const [search, setSearch] = useState("");
   const [synastryContactId, setSynastryContactId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setBirthCityDebounced(birthCityQuery.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [birthCityQuery]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setCityDebounced(cityQuery.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [cityQuery]);
+
+  const { data: birthCities, isFetching: isFetchingBirth, isError: isBirthSearchError, refetch: refetchBirthCities } = useSearchCities(
+    { q: birthCityDebounced },
+    { query: { enabled: birthCityDebounced.length >= 2, queryKey: getSearchCitiesQueryKey({ q: birthCityDebounced }) } },
+  );
+  const { data: cities, isFetching, isError: isCitySearchError, refetch: refetchCities } = useSearchCities(
+    { q: cityDebounced },
+    { query: { enabled: cityDebounced.length >= 2, queryKey: getSearchCitiesQueryKey({ q: cityDebounced }) } },
+  );
+
+  const handleSelectBirthCity = (city: City) => {
+    setFormData((previous) => ({ ...previous, birthPlace: `${city.name}, ${countryRu(city.country)}`, birthLatitude: city.lat, birthLongitude: city.lng, birthTimezone: city.timezone }));
+    setBirthCityOpen(false);
+  };
+
+  const handleSelectCity = (city: City) => {
+    setFormData((previous) => ({ ...previous, city: `${city.name}, ${countryRu(city.country)}` }));
+    setCityOpen(false);
+  };
 
   const query = search.trim().toLowerCase();
   const visibleContacts = (contacts ?? [])
@@ -207,6 +258,9 @@ export default function ContactsPage() {
       gender: contact.gender === "мужчина" || contact.gender === "женщина" ? contact.gender : "",
       city: contact.city ?? "",
       birthPlace: contact.birthPlace ?? "",
+      birthLatitude: contact.birthLatitude ?? null,
+      birthLongitude: contact.birthLongitude ?? null,
+      birthTimezone: contact.birthTimezone ?? null,
       phone: contact.phone ?? "",
       email: contact.email ?? "",
       synastryEnabled: contact.synastryEnabled ?? false,
@@ -225,8 +279,11 @@ export default function ContactsPage() {
       relationshipType: formData.relationshipType || null,
       gender: formData.gender,
       city: formData.city || null,
-      birthPlace: formData.birthPlace || null,
-      phone: formData.phone || null,
+          birthPlace: formData.birthPlace || null,
+          birthLatitude: formData.birthLatitude,
+          birthLongitude: formData.birthLongitude,
+          birthTimezone: formData.birthTimezone,
+          phone: formData.phone || null,
       email: formData.email || null,
       synastryEnabled: formData.synastryEnabled,
     };
@@ -339,11 +396,32 @@ export default function ContactsPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Город проживания (необязательно)</label>
-                <Input placeholder="Например: Москва" value={formData.city} onChange={e => setFormData(p => ({...p, city: e.target.value}))} />
+                <Popover open={cityOpen} onOpenChange={setCityOpen}>
+                  <PopoverTrigger asChild>
+                    <Button type="button" variant="outline" role="combobox" className="w-full justify-start font-normal">
+                      <MapPin className="w-4 h-4 mr-2 text-muted-foreground shrink-0" />
+                      <span className={formData.city ? "truncate" : "text-muted-foreground"}>{formData.city || "Выберите город проживания"}</span>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0 w-[--radix-popover-trigger-width]"><Command shouldFilter={false}><CommandInput placeholder="Поиск города..." value={cityQuery} onValueChange={setCityQuery} /><CommandList>
+                    {cityDebounced.length < 2 ? <CommandEmpty>Введите минимум две буквы.</CommandEmpty> : isFetching ? <CommandEmpty>Поиск...</CommandEmpty> : isCitySearchError ? <CommandEmpty className="flex flex-col gap-2 py-3"><span>Не удалось выполнить поиск.</span><Button type="button" variant="secondary" size="sm" onClick={() => refetchCities()}>Повторить</Button></CommandEmpty> : !cities?.length ? <CommandEmpty>Ничего не найдено.</CommandEmpty> : <CommandGroup>{cities.map((city, index) => <CommandItem key={`${city.name}-${city.lat}-${city.lng}-${index}`} value={`${city.name}-${index}`} onSelect={() => handleSelectCity(city)}><MapPin className="w-4 h-4 mr-2 text-muted-foreground shrink-0" /><span className="truncate">{city.name}, {countryRu(city.country)}</span></CommandItem>)}</CommandGroup>}
+                  </CommandList></Command></PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Место рождения (необязательно)</label>
-                <Input placeholder="Город рождения" value={formData.birthPlace} onChange={e => setFormData(p => ({...p, birthPlace: e.target.value}))} />
+                <Popover open={birthCityOpen} onOpenChange={setBirthCityOpen}>
+                  <PopoverTrigger asChild>
+                    <Button type="button" variant="outline" role="combobox" className="w-full justify-start font-normal">
+                      <MapPin className="w-4 h-4 mr-2 text-muted-foreground shrink-0" />
+                      <span className={formData.birthPlace ? "truncate" : "text-muted-foreground"}>{formData.birthPlace || "Выберите город рождения"}</span>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0 w-[--radix-popover-trigger-width]"><Command shouldFilter={false}><CommandInput placeholder="Поиск города..." value={birthCityQuery} onValueChange={setBirthCityQuery} /><CommandList>
+                    {birthCityDebounced.length < 2 ? <CommandEmpty>Введите минимум две буквы.</CommandEmpty> : isFetchingBirth ? <CommandEmpty>Поиск...</CommandEmpty> : isBirthSearchError ? <CommandEmpty className="flex flex-col gap-2 py-3"><span>Не удалось выполнить поиск.</span><Button type="button" variant="secondary" size="sm" onClick={() => refetchBirthCities()}>Повторить</Button></CommandEmpty> : !birthCities?.length ? <CommandEmpty>Ничего не найдено.</CommandEmpty> : <CommandGroup>{birthCities.map((city, index) => <CommandItem key={`${city.name}-${city.lat}-${city.lng}-${index}`} value={`${city.name}-${index}`} onSelect={() => handleSelectBirthCity(city)}><MapPin className="w-4 h-4 mr-2 text-muted-foreground shrink-0" /><span className="truncate">{city.name}, {countryRu(city.country)}</span></CommandItem>)}</CommandGroup>}
+                  </CommandList></Command></PopoverContent>
+                </Popover>
+                {formData.birthLatitude !== null && formData.birthLongitude !== null && <p className="text-xs text-muted-foreground tabular-nums">Координаты сохранены автоматически · {formData.birthTimezone}</p>}
               </div>
               <label className="flex items-start gap-3 rounded-lg border border-border p-3 cursor-pointer">
                 <input type="checkbox" className="mt-1 accent-primary" checked={formData.synastryEnabled} onChange={e => setFormData(p => ({ ...p, synastryEnabled: e.target.checked }))} />

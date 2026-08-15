@@ -13,7 +13,7 @@ function serialize(row: ForecastTextTemplate) {
   };
 }
 
-router.get("/admin/forecast-text-templates", requireAuth, async (_req, res): Promise<void> => {
+router.get("/admin/forecast-text-templates", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
   const rows = await db
     .select()
     .from(forecastTextTemplatesTable)

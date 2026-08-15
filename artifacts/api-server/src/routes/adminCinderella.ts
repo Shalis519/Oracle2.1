@@ -34,7 +34,7 @@ function serialize(row: CinderellaInterpretation) {
   };
 }
 
-router.get("/admin/cinderella-interpretations", requireAuth, async (req, res): Promise<void> => {
+router.get("/admin/cinderella-interpretations", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const mode = typeof req.query.mode === "string" ? req.query.mode : undefined;
   const rows = await db
     .select()

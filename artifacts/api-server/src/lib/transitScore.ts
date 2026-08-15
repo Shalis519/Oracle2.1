@@ -61,8 +61,9 @@ export function calculateTransitScore(transit: TransitAspect): number {
   // 3. Aspect (0–2 points) — conjunction & trine score highest
   score += ASPECT_SCORE[transit.type] ?? 0.5;
 
-  // 4. House (0–1 point) — angular > succedent > cadent
-  score += HOUSE_SCORE[transit.natalHouse ?? transit.transitHouse ?? 1] ?? 0.3;
+  // 4. House (0–1 point) — the transit's current natal-chart house
+  // is the primary context; natalHouse belongs to the planet being activated.
+  score += HOUSE_SCORE[transit.transitHouse ?? transit.natalHouse ?? 1] ?? 0.3;
 
   return score;
 }

@@ -247,6 +247,10 @@ function renderForecastTemplate(text: string, values: Record<string, string>): s
   return text.replace(/\{([a-zA-Z0-9_]+)\}/g, (full, key: string) => values[key] ?? full);
 }
 
+function hasUnresolvedTemplateTokens(text: string): boolean {
+  return /\{[a-zA-Z0-9_]+\}/.test(text);
+}
+
 function resolveTemplateHouses(t: TransitAspect): { transitHouse: number | null; natalHouse: number | null } {
   return { transitHouse: t.transitHouse, natalHouse: t.natalHouse };
 }
@@ -303,6 +307,7 @@ async function describeContextualMainTransit(s: TransitSemantics): Promise<strin
     transitHouse: get("house", "transit", String(houses.transitHouse)),
     natalHouse: get("house", "natal", String(houses.natalHouse)),
   });
+  if (hasUnresolvedTemplateTokens(rendered)) return null;
   return [
     buildTransitOpening({ transitBody: t.transitBody, transitSign: t.transitSign, aspect: t.type, natalBody: t.natalBody, natalSign: t.natalSign, transitHouse: houses.transitHouse }),
     ensureSentence(rendered),

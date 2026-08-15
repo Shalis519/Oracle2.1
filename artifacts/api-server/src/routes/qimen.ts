@@ -12,6 +12,7 @@ router.get("/qimen", requireAuth, async (req, res): Promise<void> => {
   const result = computeQimenStructures({
     birthDate: user.birthDate,
     birthTime: user.birthTime,
+    timezone: user.cityTimezone ?? user.birthTimezone,
     days: 2,
   });
   res.json(GetQimenResponse.parse(result));

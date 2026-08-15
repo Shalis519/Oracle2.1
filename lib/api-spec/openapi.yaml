@@ -2037,8 +2037,13 @@ components:
                 type: string
               orb:
                 type: number
+              transitHouse:
+                type: ["integer", "null"]
+              natalHouse:
+                type: ["integer", "null"]
               house:
-                type: integer
+                type: ["integer", "null"]
+                description: Backward-compatible alias for transitHouse.
               durationDays:
                 type: integer
         cinderellaGates:
@@ -2136,6 +2141,12 @@ components:
           type: ["string", "null"]
         birthPlace:
           type: ["string", "null"]
+        birthLatitude:
+          type: ["number", "null"]
+        birthLongitude:
+          type: ["number", "null"]
+        birthTimezone:
+          type: ["string", "null"]
         notes:
           type: ["string", "null"]
         notificationDays:
@@ -2180,6 +2191,12 @@ components:
           enum: ["мужчина", "женщина"]
         birthPlace:
           type: ["string", "null"]
+        birthLatitude:
+          type: ["number", "null"]
+        birthLongitude:
+          type: ["number", "null"]
+        birthTimezone:
+          type: ["string", "null"]
         notes:
           type: ["string", "null"]
         notificationDays:
@@ -2208,6 +2225,12 @@ components:
         gender:
           type: ["string", "null"]
         birthPlace:
+          type: ["string", "null"]
+        birthLatitude:
+          type: ["number", "null"]
+        birthLongitude:
+          type: ["number", "null"]
+        birthTimezone:
           type: ["string", "null"]
         notes:
           type: ["string", "null"]

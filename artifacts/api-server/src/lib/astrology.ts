@@ -540,18 +540,22 @@ const PLANET_SPEED: Record<string, number> = {
 };
 
 function getHouseForLongitude(longitude: number, houses: NatalHouse[]): number {
-  let bestHouse = 1;
-  let bestDist = Infinity;
-  for (const h of houses) {
-    const hStart = h.longitude;
-    const hEnd = (h.longitude + 30) % 360; // rough; Placidus houses vary
-    let dist = (longitude - hStart + 360) % 360;
-    if (dist < bestDist) {
-      bestDist = dist;
-      bestHouse = h.number;
-    }
+  if (houses.length === 0) return 1;
+  const normalized = ((longitude % 360) + 360) % 360;
+  const ordered = [...houses].sort((a, b) => a.number - b.number);
+
+  for (let index = 0; index < ordered.length; index += 1) {
+    const current = ordered[index];
+    const next = ordered[(index + 1) % ordered.length];
+    const start = ((current.longitude % 360) + 360) % 360;
+    const end = ((next.longitude % 360) + 360) % 360;
+    const inInterval = start < end
+      ? normalized >= start && normalized < end
+      : normalized >= start || normalized < end;
+    if (inInterval) return current.number;
   }
-  return bestHouse;
+
+  return ordered[0].number;
 }
 
 /** Compute transit positions for a given date and compare against natal chart. */
@@ -633,8 +637,8 @@ export function computeTransits(
           transitBodySymbol: t.symbol,
           transitSign: t.sign,
           transitSignSymbol: t.signSymbol,
-          // Дом считается по НАТАЛЬНЫМ куспидам: по какому дому натальной карты
-          // идёт транзитная планета — это основа семантической цепочки прогноза.
+          // Дом считается по реальным НАТАЛЬНЫМ куспидам Плацидуса: по какому
+          // дому натальной карты идёт транзитная планета — это основа семантики.
           transitHouse: getHouseForLongitude(t.longitude, natalChart.houses),
           transitRetrograde: t.retrograde,
           natalBody: natalBody.name,

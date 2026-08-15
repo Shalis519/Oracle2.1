@@ -1028,6 +1028,9 @@ export interface TransitSummary {
   natalBody: string;
   type: string;
   orb: number;
+  transitHouse: number | null;
+  natalHouse: number | null;
+  /** Backward-compatible alias for transitHouse used by older UI clients. */
   house: number | null;
   durationDays: number;
 }
@@ -1058,57 +1061,8 @@ export function computeArcanaOfDay(birthDate: string, today: string): number {
   return reduceToArcana(b.day + b.month + t.day + t.month);
 }
 
-function transitToDurationText(days: number, body: string): string {
-  if (days <= 2) return `в ближайшие ${days} дня`;
-  if (days <= 7) return `эту неделю`;
-  if (days <= 14) return `в ближайшие несколько недель`;
-  return `продлительный период`;
-}
-
-function houseToLifeArea(house: number): string {
-  const areas = [
-    "самоощущение и личность",          // 1
-    "денежные вопросы и ценности",            // 2
-    "общение и повседневная жизнь",       // 3
-    "семья и эмоциональная опора",         // 4
-    "творчество и любовь",                     // 5
-    "работа и здоровье",                      // 6
-    "отношения и партнёрство",             // 7
-    "трансформации и общие ресурсы",       // 8
-    "путешествия и обучение",               // 9
-    "карьера и общественный статус",          // 10
-    "друзья и желания",                          // 11
-    "тайны и внутренний мир",                // 12
-  ];
-  return areas[house - 1] ?? `сфера дома ${house}`;
-}
-
-function aspectNameRu(type: string): string {
-  switch (type.toLowerCase()) {
-    case "conjunction": return "соединение";
-    case "trine": return "тригон";
-    case "sextile": return "секстиль";
-    case "square": return "квадрат";
-    case "opposition": return "оппозиция";
-    default: return type;
-  }
-}
-
-/** Prepositional case for aspect names: "в тригоне", "в квадрате" etc. */
-function aspectPrepRu(type: string): string {
-  switch (type.toLowerCase()) {
-    case "conjunction": return "в соединении";
-    case "trine": return "в тригоне";
-    case "sextile": return "в секстиле";
-    case "square": return "в квадрате";
-    case "opposition": return "в оппозиции";
-    default: return type;
-  }
-}
-
-// Old hardcoded transit text generators removed.
-// Semantic forecast now generated via semanticEngine + futuristicGenerator.
-// Russian grammar helpers live in futuristicGenerator.ts.
+// Дневной текст формируется только через semanticEngine + futuristicGenerator.
+// Старые жёсткие генераторы удалены, чтобы не было второго источника прозы.
 
 /** New computeDailyForecast: uses natal chart + transits + arcana + ontology. */
 export async function computeDailyForecast(
@@ -1175,7 +1129,9 @@ export async function computeDailyForecast(
     natalBody: t.natalBody,
     type: t.type,
     orb: t.orb,
-    house: t.natalHouse,
+    transitHouse: t.transitHouse,
+    natalHouse: t.natalHouse,
+    house: t.transitHouse,
     durationDays: t.durationDays,
   }));
 

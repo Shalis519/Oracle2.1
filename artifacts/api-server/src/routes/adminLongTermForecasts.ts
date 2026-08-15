@@ -24,11 +24,16 @@ async function parseInput(body: Record<string, unknown>, userId: number): Promis
     const [contact] = await db.select().from(contactsTable).where(and(eq(contactsTable.id, contactId), eq(contactsTable.userId, userId)));
     if (!contact) throw new Error("Выбранный контакт не найден");
     if (!contact.birthDate || !contact.birthTime || !contact.birthPlace) throw new Error("У контакта должны быть указаны дата, точное время и город рождения");
-    const city = searchCities(contact.birthPlace, 1)[0];
-    if (!city) throw new Error(`Город «${contact.birthPlace}» не найден во встроенной базе городов`);
+    const legacyCity = contact.birthLatitude == null || contact.birthLongitude == null
+      ? searchCities(contact.birthPlace, 1)[0]
+      : null;
+    const latitude = contact.birthLatitude ?? legacyCity?.lat;
+    const longitude = contact.birthLongitude ?? legacyCity?.lng;
+    const timezone = contact.birthTimezone ?? legacyCity?.timezone;
+    if (latitude == null || longitude == null || !timezone) throw new Error(`Город «${contact.birthPlace}» не связан со встроенной базой городов`);
     const [year, month, day] = contact.birthDate.split("-").map(Number);
     const [hour, minute] = contact.birthTime.slice(0, 5).split(":").map(Number);
-    birth = { year, month, day, hour, minute, latitude: city.lat, longitude: city.lng, timezone: city.timezone, city: city.name, birthPlace: contact.birthPlace };
+    birth = { year, month, day, hour, minute, latitude, longitude, timezone, city: contact.birthPlace, birthPlace: contact.birthPlace };
   }
   if (!birth || typeof birth !== "object") throw new Error("Выберите контакт с данными рождения");
   const required = ["year", "month", "day", "hour", "minute", "latitude", "longitude"];

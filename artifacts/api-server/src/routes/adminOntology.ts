@@ -96,7 +96,7 @@ function serializeProfile(p: OntologyEntityProfile) {
 
 /* ─── Entities ─── */
 
-router.get("/admin/ontology/entities", requireAuth, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const search = typeof req.query.search === "string" ? req.query.search : "";
   const rows = await db
     .select()
@@ -113,7 +113,7 @@ router.get("/admin/ontology/entities", requireAuth, async (req, res): Promise<vo
   res.json({ entities: rows.map(serializeEntity) });
 });
 
-router.get("/admin/ontology/entities/:id", requireAuth, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const id = Number(req.params.id);
   if (!id) {
     res.status(400).json({ error: "Invalid id" });
@@ -240,7 +240,7 @@ router.delete("/admin/ontology/entities/:id", requireAuth, requireAdmin, async (
 
 /* ─── Entity Profile ─── */
 
-router.get("/admin/ontology/entities/:id/profile", requireAuth, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities/:id/profile", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const id = Number(req.params.id);
   if (!id) {
     res.status(400).json({ error: "Invalid id" });
@@ -327,7 +327,7 @@ router.put("/admin/ontology/entities/:id/profile", requireAuth, requireAdmin, as
 
 /* ─── Themes ─── */
 
-router.get("/admin/ontology/themes", requireAuth, async (_req, res): Promise<void> => {
+router.get("/admin/ontology/themes", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
   const rows = await db
     .select()
     .from(ontologyThemesTable)
@@ -409,7 +409,7 @@ router.delete("/admin/ontology/themes/:id", requireAuth, requireAdmin, async (re
 
 /* ─── Entity-Theme Links ─── */
 
-router.get("/admin/ontology/entities/:id/themes", requireAuth, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities/:id/themes", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const id = Number(req.params.id);
   if (!id) {
     res.status(400).json({ error: "Invalid id" });
@@ -511,7 +511,7 @@ router.delete("/admin/ontology/entity-themes/:id", requireAuth, requireAdmin, as
 
 /* ─── Entity Relations ─── */
 
-router.get("/admin/ontology/entities/:id/relations", requireAuth, async (req, res): Promise<void> => {
+router.get("/admin/ontology/entities/:id/relations", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const id = Number(req.params.id);
   if (!id) {
     res.status(400).json({ error: "Invalid id" });

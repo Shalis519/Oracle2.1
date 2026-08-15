@@ -11,6 +11,14 @@ export type DailyForecastTransitsItem = {
   natalBody?: string;
   type?: string;
   orb?: number;
-  house?: number;
+  /** @nullable */
+  transitHouse?: number | null;
+  /** @nullable */
+  natalHouse?: number | null;
+  /**
+     * Backward-compatible alias for transitHouse.
+     * @nullable
+     */
+  house?: number | null;
   durationDays?: number;
 };
