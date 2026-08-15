@@ -48,7 +48,12 @@ import type {
   HealthStatus,
   Journal,
   JournalInput,
+  ListAdminLongTermForecasts200,
   ListTasksParams,
+  LongTermForecast,
+  LongTermForecastCalculation,
+  LongTermForecastInput,
+  LongTermForecastUpdate,
   NatalChart,
   NotepadInput,
   NotepadItem,
@@ -3729,3 +3734,438 @@ export const useSendChatMessage = <TError = ErrorType<unknown>,
       return useMutation(getSendChatMessageMutationOptions(options));
     }
 
+export const getListAdminLongTermForecastsUrl = () => {
+
+
+
+
+  return `/api/admin/long-term-forecasts`
+}
+
+/**
+ * @summary List saved long-term forecasts
+ */
+export const listAdminLongTermForecasts = async ( options?: RequestInit): Promise<ListAdminLongTermForecasts200> => {
+
+  return customFetch<ListAdminLongTermForecasts200>(getListAdminLongTermForecastsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListAdminLongTermForecastsQueryKey = () => {
+    return [
+    `/api/admin/long-term-forecasts`
+    ] as const;
+    }
+
+
+export const getListAdminLongTermForecastsQueryOptions = <TData = Awaited<ReturnType<typeof listAdminLongTermForecasts>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAdminLongTermForecasts>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListAdminLongTermForecastsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminLongTermForecasts>>> = ({ signal }) => listAdminLongTermForecasts({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminLongTermForecasts>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListAdminLongTermForecastsQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminLongTermForecasts>>>
+export type ListAdminLongTermForecastsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List saved long-term forecasts
+ */
+
+export function useListAdminLongTermForecasts<TData = Awaited<ReturnType<typeof listAdminLongTermForecasts>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAdminLongTermForecasts>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListAdminLongTermForecastsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateAdminLongTermForecastUrl = () => {
+
+
+
+
+  return `/api/admin/long-term-forecasts`
+}
+
+/**
+ * @summary Calculate and save a long-term forecast draft
+ */
+export const createAdminLongTermForecast = async (longTermForecastInput: LongTermForecastInput, options?: RequestInit): Promise<LongTermForecast> => {
+
+  return customFetch<LongTermForecast>(getCreateAdminLongTermForecastUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(longTermForecastInput)
+  }
+);}
+
+
+
+
+export const getCreateAdminLongTermForecastMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminLongTermForecast>>, TError,{data: BodyType<LongTermForecastInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createAdminLongTermForecast>>, TError,{data: BodyType<LongTermForecastInput>}, TContext> => {
+
+const mutationKey = ['createAdminLongTermForecast'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createAdminLongTermForecast>>, {data: BodyType<LongTermForecastInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createAdminLongTermForecast(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateAdminLongTermForecastMutationResult = NonNullable<Awaited<ReturnType<typeof createAdminLongTermForecast>>>
+    export type CreateAdminLongTermForecastMutationBody = BodyType<LongTermForecastInput>
+    export type CreateAdminLongTermForecastMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Calculate and save a long-term forecast draft
+ */
+export const useCreateAdminLongTermForecast = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminLongTermForecast>>, TError,{data: BodyType<LongTermForecastInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createAdminLongTermForecast>>,
+        TError,
+        {data: BodyType<LongTermForecastInput>},
+        TContext
+      > => {
+      return useMutation(getCreateAdminLongTermForecastMutationOptions(options));
+    }
+
+export const getCalculateAdminLongTermForecastUrl = () => {
+
+
+
+
+  return `/api/admin/long-term-forecasts/calculate`
+}
+
+/**
+ * @summary Calculate a long-term forecast without saving text blocks
+ */
+export const calculateAdminLongTermForecast = async (longTermForecastInput: LongTermForecastInput, options?: RequestInit): Promise<LongTermForecastCalculation> => {
+
+  return customFetch<LongTermForecastCalculation>(getCalculateAdminLongTermForecastUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(longTermForecastInput)
+  }
+);}
+
+
+
+
+export const getCalculateAdminLongTermForecastMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof calculateAdminLongTermForecast>>, TError,{data: BodyType<LongTermForecastInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof calculateAdminLongTermForecast>>, TError,{data: BodyType<LongTermForecastInput>}, TContext> => {
+
+const mutationKey = ['calculateAdminLongTermForecast'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof calculateAdminLongTermForecast>>, {data: BodyType<LongTermForecastInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  calculateAdminLongTermForecast(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CalculateAdminLongTermForecastMutationResult = NonNullable<Awaited<ReturnType<typeof calculateAdminLongTermForecast>>>
+    export type CalculateAdminLongTermForecastMutationBody = BodyType<LongTermForecastInput>
+    export type CalculateAdminLongTermForecastMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Calculate a long-term forecast without saving text blocks
+ */
+export const useCalculateAdminLongTermForecast = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof calculateAdminLongTermForecast>>, TError,{data: BodyType<LongTermForecastInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof calculateAdminLongTermForecast>>,
+        TError,
+        {data: BodyType<LongTermForecastInput>},
+        TContext
+      > => {
+      return useMutation(getCalculateAdminLongTermForecastMutationOptions(options));
+    }
+
+export const getGetAdminLongTermForecastUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/long-term-forecasts/${id}`
+}
+
+/**
+ * @summary Get a saved long-term forecast
+ */
+export const getAdminLongTermForecast = async (id: number, options?: RequestInit): Promise<LongTermForecast> => {
+
+  return customFetch<LongTermForecast>(getGetAdminLongTermForecastUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAdminLongTermForecastQueryKey = (id: number,) => {
+    return [
+    `/api/admin/long-term-forecasts/${id}`
+    ] as const;
+    }
+
+
+export const getGetAdminLongTermForecastQueryOptions = <TData = Awaited<ReturnType<typeof getAdminLongTermForecast>>, TError = ErrorType<unknown>>(id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminLongTermForecast>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdminLongTermForecastQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminLongTermForecast>>> = ({ signal }) => getAdminLongTermForecast(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminLongTermForecast>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetAdminLongTermForecastQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminLongTermForecast>>>
+export type GetAdminLongTermForecastQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get a saved long-term forecast
+ */
+
+export function useGetAdminLongTermForecast<TData = Awaited<ReturnType<typeof getAdminLongTermForecast>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminLongTermForecast>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetAdminLongTermForecastQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateAdminLongTermForecastUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/long-term-forecasts/${id}`
+}
+
+/**
+ * @summary Update editable long-term forecast blocks
+ */
+export const updateAdminLongTermForecast = async (id: number,
+    longTermForecastUpdate: LongTermForecastUpdate, options?: RequestInit): Promise<LongTermForecast> => {
+
+  return customFetch<LongTermForecast>(getUpdateAdminLongTermForecastUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(longTermForecastUpdate)
+  }
+);}
+
+
+
+
+export const getUpdateAdminLongTermForecastMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminLongTermForecast>>, TError,{id: number;data: BodyType<LongTermForecastUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAdminLongTermForecast>>, TError,{id: number;data: BodyType<LongTermForecastUpdate>}, TContext> => {
+
+const mutationKey = ['updateAdminLongTermForecast'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAdminLongTermForecast>>, {id: number;data: BodyType<LongTermForecastUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateAdminLongTermForecast(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAdminLongTermForecastMutationResult = NonNullable<Awaited<ReturnType<typeof updateAdminLongTermForecast>>>
+    export type UpdateAdminLongTermForecastMutationBody = BodyType<LongTermForecastUpdate>
+    export type UpdateAdminLongTermForecastMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Update editable long-term forecast blocks
+ */
+export const useUpdateAdminLongTermForecast = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminLongTermForecast>>, TError,{id: number;data: BodyType<LongTermForecastUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateAdminLongTermForecast>>,
+        TError,
+        {id: number;data: BodyType<LongTermForecastUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateAdminLongTermForecastMutationOptions(options));
+    }
+
+export const getExportAdminLongTermForecastUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/long-term-forecasts/${id}/export`
+}
+
+/**
+ * @summary Export a saved forecast as DOCX
+ */
+export const exportAdminLongTermForecast = async (id: number, options?: RequestInit): Promise<Blob> => {
+
+  return customFetch<Blob>(getExportAdminLongTermForecastUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getExportAdminLongTermForecastQueryKey = (id: number,) => {
+    return [
+    `/api/admin/long-term-forecasts/${id}/export`
+    ] as const;
+    }
+
+
+export const getExportAdminLongTermForecastQueryOptions = <TData = Awaited<ReturnType<typeof exportAdminLongTermForecast>>, TError = ErrorType<unknown>>(id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof exportAdminLongTermForecast>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getExportAdminLongTermForecastQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof exportAdminLongTermForecast>>> = ({ signal }) => exportAdminLongTermForecast(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof exportAdminLongTermForecast>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ExportAdminLongTermForecastQueryResult = NonNullable<Awaited<ReturnType<typeof exportAdminLongTermForecast>>>
+export type ExportAdminLongTermForecastQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Export a saved forecast as DOCX
+ */
+
+export function useExportAdminLongTermForecast<TData = Awaited<ReturnType<typeof exportAdminLongTermForecast>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof exportAdminLongTermForecast>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getExportAdminLongTermForecastQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}

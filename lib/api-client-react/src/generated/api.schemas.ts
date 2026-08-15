@@ -1108,6 +1108,109 @@ export interface NatalChart {
   meta: NatalChartMeta;
 }
 
+export type LongTermForecastPeriodType = typeof LongTermForecastPeriodType[keyof typeof LongTermForecastPeriodType];
+
+
+export const LongTermForecastPeriodType = {
+  '1m': '1m',
+  '3m': '3m',
+  '6m': '6m',
+} as const;
+
+export type LongTermForecastStatus = typeof LongTermForecastStatus[keyof typeof LongTermForecastStatus];
+
+
+export const LongTermForecastStatus = {
+  draft: 'draft',
+  edited: 'edited',
+  final: 'final',
+} as const;
+
+export type LongTermForecastBirthSnapshot = { [key: string]: unknown };
+
+export type LongTermForecastCalculationPayload = { [key: string]: unknown };
+
+export interface LongTermForecastBlock {
+  id?: string;
+  method?: string;
+  title?: string;
+  text?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  isVisible?: boolean;
+  [key: string]: unknown;
+ }
+
+export interface LongTermForecast {
+  id: number;
+  clientName: string;
+  periodType: LongTermForecastPeriodType;
+  dateFrom: string;
+  dateTo: string;
+  status: LongTermForecastStatus;
+  title?: string;
+  introText?: string;
+  birthSnapshot?: LongTermForecastBirthSnapshot;
+  calculationPayload?: LongTermForecastCalculationPayload;
+  blocks: LongTermForecastBlock[];
+  [key: string]: unknown;
+ }
+
+export type LongTermForecastInputPeriodType = typeof LongTermForecastInputPeriodType[keyof typeof LongTermForecastInputPeriodType];
+
+
+export const LongTermForecastInputPeriodType = {
+  '1m': '1m',
+  '3m': '3m',
+  '6m': '6m',
+} as const;
+
+export interface LongTermForecastInput {
+  clientName: string;
+  periodType: LongTermForecastInputPeriodType;
+  dateFrom: string;
+  dateTo: string;
+  contactId: number;
+  title?: string;
+  introText?: string;
+  blocks?: LongTermForecastBlock[];
+}
+
+export type LongTermForecastUpdateStatus = typeof LongTermForecastUpdateStatus[keyof typeof LongTermForecastUpdateStatus];
+
+
+export const LongTermForecastUpdateStatus = {
+  draft: 'draft',
+  edited: 'edited',
+  final: 'final',
+} as const;
+
+export interface LongTermForecastUpdate {
+  title?: string;
+  introText?: string;
+  status?: LongTermForecastUpdateStatus;
+  blocks?: LongTermForecastBlock[];
+}
+
+export type LongTermForecastCalculationProgressions = { [key: string]: unknown };
+
+export type LongTermForecastCalculationDirections = { [key: string]: unknown };
+
+export type LongTermForecastCalculationTransit = { [key: string]: unknown };
+
+export type LongTermForecastCalculationTimelineItem = { [key: string]: unknown };
+
+export interface LongTermForecastCalculation {
+  dateFrom?: string;
+  dateTo?: string;
+  natal?: NatalChart;
+  progressions?: LongTermForecastCalculationProgressions;
+  directions?: LongTermForecastCalculationDirections;
+  transit?: LongTermForecastCalculationTransit;
+  timeline?: LongTermForecastCalculationTimelineItem[];
+  [key: string]: unknown;
+ }
+
 export type ComputeNatalChart200Chart = { [key: string]: unknown };
 
 export type ComputeNatalChart200 = {
@@ -1128,5 +1231,9 @@ export type CalculateContactSynastry422 = {
 
 export type ListTasksParams = {
 date?: string;
+};
+
+export type ListAdminLongTermForecasts200 = {
+  forecasts: LongTermForecast[];
 };
 

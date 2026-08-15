@@ -1457,3 +1457,292 @@ export const SendChatMessageResponse = zod.object({
 })
 
 
+/**
+ * @summary List saved long-term forecasts
+ */
+export const ListAdminLongTermForecastsResponse = zod.object({
+  "forecasts": zod.array(zod.object({
+  "id": zod.number(),
+  "clientName": zod.string(),
+  "periodType": zod.enum(['1m', '3m', '6m']),
+  "dateFrom": zod.coerce.date(),
+  "dateTo": zod.coerce.date(),
+  "status": zod.enum(['draft', 'edited', 'final']),
+  "title": zod.string().optional(),
+  "introText": zod.string().optional(),
+  "birthSnapshot": zod.record(zod.string(), zod.unknown()).optional(),
+  "calculationPayload": zod.record(zod.string(), zod.unknown()).optional(),
+  "blocks": zod.array(zod.object({
+  "id": zod.string().optional(),
+  "method": zod.string().optional(),
+  "title": zod.string().optional(),
+  "text": zod.string().optional(),
+  "dateFrom": zod.string().optional(),
+  "dateTo": zod.string().optional(),
+  "isVisible": zod.boolean().optional()
+}))
+}))
+})
+
+
+/**
+ * @summary Calculate and save a long-term forecast draft
+ */
+export const CreateAdminLongTermForecastBody = zod.object({
+  "clientName": zod.string(),
+  "periodType": zod.enum(['1m', '3m', '6m']),
+  "dateFrom": zod.coerce.date(),
+  "dateTo": zod.coerce.date(),
+  "contactId": zod.number(),
+  "title": zod.string().optional(),
+  "introText": zod.string().optional(),
+  "blocks": zod.array(zod.object({
+  "id": zod.string().optional(),
+  "method": zod.string().optional(),
+  "title": zod.string().optional(),
+  "text": zod.string().optional(),
+  "dateFrom": zod.string().optional(),
+  "dateTo": zod.string().optional(),
+  "isVisible": zod.boolean().optional()
+})).optional()
+})
+
+export const CreateAdminLongTermForecastResponse = zod.object({
+  "id": zod.number(),
+  "clientName": zod.string(),
+  "periodType": zod.enum(['1m', '3m', '6m']),
+  "dateFrom": zod.coerce.date(),
+  "dateTo": zod.coerce.date(),
+  "status": zod.enum(['draft', 'edited', 'final']),
+  "title": zod.string().optional(),
+  "introText": zod.string().optional(),
+  "birthSnapshot": zod.record(zod.string(), zod.unknown()).optional(),
+  "calculationPayload": zod.record(zod.string(), zod.unknown()).optional(),
+  "blocks": zod.array(zod.object({
+  "id": zod.string().optional(),
+  "method": zod.string().optional(),
+  "title": zod.string().optional(),
+  "text": zod.string().optional(),
+  "dateFrom": zod.string().optional(),
+  "dateTo": zod.string().optional(),
+  "isVisible": zod.boolean().optional()
+}))
+})
+
+
+/**
+ * @summary Calculate a long-term forecast without saving text blocks
+ */
+export const CalculateAdminLongTermForecastBody = zod.object({
+  "clientName": zod.string(),
+  "periodType": zod.enum(['1m', '3m', '6m']),
+  "dateFrom": zod.coerce.date(),
+  "dateTo": zod.coerce.date(),
+  "contactId": zod.number(),
+  "title": zod.string().optional(),
+  "introText": zod.string().optional(),
+  "blocks": zod.array(zod.object({
+  "id": zod.string().optional(),
+  "method": zod.string().optional(),
+  "title": zod.string().optional(),
+  "text": zod.string().optional(),
+  "dateFrom": zod.string().optional(),
+  "dateTo": zod.string().optional(),
+  "isVisible": zod.boolean().optional()
+})).optional()
+})
+
+export const CalculateAdminLongTermForecastResponse = zod.object({
+  "dateFrom": zod.coerce.date().optional(),
+  "dateTo": zod.coerce.date().optional(),
+  "natal": zod.object({
+  "bodies": zod.array(zod.object({
+  "key": zod.string(),
+  "name": zod.string(),
+  "symbol": zod.string(),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "signSymbol": zod.string(),
+  "longitude": zod.number(),
+  "degreeInSign": zod.string(),
+  "house": zod.number().nullable(),
+  "retrograde": zod.boolean()
+})),
+  "angles": zod.array(zod.object({
+  "key": zod.string(),
+  "name": zod.string(),
+  "abbr": zod.string(),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "signSymbol": zod.string(),
+  "longitude": zod.number(),
+  "degreeInSign": zod.string()
+})),
+  "houses": zod.array(zod.object({
+  "number": zod.number(),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "signSymbol": zod.string(),
+  "longitude": zod.number(),
+  "degreeInSign": zod.string()
+})),
+  "aspects": zod.array(zod.object({
+  "body1": zod.string(),
+  "body1Symbol": zod.string(),
+  "body2": zod.string(),
+  "body2Symbol": zod.string(),
+  "type": zod.string(),
+  "typeKey": zod.string(),
+  "typeSymbol": zod.string(),
+  "orb": zod.number()
+})),
+  "cinderellaGates": zod.array(zod.object({
+  "id": zod.string(),
+  "mode": zod.enum(['natal', 'transit']),
+  "transitBody": zod.string().nullable(),
+  "transitBodySymbol": zod.string().nullable(),
+  "natalBody": zod.string(),
+  "natalBodySymbol": zod.string(),
+  "aspectType": zod.string(),
+  "aspectKey": zod.string(),
+  "aspectSymbol": zod.string(),
+  "orb": zod.number(),
+  "peakDate": zod.string().nullable(),
+  "activeFrom": zod.string().nullable(),
+  "activeTo": zod.string().nullable(),
+  "interpretation": zod.string()
+})),
+  "lunarReturn": zod.union([zod.object({
+  "returnDate": zod.string(),
+  "returnTime": zod.string(),
+  "periodStart": zod.string(),
+  "periodEnd": zod.string(),
+  "location": zod.object({
+  "city": zod.string().nullable(),
+  "latitude": zod.number(),
+  "longitude": zod.number(),
+  "timezone": zod.string().nullable(),
+  "source": zod.enum(['residence', 'birth'])
+}),
+  "usedBirthPlace": zod.boolean(),
+  "warning": zod.string().nullable(),
+  "ascendant": zod.union([zod.object({
+  "key": zod.string(),
+  "abbr": zod.string(),
+  "sign": zod.string(),
+  "degreeInSign": zod.string(),
+  "longitude": zod.number()
+}),zod.null()]),
+  "moon": zod.object({
+  "key": zod.string(),
+  "name": zod.string(),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "degreeInSign": zod.string(),
+  "longitude": zod.number(),
+  "house": zod.number().nullable()
+}),
+  "keyThemes": zod.array(zod.string()),
+  "recommendations": zod.array(zod.string())
+}),zod.null()]).optional(),
+  "meta": zod.object({
+  "timezone": zod.string(),
+  "julianDate": zod.number(),
+  "utc": zod.string(),
+  "latitude": zod.number(),
+  "longitude": zod.number(),
+  "houseSystem": zod.string()
+})
+}).optional(),
+  "progressions": zod.record(zod.string(), zod.unknown()).optional(),
+  "directions": zod.record(zod.string(), zod.unknown()).optional(),
+  "transit": zod.record(zod.string(), zod.unknown()).optional(),
+  "timeline": zod.array(zod.record(zod.string(), zod.unknown())).optional()
+})
+
+
+/**
+ * @summary Get a saved long-term forecast
+ */
+export const GetAdminLongTermForecastParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetAdminLongTermForecastResponse = zod.object({
+  "id": zod.number(),
+  "clientName": zod.string(),
+  "periodType": zod.enum(['1m', '3m', '6m']),
+  "dateFrom": zod.coerce.date(),
+  "dateTo": zod.coerce.date(),
+  "status": zod.enum(['draft', 'edited', 'final']),
+  "title": zod.string().optional(),
+  "introText": zod.string().optional(),
+  "birthSnapshot": zod.record(zod.string(), zod.unknown()).optional(),
+  "calculationPayload": zod.record(zod.string(), zod.unknown()).optional(),
+  "blocks": zod.array(zod.object({
+  "id": zod.string().optional(),
+  "method": zod.string().optional(),
+  "title": zod.string().optional(),
+  "text": zod.string().optional(),
+  "dateFrom": zod.string().optional(),
+  "dateTo": zod.string().optional(),
+  "isVisible": zod.boolean().optional()
+}))
+})
+
+
+/**
+ * @summary Update editable long-term forecast blocks
+ */
+export const UpdateAdminLongTermForecastParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateAdminLongTermForecastBody = zod.object({
+  "title": zod.string().optional(),
+  "introText": zod.string().optional(),
+  "status": zod.enum(['draft', 'edited', 'final']).optional(),
+  "blocks": zod.array(zod.object({
+  "id": zod.string().optional(),
+  "method": zod.string().optional(),
+  "title": zod.string().optional(),
+  "text": zod.string().optional(),
+  "dateFrom": zod.string().optional(),
+  "dateTo": zod.string().optional(),
+  "isVisible": zod.boolean().optional()
+})).optional()
+})
+
+export const UpdateAdminLongTermForecastResponse = zod.object({
+  "id": zod.number(),
+  "clientName": zod.string(),
+  "periodType": zod.enum(['1m', '3m', '6m']),
+  "dateFrom": zod.coerce.date(),
+  "dateTo": zod.coerce.date(),
+  "status": zod.enum(['draft', 'edited', 'final']),
+  "title": zod.string().optional(),
+  "introText": zod.string().optional(),
+  "birthSnapshot": zod.record(zod.string(), zod.unknown()).optional(),
+  "calculationPayload": zod.record(zod.string(), zod.unknown()).optional(),
+  "blocks": zod.array(zod.object({
+  "id": zod.string().optional(),
+  "method": zod.string().optional(),
+  "title": zod.string().optional(),
+  "text": zod.string().optional(),
+  "dateFrom": zod.string().optional(),
+  "dateTo": zod.string().optional(),
+  "isVisible": zod.boolean().optional()
+}))
+})
+
+
+/**
+ * @summary Export a saved forecast as DOCX
+ */
+export const ExportAdminLongTermForecastParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const ExportAdminLongTermForecastResponse = zod.unknown()
+
+

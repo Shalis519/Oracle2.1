@@ -846,6 +846,120 @@ paths:
               schema:
                 $ref: "#/components/schemas/ChatMessage"
 
+  /admin/long-term-forecasts:
+    get:
+      operationId: listAdminLongTermForecasts
+      tags: [admin-long-term-forecasts]
+      summary: List saved long-term forecasts
+      responses:
+        "200":
+          description: Saved forecasts
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [forecasts]
+                properties:
+                  forecasts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LongTermForecast"
+    post:
+      operationId: createAdminLongTermForecast
+      tags: [admin-long-term-forecasts]
+      summary: Calculate and save a long-term forecast draft
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LongTermForecastInput"
+      responses:
+        "201":
+          description: Forecast draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LongTermForecast"
+  /admin/long-term-forecasts/calculate:
+    post:
+      operationId: calculateAdminLongTermForecast
+      tags: [admin-long-term-forecasts]
+      summary: Calculate a long-term forecast without saving text blocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LongTermForecastInput"
+      responses:
+        "200":
+          description: Forecast calculation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LongTermForecastCalculation"
+  /admin/long-term-forecasts/{id}:
+    get:
+      operationId: getAdminLongTermForecast
+      tags: [admin-long-term-forecasts]
+      summary: Get a saved long-term forecast
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Forecast
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LongTermForecast"
+    put:
+      operationId: updateAdminLongTermForecast
+      tags: [admin-long-term-forecasts]
+      summary: Update editable long-term forecast blocks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LongTermForecastUpdate"
+      responses:
+        "200":
+          description: Updated forecast
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LongTermForecast"
+  /admin/long-term-forecasts/{id}/export:
+    get:
+      operationId: exportAdminLongTermForecast
+      tags: [admin-long-term-forecasts]
+      summary: Export a saved forecast as DOCX
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Word document
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+
 components:
   schemas:
     HealthStatus:
@@ -2796,3 +2910,122 @@ components:
             - type: "null"
         meta:
           $ref: "#/components/schemas/NatalChartMeta"
+
+    LongTermForecast:
+      type: object
+      additionalProperties: true
+      required: [id, clientName, periodType, dateFrom, dateTo, status, blocks]
+      properties:
+        id:
+          type: integer
+        clientName:
+          type: string
+        periodType:
+          type: string
+          enum: [1m, 3m, 6m]
+        dateFrom:
+          type: string
+          format: date
+        dateTo:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [draft, edited, final]
+        title:
+          type: string
+        introText:
+          type: string
+        birthSnapshot:
+          type: object
+          additionalProperties: true
+        calculationPayload:
+          type: object
+          additionalProperties: true
+        blocks:
+          type: array
+          items:
+            $ref: "#/components/schemas/LongTermForecastBlock"
+    LongTermForecastBlock:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+        method:
+          type: string
+        title:
+          type: string
+        text:
+          type: string
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        isVisible:
+          type: boolean
+    LongTermForecastInput:
+      type: object
+      required: [clientName, periodType, dateFrom, dateTo, contactId]
+      properties:
+        clientName:
+          type: string
+        periodType:
+          type: string
+          enum: [1m, 3m, 6m]
+        dateFrom:
+          type: string
+          format: date
+        dateTo:
+          type: string
+          format: date
+        contactId:
+          type: integer
+        title:
+          type: string
+        introText:
+          type: string
+        blocks:
+          type: array
+          items:
+            $ref: "#/components/schemas/LongTermForecastBlock"
+    LongTermForecastUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        introText:
+          type: string
+        status:
+          type: string
+          enum: [draft, edited, final]
+        blocks:
+          type: array
+          items:
+            $ref: "#/components/schemas/LongTermForecastBlock"
+    LongTermForecastCalculation:
+      type: object
+      additionalProperties: true
+      properties:
+        dateFrom:
+          type: string
+          format: date
+        dateTo:
+          type: string
+          format: date
+        natal:
+          $ref: "#/components/schemas/NatalChart"
+        progressions:
+          type: object
+          additionalProperties: true
+        directions:
+          type: object
+          additionalProperties: true
+        transit:
+          type: object
+          additionalProperties: true
+        timeline:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
