@@ -42,7 +42,7 @@ const adjust = (p: number): number => (p === 5 ? 2 : p);
 // Palace (1..9, center→2) carrying a given stem on an earth plate of (ju, dun).
 function palaceOfStem(ju: number, yin: boolean, stemIdx: number): number {
   const k = seqIdx[stemIdx];
-  const p = yin ? (((ju - 1 - k) % 9 + 9) % 9) + 1 : (((ju - 1 + k) % 9) + 1);
+  const p = yin ? ((((ju - 1 - k) % 9) + 9) % 9) + 1 : ((ju - 1 + k) % 9) + 1;
   return adjust(p);
 }
 
@@ -52,16 +52,35 @@ const yiStemOf = (index: number): number => XUN_YI_STEM[Math.floor(index / 10)];
 // Full Russian direction per palace — nominative ("Восток") and prepositional
 // ("на Востоке"). Center (5) never occurs here (always 寄 to 2).
 const DIR_NOM: Record<number, string> = {
-  1: "Север", 2: "Юго-запад", 3: "Восток", 4: "Юго-восток",
-  6: "Северо-запад", 7: "Запад", 8: "Северо-восток", 9: "Юг",
+  1: "Север",
+  2: "Юго-запад",
+  3: "Восток",
+  4: "Юго-восток",
+  6: "Северо-запад",
+  7: "Запад",
+  8: "Северо-восток",
+  9: "Юг",
 };
 const DIR_LOC: Record<number, string> = {
-  1: "Севере", 2: "Юго-западе", 3: "Востоке", 4: "Юго-востоке",
-  6: "Северо-западе", 7: "Западе", 8: "Северо-востоке", 9: "Юге",
+  1: "Севере",
+  2: "Юго-западе",
+  3: "Востоке",
+  4: "Юго-востоке",
+  6: "Северо-западе",
+  7: "Западе",
+  8: "Северо-востоке",
+  9: "Юге",
 };
 
 function pillarsOf(date: Date) {
-  const lunar = Solar.fromYmdHms(date.getFullYear(), date.getMonth() + 1, date.getDate(), 12, 0, 0).getLunar();
+  const lunar = Solar.fromYmdHms(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate(),
+    12,
+    0,
+    0,
+  ).getLunar();
   return {
     year: parseGanZhi(lunar.getYearInGanZhiExact()),
     month: parseGanZhi(lunar.getMonthInGanZhiExact()),
@@ -72,36 +91,95 @@ function pillarsOf(date: Date) {
 // Resolve the solar year number for a year-pillar sexagenary index near `date`
 // (accounts for the 立春 boundary by checking the neighbouring Gregorian years).
 function yearNumberFor(date: Date, yearIndex: number): number {
-  for (const y of [date.getFullYear(), date.getFullYear() - 1, date.getFullYear() + 1]) {
-    if (((y - 1984) % 60 + 60) % 60 === yearIndex) return y;
+  for (const y of [
+    date.getFullYear(),
+    date.getFullYear() - 1,
+    date.getFullYear() + 1,
+  ]) {
+    if ((((y - 1984) % 60) + 60) % 60 === yearIndex) return y;
   }
   return date.getFullYear();
 }
 
-/** Годовой Джи Фу — palace of the year 旬首仪 (def B), 年家 阴遁, ju ∈ [7,4,1]. */
+/**
+ * Годовой Джи Фу — годовая карта использует только Иньский Дунь.
+ * Один Юань = 60 солнечных лет; стартовые дворцы: верхний 1, средний 4,
+ * нижний 7. Цикл привязан к солнечному году от 立春, а не к календарному 1 января.
+ */
 export function yearJiFuPalace(date: Date): number {
   const { year } = pillarsOf(date);
-  const yn = yearNumberFor(date, year.index);
-  const ju = [7, 4, 1][((yn - 1984) % 3 + 3) % 3];
+  const solarYear = yearNumberFor(date, year.index);
+  const yuan = Math.floor(((((solarYear - 1984) % 180) + 180) % 180) / 60);
+  const ju = [7, 1, 4][yuan]; // 1984-2043: 下元, 2044-2103: 上元, 2104-2163: 中元
   return palaceOfStem(ju, true, yiStemOf(year.index));
 }
 
-/** Месячный Джи Фу — palace of the month 旬首仪 (def B); 月家 中元-calibrated. */
+/**
+ * Месячный Джи Фу — 月家 делит 60 месяцев на три пятилетних Юаня.
+ * Таблица стартовых Иньских Цзюй следует классической последовательности
+ * для пяти групп годового ствола: 甲己, 乙庚, 丙辛, 丁壬, 戊癸.
+ */
 export function monthJiFuPalace(date: Date): number {
-  const { month } = pillarsOf(date);
-  const yin = juForDate(date).yin; // 阴/阳 half by 二至
-  const step = ((month.branch - 2) % 12 + 12) % 12; // steps from 寅 (正月)
-  const ju = ((step - 1) % 9 + 9) % 9 + 1; // 中元: 寅→阴9, 午→阴4, 未→阴5
-  return palaceOfStem(ju, yin, yiStemOf(month.index));
+  const { year, month } = pillarsOf(date);
+  // Four 孟 branches (寅申巳亥) = 上元, four 仲 branches
+  // (子午卯酉) = 中元, four 季 branches (辰戌丑未) = 下元.
+  // The source's explicit example (壬午 year) confirms that the
+  // 1/7/4 sequence is selected by the year branch group, not shifted by
+  // the year stem pair.
+  const yuanByBranch: Record<number, 0 | 1 | 2> = {
+    2: 0, // 寅
+    8: 0, // 申
+    5: 0, // 巳
+    11: 0, // 亥
+    0: 1, // 子
+    6: 1, // 午
+    3: 1, // 卯
+    9: 1, // 酉
+    4: 2, // 辰
+    10: 2, // 戌
+    1: 2, // 丑
+    7: 2, // 未
+  };
+  const ju = [1, 7, 4][yuanByBranch[year.branch]];
+  return palaceOfStem(ju, true, yiStemOf(month.index));
 }
 
-/** Дневной Джи Фу — palace of the day stem (def A); continuous 日家 ju. */
+function nearestJiaZiAnchor(date: Date, yin: boolean): Date {
+  // 日家 starts its 180-day cycle from the 甲子 day nearest the relevant
+  // solstice: 夏至 for 阴遁, 冬至 for 阳遁. We search around the astronomical
+  // calendar date rather than relying on a private field from juForDate.
+  const targetMonth = yin ? 5 : 11;
+  const target = new Date(date.getFullYear(), targetMonth, 21, 12, 0, 0);
+  let best: Date | undefined;
+  let bestDistance = Infinity;
+  for (let offset = -30; offset <= 30; offset += 1) {
+    const candidate = new Date(target);
+    candidate.setDate(target.getDate() + offset);
+    const p = pillarsOf(candidate).day;
+    if (p.index !== 0) continue;
+    const distance = Math.abs(candidate.getTime() - target.getTime());
+    if (distance < bestDistance) {
+      best = candidate;
+      bestDistance = distance;
+    }
+  }
+  if (!best) {
+    throw new Error(
+      "Не удалось определить опорный день 甲子 для дневного Джи Фу",
+    );
+  }
+  return best;
+}
+
+/** Дневной Джи Фу — 日家 делит 180 дней на три 60-дневных Юаня. */
 export function dayJiFuPalace(date: Date): number {
   const { day } = pillarsOf(date);
   const yin = juForDate(date).yin;
-  let ju = ((-day.index) % 9 + 9) % 9;
-  if (ju === 0) ju = 9;
-  const eff = day.stem === 0 ? yiStemOf(day.index) : day.stem; // 甲 hides as 旬首仪
+  const anchor = nearestJiaZiAnchor(date, yin);
+  const diffDays = Math.floor((date.getTime() - anchor.getTime()) / 86400000);
+  const yuan = ((Math.floor(diffDays / 60) % 3) + 3) % 3;
+  const ju = yin ? [9, 3, 6][yuan] : [1, 7, 4][yuan];
+  const eff = day.stem === 0 ? yiStemOf(day.index) : day.stem;
   return palaceOfStem(ju, yin, eff);
 }
 
@@ -130,7 +208,14 @@ export interface JiFuWish {
  * sector. Cards are emitted when strength ≥ 2 (the hour plus at least one larger scale), then shown in chronological order.
  */
 export function computeJiFuWishes(from: Date, days: number): JiFuWish[] {
-  const start = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
+  const start = new Date(
+    from.getFullYear(),
+    from.getMonth(),
+    from.getDate(),
+    12,
+    0,
+    0,
+  );
   const wishes: JiFuWish[] = [];
 
   for (let d = 0; d < days; d++) {
@@ -146,7 +231,8 @@ export function computeJiFuWishes(from: Date, days: number): JiFuWish[] {
       const matchYear = yp === hp;
       const matchMonth = mp === hp;
       const matchDay = dp === hp;
-      const strength = 1 + (matchYear ? 1 : 0) + (matchMonth ? 1 : 0) + (matchDay ? 1 : 0);
+      const strength =
+        1 + (matchYear ? 1 : 0) + (matchMonth ? 1 : 0) + (matchDay ? 1 : 0);
       if (strength < 2) continue;
 
       const chart = buildChart(date, h);
@@ -170,10 +256,11 @@ export function computeJiFuWishes(from: Date, days: number): JiFuWish[] {
   const chronologicalPosition = new Map<number, number>(
     CHRONOLOGICAL_HOUR_BRANCHES.map((branch, position) => [branch, position]),
   );
-  wishes.sort((a, b) =>
-    a.date.localeCompare(b.date) ||
-    (chronologicalPosition.get(a.hourBranch) ?? 99) -
-      (chronologicalPosition.get(b.hourBranch) ?? 99),
+  wishes.sort(
+    (a, b) =>
+      a.date.localeCompare(b.date) ||
+      (chronologicalPosition.get(a.hourBranch) ?? 99) -
+        (chronologicalPosition.get(b.hourBranch) ?? 99),
   );
   return wishes;
 }
