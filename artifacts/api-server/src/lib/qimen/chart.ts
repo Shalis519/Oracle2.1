@@ -1,8 +1,22 @@
 // Qi Men Dun Jia — rotating-plate (轉盤) hour chart.
 import {
-  DEITIES, DOORS, PALACES, PATH, STARS, STEMS, BRANCHES, type Element, pathIndex,
+  DEITIES,
+  DOORS,
+  PALACES,
+  PATH,
+  STARS,
+  STEMS,
+  BRANCHES,
+  type Element,
+  pathIndex,
 } from "./constants";
-import { dayInfo, hourGanZhiIndex, hourStem, xunInfo, type DayInfo } from "./calendar";
+import {
+  dayInfo,
+  hourGanZhiIndex,
+  hourStem,
+  xunInfo,
+  type DayInfo,
+} from "./calendar";
 import { juForDate, type JuResult } from "./ju";
 
 // 戊己庚辛壬癸丁丙乙 placement sequence (stem indices).
@@ -58,7 +72,9 @@ export function buildChart(date: Date, hourBranch: number): Chart {
   const earthStem: number[] = Array(10).fill(-1);
   const stemPalace: number[] = Array(10).fill(-1);
   for (let p = 0; p < 9; p++) {
-    const palace = yin ? (((ju.ju - 1 - p) % 9 + 9) % 9) + 1 : (((ju.ju - 1 + p) % 9) + 1);
+    const palace = yin
+      ? ((((ju.ju - 1 - p) % 9) + 9) % 9) + 1
+      : ((ju.ju - 1 + p) % 9) + 1;
     earthStem[palace] = SEQ[p];
     stemPalace[SEQ[p]] = palace;
   }
@@ -72,22 +88,34 @@ export function buildChart(date: Date, hourBranch: number): Chart {
 
   const iFu = pathIndex(pFu);
   const iHour = pathIndex(pHour);
-  const kStar = ((iHour - iFu) % 8 + 8) % 8;
+  const kStar = (((iHour - iFu) % 8) + 8) % 8;
 
-  // 八门 rotation: in Yang the door plate advances forward by kStar (same as stars);
-  // in Yin it advances by (iFu + iHour) instead of (iHour - iFu), which is equivalent
-  // to rotating in the opposite direction from the 符头 anchor.
-  // Unified: doorShift = (iHour - iFu * dir) mod 8.
-  //   Yang (dir=+1): iHour - iFu = kStar  ✓
-  //   Yin  (dir=-1): iHour + iFu           ✓ (empirically verified against reference charts)
+  // 八门 in 置闰法: the original 值使 gate is the gate whose home palace
+  // carries the 旬首仪 (pFu). Its target palace is found by advancing the
+  // position inside the current 旬 in the dun direction. This is different
+  // from the star shift: the hour-stem palace (pHour) is not the gate anchor.
   const dir = yin ? -1 : 1;
-  const doorShift = ((iHour - iFu * dir) % 8 + 8) % 8;
+  let gateTargetRaw = stemPalace[yiStem];
+  for (let step = 0; step < xun.pos; step += 1) {
+    gateTargetRaw += dir;
+    if (gateTargetRaw > 9) gateTargetRaw = 1;
+    if (gateTargetRaw < 1) gateTargetRaw = 9;
+  }
+  // The center has no gate; when the target lands there, continue one palace
+  // in the same direction, matching the standard 寄宫 handling.
+  if (gateTargetRaw === 5) {
+    gateTargetRaw += dir;
+    if (gateTargetRaw > 9) gateTargetRaw = 1;
+    if (gateTargetRaw < 1) gateTargetRaw = 9;
+  }
+  const gateTarget = adjust(gateTargetRaw);
+  const doorShift = (((pathIndex(gateTarget) - pathIndex(pFu)) % 8) + 8) % 8;
 
   const cells: Record<number, PalaceCell> = {};
   for (let i = 0; i < 8; i++) {
     const p = PATH[i];
-    const starSrc = PATH[((i - kStar) % 8 + 8) % 8];
-    const doorSrc = PATH[((i - doorShift) % 8 + 8) % 8];
+    const starSrc = PATH[(((i - kStar) % 8) + 8) % 8];
+    const doorSrc = PATH[(((i - doorShift) % 8) + 8) % 8];
     const deitySteps = ((((i - iHour) * dir) % 8) + 8) % 8;
     cells[p] = {
       palace: p,
@@ -132,7 +160,11 @@ export function buildChart(date: Date, hourBranch: number): Chart {
  * 3) find X on the earth plate -> palace B (X is never 甲, so always found);
  * 4) the gate/star whose HOME palace is B are the Main Gate / Main Star.
  */
-export function mainGateStar(chart: Chart): { gate: string; star: string; palace: number } {
+export function mainGateStar(chart: Chart): {
+  gate: string;
+  star: string;
+  palace: number;
+} {
   const a = chart.zhiFuPalace;
   const x = chart.cells[a]?.heavenStem;
   let b = -1;
