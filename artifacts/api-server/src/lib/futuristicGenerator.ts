@@ -335,36 +335,26 @@ async function describeMainTransit(s: TransitSemantics, date: Date): Promise<str
   if (s.relation?.description?.trim()) {
     parts.push(normalizeRelationDescription(s.relation.description));
   } else {
-    const fallback = formatList(profileListText(s.planetProfile));
-    if (fallback) parts.push(buildPersonalInfluence(fallback));
+    const planetThemes = formatList(profileListText(s.planetProfile), 3);
+    if (planetThemes) parts.push(`Этот транзит делает особенно заметными темы: ${planetThemes}.`);
   }
 
-  const topEvidence = s.themeEvidence.slice(0, 2);
-  if (topEvidence.length > 0) {
-    const focus = formatList(topEvidence.map((theme) => theme.name));
-    const sourceText = topEvidence
-      .filter((theme) => theme.sources.length > 1)
-      .map((theme) => `${theme.name} (${theme.sources.slice(0, 3).join(", ")})`)
-      .join("; ");
-    parts.push(buildPrimaryFocus(focus, sourceText || undefined));
-  }
-
-  const signThemes = profileListText(s.signProfile);
-  const houseTexts: string[] = [];
+  const signThemes = formatList(profileListText(s.signProfile), 3);
+  const contextTexts: string[] = [];
   if (t.transitHouse && s.houseProfile) {
-    const themes = formatList(profileListText(s.houseProfile));
-    if (themes) houseTexts.push(buildHouseThemes(t.transitHouse, themes));
+    const themes = formatList(profileListText(s.houseProfile), 3);
+    if (themes) contextTexts.push(`В Вашем ${t.transitHouse}-м доме это проявляется через темы: ${themes}`);
   }
   if (t.natalHouse && s.natalHouseProfile && t.natalHouse !== t.transitHouse) {
-    const themes = formatList(profileListText(s.natalHouseProfile));
-    if (themes) houseTexts.push(`Это также связывает транзит с темами ${t.natalHouse}-го дома: ${themes}`);
+    const themes = formatList(profileListText(s.natalHouseProfile), 3);
+    if (themes) contextTexts.push(`Связь с натальным ${t.natalHouse}-м домом добавляет темы: ${themes}`);
   }
-  if (signThemes.length > 0) houseTexts.push(buildSignThemes(formatList(signThemes)));
-  if (houseTexts.length > 0) parts.push(`${houseTexts.join(". ")}.`);
+  if (signThemes) contextTexts.push(`Знак добавляет оттенок: ${signThemes}`);
+  if (contextTexts.length > 0) parts.push(`${contextTexts.join(". ")}.`);
 
   const emotions = s.polarity === "negative" ? s.planetProfile?.negativeEmotions : s.planetProfile?.positiveEmotions;
   const emotion = emotions && emotions.length > 0 ? pickByDate(emotions, date, 1) : null;
-  if (emotion) parts.push(`Важно учитывать своё состояние. Вы можете ощутить: ${emotion.toLowerCase()}.`);
+  if (emotion) parts.push(`Это может ощущаться как ${emotion.toLowerCase()}.`);
 
   return parts;
 }

@@ -10,6 +10,13 @@ export const FORECAST_TEMPLATE_DEFAULTS: ForecastTemplateDefault[] = [
   {
     category: "entity",
     context: "transit",
+    key: "jupiter",
+    title: "Юпитер в транзитном контексте",
+    text: "расширению возможностей, росту, поиску смысла и уверенности в своих силах",
+  },
+  {
+    category: "entity",
+    context: "transit",
     key: "mercury",
     title: "Меркурий в транзитном контексте",
     text: "Вашему мышлению, речи и способам обмена информацией",
