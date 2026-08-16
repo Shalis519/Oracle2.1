@@ -284,22 +284,6 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
               {"\u{1F9D8}\u200D\u2640\uFE0F".repeat(w.strength)}
             </span>
           </div>
-
-          <div className="grid grid-cols-2 gap-2 rounded-lg border border-amber-400/15 bg-amber-400/5 p-3 text-xs">
-            {[
-              ["Год", w.yearDirection, w.yearPalace, w.matchYear],
-              ["Месяц", w.monthDirection, w.monthPalace, w.matchMonth],
-              ["День", w.dayDirection, w.dayPalace, w.matchDay],
-              ["Час", w.hourDirection, w.hourPalace, true],
-            ].map(([scale, direction, palace, matched]) => (
-              <div
-                key={scale as string}
-                className={matched ? "font-semibold text-amber-200" : "text-muted-foreground"}
-              >
-                {scale}: {direction} ({palace})
-              </div>
-            ))}
-          </div>
         </CardContent>
       </Card>
     </motion.div>
