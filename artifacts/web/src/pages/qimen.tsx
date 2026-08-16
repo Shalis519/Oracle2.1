@@ -285,10 +285,6 @@ function JiFuWishCard({ w }: { w: JiFuWish }) {
             </span>
           </div>
 
-          <div className="text-xs text-muted-foreground">
-            Месячный расчёт: <span className="font-medium text-amber-200">Joey Yap</span>
-          </div>
-
           <div className="grid grid-cols-2 gap-2 rounded-lg border border-amber-400/15 bg-amber-400/5 p-3 text-xs">
             {[
               ["Год", w.yearDirection, w.yearPalace, w.matchYear],
