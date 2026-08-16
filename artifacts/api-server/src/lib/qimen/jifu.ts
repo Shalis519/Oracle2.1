@@ -144,7 +144,10 @@ export function monthJoeyYapJiFuPalace(date: Date): number {
     "month",
     {
       stem: month.stem,
-      effectiveStem: yiStemOf(month.index),
+      // В Month Charts Joey Yap 值符 привязан к месячному стволу карты.
+      // 旬首仪 применяется для часового слоя, но не должен подменять
+      // фактический месячный ствол при определении дворца 符.
+      effectiveStem: month.stem,
       branch: month.branch,
       index: month.index,
       label: STEMS[month.stem] + BRANCHES[month.branch],
