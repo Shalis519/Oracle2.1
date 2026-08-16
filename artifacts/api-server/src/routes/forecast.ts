@@ -92,7 +92,7 @@ function buildForecast(
   };
 }
 
-export const CURRENT_FORECAST_VERSION = 48;
+export const CURRENT_FORECAST_VERSION = 49;
 
 async function getOrComputeToday(
   userId: number,
@@ -149,7 +149,9 @@ async function getOrComputeToday(
   }
 
   const transits = natalChart
-    ? computeTransits(natalChart, date, birthLatitude, birthLongitude, birthTimezone)
+    ? computeTransits(natalChart, date, birthLatitude, birthLongitude, birthTimezone, {
+        excludedNatalBodies: ["chiron"],
+      })
     : null;
 
   const result = await computeDailyForecast(birthDate, natalChart, transits, date);

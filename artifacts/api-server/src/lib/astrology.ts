@@ -1,8 +1,9 @@
-import circularPkg from "circular-natal-horoscope-js";
+import { createRequire } from "node:module";
 
 import { detectNatalCinderellaGates, detectTransitCinderellaGates, type CinderellaBody, type CinderellaGate } from "./cinderellaGates";
 
-const { Origin, Horoscope } = circularPkg as unknown as {
+const require = createRequire(import.meta.url);
+const circularPkg = require("circular-natal-horoscope-js") as {
   Origin: new (args: {
     year: number;
     month: number;
@@ -22,6 +23,7 @@ const { Origin, Horoscope } = circularPkg as unknown as {
     language?: string;
   }) => HoroscopeInstance;
 };
+const { Origin, Horoscope } = circularPkg;
 
 interface OriginInstance {
   timezone: string;
@@ -437,7 +439,7 @@ function computeAspects(bodies: NatalBody[]): NatalAspect[] {
   return out;
 }
 
-export function computeNatalChart(input: NatalChartInput): NatalChart {
+function computeNatalChartUncached(input: NatalChartInput): NatalChart {
   const origin = new Origin({
     year: input.year,
     month: input.month - 1, // library uses 0-indexed months
@@ -559,12 +561,45 @@ function getHouseForLongitude(longitude: number, houses: NatalHouse[]): number {
 }
 
 /** Compute transit positions for a given date and compare against natal chart. */
+const NATAL_CHART_CACHE_LIMIT = 4096;
+const natalChartCache = new Map<string, NatalChart>();
+
+function natalChartCacheKey(input: NatalChartInput): string {
+  return [
+    input.year,
+    input.month,
+    input.day,
+    input.hour,
+    input.minute,
+    input.second ?? 0,
+    input.latitude.toFixed(6),
+    input.longitude.toFixed(6),
+    input.timezone ?? "",
+  ].join("|");
+}
+
+export function computeNatalChart(input: NatalChartInput): NatalChart {
+  const key = natalChartCacheKey(input);
+  const cached = natalChartCache.get(key);
+  if (cached) return cached;
+  const chart = computeNatalChartUncached(input);
+  if (natalChartCache.size >= NATAL_CHART_CACHE_LIMIT) {
+    const oldestKey = natalChartCache.keys().next().value;
+    if (oldestKey) natalChartCache.delete(oldestKey);
+  }
+  natalChartCache.set(key, chart);
+  return chart;
+}
+
 export function computeTransits(
   natalChart: NatalChart,
   dateStr: string,
   latitude: number,
   longitude: number,
   timezone?: string | null,
+  // excludedNatalBodies позволяет daily forecast исключать отдельные натальные цели
+  // без удаления их из эфемерид, натальной карты или Cinderella-расчётов.
+  options?: { excludedBodies?: string[]; excludedNatalBodies?: string[] },
 ): TransitResult | null {
   const m = /^\d{4}-(\d{2})-(\d{2})$/.exec(dateStr);
   if (!m) return null;
@@ -596,7 +631,9 @@ export function computeTransits(
   ];
   const byKey = new Map(allBodies.map((b) => [b.key, b]));
 
-  const transitBodies: TransitBody[] = TRANSIT_BODIES.filter((k) => byKey.has(k)).map((k) => {
+  const excludedBodies = new Set(options?.excludedBodies ?? []);
+  const excludedNatalBodies = new Set(options?.excludedNatalBodies ?? []);
+  const transitBodies: TransitBody[] = TRANSIT_BODIES.filter((k) => !excludedBodies.has(k) && byKey.has(k)).map((k) => {
     const b = byKey.get(k)!;
     return {
       key: b.key,
@@ -619,6 +656,7 @@ export function computeTransits(
   for (const t of transitBodies) {
     for (const natalBody of natalChart.bodies) {
       if (t.key === natalBody.key) continue;
+      if (excludedNatalBodies.has(natalBody.key)) continue;
       const natalKey = natalBody.key;
       let sep = Math.abs(t.longitude - natalBody.longitude) % 360;
       if (sep > 180) sep = 360 - sep;
