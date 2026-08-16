@@ -869,6 +869,28 @@ export const CalculatePredictiveFormulaResponse = zod.object({
   "applying": zod.boolean().nullish(),
   "orb": zod.number().nullish()
 })),
+  "natalProfile": zod.object({
+  "houses": zod.array(zod.object({
+  "number": zod.union([zod.literal(5),zod.literal(7),zod.literal(10)]),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "rulers": zod.array(zod.string()),
+  "rulerKeys": zod.array(zod.string()),
+  "planets": zod.array(zod.string())
+})),
+  "formulas": zod.array(zod.string()),
+  "connections": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['natal', 'secondary_progression', 'retrograde_support']),
+  "label": zod.string(),
+  "date": zod.string().nullish(),
+  "age": zod.number().nullish(),
+  "houses": zod.array(zod.number()),
+  "method": zod.string().nullish(),
+  "applying": zod.boolean().nullish(),
+  "orb": zod.number().nullish()
+}))
+}),
   "windows": zod.array(zod.object({
   "dateFrom": zod.string(),
   "dateTo": zod.string(),

@@ -9,6 +9,7 @@ import type { MarriageFormulaResultFormula } from './marriageFormulaResultFormul
 import type { MarriageFormulaResultMethodology } from './marriageFormulaResultMethodology';
 import type { MarriageIndicator } from './marriageIndicator';
 import type { MarriageWindow } from './marriageWindow';
+import type { NatalMarriageProfile } from './natalMarriageProfile';
 
 export interface MarriageFormulaResult {
   formula: MarriageFormulaResultFormula;
@@ -18,6 +19,7 @@ export interface MarriageFormulaResult {
   ageFrom: number;
   ageTo: number;
   natalBasis: MarriageIndicator[];
+  natalProfile: NatalMarriageProfile;
   windows: MarriageWindow[];
   methodology: MarriageFormulaResultMethodology;
 }

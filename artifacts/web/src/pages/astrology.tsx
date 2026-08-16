@@ -363,33 +363,50 @@ export default function AstrologyPage() {
             </p>
           )}
           {marriageFormula.data && (
-            <div className="space-y-3 text-sm">
-              <p className="text-muted-foreground">
-                Период анализа: <span className="text-foreground">{formatRuDate(marriageFormula.data.searchFrom)} — {formatRuDate(marriageFormula.data.searchTo)}</span>.
-              </p>
-              {marriageFormula.data.natalBasis.length > 0 && (
-                <div className="rounded-md border border-primary/15 p-3">
-                  <p className="font-medium">Натальная основа</p>
-                  <div className="mt-2 space-y-1 text-muted-foreground">
-                    {marriageFormula.data.natalBasis.map((indicator) => <p key={indicator.id}>{indicator.label}</p>)}
-                  </div>
-                </div>
-              )}
-              {marriageFormula.data.windows.length === 0 ? (
-                <p className="rounded-md border border-border p-3 text-muted-foreground">В заданном диапазоне не найдено окон с тремя независимыми подтверждениями.</p>
-              ) : (
-                <div className="space-y-3">
-                  <p className="font-medium">Возможные периоды</p>
-                  {marriageFormula.data.windows.map((window) => (
-                    <details key={`${window.dateFrom}-${window.dateTo}`} className="rounded-md border border-primary/15 bg-primary/5 p-3">
-                      <summary className="cursor-pointer font-medium">{formatRuDate(window.dateFrom)} — {formatRuDate(window.dateTo)} · {window.confirmations} подтверждения</summary>
-                      <div className="mt-3 space-y-2 text-muted-foreground">
-                        {window.indicators.map((indicator) => <p key={indicator.id}>{indicator.label}{indicator.date ? ` — ${formatRuDate(indicator.date)}` : ""}</p>)}
-                      </div>
-                    </details>
+            <div className="space-y-4 text-sm">
+              <section className="space-y-3">
+                <h3 className="font-medium">1. Показатели брака в натальной карте</h3>
+                <p className="text-muted-foreground">Сначала карта показывает, как в натале связаны темы V дома, VII дома и официального статуса X дома.</p>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  {marriageFormula.data.natalProfile.houses.map((house) => (
+                    <div key={house.number} className="rounded-md border border-primary/15 bg-primary/5 p-3">
+                      <p className="font-medium">{house.number === 5 ? "V дом" : house.number === 7 ? "VII дом" : "X дом"} · {house.sign}</p>
+                      <p className="mt-2 text-xs text-muted-foreground">Управитель: {house.rulers.length ? house.rulers.join(", ") : "не определён"}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Планеты в доме: {house.planets.length ? house.planets.join(", ") : "нет"}</p>
+                    </div>
                   ))}
                 </div>
-              )}
+                {marriageFormula.data.natalProfile.formulas.length > 0 ? (
+                  <div className="rounded-md border border-primary/15 p-3">
+                    <p className="font-medium">Найденные натальные связи</p>
+                    <div className="mt-2 space-y-1 text-muted-foreground">
+                      {marriageFormula.data.natalProfile.connections.map((indicator) => <p key={indicator.id}>{indicator.label}</p>)}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="rounded-md border border-border p-3 text-muted-foreground">В этой карте не выделена прямая связь V, VII и X домов по текущей формуле.</p>
+                )}
+              </section>
+
+              <section className="space-y-3 border-t border-border/60 pt-4">
+                <h3 className="font-medium">2. Поиск прогностических периодов</h3>
+                <p className="text-muted-foreground">Период анализа: <span className="text-foreground">{formatRuDate(marriageFormula.data.searchFrom)} — {formatRuDate(marriageFormula.data.searchTo)}</span>.</p>
+                {marriageFormula.data.windows.length === 0 ? (
+                  <p className="rounded-md border border-border p-3 text-muted-foreground">В заданном диапазоне не найдено окон с тремя независимыми подтверждениями.</p>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="font-medium">Возможные периоды</p>
+                    {marriageFormula.data.windows.map((window) => (
+                      <details key={`${window.dateFrom}-${window.dateTo}`} className="rounded-md border border-primary/15 bg-primary/5 p-3">
+                        <summary className="cursor-pointer font-medium">{formatRuDate(window.dateFrom)} — {formatRuDate(window.dateTo)} · {window.confirmations} подтверждения</summary>
+                        <div className="mt-3 space-y-2 text-muted-foreground">
+                          {window.indicators.map((indicator) => <p key={indicator.id}>{indicator.label}{indicator.date ? ` — ${formatRuDate(indicator.date)}` : ""}</p>)}
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+                )}
+              </section>
             </div>
           )}
         </CardContent>

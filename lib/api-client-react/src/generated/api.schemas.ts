@@ -1145,6 +1145,30 @@ export interface MarriageIndicator {
   orb?: number | null;
 }
 
+export type NatalMarriageHouseNumber = typeof NatalMarriageHouseNumber[keyof typeof NatalMarriageHouseNumber];
+
+
+export const NatalMarriageHouseNumber = {
+  NUMBER_5: 5,
+  NUMBER_7: 7,
+  NUMBER_10: 10,
+} as const;
+
+export interface NatalMarriageHouse {
+  number: NatalMarriageHouseNumber;
+  sign: string;
+  signKey: string;
+  rulers: string[];
+  rulerKeys: string[];
+  planets: string[];
+}
+
+export interface NatalMarriageProfile {
+  houses: NatalMarriageHouse[];
+  formulas: string[];
+  connections: MarriageIndicator[];
+}
+
 export type MarriageWindowStrength = typeof MarriageWindowStrength[keyof typeof MarriageWindowStrength];
 
 
@@ -1206,6 +1230,7 @@ export interface MarriageFormulaResult {
   ageFrom: number;
   ageTo: number;
   natalBasis: MarriageIndicator[];
+  natalProfile: NatalMarriageProfile;
   windows: MarriageWindow[];
   methodology: MarriageFormulaResultMethodology;
 }

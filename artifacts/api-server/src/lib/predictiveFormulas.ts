@@ -6,7 +6,7 @@ export const MARRIAGE_MAX_AGE = 79;
 
 export type PredictiveFormulaKey = "marriage";
 
-type MarriageIndicator = {
+export type MarriageIndicator = {
   id: string;
   kind: "natal" | "secondary_progression" | "retrograde_support";
   label: string;
@@ -16,6 +16,21 @@ type MarriageIndicator = {
   method?: string;
   applying?: boolean | null;
   orb?: number;
+};
+
+export type NatalMarriageHouse = {
+  number: 5 | 7 | 10;
+  sign: string;
+  signKey: string;
+  rulers: string[];
+  rulerKeys: string[];
+  planets: string[];
+};
+
+export type NatalMarriageProfile = {
+  houses: NatalMarriageHouse[];
+  formulas: string[];
+  connections: MarriageIndicator[];
 };
 
 export type MarriageWindow = {
@@ -36,6 +51,7 @@ export type MarriageFormulaResult = {
   ageFrom: number;
   ageTo: number;
   natalBasis: MarriageIndicator[];
+  natalProfile: NatalMarriageProfile;
   windows: MarriageWindow[];
   methodology: {
     houseSystem: "Placidus";
@@ -75,11 +91,6 @@ function addDays(date: Date, days: number): Date {
   return new Date(date.getTime() + days * 86400000);
 }
 
-function ageAtDate(input: NatalChartInput, date: Date): number {
-  const birth = dateAtAge(input, 0).getTime();
-  return Number(((date.getTime() - birth) / (365.2425 * 86400000)).toFixed(2));
-}
-
 function housesRuledBy(chart: NatalChart, bodyKey: string): number[] {
   const houses: number[] = [];
   for (const house of chart.houses) {
@@ -92,34 +103,48 @@ function uniqueNumbers(values: number[]): number[] {
   return [...new Set(values)].sort((a, b) => a - b);
 }
 
-function natalMarriageBasis(chart: NatalChart): MarriageIndicator[] {
-  const basis: MarriageIndicator[] = [];
-  const v = chart.houses.find((house) => house.number === 5);
-  const vii = chart.houses.find((house) => house.number === 7);
-  const x = chart.houses.find((house) => house.number === 10);
-  if (!v || !vii || !x) return basis;
-
+function natalMarriageProfile(chart: NatalChart): NatalMarriageProfile {
   const tracked = new Set(["venus", "mars", "pluto", "sun", "moon", "jupiter", "saturn", "uranus", "neptune"]);
+  const houses = ([5, 7, 10] as const).map((number) => {
+    const house = chart.houses.find((item) => item.number === number);
+    const rulerKeys = house ? RULERS[house.signKey] ?? [] : [];
+    return {
+      number,
+      sign: house?.sign ?? "не определён",
+      signKey: house?.signKey ?? "",
+      rulers: rulerKeys.map((key) => chart.bodies.find((body) => body.key === key)?.name ?? key),
+      rulerKeys,
+      planets: chart.bodies.filter((body) => body.house === number && tracked.has(body.key)).map((body) => body.name),
+    };
+  });
+
+  const connections: MarriageIndicator[] = [];
+  const formulas = new Set<string>();
   const bodyHouses = new Map(chart.bodies.map((body) => [body.key, body.house]));
   for (const bodyKey of tracked) {
     const ruled = housesRuledBy(chart, bodyKey);
     const placed = bodyHouses.get(bodyKey);
     const connected = uniqueNumbers([...ruled, ...(placed ? [placed] : [])]);
-    const hasV = connected.includes(5);
-    const hasVII = connected.includes(7);
-    const hasX = connected.includes(10);
-    if ((hasV && hasVII) || (hasV && hasX) || (hasVII && hasX)) {
-      const formula = hasVII && hasX ? "VII + X" : hasV && hasVII ? "V + VII" : "V + X";
-      basis.push({
-        id: `natal-${bodyKey}-${formula}`,
-        kind: "natal",
-        label: `${chart.bodies.find((body) => body.key === bodyKey)?.name ?? bodyKey} связан с формулой ${formula}`,
-        houses: connected.filter((house) => [5, 7, 10].includes(house)),
-        method: "натальная карта",
-      });
-    }
+    const marriageHouses = connected.filter((house) => [5, 7, 10].includes(house));
+    if (marriageHouses.length < 2) continue;
+
+    const hasV = marriageHouses.includes(5);
+    const hasVII = marriageHouses.includes(7);
+    const hasX = marriageHouses.includes(10);
+    const formula = hasVII && hasX ? "VII + X" : hasV && hasVII ? "V + VII" : hasV && hasX ? "V + X" : null;
+    if (!formula) continue;
+    formulas.add(formula);
+    const bodyName = chart.bodies.find((body) => body.key === bodyKey)?.name ?? bodyKey;
+    connections.push({
+      id: `natal-${bodyKey}-${formula}`,
+      kind: "natal",
+      label: `${bodyName} связан с формулой ${formula}`,
+      houses: marriageHouses,
+      method: "натальная карта",
+    });
   }
-  return basis;
+
+  return { houses, formulas: [...formulas], connections };
 }
 
 function aspectHouses(aspect: ProgressionAspect): number[] {
@@ -137,7 +162,7 @@ function aspectFormula(aspect: ProgressionAspect): string | null {
   return null;
 }
 
-function progressionIndicator(aspect: ProgressionAspect, input: NatalChartInput, resultAge: number): MarriageIndicator | null {
+function progressionIndicator(aspect: ProgressionAspect, resultAge: number): MarriageIndicator | null {
   const formula = aspectFormula(aspect);
   if (!formula) return null;
   return {
@@ -153,7 +178,7 @@ function progressionIndicator(aspect: ProgressionAspect, input: NatalChartInput,
   };
 }
 
-function scanDates(input: NatalChartInput, start: Date, end: Date, stepDays: number): Date[] {
+function scanDates(start: Date, end: Date, stepDays: number): Date[] {
   const dates: Date[] = [];
   for (let cursor = start; cursor <= end; cursor = addDays(cursor, stepDays)) dates.push(cursor);
   if (!dates.length || dates[dates.length - 1].getTime() !== end.getTime()) dates.push(end);
@@ -185,16 +210,17 @@ function mergeIndicators(indicators: MarriageIndicator[]): MarriageWindow[] {
 
 export function computeMarriageFormula(input: NatalChartInput): MarriageFormulaResult {
   const natal = computeNatalChart(input);
+  const natalProfile = natalMarriageProfile(natal);
+  const natalBasis = natalProfile.connections;
   const searchStart = dateAtAge(input, MARRIAGE_MIN_AGE);
   const searchEnd = addDays(dateAtAge(input, MARRIAGE_MAX_AGE + 1), -1);
-  const natalBasis = natalMarriageBasis(natal);
   const indicators: MarriageIndicator[] = [];
 
-  // A yearly pass finds broad periods without making the public request perform a daily 64-year scan.
-  for (const date of scanDates(input, searchStart, searchEnd, 365)) {
+  // Ежегодный проход находит широкие окна; точное сужение добавим отдельным методом.
+  for (const date of scanDates(searchStart, searchEnd, 365)) {
     const progression = computeSecondaryProgressions(input, date);
     for (const aspect of progression.aspects) {
-      const found = progressionIndicator(aspect, input, progression.ageYears);
+      const found = progressionIndicator(aspect, progression.ageYears);
       if (found) indicators.push(found);
       const point = progression.points.find((item) => item.key === aspect.sourceBodyKey);
       if (point?.retrograde && found) {
@@ -224,6 +250,7 @@ export function computeMarriageFormula(input: NatalChartInput): MarriageFormulaR
     ageFrom: MARRIAGE_MIN_AGE,
     ageTo: MARRIAGE_MAX_AGE,
     natalBasis,
+    natalProfile,
     windows,
     methodology: {
       houseSystem: "Placidus",

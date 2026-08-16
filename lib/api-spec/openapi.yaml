@@ -2973,6 +2973,47 @@ components:
         orb:
           type: [number, "null"]
 
+    NatalMarriageHouse:
+      type: object
+      required: [number, sign, signKey, rulers, rulerKeys, planets]
+      properties:
+        number:
+          type: integer
+          enum: [5, 7, 10]
+        sign:
+          type: string
+        signKey:
+          type: string
+        rulers:
+          type: array
+          items:
+            type: string
+        rulerKeys:
+          type: array
+          items:
+            type: string
+        planets:
+          type: array
+          items:
+            type: string
+
+    NatalMarriageProfile:
+      type: object
+      required: [houses, formulas, connections]
+      properties:
+        houses:
+          type: array
+          items:
+            $ref: "#/components/schemas/NatalMarriageHouse"
+        formulas:
+          type: array
+          items:
+            type: string
+        connections:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarriageIndicator"
+
     MarriageWindow:
       type: object
       required: [dateFrom, dateTo, ageFrom, ageTo, confirmations, strength, indicators]
@@ -2997,7 +3038,7 @@ components:
 
     MarriageFormulaResult:
       type: object
-      required: [formula, formulaLabel, searchFrom, searchTo, ageFrom, ageTo, natalBasis, windows, methodology]
+      required: [formula, formulaLabel, searchFrom, searchTo, ageFrom, ageTo, natalBasis, natalProfile, windows, methodology]
       properties:
         formula:
           type: string
@@ -3016,6 +3057,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/MarriageIndicator"
+        natalProfile:
+          $ref: "#/components/schemas/NatalMarriageProfile"
         windows:
           type: array
           items:
