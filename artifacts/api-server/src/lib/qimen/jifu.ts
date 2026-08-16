@@ -21,7 +21,7 @@ import {
   parseGanZhi,
 } from "./constants";
 import { buildChart, buildPeriodMap } from "./chart";
-import { juForDate } from "./ju";
+import { dayJoeyYapJuForDate, juForDate } from "./ju";
 import { dateToIso } from "./calendar";
 
 // 旬首仪 stem (戊己庚辛壬癸) for a sexagenary index 0..59.
@@ -107,17 +107,22 @@ export function yearJiFuPalace(date: Date): number {
 }
 
 /**
- * Месячный Джи Фу — 月家 делит 60 месяцев на три пятилетних Юаня.
- * Таблица стартовых Иньских Цзюй следует классической последовательности
- * для пяти групп годового ствола: 甲己, 乙庚, 丙辛, 丁壬, 戊癸.
+ * Месячный Цзи Фу по Joey Yap Month Charts.
+ *
+ * Это отдельный месячный слой и не должен смешиваться с Guam Ham Hai.
+ * Для режима Joey Yap месячная структура выбирается из последовательности
+ * Yin 1 / Yin 4 / Yin 7 по группе земной ветви солнечного года. В 2026 году
+ * (午 — лошадь) контроль Mingli показывает Yin 7 для Joey Yap, включая
+ * август–декабрь; это отличается от Guam Ham Hai, где на тех же датах
+ * контрольные значения дают Yin 4.
+ *
+ * Важно: год определяется по солнечной границе 立春 через
+ * getYearInGanZhiExact(), а месячный столп — через getMonthInGanZhiExact().
  */
-export function monthJiFuPalace(date: Date): number {
+export function monthJoeyYapJiFuPalace(date: Date): number {
   const { year, month } = pillarsOf(date);
-  // Four 孟 branches (寅申巳亥) = 上元, four 仲 branches
-  // (子午卯酉) = 中元, four 季 branches (辰戌丑未) = 下元.
-  // The source's explicit example (壬午 year) confirms that the
-  // 1/7/4 sequence is selected by the year branch group, not shifted by
-  // the year stem pair.
+  // Joey Yap Month Charts use three Yin structures. The year-branch groups
+  // select the corresponding Upper/Middle/Lower cycle: 1 / 7 / 4.
   const yuanByBranch: Record<number, 0 | 1 | 2> = {
     2: 0, // 寅
     8: 0, // 申
@@ -144,9 +149,12 @@ export function monthJiFuPalace(date: Date): number {
       index: month.index,
       label: STEMS[month.stem] + BRANCHES[month.branch],
     },
-    { yin: true, ju, term: "月家", yuan },
+    { yin: true, ju, term: "月家 Joey Yap", yuan },
   ).zhiFuPalace;
 }
+
+/** Backward-compatible alias: the active monthly Ji Fu mode is Joey Yap. */
+export const monthJiFuPalace = monthJoeyYapJiFuPalace;
 
 function nearestJiaZiAnchor(date: Date, yin: boolean): Date {
   // 日家 starts its 180-day cycle from the 甲子 day nearest the relevant
@@ -178,11 +186,10 @@ function nearestJiaZiAnchor(date: Date, yin: boolean): Date {
 /** Дневной Джи Фу — 日家 делит 180 дней на три 60-дневных Юаня. */
 export function dayJiFuPalace(date: Date): number {
   const { day } = pillarsOf(date);
-  const yin = juForDate(date).yin;
-  const anchor = nearestJiaZiAnchor(date, yin);
-  const diffDays = Math.floor((date.getTime() - anchor.getTime()) / 86400000);
-  const yuan = ((Math.floor(diffDays / 60) % 3) + 3) % 3;
-  const ju = yin ? [9, 3, 6][yuan] : [1, 7, 4][yuan];
+  const dayJu = dayJoeyYapJuForDate(date);
+  const yin = dayJu.yin;
+  const ju = dayJu.ju;
+  const yuan = dayJu.yuan;
   return buildPeriodMap(
     date,
     "day",
@@ -209,6 +216,14 @@ export interface JiFuWish {
   hourLabel: string; // "час Петуха (17:00–19:00)"
   direction: string; // nominative, e.g. "Восток"
   directionLoc: string; // prepositional, e.g. "Востоке"
+  yearPalace: number;
+  monthPalace: number;
+  dayPalace: number;
+  hourPalace: number;
+  yearDirection: string;
+  monthDirection: string;
+  dayDirection: string;
+  hourDirection: string;
   strength: number; // 2..4
   matchYear: boolean;
   matchMonth: boolean;
@@ -258,6 +273,14 @@ export function computeJiFuWishes(from: Date, days: number): JiFuWish[] {
         hourLabel: `час ${BRANCH_ANIMAL_RU_GEN[h]} (${BRANCH_HOUR_WINDOW[h]})`,
         direction: DIR_NOM[hp],
         directionLoc: DIR_LOC[hp],
+        yearPalace: yp,
+        monthPalace: mp,
+        dayPalace: dp,
+        hourPalace: hp,
+        yearDirection: DIR_NOM[yp],
+        monthDirection: DIR_NOM[mp],
+        dayDirection: DIR_NOM[dp],
+        hourDirection: DIR_NOM[hp],
         strength,
         matchYear,
         matchMonth,

@@ -135,6 +135,43 @@ export function juForDate(d: Date): JuResult {
 }
 
 /** Convenience for ISO date string. */
+/**
+ * Дневной Цзюй в режиме Джоуи Яп.
+ *
+ * Это отдельный 日家-цикл и не должен использовать часовую 置闰-схему.
+ * От ближайшего 甲子-дня у зимнего/летнего солнцестояния Цзюй меняется
+ * ежедневно по девяти дворцам: Ян 1→9, Инь 9→1.
+ */
+export function dayJoeyYapJuForDate(d: Date): JuResult {
+  const term = currentTerm(d);
+  const yin = isYin(term.name);
+  const targetYear = yin
+    ? d.getFullYear()
+    : d.getMonth() < 6
+      ? d.getFullYear() - 1
+      : d.getFullYear();
+  const target = new Date(targetYear, yin ? 5 : 11, 21, 12, 0, 0);
+  let anchor: Date | undefined;
+  let bestDistance = Infinity;
+  for (let offset = -30; offset <= 30; offset += 1) {
+    const candidate = addDays(target, offset);
+    if (dayInfo(candidate).index !== 0) continue;
+    const distance = Math.abs(dayNumber(candidate) - dayNumber(target));
+    if (distance < bestDistance) {
+      anchor = candidate;
+      bestDistance = distance;
+    }
+  }
+  if (!anchor) {
+    throw new Error(`Не удалось определить 甲子-якорь для дневного Цзюй: ${dateToIso(d)}`);
+  }
+  const offset = dayNumber(d) - dayNumber(anchor);
+  const cycle = ((offset % 9) + 9) % 9;
+  const ju = yin ? 9 - cycle : cycle + 1;
+  const yuan = (Math.floor(Math.max(offset, 0) / 20) % 3) as 0 | 1 | 2;
+  return { yin, ju, term: term.name, yuan };
+}
+
 export function juForIso(iso: string): JuResult {
   return juForDate(isoToDate(iso));
 }
