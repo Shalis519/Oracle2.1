@@ -1124,7 +1124,8 @@ export async function computeDailyForecast(
 
   const hasWarning = warnings.length > 0 || conflicts.length > 0;
 
-  const transitSummary: TransitSummary[] = transitAspects.map((t) => ({
+  // UI and prose must use the same ranked candidate set; do not expose the raw orb-sorted array.
+  const transitSummary: TransitSummary[] = rankedTransits.map((t) => ({
     transitBody: t.transitBody,
     natalBody: t.natalBody,
     type: t.type,
