@@ -232,8 +232,8 @@ function contradicts(a: TransitSemantics, b: TransitSemantics): boolean {
 
 /* ─── Построение текста ─── */
 
-// Временный флаг: шаблоны проверяются отдельно и пока не вмешиваются в основной live-прогноз.
-const ENABLE_CONTEXTUAL_FORECAST_TEMPLATES = false;
+// Шаблонная сборка использует литературные формулировки из Oracle Studio.
+const ENABLE_CONTEXTUAL_FORECAST_TEMPLATES = true;
 
 const ASPECT_TEMPLATE_KEYS: Record<string, string> = {
   "соединение": "conjunction",

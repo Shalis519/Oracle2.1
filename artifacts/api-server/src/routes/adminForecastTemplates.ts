@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { asc, eq } from "drizzle-orm";
 import { db, forecastTextTemplatesTable, type ForecastTextTemplate } from "@workspace/db";
 import { requireAdmin, requireAuth } from "../lib/auth";
+import { ensureForecastTemplateSeeds } from "../lib/runtimeSchema";
 
 const router: IRouter = Router();
 
@@ -14,6 +15,7 @@ function serialize(row: ForecastTextTemplate) {
 }
 
 router.get("/admin/forecast-text-templates", requireAuth, requireAdmin, async (_req, res): Promise<void> => {
+  await ensureForecastTemplateSeeds();
   const rows = await db
     .select()
     .from(forecastTextTemplatesTable)
