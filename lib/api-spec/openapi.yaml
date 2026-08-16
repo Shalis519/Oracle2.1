@@ -327,6 +327,34 @@ paths:
                   error:
                     type: string
 
+  /astrology/predictive-formula:
+    post:
+      operationId: calculatePredictiveFormula
+      tags: [systems]
+      summary: Calculate a selected predictive astrology formula on demand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PredictiveFormulaInput"
+      responses:
+        "200":
+          description: Predictive formula result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarriageFormulaResult"
+        "400":
+          description: Missing birth data or unsupported formula
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
   /contacts:
     get:
       operationId: listContacts
@@ -2910,6 +2938,103 @@ components:
             - type: "null"
         meta:
           $ref: "#/components/schemas/NatalChartMeta"
+
+    PredictiveFormulaInput:
+      type: object
+      required: [formula]
+      properties:
+        formula:
+          type: string
+          enum: [marriage]
+
+    MarriageIndicator:
+      type: object
+      required: [id, kind, label, houses]
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum: [natal, secondary_progression, retrograde_support]
+        label:
+          type: string
+        date:
+          type: [string, "null"]
+        age:
+          type: [number, "null"]
+        houses:
+          type: array
+          items:
+            type: integer
+        method:
+          type: [string, "null"]
+        applying:
+          type: [boolean, "null"]
+        orb:
+          type: [number, "null"]
+
+    MarriageWindow:
+      type: object
+      required: [dateFrom, dateTo, ageFrom, ageTo, confirmations, strength, indicators]
+      properties:
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        ageFrom:
+          type: number
+        ageTo:
+          type: number
+        confirmations:
+          type: integer
+        strength:
+          type: string
+          enum: [strong, moderate]
+        indicators:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarriageIndicator"
+
+    MarriageFormulaResult:
+      type: object
+      required: [formula, formulaLabel, searchFrom, searchTo, ageFrom, ageTo, natalBasis, windows, methodology]
+      properties:
+        formula:
+          type: string
+          enum: [marriage]
+        formulaLabel:
+          type: string
+        searchFrom:
+          type: string
+        searchTo:
+          type: string
+        ageFrom:
+          type: integer
+        ageTo:
+          type: integer
+        natalBasis:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarriageIndicator"
+        windows:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarriageWindow"
+        methodology:
+          type: object
+          required: [houseSystem, progression, minConfirmations, retrogradeProgressivePlanets]
+          properties:
+            houseSystem:
+              type: string
+              enum: [Placidus]
+            progression:
+              type: string
+              enum: [day-for-a-year]
+            minConfirmations:
+              type: integer
+            retrogradeProgressivePlanets:
+              type: string
+              enum: [flagged]
 
     LongTermForecast:
       type: object

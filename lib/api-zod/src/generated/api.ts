@@ -845,6 +845,59 @@ export const GetNatalChartResponse = zod.object({
 
 
 /**
+ * @summary Calculate a selected predictive astrology formula on demand
+ */
+export const CalculatePredictiveFormulaBody = zod.object({
+  "formula": zod.enum(['marriage'])
+})
+
+export const CalculatePredictiveFormulaResponse = zod.object({
+  "formula": zod.enum(['marriage']),
+  "formulaLabel": zod.string(),
+  "searchFrom": zod.string(),
+  "searchTo": zod.string(),
+  "ageFrom": zod.number(),
+  "ageTo": zod.number(),
+  "natalBasis": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['natal', 'secondary_progression', 'retrograde_support']),
+  "label": zod.string(),
+  "date": zod.string().nullish(),
+  "age": zod.number().nullish(),
+  "houses": zod.array(zod.number()),
+  "method": zod.string().nullish(),
+  "applying": zod.boolean().nullish(),
+  "orb": zod.number().nullish()
+})),
+  "windows": zod.array(zod.object({
+  "dateFrom": zod.string(),
+  "dateTo": zod.string(),
+  "ageFrom": zod.number(),
+  "ageTo": zod.number(),
+  "confirmations": zod.number(),
+  "strength": zod.enum(['strong', 'moderate']),
+  "indicators": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['natal', 'secondary_progression', 'retrograde_support']),
+  "label": zod.string(),
+  "date": zod.string().nullish(),
+  "age": zod.number().nullish(),
+  "houses": zod.array(zod.number()),
+  "method": zod.string().nullish(),
+  "applying": zod.boolean().nullish(),
+  "orb": zod.number().nullish()
+}))
+})),
+  "methodology": zod.object({
+  "houseSystem": zod.enum(['Placidus']),
+  "progression": zod.enum(['day-for-a-year']),
+  "minConfirmations": zod.number(),
+  "retrogradeProgressivePlanets": zod.enum(['flagged'])
+})
+})
+
+
+/**
  * @summary List contacts
  */
 export const ListContactsResponseItem = zod.object({

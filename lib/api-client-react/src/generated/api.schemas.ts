@@ -1108,6 +1108,108 @@ export interface NatalChart {
   meta: NatalChartMeta;
 }
 
+export type PredictiveFormulaInputFormula = typeof PredictiveFormulaInputFormula[keyof typeof PredictiveFormulaInputFormula];
+
+
+export const PredictiveFormulaInputFormula = {
+  marriage: 'marriage',
+} as const;
+
+export interface PredictiveFormulaInput {
+  formula: PredictiveFormulaInputFormula;
+}
+
+export type MarriageIndicatorKind = typeof MarriageIndicatorKind[keyof typeof MarriageIndicatorKind];
+
+
+export const MarriageIndicatorKind = {
+  natal: 'natal',
+  secondary_progression: 'secondary_progression',
+  retrograde_support: 'retrograde_support',
+} as const;
+
+export interface MarriageIndicator {
+  id: string;
+  kind: MarriageIndicatorKind;
+  label: string;
+  /** @nullable */
+  date?: string | null;
+  /** @nullable */
+  age?: number | null;
+  houses: number[];
+  /** @nullable */
+  method?: string | null;
+  /** @nullable */
+  applying?: boolean | null;
+  /** @nullable */
+  orb?: number | null;
+}
+
+export type MarriageWindowStrength = typeof MarriageWindowStrength[keyof typeof MarriageWindowStrength];
+
+
+export const MarriageWindowStrength = {
+  strong: 'strong',
+  moderate: 'moderate',
+} as const;
+
+export interface MarriageWindow {
+  dateFrom: string;
+  dateTo: string;
+  ageFrom: number;
+  ageTo: number;
+  confirmations: number;
+  strength: MarriageWindowStrength;
+  indicators: MarriageIndicator[];
+}
+
+export type MarriageFormulaResultFormula = typeof MarriageFormulaResultFormula[keyof typeof MarriageFormulaResultFormula];
+
+
+export const MarriageFormulaResultFormula = {
+  marriage: 'marriage',
+} as const;
+
+export type MarriageFormulaResultMethodologyHouseSystem = typeof MarriageFormulaResultMethodologyHouseSystem[keyof typeof MarriageFormulaResultMethodologyHouseSystem];
+
+
+export const MarriageFormulaResultMethodologyHouseSystem = {
+  Placidus: 'Placidus',
+} as const;
+
+export type MarriageFormulaResultMethodologyProgression = typeof MarriageFormulaResultMethodologyProgression[keyof typeof MarriageFormulaResultMethodologyProgression];
+
+
+export const MarriageFormulaResultMethodologyProgression = {
+  'day-for-a-year': 'day-for-a-year',
+} as const;
+
+export type MarriageFormulaResultMethodologyRetrogradeProgressivePlanets = typeof MarriageFormulaResultMethodologyRetrogradeProgressivePlanets[keyof typeof MarriageFormulaResultMethodologyRetrogradeProgressivePlanets];
+
+
+export const MarriageFormulaResultMethodologyRetrogradeProgressivePlanets = {
+  flagged: 'flagged',
+} as const;
+
+export type MarriageFormulaResultMethodology = {
+  houseSystem: MarriageFormulaResultMethodologyHouseSystem;
+  progression: MarriageFormulaResultMethodologyProgression;
+  minConfirmations: number;
+  retrogradeProgressivePlanets: MarriageFormulaResultMethodologyRetrogradeProgressivePlanets;
+};
+
+export interface MarriageFormulaResult {
+  formula: MarriageFormulaResultFormula;
+  formulaLabel: string;
+  searchFrom: string;
+  searchTo: string;
+  ageFrom: number;
+  ageTo: number;
+  natalBasis: MarriageIndicator[];
+  windows: MarriageWindow[];
+  methodology: MarriageFormulaResultMethodology;
+}
+
 export type LongTermForecastPeriodType = typeof LongTermForecastPeriodType[keyof typeof LongTermForecastPeriodType];
 
 
@@ -1222,6 +1324,10 @@ q: string;
 };
 
 export type GetNatalChart400 = {
+  error?: string;
+};
+
+export type CalculatePredictiveFormula400 = {
   error?: string;
 };
 

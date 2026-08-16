@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   useGetNatalChart,
   getGetNatalChartQueryKey,
+  useCalculatePredictiveFormula,
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import NatalWheel from "@/components/natal-wheel";
 
 const VS = "\uFE0E";
 const glyph = (s: string) => (s ? s + VS : s);
+const formatRuDate = (value: string) => new Date(`${value}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 const ROMAN = [
   "I",
@@ -38,6 +40,7 @@ export default function AstrologyPage() {
   } = useGetNatalChart({
     query: { retry: false, queryKey: getGetNatalChartQueryKey() },
   });
+  const marriageFormula = useCalculatePredictiveFormula();
 
   if (isLoading) {
     return (
@@ -337,6 +340,60 @@ export default function AstrologyPage() {
           </CardContent>
         </Card>
       )}
+
+      <Card className="bg-card/40 backdrop-blur-md border-primary/20">
+        <CardHeader className="pb-2">
+          <CardTitle className="font-serif text-lg">Прогностические формулы</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="rounded-md border border-primary/15 bg-primary/5 p-3 text-sm">
+            <p className="font-medium">Возможный период бракосочетания</p>
+            <p className="mt-1 text-muted-foreground">Расчёт выполняется только после нажатия кнопки и охватывает возраст от 15-го до 79-го года жизни.</p>
+          </div>
+          <Button
+            type="button"
+            onClick={() => marriageFormula.mutate({ data: { formula: "marriage" } })}
+            disabled={marriageFormula.isPending}
+          >
+            {marriageFormula.isPending ? "Расчёт выполняется…" : "Рассчитать период брака"}
+          </Button>
+          {marriageFormula.isError && (
+            <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              Не удалось выполнить расчёт. Проверьте данные рождения в профиле и попробуйте ещё раз.
+            </p>
+          )}
+          {marriageFormula.data && (
+            <div className="space-y-3 text-sm">
+              <p className="text-muted-foreground">
+                Период анализа: <span className="text-foreground">{formatRuDate(marriageFormula.data.searchFrom)} — {formatRuDate(marriageFormula.data.searchTo)}</span>.
+              </p>
+              {marriageFormula.data.natalBasis.length > 0 && (
+                <div className="rounded-md border border-primary/15 p-3">
+                  <p className="font-medium">Натальная основа</p>
+                  <div className="mt-2 space-y-1 text-muted-foreground">
+                    {marriageFormula.data.natalBasis.map((indicator) => <p key={indicator.id}>{indicator.label}</p>)}
+                  </div>
+                </div>
+              )}
+              {marriageFormula.data.windows.length === 0 ? (
+                <p className="rounded-md border border-border p-3 text-muted-foreground">В заданном диапазоне не найдено окон с тремя независимыми подтверждениями.</p>
+              ) : (
+                <div className="space-y-3">
+                  <p className="font-medium">Возможные периоды</p>
+                  {marriageFormula.data.windows.map((window) => (
+                    <details key={`${window.dateFrom}-${window.dateTo}`} className="rounded-md border border-primary/15 bg-primary/5 p-3">
+                      <summary className="cursor-pointer font-medium">{formatRuDate(window.dateFrom)} — {formatRuDate(window.dateTo)} · {window.confirmations} подтверждения</summary>
+                      <div className="mt-3 space-y-2 text-muted-foreground">
+                        {window.indicators.map((indicator) => <p key={indicator.id}>{indicator.label}{indicator.date ? ` — ${formatRuDate(indicator.date)}` : ""}</p>)}
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <p className="text-xs text-muted-foreground/60 text-center">
         Точность расчёта — до угловых минут. Часовой пояс определяется

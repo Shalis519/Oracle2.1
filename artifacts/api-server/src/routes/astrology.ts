@@ -5,6 +5,7 @@ import { computeNatalChart } from "../lib/astrology";
 import { computeLunarForProfile, hydrateLunarRecommendations } from "../lib/lunarReturn";
 import { hydrateCinderellaGates } from "../lib/cinderellaGates";
 import { todayString } from "../lib/oracle";
+import { computeMarriageFormula } from "../lib/predictiveFormulas";
 
 const router: IRouter = Router();
 
@@ -72,6 +73,46 @@ router.get("/astrology/natal", requireAuth, async (req, res): Promise<void> => {
 
   const hydratedLunarReturn = await hydrateLunarRecommendations(lunarReturn);
   res.json(GetNatalChartResponse.parse({ ...chartWithInterpretations, lunarReturn: hydratedLunarReturn }));
+});
+
+router.post("/astrology/predictive-formula", requireAuth, async (req, res): Promise<void> => {
+  const formula = typeof req.body?.formula === "string" ? req.body.formula : "";
+  if (formula !== "marriage") {
+    res.status(400).json({ error: "Неизвестная прогностическая формула." });
+    return;
+  }
+
+  const user = req.localUser!;
+  if (!user.birthDate || user.birthLatitude == null || user.birthLongitude == null || !user.birthTimezone) {
+    res.status(400).json({
+      error: "Для расчёта формулы заполните дату, точное время, город рождения, координаты и часовой пояс в профиле.",
+    });
+    return;
+  }
+
+  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})/.exec(user.birthDate);
+  const timeMatch = /^(\d{1,2}):(\d{2})/.exec(user.birthTime ?? "12:00");
+  if (!dateMatch || !timeMatch) {
+    res.status(400).json({ error: "Некорректный формат даты или времени рождения." });
+    return;
+  }
+
+  try {
+    const result = computeMarriageFormula({
+      year: Number(dateMatch[1]),
+      month: Number(dateMatch[2]),
+      day: Number(dateMatch[3]),
+      hour: Number(timeMatch[1]),
+      minute: Number(timeMatch[2]),
+      latitude: user.birthLatitude,
+      longitude: user.birthLongitude,
+      timezone: user.birthTimezone,
+    });
+    res.json(result);
+  } catch (error) {
+    console.error("Marriage formula calculation failed", error);
+    res.status(500).json({ error: "Не удалось рассчитать формулу возможного бракосочетания." });
+  }
 });
 
 export default router;

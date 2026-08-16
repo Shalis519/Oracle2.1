@@ -25,6 +25,7 @@ import type {
   BaziHoursResult,
   BaziSummary,
   CalculateContactSynastry422,
+  CalculatePredictiveFormula400,
   ChatMessage,
   ChatMessageInput,
   ChatReadInput,
@@ -54,12 +55,14 @@ import type {
   LongTermForecastCalculation,
   LongTermForecastInput,
   LongTermForecastUpdate,
+  MarriageFormulaResult,
   NatalChart,
   NotepadInput,
   NotepadItem,
   NotepadUpdate,
   PeachBlossomSummary,
   PersonalMatrix,
+  PredictiveFormulaInput,
   Profile,
   ProfileInput,
   QimenSummary,
@@ -1538,6 +1541,76 @@ export function useGetNatalChart<TData = Awaited<ReturnType<typeof getNatalChart
 
 
 
+
+export const getCalculatePredictiveFormulaUrl = () => {
+
+
+
+
+  return `/api/astrology/predictive-formula`
+}
+
+/**
+ * @summary Calculate a selected predictive astrology formula on demand
+ */
+export const calculatePredictiveFormula = async (predictiveFormulaInput: PredictiveFormulaInput, options?: RequestInit): Promise<MarriageFormulaResult> => {
+
+  return customFetch<MarriageFormulaResult>(getCalculatePredictiveFormulaUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(predictiveFormulaInput)
+  }
+);}
+
+
+
+
+export const getCalculatePredictiveFormulaMutationOptions = <TError = ErrorType<CalculatePredictiveFormula400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof calculatePredictiveFormula>>, TError,{data: BodyType<PredictiveFormulaInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof calculatePredictiveFormula>>, TError,{data: BodyType<PredictiveFormulaInput>}, TContext> => {
+
+const mutationKey = ['calculatePredictiveFormula'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof calculatePredictiveFormula>>, {data: BodyType<PredictiveFormulaInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  calculatePredictiveFormula(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CalculatePredictiveFormulaMutationResult = NonNullable<Awaited<ReturnType<typeof calculatePredictiveFormula>>>
+    export type CalculatePredictiveFormulaMutationBody = BodyType<PredictiveFormulaInput>
+    export type CalculatePredictiveFormulaMutationError = ErrorType<CalculatePredictiveFormula400>
+
+    /**
+ * @summary Calculate a selected predictive astrology formula on demand
+ */
+export const useCalculatePredictiveFormula = <TError = ErrorType<CalculatePredictiveFormula400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof calculatePredictiveFormula>>, TError,{data: BodyType<PredictiveFormulaInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof calculatePredictiveFormula>>,
+        TError,
+        {data: BodyType<PredictiveFormulaInput>},
+        TContext
+      > => {
+      return useMutation(getCalculatePredictiveFormulaMutationOptions(options));
+    }
 
 export const getListContactsUrl = () => {
 
@@ -4169,3 +4242,10 @@ export function useExportAdminLongTermForecast<TData = Awaited<ReturnType<typeof
 
   return withQueryKey(query, queryOptions.queryKey);
 }
+
+
+
+
+
+
+

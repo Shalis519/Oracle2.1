@@ -1,0 +1,235 @@
+import { computeNatalChart, type NatalChart, type NatalChartInput } from "./astrology";
+import { computeSecondaryProgressions, type ProgressionAspect } from "./progressions";
+
+export const MARRIAGE_MIN_AGE = 15;
+export const MARRIAGE_MAX_AGE = 79;
+
+export type PredictiveFormulaKey = "marriage";
+
+type MarriageIndicator = {
+  id: string;
+  kind: "natal" | "secondary_progression" | "retrograde_support";
+  label: string;
+  date?: string;
+  age?: number;
+  houses: number[];
+  method?: string;
+  applying?: boolean | null;
+  orb?: number;
+};
+
+export type MarriageWindow = {
+  dateFrom: string;
+  dateTo: string;
+  ageFrom: number;
+  ageTo: number;
+  confirmations: number;
+  strength: "strong" | "moderate";
+  indicators: MarriageIndicator[];
+};
+
+export type MarriageFormulaResult = {
+  formula: PredictiveFormulaKey;
+  formulaLabel: string;
+  searchFrom: string;
+  searchTo: string;
+  ageFrom: number;
+  ageTo: number;
+  natalBasis: MarriageIndicator[];
+  windows: MarriageWindow[];
+  methodology: {
+    houseSystem: "Placidus";
+    progression: "day-for-a-year";
+    minConfirmations: 3;
+    retrogradeProgressivePlanets: "flagged";
+  };
+};
+
+const RULERS: Record<string, string[]> = {
+  aries: ["mars"],
+  taurus: ["venus"],
+  gemini: ["mercury"],
+  cancer: ["moon"],
+  leo: ["sun"],
+  virgo: ["mercury"],
+  libra: ["venus"],
+  scorpio: ["mars", "pluto"],
+  sagittarius: ["jupiter"],
+  capricorn: ["saturn"],
+  aquarius: ["saturn", "uranus"],
+  pisces: ["jupiter", "neptune"],
+};
+
+function dateAtAge(input: NatalChartInput, age: number): Date {
+  const birth = new Date(Date.UTC(input.year, input.month - 1, input.day, input.hour, input.minute, input.second ?? 0));
+  const target = new Date(birth);
+  target.setUTCFullYear(target.getUTCFullYear() + age);
+  return target;
+}
+
+function isoDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function addDays(date: Date, days: number): Date {
+  return new Date(date.getTime() + days * 86400000);
+}
+
+function ageAtDate(input: NatalChartInput, date: Date): number {
+  const birth = dateAtAge(input, 0).getTime();
+  return Number(((date.getTime() - birth) / (365.2425 * 86400000)).toFixed(2));
+}
+
+function housesRuledBy(chart: NatalChart, bodyKey: string): number[] {
+  const houses: number[] = [];
+  for (const house of chart.houses) {
+    if ((RULERS[house.signKey] ?? []).includes(bodyKey)) houses.push(house.number);
+  }
+  return houses;
+}
+
+function uniqueNumbers(values: number[]): number[] {
+  return [...new Set(values)].sort((a, b) => a - b);
+}
+
+function natalMarriageBasis(chart: NatalChart): MarriageIndicator[] {
+  const basis: MarriageIndicator[] = [];
+  const v = chart.houses.find((house) => house.number === 5);
+  const vii = chart.houses.find((house) => house.number === 7);
+  const x = chart.houses.find((house) => house.number === 10);
+  if (!v || !vii || !x) return basis;
+
+  const tracked = new Set(["venus", "mars", "pluto", "sun", "moon", "jupiter", "saturn", "uranus", "neptune"]);
+  const bodyHouses = new Map(chart.bodies.map((body) => [body.key, body.house]));
+  for (const bodyKey of tracked) {
+    const ruled = housesRuledBy(chart, bodyKey);
+    const placed = bodyHouses.get(bodyKey);
+    const connected = uniqueNumbers([...ruled, ...(placed ? [placed] : [])]);
+    const hasV = connected.includes(5);
+    const hasVII = connected.includes(7);
+    const hasX = connected.includes(10);
+    if ((hasV && hasVII) || (hasV && hasX) || (hasVII && hasX)) {
+      const formula = hasVII && hasX ? "VII + X" : hasV && hasVII ? "V + VII" : "V + X";
+      basis.push({
+        id: `natal-${bodyKey}-${formula}`,
+        kind: "natal",
+        label: `${chart.bodies.find((body) => body.key === bodyKey)?.name ?? bodyKey} связан с формулой ${formula}`,
+        houses: connected.filter((house) => [5, 7, 10].includes(house)),
+        method: "натальная карта",
+      });
+    }
+  }
+  return basis;
+}
+
+function aspectHouses(aspect: ProgressionAspect): number[] {
+  return uniqueNumbers([aspect.sourceHouse ?? 0, aspect.targetHouse ?? 0].filter((house) => house > 0));
+}
+
+function aspectFormula(aspect: ProgressionAspect): string | null {
+  const houses = aspectHouses(aspect);
+  const hasV = houses.includes(5);
+  const hasVII = houses.includes(7);
+  const hasX = houses.includes(10);
+  if (hasVII && hasX) return "VII + X";
+  if (hasV && hasVII) return "V + VII";
+  if (hasV && hasX) return "V + X";
+  return null;
+}
+
+function progressionIndicator(aspect: ProgressionAspect, input: NatalChartInput, resultAge: number): MarriageIndicator | null {
+  const formula = aspectFormula(aspect);
+  if (!formula) return null;
+  return {
+    id: `secondary-${aspect.exactDate}-${aspect.sourceBodyKey}-${aspect.targetBodyKey}-${aspect.aspectKey}`,
+    kind: "secondary_progression",
+    label: `${aspect.sourceBody} образует ${aspect.aspectKey} к ${aspect.targetBody}; формула ${formula}`,
+    date: aspect.exactDate,
+    age: resultAge,
+    houses: aspectHouses(aspect),
+    method: "вторичная прогрессия",
+    applying: aspect.applying,
+    orb: aspect.orb,
+  };
+}
+
+function scanDates(input: NatalChartInput, start: Date, end: Date, stepDays: number): Date[] {
+  const dates: Date[] = [];
+  for (let cursor = start; cursor <= end; cursor = addDays(cursor, stepDays)) dates.push(cursor);
+  if (!dates.length || dates[dates.length - 1].getTime() !== end.getTime()) dates.push(end);
+  return dates;
+}
+
+function mergeIndicators(indicators: MarriageIndicator[]): MarriageWindow[] {
+  const sorted = [...indicators].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  const windows: MarriageWindow[] = [];
+  for (const indicator of sorted) {
+    const date = new Date(`${indicator.date}T00:00:00Z`);
+    const current = windows[windows.length - 1];
+    if (!current || date.getTime() - new Date(`${current.dateTo}T00:00:00Z`).getTime() > 180 * 86400000) {
+      windows.push({ dateFrom: indicator.date!, dateTo: indicator.date!, ageFrom: indicator.age ?? 0, ageTo: indicator.age ?? 0, confirmations: 0, strength: "moderate", indicators: [indicator] });
+    } else {
+      current.dateTo = indicator.date!;
+      current.ageTo = indicator.age ?? current.ageTo;
+      current.indicators.push(indicator);
+    }
+  }
+  return windows.map((window) => {
+    const unique = new Map<string, MarriageIndicator>();
+    for (const indicator of window.indicators) unique.set(`${indicator.kind}:${indicator.method}:${indicator.id.split("-").slice(0, 2).join("-")}`, indicator);
+    const indicators = [...unique.values()];
+    const confirmations = indicators.length;
+    return { ...window, indicators, confirmations, strength: confirmations >= 4 ? "strong" : "moderate" };
+  });
+}
+
+export function computeMarriageFormula(input: NatalChartInput): MarriageFormulaResult {
+  const natal = computeNatalChart(input);
+  const searchStart = dateAtAge(input, MARRIAGE_MIN_AGE);
+  const searchEnd = addDays(dateAtAge(input, MARRIAGE_MAX_AGE + 1), -1);
+  const natalBasis = natalMarriageBasis(natal);
+  const indicators: MarriageIndicator[] = [];
+
+  // A yearly pass finds broad periods without making the public request perform a daily 64-year scan.
+  for (const date of scanDates(input, searchStart, searchEnd, 365)) {
+    const progression = computeSecondaryProgressions(input, date);
+    for (const aspect of progression.aspects) {
+      const found = progressionIndicator(aspect, input, progression.ageYears);
+      if (found) indicators.push(found);
+      const point = progression.points.find((item) => item.key === aspect.sourceBodyKey);
+      if (point?.retrograde && found) {
+        indicators.push({
+          id: `retrograde-${found.id}`,
+          kind: "retrograde_support",
+          label: `${point.name} ретрограден в прогрессии; применяется правило дополнительного управления`,
+          date: found.date,
+          age: found.age,
+          houses: found.houses,
+          method: "правило ретроградной прогрессивной планеты",
+        });
+      }
+    }
+  }
+
+  const windows = mergeIndicators(indicators)
+    .map((window) => ({ ...window, confirmations: window.confirmations + (natalBasis.length > 0 ? 1 : 0) }))
+    .filter((window) => window.confirmations >= 3)
+    .sort((a, b) => a.dateFrom.localeCompare(b.dateFrom));
+
+  return {
+    formula: "marriage",
+    formulaLabel: "Возможный период бракосочетания",
+    searchFrom: isoDate(searchStart),
+    searchTo: isoDate(searchEnd),
+    ageFrom: MARRIAGE_MIN_AGE,
+    ageTo: MARRIAGE_MAX_AGE,
+    natalBasis,
+    windows,
+    methodology: {
+      houseSystem: "Placidus",
+      progression: "day-for-a-year",
+      minConfirmations: 3,
+      retrogradeProgressivePlanets: "flagged",
+    },
+  };
+}
