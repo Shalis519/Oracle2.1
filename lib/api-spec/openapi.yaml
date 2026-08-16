@@ -3014,6 +3014,45 @@ components:
           items:
             $ref: "#/components/schemas/MarriageIndicator"
 
+    NatalMarriageAspect:
+      type: object
+      required: [body1, body2, type, typeKey, orb, quality]
+      properties:
+        body1:
+          type: string
+        body2:
+          type: string
+        type:
+          type: string
+        typeKey:
+          type: string
+        orb:
+          type: number
+        quality:
+          type: string
+          enum: [harmonious, tense, neutral]
+
+    NatalMarriageCharacter:
+      type: object
+      required: [participantNames, harmoniousCount, tenseCount, neutralCount, aspects, summary]
+      properties:
+        participantNames:
+          type: array
+          items:
+            type: string
+        harmoniousCount:
+          type: integer
+        tenseCount:
+          type: integer
+        neutralCount:
+          type: integer
+        aspects:
+          type: array
+          items:
+            $ref: "#/components/schemas/NatalMarriageAspect"
+        summary:
+          type: string
+
     MarriageWindow:
       type: object
       required: [dateFrom, dateTo, ageFrom, ageTo, confirmations, strength, indicators]
@@ -3038,7 +3077,7 @@ components:
 
     MarriageFormulaResult:
       type: object
-      required: [formula, formulaLabel, searchFrom, searchTo, ageFrom, ageTo, natalBasis, natalProfile, windows, methodology]
+      required: [formula, formulaLabel, searchFrom, searchTo, ageFrom, ageTo, natalBasis, natalProfile, natalCharacter, windows, methodology]
       properties:
         formula:
           type: string
@@ -3059,6 +3098,8 @@ components:
             $ref: "#/components/schemas/MarriageIndicator"
         natalProfile:
           $ref: "#/components/schemas/NatalMarriageProfile"
+        natalCharacter:
+          $ref: "#/components/schemas/NatalMarriageCharacter"
         windows:
           type: array
           items:

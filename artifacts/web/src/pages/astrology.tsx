@@ -389,7 +389,25 @@ export default function AstrologyPage() {
               </section>
 
               <section className="space-y-3 border-t border-border/60 pt-4">
-                <h3 className="font-medium">2. Поиск прогностических периодов</h3>
+                <h3 className="font-medium">2. Характер брачной темы</h3>
+                <p className="leading-relaxed text-muted-foreground">{marriageFormula.data.natalCharacter.summary}</p>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 p-3"><span className="text-xs text-muted-foreground">Гармоничные аспекты</span><p className="mt-1 text-lg font-medium">{marriageFormula.data.natalCharacter.harmoniousCount}</p></div>
+                  <div className="rounded-md border border-amber-500/20 bg-amber-500/5 p-3"><span className="text-xs text-muted-foreground">Напряжённые аспекты</span><p className="mt-1 text-lg font-medium">{marriageFormula.data.natalCharacter.tenseCount}</p></div>
+                  <div className="rounded-md border border-border p-3"><span className="text-xs text-muted-foreground">Нейтральные аспекты</span><p className="mt-1 text-lg font-medium">{marriageFormula.data.natalCharacter.neutralCount}</p></div>
+                </div>
+                {marriageFormula.data.natalCharacter.aspects.length > 0 && (
+                  <div className="rounded-md border border-primary/15 p-3">
+                    <p className="font-medium">Аспекты участников формулы</p>
+                    <div className="mt-2 space-y-1 text-muted-foreground">
+                      {marriageFormula.data.natalCharacter.aspects.map((aspect) => <p key={`${aspect.body1}-${aspect.body2}-${aspect.typeKey}`}>{aspect.body1} — {aspect.type.toLowerCase()} — {aspect.body2}, орбис {aspect.orb.toFixed(2)}°</p>)}
+                    </div>
+                  </div>
+                )}
+              </section>
+
+              <section className="space-y-3 border-t border-border/60 pt-4">
+                <h3 className="font-medium">3. Поиск прогностических периодов</h3>
                 <p className="text-muted-foreground">Период анализа: <span className="text-foreground">{formatRuDate(marriageFormula.data.searchFrom)} — {formatRuDate(marriageFormula.data.searchTo)}</span>.</p>
                 {marriageFormula.data.windows.length === 0 ? (
                   <p className="rounded-md border border-border p-3 text-muted-foreground">В заданном диапазоне не найдено окон с тремя независимыми подтверждениями.</p>

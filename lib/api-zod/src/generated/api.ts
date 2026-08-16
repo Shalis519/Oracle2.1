@@ -891,6 +891,21 @@ export const CalculatePredictiveFormulaResponse = zod.object({
   "orb": zod.number().nullish()
 }))
 }),
+  "natalCharacter": zod.object({
+  "participantNames": zod.array(zod.string()),
+  "harmoniousCount": zod.number(),
+  "tenseCount": zod.number(),
+  "neutralCount": zod.number(),
+  "aspects": zod.array(zod.object({
+  "body1": zod.string(),
+  "body2": zod.string(),
+  "type": zod.string(),
+  "typeKey": zod.string(),
+  "orb": zod.number(),
+  "quality": zod.enum(['harmonious', 'tense', 'neutral'])
+})),
+  "summary": zod.string()
+}),
   "windows": zod.array(zod.object({
   "dateFrom": zod.string(),
   "dateTo": zod.string(),

@@ -33,6 +33,24 @@ export type NatalMarriageProfile = {
   connections: MarriageIndicator[];
 };
 
+export type NatalMarriageAspect = {
+  body1: string;
+  body2: string;
+  type: string;
+  typeKey: string;
+  orb: number;
+  quality: "harmonious" | "tense" | "neutral";
+};
+
+export type NatalMarriageCharacter = {
+  participantNames: string[];
+  harmoniousCount: number;
+  tenseCount: number;
+  neutralCount: number;
+  aspects: NatalMarriageAspect[];
+  summary: string;
+};
+
 export type MarriageWindow = {
   dateFrom: string;
   dateTo: string;
@@ -52,6 +70,7 @@ export type MarriageFormulaResult = {
   ageTo: number;
   natalBasis: MarriageIndicator[];
   natalProfile: NatalMarriageProfile;
+  natalCharacter: NatalMarriageCharacter;
   windows: MarriageWindow[];
   methodology: {
     houseSystem: "Placidus";
@@ -147,6 +166,46 @@ function natalMarriageProfile(chart: NatalChart): NatalMarriageProfile {
   return { houses, formulas: [...formulas], connections };
 }
 
+function buildNatalMarriageCharacter(chart: NatalChart, profile: NatalMarriageProfile): NatalMarriageCharacter {
+  const participantKeys = new Set<string>();
+  for (const connection of profile.connections) {
+    const match = chart.bodies.find((body) => connection.label.startsWith(body.name));
+    if (match) participantKeys.add(match.key);
+  }
+  for (const key of ["mars", "venus", "pluto"]) {
+    const body = chart.bodies.find((item) => item.key === key);
+    if (body && (body.house === 5 || body.house === 7 || body.house === 10 || housesRuledBy(chart, key).some((house) => [5, 7, 10].includes(house)))) participantKeys.add(key);
+  }
+
+  const participantNames = chart.bodies.filter((body) => participantKeys.has(body.key)).map((body) => body.name);
+  const aspects = chart.aspects
+    .filter((aspect) => participantNames.includes(aspect.body1) && participantNames.includes(aspect.body2))
+    .map((aspect) => ({
+      body1: aspect.body1,
+      body2: aspect.body2,
+      type: aspect.type,
+      typeKey: aspect.typeKey,
+      orb: aspect.orb,
+      quality: ["trine", "sextile"].includes(aspect.typeKey) ? "harmonious" as const : ["square", "opposition"].includes(aspect.typeKey) ? "tense" as const : "neutral" as const,
+    }))
+    .slice(0, 12);
+
+  const harmoniousCount = aspects.filter((aspect) => aspect.quality === "harmonious").length;
+  const tenseCount = aspects.filter((aspect) => aspect.quality === "tense").length;
+  const neutralCount = aspects.filter((aspect) => aspect.quality === "neutral").length;
+  const formulaText = profile.formulas.length ? profile.formulas.join(", ") : "связь V, VII и X домов не сформирована напрямую";
+  const namesText = participantNames.length ? participantNames.join(", ") : "планеты формулы не выделены";
+
+  let summary = `Натальная основа брака: ${formulaText}. В формуле участвуют ${namesText}.`;
+  if (harmoniousCount >= 2 && tenseCount === 1) summary += " Преобладают гармоничные связи, но одна напряжённая связь указывает на постоянную зону, требующую внимания.";
+  else if (tenseCount >= 2 && harmoniousCount === 1) summary += " Напряжённых связей больше, чем гармоничных; отношения могут требовать особой работы с взаимностью и конфликтами.";
+  else if (tenseCount > 0 && harmoniousCount === 0) summary += " В отобранных связях преобладает напряжённая динамика; это указывает на возможные испытания, но не предсказывает событие автоматически.";
+  else if (harmoniousCount > 0 && tenseCount === 0) summary += " В отобранных связях преобладает гармоничная динамика и потенциал взаимной поддержки.";
+  else summary += " Качество брачной темы уточняется по прогностическим аспектам и дополнительным факторам карты.";
+
+  return { participantNames, harmoniousCount, tenseCount, neutralCount, aspects, summary };
+}
+
 function aspectHouses(aspect: ProgressionAspect): number[] {
   return uniqueNumbers([aspect.sourceHouse ?? 0, aspect.targetHouse ?? 0].filter((house) => house > 0));
 }
@@ -212,6 +271,7 @@ export function computeMarriageFormula(input: NatalChartInput): MarriageFormulaR
   const natal = computeNatalChart(input);
   const natalProfile = natalMarriageProfile(natal);
   const natalBasis = natalProfile.connections;
+  const natalCharacter = buildNatalMarriageCharacter(natal, natalProfile);
   const searchStart = dateAtAge(input, MARRIAGE_MIN_AGE);
   const searchEnd = addDays(dateAtAge(input, MARRIAGE_MAX_AGE + 1), -1);
   const indicators: MarriageIndicator[] = [];
@@ -251,6 +311,7 @@ export function computeMarriageFormula(input: NatalChartInput): MarriageFormulaR
     ageTo: MARRIAGE_MAX_AGE,
     natalBasis,
     natalProfile,
+    natalCharacter,
     windows,
     methodology: {
       houseSystem: "Placidus",

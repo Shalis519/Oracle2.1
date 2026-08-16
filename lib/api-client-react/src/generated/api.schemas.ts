@@ -1169,6 +1169,33 @@ export interface NatalMarriageProfile {
   connections: MarriageIndicator[];
 }
 
+export type NatalMarriageAspectQuality = typeof NatalMarriageAspectQuality[keyof typeof NatalMarriageAspectQuality];
+
+
+export const NatalMarriageAspectQuality = {
+  harmonious: 'harmonious',
+  tense: 'tense',
+  neutral: 'neutral',
+} as const;
+
+export interface NatalMarriageAspect {
+  body1: string;
+  body2: string;
+  type: string;
+  typeKey: string;
+  orb: number;
+  quality: NatalMarriageAspectQuality;
+}
+
+export interface NatalMarriageCharacter {
+  participantNames: string[];
+  harmoniousCount: number;
+  tenseCount: number;
+  neutralCount: number;
+  aspects: NatalMarriageAspect[];
+  summary: string;
+}
+
 export type MarriageWindowStrength = typeof MarriageWindowStrength[keyof typeof MarriageWindowStrength];
 
 
@@ -1231,6 +1258,7 @@ export interface MarriageFormulaResult {
   ageTo: number;
   natalBasis: MarriageIndicator[];
   natalProfile: NatalMarriageProfile;
+  natalCharacter: NatalMarriageCharacter;
   windows: MarriageWindow[];
   methodology: MarriageFormulaResultMethodology;
 }
