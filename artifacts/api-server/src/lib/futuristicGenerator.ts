@@ -21,6 +21,7 @@ import {
   bodyDative,
   bodyInstrumental,
   ensureSentence,
+  colorShades,
   firstSentence,
   formatList,
   lowerFirst,
@@ -392,7 +393,7 @@ function buildSoftRecommendation(main: TransitSemantics, date: Date): string | n
   if (plant) parts.push(`приготовьте чай с ${plantForTea(plant)}`);
   if (crystal) parts.push(`выберите кристалл «${lowerFirst(crystal)}»`);
   if (jewelry) parts.push(`наденьте украшение «${lowerFirst(jewelry)}»`);
-  if (color) parts.push(`добавьте в образ ${lowerFirst(color)} оттенки`);
+  if (color) parts.push(`добавьте в образ ${colorShades(color)}`);
 
   return `Мягкая рекомендация дня: ${parts.join(" или ")}.`;
 }

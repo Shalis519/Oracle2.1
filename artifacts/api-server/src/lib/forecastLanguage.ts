@@ -141,8 +141,34 @@ export function plantForTea(plant: string): string {
     шалфей: "шалфеем",
     чабрец: "чабрецом",
     розмарин: "розмарином",
+    валериана: "валерианой",
+    пустырник: "пустырником",
+    имбирь: "имбирём",
   };
   return forms[plant.trim().toLowerCase()] ?? plant;
+}
+
+export function colorShades(color: string): string {
+  const value = lowerFirst(color.trim());
+  const forms: Record<string, string> = {
+    зелёный: "зелёные",
+    зеленый: "зелёные",
+    фиолетовый: "фиолетовые",
+    розовый: "розовые",
+    жёлтый: "жёлтые",
+    желтый: "жёлтые",
+    золотой: "золотистые",
+    серебряный: "серебристые",
+    голубой: "голубые",
+    синий: "синие",
+    красный: "красные",
+    оранжевый: "оранжевые",
+    белый: "белые",
+    серый: "серые",
+    чёрный: "чёрные",
+    черный: "чёрные",
+  };
+  return `${forms[value] ?? value} оттенки`;
 }
 
 export function profileListText(profile: { keyMeaningsArr?: string[]; keyMeanings?: string | null } | null): string[] {
