@@ -80,6 +80,7 @@ function yearNumberFor(date: Date, yearIndex: number): number {
 }
 
 /**
+ * Метод: годовой слой QMDJ проекта, солнечный год от 立春.
  * Годовой Джи Фу — годовая карта использует только Иньский Дунь.
  * Один Юань = 60 солнечных лет; стартовые дворцы: верхний 1, средний 4,
  * нижний 7. Цикл привязан к солнечному году от 立春, а не к календарному 1 января.
@@ -186,7 +187,10 @@ function nearestJiaZiAnchor(date: Date, yin: boolean): Date {
   return best;
 }
 
-/** Дневной Джи Фу — 日家 делит 180 дней на три 60-дневных Юаня. */
+/**
+ * Метод: Joey Yap Day Chart, отдельный дневной цикл 日家.
+ * Дневной Джи Фу — 日家 делит 180 дней на три 60-дневных Юаня.
+ */
 export function dayJiFuPalace(date: Date): number {
   const { day } = pillarsOf(date);
   const dayJu = dayJoeyYapJuForDate(date);
@@ -206,7 +210,10 @@ export function dayJiFuPalace(date: Date): number {
   ).zhiFuPalace;
 }
 
-/** Часовой Джи Фу — где 甲 / 值符 на небесной тарелке (def A, 置闰 движок). */
+/**
+ * Метод: Zhi Run / 置闰, часовой слой.
+ * Часовой Джи Фу — где 甲 / 值符 на небесной тарелке (def A, 置闰 движок).
+ */
 export function hourJiFuPalace(date: Date, hourBranch: number): number {
   return buildChart(date, hourBranch).zhiFuPalace;
 }
