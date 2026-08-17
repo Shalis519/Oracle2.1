@@ -123,7 +123,9 @@ export async function seedOntology() {
       symbol: "",
       system: "astrology" as const,
       type: "house" as const,
-      lifeThemes: ([] as string[]),
+      lifeThemes: i === 4
+        ? ["Творчество", "Удовольствия", "Любовь", "Развлечения", "Дети", "Спорт", "Конкурсы"]
+        : ([] as string[]),
       keyMeaningsArr: ([] as string[]),
       positiveQualities: ([] as string[]),
       shadowQualities: ([] as string[]),
