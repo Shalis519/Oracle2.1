@@ -374,11 +374,15 @@ async function describeMainTransit(s: TransitSemantics): Promise<string[] | null
   return null;
 }
 
-function describeSecondaryTransit(s: TransitSemantics, index: number): string | null {
-  const t = s.transit;
+async function describeSecondaryTransit(s: TransitSemantics, index: number): Promise<string | null> {
   const connective = index === 0 ? "Одновременно" : "Кроме того,";
-  const head = `${connective} ${transitBodyPhrase(t.transitBody)} образует ${aspectAccusative(t.type)} с ${natalBodyInstrumental(t.natalBody)}`;
+  const contextual = await describeContextualMainTransit(s);
+  if (contextual?.[1]) {
+    return `${connective} ${lowerFirst(contextual[1])}`;
+  }
 
+  const t = s.transit;
+  const head = `${connective} ${transitBodyPhrase(t.transitBody)} образует ${aspectAccusative(t.type)} с ${natalBodyInstrumental(t.natalBody)}`;
   if (s.relation?.description?.trim()) {
     return `${head}: ${lowerFirst(firstSentence(s.relation.description))}`;
   }
@@ -477,11 +481,13 @@ export class FuturisticGenerator {
       }
       paragraphs.push(mainDescription.join(" "));
 
-      // Абзацы 2-3: дополнительные транзиты, коротко.
-      picked.slice(1).forEach((s, i) => {
-        const line = describeSecondaryTransit(s, i);
+      // Абзацы 2-3: дополнительные транзиты с той же строгой сборкой Studio.
+      const secondaryLines = await Promise.all(
+        picked.slice(1).map((s, i) => describeSecondaryTransit(s, i)),
+      );
+      for (const line of secondaryLines) {
         if (line) paragraphs.push(ensureSentence(line));
-      });
+      }
 
       // Совет дня из профилей.
       const advice = buildAdvice(main);
