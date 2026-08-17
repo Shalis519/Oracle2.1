@@ -24,6 +24,7 @@ import {
   colorShades,
   firstSentence,
   formatList,
+  formatHouse5Themes,
   lowerFirst,
   profileListText,
   plantForTea,
@@ -299,6 +300,15 @@ async function describeContextualMainTransit(s: TransitSemantics): Promise<strin
   const get = (category: string, context: string, key: string) => rows.find((row) => row.category === category && row.context === context && row.key === key)?.text ?? "";
   const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()] ?? t.typeKey?.toLowerCase();
   const composition = get("composition", aspectKey, "default");
+  const natalHouseThemeNames = houses.natalHouse === 5
+    ? s.themeEvidence
+        .filter((evidence) => evidence.sources.includes("Дом 5"))
+        .map((evidence) => evidence.name)
+    : [];
+  if (houses.natalHouse === 5 && natalHouseThemeNames.length === 0) return null;
+  const natalHouseThemes = houses.natalHouse === 5
+    ? formatHouse5Themes(natalHouseThemeNames, "instrumental")
+    : get("house", "natal", String(houses.natalHouse));
   const rendered = renderForecastTemplate(composition, {
     transitEntity: get("entity", "transit", t.transitBody.toLowerCase()),
     natalPlanet: bodyDative(t.natalBody),
@@ -306,7 +316,7 @@ async function describeContextualMainTransit(s: TransitSemantics): Promise<strin
     aspectName: t.type,
     aspectMeaning: get("aspect", aspectKey, "default"),
     transitHouse: get("house", "transit", String(houses.transitHouse)),
-    natalHouse: get("house", "natal", String(houses.natalHouse)),
+    natalHouse: natalHouseThemes,
   });
   if (hasUnresolvedTemplateTokens(rendered)) return null;
   return [

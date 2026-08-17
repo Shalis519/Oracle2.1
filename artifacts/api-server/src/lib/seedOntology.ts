@@ -55,6 +55,9 @@ export async function seedOntology() {
       { name: "Отношения", slug: "relationships", description: "Партнерство, единство, связи, общность" },
       { name: "Искусство", slug: "art", description: "Творчество, вдохновение, эстетика, ремесло" },
       { name: "Удовольствия", slug: "pleasures", description: "Наслаждения, удовольствие, любовь, радость" },
+      { name: "Развлечения", slug: "entertainment", description: "Игры, отдых, досуг и приятное времяпрепровождение" },
+      { name: "Дети", slug: "children", description: "Дети, забота о детях, радость общения и связь с ними" },
+      { name: "Спорт", slug: "sport", description: "Физическая активность, соревнования, тренировки и развитие формы" },
       { name: "Ценности", slug: "values", description: "Ценности, принципы, этика, критерии" },
       { name: "Красота", slug: "beauty", description: "Эстетика, внешний вид, грация, искусство оформления" },
       { name: "Гармония", slug: "harmony", description: "Баланс, согласованность, мир, единство" },
@@ -65,6 +68,7 @@ export async function seedOntology() {
       { name: "Страсть", slug: "passion", description: "Сильные чувства, огонь внутри" },
       { name: "Сила", slug: "strength", description: "Внутренняя и внешняя мощь" },
       { name: "Конкуренция", slug: "competition", description: "Соревновательный дух, желание быть лучшим" },
+      { name: "Конкурсы", slug: "contests", description: "Творческие, спортивные и игровые состязания, участие и демонстрация способностей" },
       { name: "Защита", slug: "protection", description: "Физическая и эмоциональная защита близких" },
       { name: "Смелость", slug: "courage", description: "Отвага, готовность действовать" },
     ])
@@ -406,6 +410,11 @@ export async function seedOntology() {
   addLink("house_4", "home", 0.8, "positive");
   addLink("house_5", "creativity", 1.0, "positive");
   addLink("house_5", "pleasures", 0.7, "positive");
+  addLink("house_5", "love", 0.8, "positive");
+  addLink("house_5", "entertainment", 0.8, "positive");
+  addLink("house_5", "children", 0.8, "positive");
+  addLink("house_5", "sport", 0.7, "positive");
+  addLink("house_5", "contests", 0.7, "positive");
   addLink("house_6", "health", 0.9, "positive");
   addLink("house_6", "habits", 0.6, "neutral");
   addLink("house_7", "love", 0.9, "positive");

@@ -171,6 +171,75 @@ export function colorShades(color: string): string {
   return `${forms[value] ?? value} оттенки`;
 }
 
+export type ForecastGrammarCase = "nominative" | "genitive" | "dative" | "accusative" | "instrumental" | "prepositional";
+
+/** Пилотные формы тем 5-го дома. Хранятся локально до переноса в Oracle Studio. */
+const HOUSE_5_THEME_FORMS: Record<string, Record<ForecastGrammarCase, string>> = {
+  творчество: {
+    nominative: "творчество",
+    genitive: "творчества",
+    dative: "творчеству",
+    accusative: "творчество",
+    instrumental: "творчеством",
+    prepositional: "творчестве",
+  },
+  удовольствия: {
+    nominative: "удовольствия",
+    genitive: "удовольствий",
+    dative: "удовольствиям",
+    accusative: "удовольствия",
+    instrumental: "удовольствиями",
+    prepositional: "удовольствиях",
+  },
+  любовь: {
+    nominative: "любовь",
+    genitive: "любви",
+    dative: "любви",
+    accusative: "любовь",
+    instrumental: "любовью",
+    prepositional: "любви",
+  },
+  развлечения: {
+    nominative: "развлечения",
+    genitive: "развлечений",
+    dative: "развлечениям",
+    accusative: "развлечения",
+    instrumental: "развлечениями",
+    prepositional: "развлечениях",
+  },
+  дети: {
+    nominative: "дети",
+    genitive: "детей",
+    dative: "детям",
+    accusative: "детей",
+    instrumental: "детьми",
+    prepositional: "детях",
+  },
+  спорт: {
+    nominative: "спорт",
+    genitive: "спорта",
+    dative: "спорту",
+    accusative: "спорт",
+    instrumental: "спортом",
+    prepositional: "спорте",
+  },
+  конкурсы: {
+    nominative: "конкурсы",
+    genitive: "конкурсов",
+    dative: "конкурсам",
+    accusative: "конкурсы",
+    instrumental: "конкурсами",
+    prepositional: "конкурсах",
+  },
+};
+
+export function formatHouse5Themes(themes: string[], grammaticalCase: ForecastGrammarCase = "instrumental"): string {
+  const formatted = themes
+    .map((theme) => HOUSE_5_THEME_FORMS[theme.trim().toLowerCase()]?.[grammaticalCase] ?? theme.trim().toLowerCase())
+    .filter(Boolean);
+  return formatList(formatted, 7);
+}
+
 export function profileListText(profile: { keyMeaningsArr?: string[]; keyMeanings?: string | null } | null): string[] {
   if (!profile) return [];
   if (profile.keyMeaningsArr?.length) return Array.from(new Set(profile.keyMeaningsArr.map((item) => lowerFirst(item.trim())).filter(Boolean)));

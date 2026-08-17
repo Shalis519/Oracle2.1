@@ -17,6 +17,20 @@ export const FORECAST_TEMPLATE_DEFAULTS: ForecastTemplateDefault[] = [
   {
     category: "entity",
     context: "transit",
+    key: "moon",
+    title: "Луна в транзитном контексте",
+    text: "эмоциональной реакции, внутренним переживаниям и кратким изменениям настроения",
+  },
+  {
+    category: "entity",
+    context: "natal",
+    key: "pluto",
+    title: "Плутон в натальном контексте",
+    text: "глубоким внутренним реакциям, сильной вовлечённости и стремлению сохранять контроль",
+  },
+  {
+    category: "entity",
+    context: "transit",
     key: "mercury",
     title: "Меркурий в транзитном контексте",
     text: "Вашему мышлению, речи и способам обмена информацией",
@@ -36,11 +50,25 @@ export const FORECAST_TEMPLATE_DEFAULTS: ForecastTemplateDefault[] = [
     text: "создаёт напряжение между двумя способами реагировать и требует найти более устойчивый способ их согласовать",
   },
   {
+    category: "aspect",
+    context: "conjunction",
+    key: "default",
+    title: "Соединение",
+    text: "усиливает их совместное проявление и делает внутреннюю реакцию заметнее",
+  },
+  {
     category: "house",
     context: "transit",
     key: "1",
     title: "Транзитная планета в 1-м доме",
     text: "личными желаниями, самовыражением и готовностью заявлять о себе",
+  },
+  {
+    category: "house",
+    context: "natal",
+    key: "5",
+    title: "Натальная планета в 5-м доме",
+    text: "творчеством, удовольствиями, любовью, развлечениями, детьми, спортом и конкурсами",
   },
   {
     category: "house",
@@ -55,6 +83,13 @@ export const FORECAST_TEMPLATE_DEFAULTS: ForecastTemplateDefault[] = [
     key: "default",
     title: "Сборка напряжённого аспекта",
     text: "Транзит усиливает внимание к {transitEntity}. Эта активность связана с {transitHouse}. Квадрат к натальному {natalPlanet} затрагивает {natalEntity}; {aspectMeaning}. В натальном доме тема связана с {natalHouse}.",
+  },
+  {
+    category: "composition",
+    context: "conjunction",
+    key: "default",
+    title: "Сборка соединения Луны с Плутоном",
+    text: "Эмоциональная реакция может стать интенсивнее, а внутренние переживания — заметнее в темах, связанных с {natalHouse}. Краткий лунный транзит может подсветить сильное желание проявить себя, получить отклик или сохранить контроль над ситуацией. Постарайтесь сначала понять, что именно вызвало реакцию, и только потом действовать.",
   },
 ];
 
