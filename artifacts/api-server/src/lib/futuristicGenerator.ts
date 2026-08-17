@@ -301,6 +301,19 @@ async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTempla
   const selected = required
     .map(([category, context, key]) => byKey.get(forecastTemplateKey(category, context, key)) ?? null)
     .filter((row): row is ForecastTemplateRow => Boolean(row && row.text.trim() && row.text.trim() !== "В разработке"));
+  if (selected.length !== required.length) {
+    const missing = required
+      .filter(([category, context, key]) => !byKey.has(forecastTemplateKey(category, context, key)))
+      .map(([category, context, key]) => `${category}:${context}:${key}`);
+    logger.warn({
+      transitBody: t.transitBody,
+      natalBody: t.natalBody,
+      aspect: aspectKey,
+      transitHouse: houses.transitHouse,
+      natalHouse: houses.natalHouse,
+      missing,
+    }, "forecast template set incomplete in Oracle Studio");
+  }
   return selected.length === required.length ? selected : null;
 }
 
