@@ -3,7 +3,9 @@ import { eq } from "drizzle-orm";
 import { db, forecastTextTemplatesTable } from "@workspace/db";
 import { type TransitAspect } from "./astrology";
 import { ensureForecastTemplateSeeds } from "./runtimeSchema";
-import { FORECAST_TEMPLATE_DEFAULTS_BY_KEY, forecastTemplateKey } from "./forecastTemplateDefaults";
+function forecastTemplateKey(category: string, context: string, key: string): string {
+  return `${category}:${context}:${key}`;
+}
 import {
   getEntity,
   getEntityThemes,
@@ -269,7 +271,7 @@ async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTempla
       .from(forecastTextTemplatesTable)
       .where(eq(forecastTextTemplatesTable.isActive, true));
   } catch (error) {
-    logger.warn({ error }, "forecast templates unavailable; using embedded defaults");
+    logger.warn({ error }, "forecast templates unavailable in Oracle Studio");
   }
   const required = [
     ["entity", "transit", t.transitBody.toLowerCase()],
@@ -280,15 +282,9 @@ async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTempla
     ["composition", aspectKey, "default"],
   ] as const;
   const byKey = new Map(rows.map((row) => [forecastTemplateKey(row.category, row.context, row.key), row]));
-  const selected = required.map(([category, context, key]) => {
-    const dbRow = byKey.get(forecastTemplateKey(category, context, key));
-    const fallback = FORECAST_TEMPLATE_DEFAULTS_BY_KEY.get(forecastTemplateKey(category, context, key));
-    const isOldSeed = dbRow?.sourceNote === "Начальный литературный шаблон";
-    if ((!dbRow || isOldSeed || !dbRow.text.trim() || dbRow.text.trim() === "В разработке") && fallback) {
-      return { ...fallback, sourceNote: null, isActive: true } satisfies ForecastTemplateRow;
-    }
-    return dbRow ?? null;
-  }).filter((row): row is ForecastTemplateRow => Boolean(row && row.text.trim() && row.text.trim() !== "В разработке"));
+  const selected = required
+    .map(([category, context, key]) => byKey.get(forecastTemplateKey(category, context, key)) ?? null)
+    .filter((row): row is ForecastTemplateRow => Boolean(row && row.text.trim() && row.text.trim() !== "В разработке"));
   return selected.length === required.length ? selected : null;
 }
 
