@@ -65,6 +65,13 @@ export const FORECAST_TEMPLATE_DEFAULTS: ForecastTemplateDefault[] = [
   },
   {
     category: "house",
+    context: "transit",
+    key: "5",
+    title: "Транзитная планета в 5-м доме",
+    text: "творчеством, удовольствиями, любовью, развлечениями, детьми, спортом и конкурсами",
+  },
+  {
+    category: "house",
     context: "natal",
     key: "5",
     title: "Натальная планета в 5-м доме",
