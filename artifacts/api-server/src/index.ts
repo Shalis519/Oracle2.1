@@ -35,6 +35,7 @@ async function start(): Promise<void> {
   app.get("/health", (req, res) => {
     res.status(200).json({
       status: "ok",
+      build: "forecast-v51-798d356",
       timestamp: new Date().toISOString(),
     });
   });
