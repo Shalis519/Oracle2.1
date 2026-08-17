@@ -381,11 +381,6 @@ async function describeSecondaryTransit(s: TransitSemantics, index: number): Pro
     return `${connective} ${lowerFirst(contextual[1])}`;
   }
 
-  const t = s.transit;
-  const head = `${connective} ${transitBodyPhrase(t.transitBody)} образует ${aspectAccusative(t.type)} с ${natalBodyInstrumental(t.natalBody)}`;
-  if (s.relation?.description?.trim()) {
-    return `${head}: ${lowerFirst(firstSentence(s.relation.description))}`;
-  }
   return null;
 }
 
