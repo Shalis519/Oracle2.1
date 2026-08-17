@@ -153,7 +153,7 @@ async function resolveTransitThemes(t: TransitAspect): Promise<ThemeEvidence[]> 
   if (t.transitHouse) {
     for (const th of transitHouseThemes) addEvidence(th.themeName, th.weight * 0.8, `Дом ${t.transitHouse}`);
   }
-  if (t.natalHouse && t.natalHouse !== t.transitHouse) {
+  if (t.natalHouse && (t.natalHouse !== t.transitHouse || t.natalHouse === 5)) {
     for (const th of natalHouseThemes) addEvidence(th.themeName, th.weight * 0.7, `Дом ${t.natalHouse}`);
   }
 
