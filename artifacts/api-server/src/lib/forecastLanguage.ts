@@ -58,6 +58,12 @@ export function bodyInstrumental(name: string): string {
   return BODY_INSTRUMENTAL[name.toLowerCase()] ?? name;
 }
 
+export function natalBodyInstrumental(name: string): string {
+  const lower = name.toLowerCase();
+  const adjective = new Set(["луна", "венера"]).has(lower) ? "натальной" : "натальным";
+  return `${adjective} ${bodyInstrumental(name)}`;
+}
+
 export function transitBodyPhrase(name: string): string {
   const feminine = new Set(["венера", "луна"]);
   const neuter = new Set(["солнце"]);
@@ -255,7 +261,7 @@ export function buildTransitOpening(input: {
   transitHouse?: number | null;
 }): string {
   const housePart = input.transitHouse ? ` Транзит проходит через Ваш ${input.transitHouse}-й дом.` : "";
-  return `Сегодня ${transitBodyPhrase(input.transitBody)} находится ${signInPrepositional(input.transitSign)} и образует ${aspectAccusative(input.aspect)} с ${bodyInstrumental(input.natalBody)} ${signInPrepositional(input.natalSign)}.${housePart}`;
+  return `Сегодня ${transitBodyPhrase(input.transitBody)} находится ${signInPrepositional(input.transitSign)} и образует ${aspectAccusative(input.aspect)} с ${natalBodyInstrumental(input.natalBody)} ${signInPrepositional(input.natalSign)}.${housePart}`;
 }
 
 export function buildPersonalInfluence(themes: string): string {

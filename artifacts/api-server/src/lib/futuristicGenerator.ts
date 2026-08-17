@@ -22,6 +22,7 @@ import {
   buildTransitOpening,
   bodyDative,
   bodyInstrumental,
+  natalBodyInstrumental,
   ensureSentence,
   colorShades,
   firstSentence,
@@ -376,7 +377,7 @@ async function describeMainTransit(s: TransitSemantics): Promise<string[] | null
 function describeSecondaryTransit(s: TransitSemantics, index: number): string | null {
   const t = s.transit;
   const connective = index === 0 ? "Одновременно" : "Кроме того,";
-  const head = `${connective} ${transitBodyPhrase(t.transitBody)} образует ${aspectAccusative(t.type)} с ${bodyInstrumental(t.natalBody)}`;
+  const head = `${connective} ${transitBodyPhrase(t.transitBody)} образует ${aspectAccusative(t.type)} с ${natalBodyInstrumental(t.natalBody)}`;
 
   if (s.relation?.description?.trim()) {
     return `${head}: ${lowerFirst(firstSentence(s.relation.description))}`;
@@ -492,7 +493,7 @@ export class FuturisticGenerator {
 
       // Мотивационная фраза из Studio — последним предложением.
       if (motivationPhrase?.trim()) {
-        paragraphs.push(`Фраза дня: ${lowerFirst(ensureSentence(motivationPhrase))}`);
+        paragraphs.push(lowerFirst(ensureSentence(motivationPhrase)));
       }
 
       return renderParagraphs(paragraphs);
