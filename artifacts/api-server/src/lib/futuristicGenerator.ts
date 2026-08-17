@@ -246,6 +246,22 @@ const ASPECT_TEMPLATE_KEYS: Record<string, string> = {
   "тригон": "trine",
   "оппозиция": "opposition",
 };
+const BODY_TEMPLATE_KEYS: Record<string, string> = {
+  "солнце": "sun",
+  "луна": "moon",
+  "меркурий": "mercury",
+  "венера": "venus",
+  "марс": "mars",
+  "юпитер": "jupiter",
+  "сатурн": "saturn",
+  "уран": "uranus",
+  "нептун": "neptune",
+  "плутон": "pluto",
+  "хирон": "chiron",
+};
+function bodyTemplateKey(body: string): string {
+  return BODY_TEMPLATE_KEYS[body.trim().toLowerCase()] ?? body.trim().toLowerCase();
+}
 
 function renderForecastTemplate(text: string, values: Record<string, string>): string {
   return text.replace(/\{([a-zA-Z0-9_]+)\}/g, (full, key: string) => values[key] ?? full);
@@ -274,8 +290,8 @@ async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTempla
     logger.warn({ error }, "forecast templates unavailable in Oracle Studio");
   }
   const required = [
-    ["entity", "transit", t.transitBody.toLowerCase()],
-    ["entity", "natal", t.natalBody.toLowerCase()],
+    ["entity", "transit", bodyTemplateKey(t.transitBody)],
+    ["entity", "natal", bodyTemplateKey(t.natalBody)],
     ["aspect", aspectKey, "default"],
     ["house", "transit", String(houses.transitHouse)],
     ["house", "natal", String(houses.natalHouse)],
@@ -306,9 +322,9 @@ async function describeContextualMainTransit(s: TransitSemantics): Promise<strin
     ? formatHouse5Themes(natalHouseThemeNames, "instrumental")
     : get("house", "natal", String(houses.natalHouse));
   const rendered = renderForecastTemplate(composition, {
-    transitEntity: get("entity", "transit", t.transitBody.toLowerCase()),
+    transitEntity: get("entity", "transit", bodyTemplateKey(t.transitBody)),
     natalPlanet: bodyDative(t.natalBody),
-    natalEntity: get("entity", "natal", t.natalBody.toLowerCase()),
+    natalEntity: get("entity", "natal", bodyTemplateKey(t.natalBody)),
     aspectName: t.type,
     aspectMeaning: get("aspect", aspectKey, "default"),
     transitHouse: get("house", "transit", String(houses.transitHouse)),
