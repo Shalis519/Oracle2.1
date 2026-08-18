@@ -7,6 +7,7 @@ import { requireAdmin, requireAuth } from "../lib/auth";
 import { computeSecondaryLunationWindows, computeSecondaryProgressionAspectWindows, computeSecondaryProgressionWindows, computeSecondaryProgressions, computeSolarArcDirections, type SecondaryProgressionWindow, type ProgressionResult } from "../lib/progressions";
 import { computeNatalChart, computeTransits, type NatalChartInput } from "../lib/astrology";
 import { renderProgressionEventWindows } from "../lib/progressionLiterary";
+import { renderLongTermTransit } from "../lib/longTermTransitLiterary";
 
 const router: IRouter = Router();
 
@@ -176,7 +177,39 @@ const ASPECT_LABELS: Record<string, string> = {
   quincunx: "квинконс",
 };
 
-function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progressionWindows: SecondaryProgressionWindow[]) {
+const PLANET_NAMES: Record<string, string> = {
+  sun: "Солнце", moon: "Луна", mercury: "Меркурий", venus: "Венера", mars: "Марс",
+  jupiter: "Юпитер", saturn: "Сатурн", uranus: "Уран", neptune: "Нептун", pluto: "Плутон",
+};
+
+const TRANSIT_PLANET_FORMS: Record<string, string> = {
+  sun: "транзитное Солнце", moon: "транзитная Луна", mercury: "транзитный Меркурий", venus: "транзитная Венера", mars: "транзитный Марс",
+  jupiter: "транзитный Юпитер", saturn: "транзитный Сатурн", uranus: "транзитный Уран", neptune: "транзитный Нептун", pluto: "транзитный Плутон",
+};
+
+const NATAL_PLANET_FORMS: Record<string, string> = {
+  sun: "натальным Солнцем", moon: "натальной Луной", mercury: "натальным Меркурием", venus: "натальной Венерой", mars: "натальным Марсом",
+  jupiter: "натальным Юпитером", saturn: "натальным Сатурном", uranus: "натальным Ураном", neptune: "натальным Нептуном", pluto: "натальным Плутоном",
+};
+
+function bodyKey(value: unknown): string {
+  const normalized = String(value ?? "").toLowerCase().trim();
+  const entry = Object.entries(PLANET_NAMES).find(([, name]) => name.toLowerCase() === normalized);
+  return entry?.[0] ?? normalized;
+}
+
+function transitTechnicalLine(aspect: Record<string, unknown>): string {
+  const transitKey = bodyKey(aspect.transitBodyKey ?? aspect.transitBody);
+  const natalKey = bodyKey(aspect.natalBodyKey ?? aspect.natalBody);
+  const transitBody = TRANSIT_PLANET_FORMS[transitKey] ?? `транзитный ${String(aspect.transitBody)}`;
+  const natalBody = NATAL_PLANET_FORMS[natalKey] ?? `натальной ${String(aspect.natalBody)}`;
+  const aspectName = ASPECT_LABELS[String(aspect.typeKey)] ?? String(aspect.type ?? "аспект").toLowerCase();
+  const transitHouse = aspect.transitHouse == null ? "" : `, проходя по Вашему натальному ${String(aspect.transitHouse)} дому`;
+  const natalHouse = aspect.natalHouse == null ? "" : ` в ${String(aspect.natalHouse)} доме`;
+  return `${transitBody}${transitHouse} образует ${aspectName} с ${natalBody}${natalHouse}.`;
+}
+
+async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progressionWindows: SecondaryProgressionWindow[]) {
   const transitEntries: Array<{ date: string; key: string; text: string }> = [];
   const progressionLines: string[] = [];
   const directionEntries: Array<{ date: string; key: string; text: string }> = [];
@@ -191,8 +224,8 @@ function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progress
     const date = String(point.date);
     const transit = point.transit as { aspects?: Array<Record<string, unknown>> } | null;
     for (const aspect of transit?.aspects ?? []) {
-      const text = `транзитный ${String(aspect.transitBody)} образует ${String(aspect.type).toLowerCase()} с ${String(aspect.natalBody)}; дом транзита — ${String(aspect.transitHouse ?? "не указан")}, орбис — ${String(aspect.orb)}°.`;
-      transitEntries.push({ date, key: `${aspect.transitBodyKey ?? aspect.transitBody}|${aspect.natalBodyKey ?? aspect.natalBody}|${aspect.type}`, text });
+      const text = `${transitTechnicalLine(aspect)} Орбис — ${String(aspect.orb)}°.`;
+      transitEntries.push({ date, key: `${aspect.transitBodyKey ?? aspect.transitBody}|${aspect.natalBodyKey ?? aspect.natalBody}|${aspect.typeKey ?? aspect.type}`, text });
     }
     const progressions = point.progressions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of progressions?.aspects ?? []) {
@@ -205,22 +238,33 @@ function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progress
     }
   }
   const grouped = (entries: Array<{ date: string; key: string; text: string }>) => {
-    const groups = new Map<string, { from: string; to: string; text: string }>();
+    const groups = new Map<string, { key: string; from: string; to: string; text: string }>();
     for (const entry of entries) {
       const current = groups.get(entry.key);
-      if (!current) groups.set(entry.key, { from: entry.date, to: entry.date, text: entry.text });
+      if (!current) groups.set(entry.key, { key: entry.key, from: entry.date, to: entry.date, text: entry.text });
       else { current.from = current.from < entry.date ? current.from : entry.date; current.to = current.to > entry.date ? current.to : entry.date; }
     }
-    return [...groups.values()].sort((a, b) => a.from.localeCompare(b.from)).map((item) => {
-      const period = item.from === item.to ? formatDisplayDate(item.from) : `с ${formatDisplayDate(item.from)} по ${formatDisplayDate(item.to)}`;
-      return `${period}: ${item.text}`;
-    });
+    return [...groups.values()].sort((a, b) => a.from.localeCompare(b.from));
   };
+  const formatGrouped = (items: Array<{ key: string; from: string; to: string; text: string }>) => items.map((item) => {
+    const period = item.from === item.to ? formatDisplayDate(item.from) : `с ${formatDisplayDate(item.from)} по ${formatDisplayDate(item.to)}`;
+    return `${period}: ${item.text}`;
+  });
+  const groupedTransitEntries = grouped(transitEntries);
+  const transitLines: string[] = [];
+  for (const item of groupedTransitEntries) {
+    const [transitBodyKey, natalBodyKey, rawAspectKey] = item.key.split("|");
+    const aspectKey = ({ "соединение": "conjunction", "оппозиция": "opposition", "квадрат": "square", "тригон": "trine", "секстиль": "sextile" } as Record<string, string>)[rawAspectKey] ?? rawAspectKey;
+    const period = item.from === item.to ? formatDisplayDate(item.from) : `с ${formatDisplayDate(item.from)} по ${formatDisplayDate(item.to)}`;
+    const technicalLine = `${period}: ${item.text}`;
+    const literary = await renderLongTermTransit(technicalLine, transitBodyKey, aspectKey, natalBodyKey, item.from, item.to, "", "");
+    transitLines.push(literary ?? technicalLine);
+  }
   const draft = (lines: string[], empty: string) => lines.length ? lines.slice(0, 24).join("\\n") : empty;
   return {
-    transits: draft(grouped(transitEntries), "За выбранный период значимые транзитные аспекты не выделены."),
+    transits: draft(transitLines, "За выбранный период значимые транзитные аспекты не выделены."),
     progressions: draft(progressionLines, "За выбранный период точные аспекты вторичных прогрессий не выделены."),
-    directions: draft(grouped(directionEntries), "За выбранный период точные аспекты солнечных дуг не выделены."),
+    directions: draft(formatGrouped(grouped(directionEntries)), "За выбранный период точные аспекты солнечных дуг не выделены."),
   };
 }
 
@@ -280,7 +324,7 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
     const directions = filterLongTermDirections(computeSolarArcDirections(input, parsedDateFrom));
     const transit = withoutExcludedLongTermBodies(computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const timeline = buildForecastTimeline(input, natal, parsedDateFrom, parsedDateTo);
-    const draftTexts = buildDraftBlockTexts(timeline, progressionWindows);
+    const draftTexts = await buildDraftBlockTexts(timeline, progressionWindows);
     const [row] = await db.insert(longTermForecastsTable).values({
       userId: typeof body.userId === "number" ? body.userId : null,
       clientName: body.clientName.trim(), periodType: String(body.periodType), dateFrom, dateTo,
