@@ -127,7 +127,7 @@ export async function renderLongTermTransit(
       item.text.trim() &&
       item.text.trim() !== "В разработке",
   );
-  if (!row) return "В разработке";
+  if (!row) return `${technicalLine}\n\nВ разработке`;
   const transitHouseThemes = rows.find(
     (item) => item.category === "house" && item.context === "transit" && item.key === transitHouse,
   )?.text?.trim() ?? "";
@@ -144,5 +144,5 @@ export async function renderLongTermTransit(
     natalHouseThemes,
     aspectName: ASPECT_KEYS[aspectKey],
   });
-  return hasUnresolvedTokens(rendered) ? "В разработке" : rendered.trim();
+  return hasUnresolvedTokens(rendered) ? `${technicalLine}\n\nВ разработке` : rendered.trim();
 }
