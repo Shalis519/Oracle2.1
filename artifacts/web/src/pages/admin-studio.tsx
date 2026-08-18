@@ -1312,6 +1312,18 @@ export default function AdminStudioPage() {
     if (res.ok) { await loadLongTermForecasts(); toast({ title: "Текст блока сохранён" }); }
   };
 
+  const deleteLongTermForecast = async (forecast: LongTermForecast) => {
+    if (!confirm(`Удалить прогноз «${forecast.title || forecast.clientName}»? Это действие нельзя отменить.`)) return;
+    const res = await apiFetch(`/admin/long-term-forecasts/${forecast.id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      toast({ title: "Не удалось удалить прогноз", description: error.error, variant: "destructive" });
+      return;
+    }
+    await loadLongTermForecasts();
+    toast({ title: "Прогноз удалён" });
+  };
+
   const exportLongTermForecast = async (forecast: LongTermForecast) => {
     const res = await apiFetch(`/admin/long-term-forecasts/${forecast.id}/export`);
     if (!res.ok) { toast({ title: "Не удалось подготовить Word-файл", variant: "destructive" }); return; }
@@ -2236,7 +2248,7 @@ export default function AdminStudioPage() {
             <CardContent className="space-y-4">
               {longTermLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : longTermForecasts.length === 0 ? <p className="text-sm text-muted-foreground">Сохранённых прогнозов пока нет.</p> : longTermForecasts.map((forecast) => (
                 <div key={forecast.id} className="rounded-lg border border-border p-4 space-y-3">
-                  <div className="flex items-start justify-between gap-3"><div><p className="font-medium">{forecast.title}</p><p className="text-xs text-muted-foreground">{forecast.clientName} · {formatDisplayDate(forecast.dateFrom)} — {formatDisplayDate(forecast.dateTo)} · {forecast.status}</p></div><div className="flex items-center gap-2"><Badge variant="outline">{forecast.periodType}</Badge><Button size="sm" variant="outline" onClick={() => exportLongTermForecast(forecast)}><Download className="w-4 h-4 mr-1" />Word</Button></div></div>
+                  <div className="flex items-start justify-between gap-3"><div><p className="font-medium">{forecast.title}</p><p className="text-xs text-muted-foreground">{forecast.clientName} · {formatDisplayDate(forecast.dateFrom)} — {formatDisplayDate(forecast.dateTo)} · {forecast.status}</p></div><div className="flex items-center gap-2"><Badge variant="outline">{forecast.periodType}</Badge><Button size="sm" variant="outline" onClick={() => exportLongTermForecast(forecast)}><Download className="w-4 h-4 mr-1" />Word</Button><Button size="sm" variant="outline" onClick={() => deleteLongTermForecast(forecast)} className="text-destructive hover:text-destructive"><Trash2 className="w-4 h-4 mr-1" />Удалить</Button></div></div>
                   {forecast.introText && <p className="whitespace-pre-wrap text-sm text-muted-foreground">{forecast.introText}</p>}
                   {forecast.blocks?.map((block, index) => <div key={block.id ?? index} className="rounded-md bg-muted/30 p-3 space-y-2"><p className="font-medium">{block.title || `Блок ${index + 1}`} <span className="text-xs text-muted-foreground">{block.method || ""}</span></p><Textarea defaultValue={block.text || ""} rows={5} onBlur={(e) => saveLongTermBlock(forecast, index, e.target.value)} /><p className="text-xs text-muted-foreground">Изменения сохраняются при выходе из поля.</p></div>)}
                 </div>

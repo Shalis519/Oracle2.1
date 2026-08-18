@@ -318,6 +318,14 @@ router.put("/admin/long-term-forecasts/:id", requireAuth, requireAdmin, async (r
   res.json(serialize(row));
 });
 
+router.delete("/admin/long-term-forecasts/:id", requireAuth, requireAdmin, async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) { res.status(400).json({ error: "Некорректный идентификатор прогноза" }); return; }
+  const [deleted] = await db.delete(longTermForecastsTable).where(eq(longTermForecastsTable.id, id)).returning({ id: longTermForecastsTable.id });
+  if (!deleted) { res.status(404).json({ error: "Прогноз не найден" }); return; }
+  res.status(204).send();
+});
+
 router.get("/admin/long-term-forecasts/:id/export", requireAuth, requireAdmin, async (req, res): Promise<void> => {
   const id = Number(req.params.id);
   const [row] = await db.select().from(longTermForecastsTable).where(eq(longTermForecastsTable.id, id));
