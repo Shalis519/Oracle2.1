@@ -101,9 +101,9 @@ function buildForecastTimeline(
   const end = new Date(dateTo);
   while (cursor <= end && timeline.length < 32) {
     const date = isoDate(cursor);
-    const transit = withoutChironAspects(computeTransits(natal, date, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron"] }));
-    const progressions = withoutChironAspects(computeSecondaryProgressions(input, cursor));
-    const directions = withoutChironAspects(computeSolarArcDirections(input, cursor));
+    const transit = withoutExcludedLongTermBodies(computeTransits(natal, date, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
+    const progressions = withoutExcludedLongTermBodies(computeSecondaryProgressions(input, cursor));
+    const directions = withoutExcludedLongTermBodies(computeSolarArcDirections(input, cursor));
     timeline.push({
       date,
       transit,
@@ -125,11 +125,11 @@ function buildForecastTimeline(
   return timeline;
 }
 
-const LONG_TERM_EXCLUDED_BODY_KEYS = new Set(["chiron"]);
+const LONG_TERM_EXCLUDED_BODY_KEYS = new Set(["chiron", "lilith", "northnode", "southnode"]);
 
-function withoutChironAspects<T extends object>(result: T): T;
-function withoutChironAspects<T extends object>(result: T | null): T | null;
-function withoutChironAspects<T extends object>(result: T | null): T | null {
+function withoutExcludedLongTermBodies<T extends object>(result: T): T;
+function withoutExcludedLongTermBodies<T extends object>(result: T | null): T | null;
+function withoutExcludedLongTermBodies<T extends object>(result: T | null): T | null {
   if (!result) return result;
   const source = result as { aspects?: unknown; points?: unknown };
   const aspects = Array.isArray(source.aspects)
@@ -205,7 +205,7 @@ router.post("/admin/long-term-forecasts/calculate", requireAuth, requireAdmin, a
     const dateTo = parseDate(body.dateTo, "dateTo");
     if (dateTo < dateFrom) throw new Error("Дата окончания не может быть раньше даты начала");
     const natal = computeNatalChart(input);
-    const progressions = withoutChironAspects(computeSecondaryProgressions(input, dateFrom));
+    const progressions = withoutExcludedLongTermBodies(computeSecondaryProgressions(input, dateFrom));
     const progressionWindows = computeSecondaryProgressionWindows(input, dateFrom, dateTo, natal)
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.sourceBodyKey));
     const progressionAspectWindows = computeSecondaryProgressionAspectWindows(input, dateFrom, dateTo, natal)
@@ -213,8 +213,8 @@ router.post("/admin/long-term-forecasts/calculate", requireAuth, requireAdmin, a
     const progressionLunationWindows = computeSecondaryLunationWindows(input, dateFrom, dateTo, natal)
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.natalContactBodyKey));
     const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows);
-    const directions = withoutChironAspects(computeSolarArcDirections(input, dateFrom));
-    const transit = withoutChironAspects(computeTransits(natal, String(body.dateFrom), input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron"] }));
+    const directions = withoutExcludedLongTermBodies(computeSolarArcDirections(input, dateFrom));
+    const transit = withoutExcludedLongTermBodies(computeTransits(natal, String(body.dateFrom), input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const timeline = buildForecastTimeline(input, natal, dateFrom, dateTo);
     res.json({ dateFrom: String(body.dateFrom), dateTo: String(body.dateTo), natal, progressions, progressionWindows, progressionAspectWindows, progressionLunationWindows, progressionText, directions, transit, timeline, blocks: [] });
   } catch (error) {
@@ -234,7 +234,7 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
     const natal = computeNatalChart(input);
     const parsedDateFrom = parseDate(dateFrom, "dateFrom");
     const parsedDateTo = parseDate(dateTo, "dateTo");
-    const progressions = withoutChironAspects(computeSecondaryProgressions(input, parsedDateFrom));
+    const progressions = withoutExcludedLongTermBodies(computeSecondaryProgressions(input, parsedDateFrom));
     const progressionWindows = computeSecondaryProgressionWindows(input, parsedDateFrom, parsedDateTo, natal)
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.sourceBodyKey));
     const progressionAspectWindows = computeSecondaryProgressionAspectWindows(input, parsedDateFrom, parsedDateTo, natal)
@@ -242,8 +242,8 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
     const progressionLunationWindows = computeSecondaryLunationWindows(input, parsedDateFrom, parsedDateTo, natal)
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.natalContactBodyKey));
     const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows);
-    const directions = withoutChironAspects(computeSolarArcDirections(input, parsedDateFrom));
-    const transit = withoutChironAspects(computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron"] }));
+    const directions = withoutExcludedLongTermBodies(computeSolarArcDirections(input, parsedDateFrom));
+    const transit = withoutExcludedLongTermBodies(computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const timeline = buildForecastTimeline(input, natal, parsedDateFrom, parsedDateTo);
     const draftTexts = buildDraftBlockTexts(timeline, progressionWindows);
     const [row] = await db.insert(longTermForecastsTable).values({
