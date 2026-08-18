@@ -4,7 +4,7 @@ import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
 import { db, contactsTable } from "@workspace/db";
 import { longTermForecastsTable } from "@workspace/db/schema";
 import { requireAdmin, requireAuth } from "../lib/auth";
-import { computeSecondaryLunationWindows, computeSecondaryProgressionAspectWindows, computeSecondaryProgressionWindows, computeSecondaryProgressions, computeSolarArcDirections, type SecondaryProgressionWindow } from "../lib/progressions";
+import { computeSecondaryLunationWindows, computeSecondaryProgressionAspectWindows, computeSecondaryProgressionWindows, computeSecondaryProgressions, computeSolarArcDirections, type SecondaryProgressionWindow, type ProgressionResult } from "../lib/progressions";
 import { computeNatalChart, computeTransits, type NatalChartInput } from "../lib/astrology";
 import { renderProgressionEventWindows } from "../lib/progressionLiterary";
 
@@ -108,7 +108,7 @@ function buildForecastTimeline(
     const date = isoDate(cursor);
     const transit = withoutExcludedLongTermBodies(computeTransits(natal, date, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const progressions = withoutExcludedLongTermBodies(computeSecondaryProgressions(input, cursor));
-    const directions = withoutExcludedLongTermBodies(computeSolarArcDirections(input, cursor));
+    const directions = filterLongTermDirections(computeSolarArcDirections(input, cursor));
     timeline.push({
       date,
       transit,
@@ -151,6 +151,22 @@ function withoutExcludedLongTermBodies<T extends object>(result: T | null): T | 
   return { ...result, aspects, points } as T;
 }
 
+const DIRECTION_NODE_PARTNERS = new Set(["mars", "uranus", "neptune", "pluto", "saturn"]);
+
+function filterLongTermDirections(result: ProgressionResult): ProgressionResult {
+  const aspects = result.aspects.filter((aspect) => {
+    const sourceIsNode = aspect.sourceBodyKey === "northnode" || aspect.sourceBodyKey === "southnode";
+    const targetIsNode = aspect.targetBodyKey === "northnode" || aspect.targetBodyKey === "southnode";
+    const isNodeConjunction = aspect.aspectKey === "conjunction" && (
+      (sourceIsNode && DIRECTION_NODE_PARTNERS.has(aspect.targetBodyKey)) ||
+      (targetIsNode && aspect.targetBodyKey === "southnode" && !LONG_TERM_EXCLUDED_BODY_KEYS.has(aspect.sourceBodyKey))
+    );
+    if (sourceIsNode || targetIsNode) return isNodeConjunction;
+    return !LONG_TERM_EXCLUDED_BODY_KEYS.has(aspect.sourceBodyKey) && !LONG_TERM_EXCLUDED_BODY_KEYS.has(aspect.targetBodyKey);
+  });
+  return { ...result, aspects };
+}
+
 const ASPECT_LABELS: Record<string, string> = {
   conjunction: "соединение",
   opposition: "оппозиция",
@@ -161,9 +177,9 @@ const ASPECT_LABELS: Record<string, string> = {
 };
 
 function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progressionWindows: SecondaryProgressionWindow[]) {
-  const transitLines: string[] = [];
+  const transitEntries: Array<{ date: string; key: string; text: string }> = [];
   const progressionLines: string[] = [];
-  const directionLines: string[] = [];
+  const directionEntries: Array<{ date: string; key: string; text: string }> = [];
   for (const window of progressionWindows) {
     if (window.eventType === "sign_ingress") {
       progressionLines.push(`${formatDisplayDate(window.startDate)} — ${formatDisplayDate(window.endDate)}: прогрессивная Луна в ${window.sourceSign}; длительный эмоционально-психологический фон.`);
@@ -175,7 +191,8 @@ function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progress
     const date = String(point.date);
     const transit = point.transit as { aspects?: Array<Record<string, unknown>> } | null;
     for (const aspect of transit?.aspects ?? []) {
-      transitLines.push(`${formatDisplayDate(date)}: транзитный ${String(aspect.transitBody)} образует ${String(aspect.type).toLowerCase()} с ${String(aspect.natalBody)}; дом транзита — ${String(aspect.transitHouse ?? "не указан")}, орбис — ${String(aspect.orb)}°.`);
+      const text = `транзитный ${String(aspect.transitBody)} образует ${String(aspect.type).toLowerCase()} с ${String(aspect.natalBody)}; дом транзита — ${String(aspect.transitHouse ?? "не указан")}, орбис — ${String(aspect.orb)}°.`;
+      transitEntries.push({ date, key: `${aspect.transitBodyKey ?? aspect.transitBody}|${aspect.natalBodyKey ?? aspect.natalBody}|${aspect.type}`, text });
     }
     const progressions = point.progressions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of progressions?.aspects ?? []) {
@@ -183,14 +200,24 @@ function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progress
     }
     const directions = point.directions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of directions?.aspects ?? []) {
-      directionLines.push(`${formatDisplayDate(date)}: направленный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`);
+      const text = `направленный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`;
+      directionEntries.push({ date, key: `${aspect.sourceBodyKey ?? aspect.sourceBody}|${aspect.targetBodyKey ?? aspect.targetBody}|${aspect.aspectKey}`, text });
     }
   }
+  const grouped = (entries: Array<{ date: string; key: string; text: string }>) => {
+    const groups = new Map<string, { from: string; to: string; text: string }>();
+    for (const entry of entries) {
+      const current = groups.get(entry.key);
+      if (!current) groups.set(entry.key, { from: entry.date, to: entry.date, text: entry.text });
+      else { current.from = current.from < entry.date ? current.from : entry.date; current.to = current.to > entry.date ? current.to : entry.date; }
+    }
+    return [...groups.values()].sort((a, b) => a.from.localeCompare(b.from)).map((item) => `с ${formatDisplayDate(item.from)} по ${formatDisplayDate(item.to)}: ${item.text}`);
+  };
   const draft = (lines: string[], empty: string) => lines.length ? lines.slice(0, 24).join("\\n") : empty;
   return {
-    transits: draft(transitLines, "За выбранный период значимые транзитные аспекты не выделены."),
+    transits: draft(grouped(transitEntries), "За выбранный период значимые транзитные аспекты не выделены."),
     progressions: draft(progressionLines, "За выбранный период точные аспекты вторичных прогрессий не выделены."),
-    directions: draft(directionLines, "За выбранный период точные аспекты солнечных дуг не выделены."),
+    directions: draft(grouped(directionEntries), "За выбранный период точные аспекты солнечных дуг не выделены."),
   };
 }
 
@@ -218,7 +245,7 @@ router.post("/admin/long-term-forecasts/calculate", requireAuth, requireAdmin, a
     const progressionLunationWindows = computeSecondaryLunationWindows(input, dateFrom, dateTo, natal)
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.natalContactBodyKey));
     const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows);
-    const directions = withoutExcludedLongTermBodies(computeSolarArcDirections(input, dateFrom));
+    const directions = filterLongTermDirections(computeSolarArcDirections(input, dateFrom));
     const transit = withoutExcludedLongTermBodies(computeTransits(natal, String(body.dateFrom), input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const timeline = buildForecastTimeline(input, natal, dateFrom, dateTo);
     res.json({ dateFrom: String(body.dateFrom), dateTo: String(body.dateTo), natal, progressions, progressionWindows, progressionAspectWindows, progressionLunationWindows, progressionText, directions, transit, timeline, blocks: [] });
@@ -247,7 +274,7 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
     const progressionLunationWindows = computeSecondaryLunationWindows(input, parsedDateFrom, parsedDateTo, natal)
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.natalContactBodyKey));
     const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows);
-    const directions = withoutExcludedLongTermBodies(computeSolarArcDirections(input, parsedDateFrom));
+    const directions = filterLongTermDirections(computeSolarArcDirections(input, parsedDateFrom));
     const transit = withoutExcludedLongTermBodies(computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const timeline = buildForecastTimeline(input, natal, parsedDateFrom, parsedDateTo);
     const draftTexts = buildDraftBlockTexts(timeline, progressionWindows);
