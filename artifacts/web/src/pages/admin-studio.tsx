@@ -90,6 +90,13 @@ interface EntityRelation {
 
 type LongTermInputMode = "contact" | "manual";
 
+function addForecastMonths(dateValue: string, months: number): string {
+  const date = new Date(`${dateValue}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return dateValue;
+  date.setMonth(date.getMonth() + months);
+  return date.toISOString().slice(0, 10);
+}
+
 interface LongTermContact {
   id: number;
   name: string;
@@ -1238,9 +1245,15 @@ export default function AdminStudioPage() {
     return () => clearTimeout(timer);
   }, [longTermCityQuery]);
 
+  useEffect(() => {
+    const months = longTermForm.periodType === "3m" ? 3 : longTermForm.periodType === "6m" ? 6 : 1;
+    setLongTermForm((form) => ({ ...form, dateTo: addForecastMonths(form.dateFrom, months) }));
+  }, [longTermForm.dateFrom, longTermForm.periodType]);
+
   const selectLongTermManualCity = (city: City) => {
     const displayName = `${city.name}, ${new Intl.DisplayNames(["ru"], { type: "region" }).of(city.country) ?? city.country}`;
-    setLongTermCityQuery(displayName);
+    setLongTermCityQuery("");
+    setLongTermCityDebounced("");
     setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, city: displayName, birthPlace: displayName, latitude: city.lat, longitude: city.lng, timezone: city.timezone } }));
   };
 
@@ -2204,7 +2217,7 @@ export default function AdminStudioPage() {
                 <div className="flex items-center justify-between gap-3"><p className="font-medium">Данные рождения</p><span className="text-xs text-muted-foreground">Город выбирается из встроенной базы, координаты и часовой пояс подставляются автоматически</span></div>
                 <div className="grid gap-4 md:grid-cols-3">
                   <div><Label>Источник данных</Label><Select value={longTermInputMode} onValueChange={(value: LongTermInputMode) => setLongTermInputMode(value)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="contact">Сохранённый контакт</SelectItem><SelectItem value="manual">Ввести вручную</SelectItem></SelectContent></Select></div>
-                  {longTermInputMode === "contact" ? <div className="md:col-span-2"><Label>Контакт клиента</Label><Select value={selectedLongTermContactId} onValueChange={selectLongTermContact}><SelectTrigger><SelectValue placeholder="Выберите сохранённый контакт" /></SelectTrigger><SelectContent>{longTermContacts.length === 0 ? <SelectItem value="no-contacts" disabled>Сохранённых контактов нет</SelectItem> : longTermContacts.map((contact) => <SelectItem key={contact.id} value={String(contact.id)}>{contact.name}{contact.city || contact.birthPlace ? ` — ${contact.city || contact.birthPlace}` : ""}</SelectItem>)}</SelectContent></Select></div> : <div className="md:col-span-2"><Label>Город рождения</Label><Input value={longTermCityQuery} onChange={(e) => { setLongTermCityQuery(e.target.value); setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, city: "", birthPlace: "", latitude: 0, longitude: 0, timezone: "UTC" } })); }} placeholder="Начните вводить город" />{longTermCityDebounced.length >= 2 && <div className="mt-2 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1">{longTermCitiesLoading ? <p className="px-3 py-2 text-sm text-muted-foreground">Поиск...</p> : (longTermCities ?? []).length === 0 ? <p className="px-3 py-2 text-sm text-muted-foreground">Город не найден в базе</p> : (longTermCities ?? []).map((city) => <button type="button" key={`${city.name}-${city.country}-${city.lat}`} className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-accent" onClick={() => selectLongTermManualCity(city)}>{city.name}, {new Intl.DisplayNames(["ru"], { type: "region" }).of(city.country) ?? city.country}<span className="ml-2 text-xs text-muted-foreground">{city.timezone}</span></button>)}</div>}</div>}
+                  {longTermInputMode === "contact" ? <div className="md:col-span-2"><Label>Контакт клиента</Label><Select value={selectedLongTermContactId} onValueChange={selectLongTermContact}><SelectTrigger><SelectValue placeholder="Выберите сохранённый контакт" /></SelectTrigger><SelectContent>{longTermContacts.length === 0 ? <SelectItem value="no-contacts" disabled>Сохранённых контактов нет</SelectItem> : longTermContacts.map((contact) => <SelectItem key={contact.id} value={String(contact.id)}>{contact.name}{contact.city || contact.birthPlace ? ` — ${contact.city || contact.birthPlace}` : ""}</SelectItem>)}</SelectContent></Select></div> : <div className="md:col-span-2"><Label>Город рождения</Label><Input value={longTermCityQuery || longTermForm.birthSnapshot.birthPlace} onChange={(e) => { setLongTermCityQuery(e.target.value); setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, city: "", birthPlace: "", latitude: 0, longitude: 0, timezone: "UTC" } })); }} placeholder="Начните вводить город" />{longTermCityDebounced.length >= 2 && <div className="mt-2 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1">{longTermCitiesLoading ? <p className="px-3 py-2 text-sm text-muted-foreground">Поиск...</p> : (longTermCities ?? []).length === 0 ? <p className="px-3 py-2 text-sm text-muted-foreground">Город не найден в базе</p> : (longTermCities ?? []).map((city) => <button type="button" key={`${city.name}-${city.country}-${city.lat}`} className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-accent" onClick={() => selectLongTermManualCity(city)}>{city.name}, {new Intl.DisplayNames(["ru"], { type: "region" }).of(city.country) ?? city.country}<span className="ml-2 text-xs text-muted-foreground">{city.timezone}</span></button>)}</div>}</div>}
                   {longTermInputMode === "contact" && <div><Label>Город рождения</Label><div className="flex h-9 items-center rounded-md border border-input bg-muted/20 px-3 text-sm text-muted-foreground truncate">{longTermContacts.find((contact) => String(contact.id) === selectedLongTermContactId)?.city || longTermContacts.find((contact) => String(contact.id) === selectedLongTermContactId)?.birthPlace || "Выберите контакт"}</div></div>}
                   <div><Label>Год</Label><Input type="number" value={longTermForm.birthSnapshot.year} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, year: Number(e.target.value) } }))} /></div>
                   <div><Label>Месяц</Label><Input type="number" min="1" max="12" value={longTermForm.birthSnapshot.month} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, month: Number(e.target.value) } }))} /></div>
