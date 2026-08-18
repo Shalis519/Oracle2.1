@@ -69,7 +69,7 @@ export function transitBodyPhrase(name: string): string {
   const neuter = new Set(["солнце"]);
   const lower = name.toLowerCase();
   const adjective = feminine.has(lower) ? "Транзитная" : neuter.has(lower) ? "Транзитное" : "Транзитный";
-  return `${adjective} ${name}`;
+  return `${adjective.toLowerCase()} ${name}`;
 }
 
 export function natalBodyInHouse(name: string, house: number): string {
@@ -150,12 +150,14 @@ export function plantForTea(plant: string): string {
     валериана: "валерианой",
     пустырник: "пустырником",
     имбирь: "имбирём",
+    первоцвет: "первоцветом",
   };
   return forms[plant.trim().toLowerCase()] ?? plant;
 }
 
 export function colorShades(color: string): string {
   const value = lowerFirst(color.trim());
+  if (/\bоттенки?$/i.test(value)) return value;
   const forms: Record<string, string> = {
     зелёный: "зелёные",
     зеленый: "зелёные",
