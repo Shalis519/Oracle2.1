@@ -29,6 +29,18 @@ function displayDate(value: string | undefined): string {
   return match ? `${match[3]}.${match[2]}.${match[1]}` : value;
 }
 
+function maxDate(a: string, b: string): string { return a > b ? a : b; }
+function minDate(a: string, b: string): string { return a < b ? a : b; }
+
+type ForecastRenderContext = { startDate: string; endDate: string };
+
+function exactPeriodText(window: SecondaryProgressionWindow, context?: ForecastRenderContext): string {
+  if (!window.exactStartDate || !window.exactEndDate || !context) return window.exactStartDate && window.exactEndDate ? `с ${displayDate(window.exactStartDate)} по ${displayDate(window.exactEndDate)}` : "точная фаза не попадает в выбранный период";
+  if (window.exactEndDate < context.startDate) return `точное соединение уже прошло до начала выбранного периода; сейчас аспект расходится`;
+  if (window.exactStartDate > context.endDate) return `точное соединение ожидается после выбранного периода`;
+  return `с ${displayDate(maxDate(window.exactStartDate, context.startDate))} по ${displayDate(minDate(window.exactEndDate, context.endDate))}`;
+}
+
 function bodyPhrase(bodyKey: string): string | null {
   const phrases: Record<string, string> = {
     sun: "Прогрессивное Солнце",
@@ -73,7 +85,7 @@ function get(selected: Map<string, ProgressionTemplateRow>, category: string, co
   return selected.get(templateKey(category, context, key))?.text ?? "";
 }
 
-export async function renderProgressionWindow(window: SecondaryProgressionWindow): Promise<string | null> {
+export async function renderProgressionWindow(window: SecondaryProgressionWindow, context?: ForecastRenderContext): Promise<string | null> {
   const phrase = bodyPhrase(window.sourceBodyKey);
   if (!phrase) return null;
 
@@ -89,8 +101,8 @@ export async function renderProgressionWindow(window: SecondaryProgressionWindow
       sourceBody: phrase,
       sourceSign: window.sourceSign,
       signThemes: get(selected, "progression_sign", "moon", window.sourceSignKey),
-      startDate: displayDate(window.startDate),
-      endDate: displayDate(window.endDate),
+      startDate: displayDate(context ? maxDate(window.startDate, context.startDate) : window.startDate),
+      endDate: displayDate(context ? minDate(window.endDate, context.endDate) : window.endDate),
     });
     return hasUnresolvedTokens(rendered) ? null : rendered.trim();
   }
@@ -109,11 +121,12 @@ export async function renderProgressionWindow(window: SecondaryProgressionWindow
       sourceBody: phrase,
       bodyThemes: get(selected, "progression_entity", "body", window.sourceBodyKey),
       targetHouse: String(window.targetHouse),
-      startDate: displayDate(window.startDate),
+      startDate: displayDate(context ? maxDate(window.startDate, context.startDate) : window.startDate),
       peakDate: displayDate(window.peakDate),
-      endDate: displayDate(window.endDate),
+      endDate: displayDate(context ? minDate(window.endDate, context.endDate) : window.endDate),
       exactStartDate: displayDate(window.exactStartDate ?? window.peakDate),
       exactEndDate: displayDate(window.exactEndDate ?? window.peakDate),
+      exactPeriodText: exactPeriodText(window, context),
       orb: `${window.orb}°`,
       houseThemes: get(selected, "house", "natal", String(window.targetHouse)),
     });
@@ -124,11 +137,12 @@ export async function renderProgressionWindow(window: SecondaryProgressionWindow
     sourceBody: phrase,
     bodyThemes: get(selected, "progression_entity", "body", window.sourceBodyKey),
     targetHouse: String(window.targetHouse),
-    startDate: displayDate(window.startDate),
+    startDate: displayDate(context ? maxDate(window.startDate, context.startDate) : window.startDate),
     peakDate: displayDate(window.peakDate),
-    endDate: displayDate(window.endDate),
+    endDate: displayDate(context ? minDate(window.endDate, context.endDate) : window.endDate),
     exactStartDate: displayDate(window.exactStartDate ?? window.peakDate),
     exactEndDate: displayDate(window.exactEndDate ?? window.peakDate),
+    exactPeriodText: exactPeriodText(window, context),
     orb: `${window.orb}°`,
     houseThemes: get(selected, "house", "natal", String(window.targetHouse)),
   });
@@ -227,10 +241,11 @@ export async function renderProgressionEventWindows(
   windows: SecondaryProgressionWindow[],
   aspectWindows: ProgressionAspectWindow[],
   lunationWindows: ProgressionLunationWindow[],
+  context?: ForecastRenderContext,
 ): Promise<string | null> {
   const rendered: string[] = [];
   for (const window of windows) {
-    const text = await renderProgressionWindow(window);
+    const text = await renderProgressionWindow(window, context);
     if (text) rendered.push(text);
   }
   for (const window of aspectWindows) {

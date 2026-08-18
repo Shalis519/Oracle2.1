@@ -244,7 +244,7 @@ router.post("/admin/long-term-forecasts/calculate", requireAuth, requireAdmin, a
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.sourceBodyKey) && !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.targetBodyKey));
     const progressionLunationWindows = computeSecondaryLunationWindows(input, dateFrom, dateTo, natal)
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.natalContactBodyKey));
-    const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows);
+    const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows, { startDate: isoDate(dateFrom), endDate: isoDate(dateTo) });
     const directions = filterLongTermDirections(computeSolarArcDirections(input, dateFrom));
     const transit = withoutExcludedLongTermBodies(computeTransits(natal, String(body.dateFrom), input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const timeline = buildForecastTimeline(input, natal, dateFrom, dateTo);
@@ -273,7 +273,7 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.sourceBodyKey) && !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.targetBodyKey));
     const progressionLunationWindows = computeSecondaryLunationWindows(input, parsedDateFrom, parsedDateTo, natal)
       .filter((window) => !LONG_TERM_EXCLUDED_BODY_KEYS.has(window.natalContactBodyKey));
-    const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows);
+    const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows, { startDate: isoDate(parsedDateFrom), endDate: isoDate(parsedDateTo) });
     const directions = filterLongTermDirections(computeSolarArcDirections(input, parsedDateFrom));
     const transit = withoutExcludedLongTermBodies(computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const timeline = buildForecastTimeline(input, natal, parsedDateFrom, parsedDateTo);
