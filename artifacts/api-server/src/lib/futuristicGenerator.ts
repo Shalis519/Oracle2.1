@@ -325,7 +325,7 @@ async function describeContextualMainTransit(s: TransitSemantics): Promise<strin
   if (!rows) return null;
   const get = (category: string, context: string, key: string) => rows.find((row) => row.category === category && row.context === context && row.key === key)?.text ?? "";
   const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()] ?? t.typeKey?.toLowerCase();
-  const composition = get("composition", aspectKey, "default");
+  const composition = get("composition", aspectKey, `${bodyTemplateKey(t.transitBody)}:${bodyTemplateKey(t.natalBody)}`) || get("composition", aspectKey, "default");
   const natalHouseThemeNames = houses.natalHouse === 5
     ? s.themeEvidence
         .filter((evidence) => evidence.sources.includes("Дом 5"))
