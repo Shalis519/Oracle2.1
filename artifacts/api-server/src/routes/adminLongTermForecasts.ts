@@ -4,8 +4,9 @@ import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
 import { db, contactsTable } from "@workspace/db";
 import { longTermForecastsTable } from "@workspace/db/schema";
 import { requireAdmin, requireAuth } from "../lib/auth";
-import { computeSecondaryProgressions, computeSolarArcDirections } from "../lib/progressions";
+import { computeSecondaryLunationWindows, computeSecondaryProgressionAspectWindows, computeSecondaryProgressionWindows, computeSecondaryProgressions, computeSolarArcDirections, type SecondaryProgressionWindow } from "../lib/progressions";
 import { computeNatalChart, computeTransits, type NatalChartInput } from "../lib/astrology";
+import { renderProgressionEventWindows } from "../lib/progressionLiterary";
 
 const router: IRouter = Router();
 
@@ -33,7 +34,7 @@ async function parseInput(body: Record<string, unknown>, userId: number): Promis
     const [hour, minute] = contact.birthTime.slice(0, 5).split(":").map(Number);
     birth = { year, month, day, hour, minute, latitude, longitude, timezone, city: contact.birthPlace, birthPlace: contact.birthPlace };
   }
-  if (!birth || typeof birth !== "object") throw new Error("Выберите контакт с данными рождения");
+  if (!birth || typeof birth !== "object") throw new Error("Укажите данные рождения или выберите сохранённый контакт");
   const required = ["year", "month", "day", "hour", "minute", "latitude", "longitude"];
   for (const key of required) if (typeof birth[key] !== "number" || !Number.isFinite(birth[key])) throw new Error(`Некорректное поле рождения: ${key}`);
   return {
@@ -55,6 +56,40 @@ function isoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+function formatBirthDate(snapshot: Record<string, unknown>): string {
+  const day = Number(snapshot.day);
+  const month = Number(snapshot.month);
+  const year = Number(snapshot.year);
+  if (![day, month, year].every(Number.isFinite)) return "дата рождения не указана";
+  return `${day}.${String(month).padStart(2, "0")}.${year}`;
+}
+
+function formatBirthTime(snapshot: Record<string, unknown>): string {
+  const hour = Number(snapshot.hour);
+  const minute = Number(snapshot.minute);
+  if (![hour, minute].every(Number.isFinite)) return "время не указано";
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
+function periodLabel(periodType: string): string {
+  if (periodType === "1m") return "1 месяц";
+  if (periodType === "3m") return "3 месяца";
+  if (periodType === "6m") return "6 месяцев";
+  return periodType;
+}
+
+function exportBlockOrder(block: Record<string, unknown>): number {
+  const order: Record<string, number> = { "solar-arc": 0, secondary: 1, transits: 2 };
+  return typeof block.id === "string" ? (order[block.id] ?? 99) : 99;
+}
+
+function exportBlockTitle(block: Record<string, unknown>): string {
+  if (block.id === "solar-arc") return "Длительные дирекции";
+  if (block.id === "secondary") return "Прогрессии";
+  if (block.id === "transits") return "Транзиты";
+  return typeof block.title === "string" && block.title.trim() ? block.title : "Прогнозный период";
+}
+
 function buildForecastTimeline(
   input: NatalChartInput,
   natal: ReturnType<typeof computeNatalChart>,
@@ -66,7 +101,7 @@ function buildForecastTimeline(
   const end = new Date(dateTo);
   while (cursor <= end && timeline.length < 32) {
     const date = isoDate(cursor);
-    const transit = computeTransits(natal, date, input.latitude, input.longitude, input.timezone);
+    const transit = computeTransits(natal, date, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"] });
     const progressions = computeSecondaryProgressions(input, cursor);
     const directions = computeSolarArcDirections(input, cursor);
     timeline.push({
@@ -99,10 +134,17 @@ const ASPECT_LABELS: Record<string, string> = {
   quincunx: "квинконс",
 };
 
-function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>) {
+function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progressionWindows: SecondaryProgressionWindow[]) {
   const transitLines: string[] = [];
   const progressionLines: string[] = [];
   const directionLines: string[] = [];
+  for (const window of progressionWindows) {
+    if (window.eventType === "sign_ingress") {
+      progressionLines.push(`${window.startDate} — ${window.endDate}: прогрессивная Луна в ${window.sourceSign}; длительный эмоционально-психологический фон.`);
+    } else {
+      progressionLines.push(`${window.startDate} — ${window.endDate}: прогрессивный ${window.sourceBody} — влияние на куспид ${window.targetHouse}-го дома, точность ${window.peakDate}, орбис ${window.orb}°.`);
+    }
+  }
   for (const point of timeline) {
     const date = String(point.date);
     const transit = point.transit as { aspects?: Array<Record<string, unknown>> } | null;
@@ -143,10 +185,14 @@ router.post("/admin/long-term-forecasts/calculate", requireAuth, requireAdmin, a
     if (dateTo < dateFrom) throw new Error("Дата окончания не может быть раньше даты начала");
     const natal = computeNatalChart(input);
     const progressions = computeSecondaryProgressions(input, dateFrom);
+    const progressionWindows = computeSecondaryProgressionWindows(input, dateFrom, dateTo, natal);
+    const progressionAspectWindows = computeSecondaryProgressionAspectWindows(input, dateFrom, dateTo, natal);
+    const progressionLunationWindows = computeSecondaryLunationWindows(input, dateFrom, dateTo, natal);
+    const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows);
     const directions = computeSolarArcDirections(input, dateFrom);
-    const transit = computeTransits(natal, String(body.dateFrom), input.latitude, input.longitude, input.timezone);
+    const transit = computeTransits(natal, String(body.dateFrom), input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"] });
     const timeline = buildForecastTimeline(input, natal, dateFrom, dateTo);
-    res.json({ dateFrom: String(body.dateFrom), dateTo: String(body.dateTo), natal, progressions, directions, transit, timeline, blocks: [] });
+    res.json({ dateFrom: String(body.dateFrom), dateTo: String(body.dateTo), natal, progressions, progressionWindows, progressionAspectWindows, progressionLunationWindows, progressionText, directions, transit, timeline, blocks: [] });
   } catch (error) {
     res.status(400).json({ error: error instanceof Error ? error.message : "Не удалось выполнить расчёт" });
   }
@@ -162,21 +208,27 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
     if (!["1m", "3m", "6m"].includes(String(body.periodType))) throw new Error("Период должен быть 1m, 3m или 6m");
     const { input, birthSnapshot } = await parseInput(body, req.localUser!.id);
     const natal = computeNatalChart(input);
-    const progressions = computeSecondaryProgressions(input, parseDate(dateFrom, "dateFrom"));
-    const directions = computeSolarArcDirections(input, parseDate(dateFrom, "dateFrom"));
-    const transit = computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone);
-    const timeline = buildForecastTimeline(input, natal, parseDate(dateFrom, "dateFrom"), parseDate(dateTo, "dateTo"));
-    const draftTexts = buildDraftBlockTexts(timeline);
+    const parsedDateFrom = parseDate(dateFrom, "dateFrom");
+    const parsedDateTo = parseDate(dateTo, "dateTo");
+    const progressions = computeSecondaryProgressions(input, parsedDateFrom);
+    const progressionWindows = computeSecondaryProgressionWindows(input, parsedDateFrom, parsedDateTo, natal);
+    const progressionAspectWindows = computeSecondaryProgressionAspectWindows(input, parsedDateFrom, parsedDateTo, natal);
+    const progressionLunationWindows = computeSecondaryLunationWindows(input, parsedDateFrom, parsedDateTo, natal);
+    const progressionText = await renderProgressionEventWindows(progressionWindows, progressionAspectWindows, progressionLunationWindows);
+    const directions = computeSolarArcDirections(input, parsedDateFrom);
+    const transit = computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"] });
+    const timeline = buildForecastTimeline(input, natal, parsedDateFrom, parsedDateTo);
+    const draftTexts = buildDraftBlockTexts(timeline, progressionWindows);
     const [row] = await db.insert(longTermForecastsTable).values({
       userId: typeof body.userId === "number" ? body.userId : null,
       clientName: body.clientName.trim(), periodType: String(body.periodType), dateFrom, dateTo,
       status: "draft", title: typeof body.title === "string" && body.title.trim() ? body.title.trim() : `Долгосрочный прогноз для ${body.clientName.trim()}`,
       introText: typeof body.introText === "string" ? body.introText : "",
       birthSnapshot,
-      calculationPayload: { natal, progressions, directions, transit, timeline },
+      calculationPayload: { natal, progressions, progressionWindows, progressionAspectWindows, progressionLunationWindows, progressionText, directions, transit, timeline },
       blocks: Array.isArray(body.blocks) ? body.blocks : [
         { id: "transits", method: "Транзиты", title: "Внешние триггеры периода", text: draftTexts.transits, dateFrom, dateTo, isVisible: true },
-        { id: "secondary", method: "Прогрессии", title: "Внутренняя динамика и развитие", text: draftTexts.progressions, dateFrom, dateTo, isVisible: true },
+        { id: "secondary", method: "Прогрессии", title: "Внутренняя динамика и развитие", text: progressionText ?? "Литературные шаблоны прогрессий ещё не заполнены в Oracle Studio.", dateFrom, dateTo, isVisible: true },
         { id: "solar-arc", method: "Дирекции", title: "Символические поворотные точки", text: draftTexts.directions, dateFrom, dateTo, isVisible: true },
       ],
       version: 1, createdBy: req.clerkUserId ?? "admin", updatedBy: req.clerkUserId ?? "admin",
@@ -212,15 +264,21 @@ router.get("/admin/long-term-forecasts/:id/export", requireAuth, requireAdmin, a
   const [row] = await db.select().from(longTermForecastsTable).where(eq(longTermForecastsTable.id, id));
   if (!row) { res.status(404).json({ error: "Прогноз не найден" }); return; }
   const blocks = Array.isArray(row.blocks) ? row.blocks as Array<Record<string, unknown>> : [];
+  const birthSnapshot = row.birthSnapshot as Record<string, unknown>;
+  const city = typeof birthSnapshot.birthPlace === "string" && birthSnapshot.birthPlace.trim()
+    ? birthSnapshot.birthPlace.trim()
+    : typeof birthSnapshot.city === "string" && birthSnapshot.city.trim()
+      ? birthSnapshot.city.trim()
+      : "город не указан";
+  const identityLine = `${row.clientName}, ${formatBirthDate(birthSnapshot)}, ${city}, ${formatBirthTime(birthSnapshot)}`;
   const children: Paragraph[] = [
-    new Paragraph({ text: row.title, heading: HeadingLevel.TITLE }),
-    new Paragraph({ children: [new TextRun({ text: `Клиент: ${row.clientName}`, bold: true })] }),
-    new Paragraph(`Период: ${row.dateFrom} — ${row.dateTo}`),
+    new Paragraph({ text: identityLine, heading: HeadingLevel.TITLE }),
+    new Paragraph({ text: `Прогностика на ${periodLabel(row.periodType)}`, heading: HeadingLevel.HEADING_1 }),
   ];
   if (row.introText.trim()) children.push(new Paragraph(row.introText));
-  for (const block of blocks) {
+  for (const block of [...blocks].sort((a, b) => exportBlockOrder(a) - exportBlockOrder(b))) {
     if (block.isVisible === false) continue;
-    const title = typeof block.title === "string" && block.title.trim() ? block.title : "Прогнозный период";
+    const title = exportBlockTitle(block);
     const text = typeof block.text === "string" ? block.text.trim() : "";
     if (!text) continue;
     children.push(new Paragraph({ text: String(title), heading: HeadingLevel.HEADING_2 }));

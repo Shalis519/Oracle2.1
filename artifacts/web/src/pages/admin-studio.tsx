@@ -43,7 +43,10 @@ import { cn } from "@/lib/utils";
 import { ONTOLOGY_WEIGHTS, WEIGHT_LEVELS, getWeightLabel } from "@workspace/db/weights";
 import {
   getGetAdminUserStatisticsQueryKey,
+  getSearchCitiesQueryKey,
   useGetAdminUserStatistics,
+  useSearchCities,
+  type City,
 } from "@workspace/api-client-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -84,6 +87,8 @@ interface EntityRelation {
   futuristic?: Record<string, unknown> | null;
   keywords?: string[] | null;
 }
+
+type LongTermInputMode = "contact" | "manual";
 
 interface LongTermContact {
   id: number;
@@ -1000,9 +1005,17 @@ export default function AdminStudioPage() {
   const [longTermForecasts, setLongTermForecasts] = useState<LongTermForecast[]>([]);
   const [longTermContacts, setLongTermContacts] = useState<LongTermContact[]>([]);
   const [selectedLongTermContactId, setSelectedLongTermContactId] = useState<string>("");
+  const [longTermInputMode, setLongTermInputMode] = useState<LongTermInputMode>("contact");
+  const [longTermCityQuery, setLongTermCityQuery] = useState("");
+  const [longTermCityDebounced, setLongTermCityDebounced] = useState("");
   const [longTermLoading, setLongTermLoading] = useState(false);
   const [longTermSaving, setLongTermSaving] = useState(false);
-  const [longTermForm, setLongTermForm] = useState({ clientName: "", periodType: "1m", dateFrom: new Date().toISOString().slice(0, 10), dateTo: new Date().toISOString().slice(0, 10), title: "", introText: "", birthSnapshot: { year: 1980, month: 1, day: 1, hour: 12, minute: 0, latitude: 0, longitude: 0, timezone: "UTC" } });
+  const [longTermForm, setLongTermForm] = useState({ clientName: "", periodType: "1m", dateFrom: new Date().toISOString().slice(0, 10), dateTo: new Date().toISOString().slice(0, 10), title: "", introText: "", birthSnapshot: { year: 1980, month: 1, day: 1, hour: 12, minute: 0, latitude: 0, longitude: 0, timezone: "UTC", city: "", birthPlace: "" } });
+
+  const { data: longTermCities, isFetching: longTermCitiesLoading } = useSearchCities(
+    { q: longTermCityDebounced },
+    { query: { enabled: longTermInputMode === "manual" && longTermCityDebounced.length >= 2, queryKey: getSearchCitiesQueryKey({ q: longTermCityDebounced }) } },
+  );
   const [editingLongTerm, setEditingLongTerm] = useState<LongTermForecast | null>(null);
 
   useEffect(() => {
@@ -1220,7 +1233,19 @@ export default function AdminStudioPage() {
     } catch { setLongTermContacts([]); }
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setLongTermCityDebounced(longTermCityQuery.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [longTermCityQuery]);
+
+  const selectLongTermManualCity = (city: City) => {
+    const displayName = `${city.name}, ${new Intl.DisplayNames(["ru"], { type: "region" }).of(city.country) ?? city.country}`;
+    setLongTermCityQuery(displayName);
+    setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, city: displayName, birthPlace: displayName, latitude: city.lat, longitude: city.lng, timezone: city.timezone } }));
+  };
+
   const selectLongTermContact = (contactId: string) => {
+    setLongTermInputMode("contact");
     setSelectedLongTermContactId(contactId);
     const contact = longTermContacts.find((item) => String(item.id) === contactId);
     if (!contact) return;
@@ -1254,11 +1279,12 @@ export default function AdminStudioPage() {
   }, []);
 
   const saveLongTermForecast = async () => {
-    if (!selectedLongTermContactId) { toast({ title: "Выберите контакт клиента", description: "Дата, время и город рождения будут взяты из карточки контакта.", variant: "destructive" }); return; }
+    if (longTermInputMode === "contact" && !selectedLongTermContactId) { toast({ title: "Выберите контакт клиента", description: "Или переключитесь на ручной ввод данных рождения.", variant: "destructive" }); return; }
+    if (longTermInputMode === "manual" && (!longTermForm.birthSnapshot.birthPlace || !longTermForm.birthSnapshot.timezone || !Number.isFinite(longTermForm.birthSnapshot.latitude) || !Number.isFinite(longTermForm.birthSnapshot.longitude))) { toast({ title: "Выберите город рождения", description: "Город нужно выбрать из встроенной базы, чтобы сохранить координаты и часовой пояс.", variant: "destructive" }); return; }
     if (!longTermForm.clientName.trim()) { toast({ title: "Укажите имя клиента", variant: "destructive" }); return; }
     setLongTermSaving(true);
     try {
-      const payload = { ...longTermForm, contactId: Number(selectedLongTermContactId), birthSnapshot: longTermForm.birthSnapshot, title: longTermForm.title || `Долгосрочный прогноз для ${longTermForm.clientName}` };
+      const payload = { ...longTermForm, ...(longTermInputMode === "contact" ? { contactId: Number(selectedLongTermContactId) } : {}), birthSnapshot: longTermForm.birthSnapshot, title: longTermForm.title || `Долгосрочный прогноз для ${longTermForm.clientName}` };
       const res = await apiFetch("/admin/long-term-forecasts", { method: "POST", body: JSON.stringify(payload) });
       if (!res.ok) { const err = await res.json(); toast({ title: "Ошибка расчёта", description: err.error, variant: "destructive" }); return; }
       await loadLongTermForecasts();
@@ -2175,15 +2201,17 @@ export default function AdminStudioPage() {
                 <div><Label>Дата окончания</Label><Input type="date" value={longTermForm.dateTo} onChange={(e) => setLongTermForm((form) => ({ ...form, dateTo: e.target.value }))} /></div>
               </div>
               <div className="rounded-md border border-border p-4 space-y-3">
-                <div className="flex items-center justify-between gap-3"><p className="font-medium">Данные рождения</p><span className="text-xs text-muted-foreground">Город, координаты и часовой пояс берутся из выбранного контакта</span></div>
+                <div className="flex items-center justify-between gap-3"><p className="font-medium">Данные рождения</p><span className="text-xs text-muted-foreground">Город выбирается из встроенной базы, координаты и часовой пояс подставляются автоматически</span></div>
                 <div className="grid gap-4 md:grid-cols-3">
-                  <div className="md:col-span-2"><Label>Контакт клиента</Label><Select value={selectedLongTermContactId} onValueChange={selectLongTermContact}><SelectTrigger><SelectValue placeholder="Выберите сохранённый контакт" /></SelectTrigger><SelectContent>{longTermContacts.length === 0 ? <SelectItem value="no-contacts" disabled>Сохранённых контактов нет</SelectItem> : longTermContacts.map((contact) => <SelectItem key={contact.id} value={String(contact.id)}>{contact.name}{contact.city || contact.birthPlace ? ` — ${contact.city || contact.birthPlace}` : ""}</SelectItem>)}</SelectContent></Select></div>
-                  <div><Label>Город рождения</Label><div className="flex h-9 items-center rounded-md border border-input bg-muted/20 px-3 text-sm text-muted-foreground truncate">{longTermContacts.find((contact) => String(contact.id) === selectedLongTermContactId)?.city || longTermContacts.find((contact) => String(contact.id) === selectedLongTermContactId)?.birthPlace || "Выберите контакт"}</div></div>
+                  <div><Label>Источник данных</Label><Select value={longTermInputMode} onValueChange={(value: LongTermInputMode) => setLongTermInputMode(value)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="contact">Сохранённый контакт</SelectItem><SelectItem value="manual">Ввести вручную</SelectItem></SelectContent></Select></div>
+                  {longTermInputMode === "contact" ? <div className="md:col-span-2"><Label>Контакт клиента</Label><Select value={selectedLongTermContactId} onValueChange={selectLongTermContact}><SelectTrigger><SelectValue placeholder="Выберите сохранённый контакт" /></SelectTrigger><SelectContent>{longTermContacts.length === 0 ? <SelectItem value="no-contacts" disabled>Сохранённых контактов нет</SelectItem> : longTermContacts.map((contact) => <SelectItem key={contact.id} value={String(contact.id)}>{contact.name}{contact.city || contact.birthPlace ? ` — ${contact.city || contact.birthPlace}` : ""}</SelectItem>)}</SelectContent></Select></div> : <div className="md:col-span-2"><Label>Город рождения</Label><Input value={longTermCityQuery} onChange={(e) => { setLongTermCityQuery(e.target.value); setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, city: "", birthPlace: "", latitude: 0, longitude: 0, timezone: "UTC" } })); }} placeholder="Начните вводить город" />{longTermCityDebounced.length >= 2 && <div className="mt-2 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1">{longTermCitiesLoading ? <p className="px-3 py-2 text-sm text-muted-foreground">Поиск...</p> : (longTermCities ?? []).length === 0 ? <p className="px-3 py-2 text-sm text-muted-foreground">Город не найден в базе</p> : (longTermCities ?? []).map((city) => <button type="button" key={`${city.name}-${city.country}-${city.lat}`} className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-accent" onClick={() => selectLongTermManualCity(city)}>{city.name}, {new Intl.DisplayNames(["ru"], { type: "region" }).of(city.country) ?? city.country}<span className="ml-2 text-xs text-muted-foreground">{city.timezone}</span></button>)}</div>}</div>}
+                  {longTermInputMode === "contact" && <div><Label>Город рождения</Label><div className="flex h-9 items-center rounded-md border border-input bg-muted/20 px-3 text-sm text-muted-foreground truncate">{longTermContacts.find((contact) => String(contact.id) === selectedLongTermContactId)?.city || longTermContacts.find((contact) => String(contact.id) === selectedLongTermContactId)?.birthPlace || "Выберите контакт"}</div></div>}
                   <div><Label>Год</Label><Input type="number" value={longTermForm.birthSnapshot.year} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, year: Number(e.target.value) } }))} /></div>
                   <div><Label>Месяц</Label><Input type="number" min="1" max="12" value={longTermForm.birthSnapshot.month} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, month: Number(e.target.value) } }))} /></div>
                   <div><Label>День</Label><Input type="number" min="1" max="31" value={longTermForm.birthSnapshot.day} onChange={(e) => setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, day: Number(e.target.value) } }))} /></div>
                   <div><Label>Время</Label><Input type="time" value={`${String(longTermForm.birthSnapshot.hour).padStart(2, "0")}:${String(longTermForm.birthSnapshot.minute).padStart(2, "0")}`} onChange={(e) => { const [hour, minute] = e.target.value.split(":").map(Number); setLongTermForm((form) => ({ ...form, birthSnapshot: { ...form.birthSnapshot, hour, minute } })); }} /></div>
                 </div>
+                {longTermInputMode === "manual" && longTermForm.birthSnapshot.birthPlace && <p className="text-xs text-muted-foreground">Город выбран: {longTermForm.birthSnapshot.birthPlace} · {longTermForm.birthSnapshot.timezone}</p>}
               </div>
               <div><Label>Вступление</Label><Textarea rows={4} value={longTermForm.introText} onChange={(e) => setLongTermForm((form) => ({ ...form, introText: e.target.value }))} placeholder="Дополнительное вступление к прогнозу" /></div>
               <Button onClick={saveLongTermForecast} disabled={longTermSaving}>{longTermSaving ? "Расчёт..." : "Рассчитать и сохранить черновик"}</Button>
