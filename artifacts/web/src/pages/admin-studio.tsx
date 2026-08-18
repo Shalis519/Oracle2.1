@@ -1009,6 +1009,7 @@ export default function AdminStudioPage() {
   const [forecastTemplatesSaving, setForecastTemplatesSaving] = useState(false);
   const [editingForecastTemplate, setEditingForecastTemplate] = useState<ForecastTextTemplate | null>(null);
   const [forecastTemplateEditorOpen, setForecastTemplateEditorOpen] = useState(false);
+  const [forecastTemplateFilter, setForecastTemplateFilter] = useState<"all" | "daily" | "progressions" | "directions" | "transits" | "lunations">("all");
   const [forecastTemplateForm, setForecastTemplateForm] = useState({ category: "entity", context: "transit", key: "mercury", title: "Меркурий в транзитном контексте", text: "В разработке", sourceNote: "", isActive: true });
   const [longTermForecasts, setLongTermForecasts] = useState<LongTermForecast[]>([]);
   const [longTermContacts, setLongTermContacts] = useState<LongTermContact[]>([]);
@@ -1341,8 +1342,16 @@ export default function AdminStudioPage() {
     const res = await apiFetch(`/admin/forecast-text-templates/${id}`, { method: "DELETE" });
     if (res.ok) { await loadForecastTemplates(); toast({ title: "Шаблон прогноза удалён" }); }
   };
-  const forecastCategoryLabel = (category: string) => ({ entity: "Сущность", aspect: "Аспект", house: "Дом", composition: "Сборка" } as Record<string, string>)[category] ?? category;
-  const forecastContextLabel = (context: string) => ({ transit: "Транзит", natal: "Натал", square: "Квадрат", trine: "Тригон", opposition: "Оппозиция", conjunction: "Соединение" } as Record<string, string>)[context] ?? context;
+  const forecastCategoryLabel = (category: string) => ({ entity: "Сущность", aspect: "Аспект", house: "Дом", composition: "Сборка", progression: "Прогрессии", progression_ingress_house: "Прогрессии: ингрессии", long_term_transit: "Транзиты", solar_arc: "Дирекции", lunation: "Лунации", progression_lunation: "Лунации" } as Record<string, string>)[category] ?? category;
+  const forecastContextLabel = (context: string) => ({ transit: "Транзит", natal: "Натал", square: "Квадрат", trine: "Тригон", opposition: "Оппозиция", conjunction: "Соединение", ingress_house_cusp: "Куспид дома", moon_sign: "Луна в знаке", major_aspect: "Мажорный аспект" } as Record<string, string>)[context] ?? context;
+  const forecastTemplateMatches = (item: ForecastTextTemplate, filter: typeof forecastTemplateFilter) => {
+    if (filter === "all") return true;
+    if (filter === "daily") return ["entity", "aspect", "house", "composition"].includes(item.category);
+    if (filter === "progressions") return item.category.startsWith("progression");
+    if (filter === "directions") return ["solar_arc", "direction", "directions"].includes(item.category) || item.context.startsWith("solar_arc");
+    if (filter === "transits") return ["long_term_transit", "transit"].includes(item.category) || item.context === "transit";
+    return ["lunation", "progression_lunation"].includes(item.category) || item.context.includes("lunation");
+  };
   const getSynastryBodyLabel = (key: string) => SYNastryBodies.find((item) => item.key === key)?.label ?? key;
   const getSynastryAspectLabel = (key: string) => SYNastryAspects.find((item) => item.key === key)?.label ?? key;
   const getSynastryDirectionLabel = (key: string) => SYNastryDirections.find((item) => item.key === key)?.label ?? key;
@@ -2267,10 +2276,25 @@ export default function AdminStudioPage() {
               <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
                 Каждый шаблон имеет контекст: транзитная или натальная сущность, аспект или дом. Пустые записи показываются как «В разработке» и не перезаписывают Ваши изменения.
               </div>
-              <Button onClick={() => { setEditingForecastTemplate(null); setForecastTemplateForm({ category: "entity", context: "transit", key: "mercury", title: "Новый шаблон", text: "В разработке", sourceNote: "", isActive: true }); setForecastTemplateEditorOpen(true); }}><Plus className="w-4 h-4 mr-2" />Добавить шаблон</Button>
-              {forecastTemplatesLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : forecastTemplates.length === 0 ? <p className="text-sm text-muted-foreground">Шаблонов пока нет.</p> : (
+              <div className="flex flex-wrap gap-2">
+                {([
+                  ["all", "Все шаблоны"],
+                  ["daily", "Ежедневный синтез"],
+                  ["progressions", "Прогрессии"],
+                  ["directions", "Дирекции"],
+                  ["transits", "Транзиты"],
+                  ["lunations", "Лунации"],
+                ] as const).map(([value, label]) => (
+                  <Button key={value} size="sm" variant={forecastTemplateFilter === value ? "default" : "outline"} onClick={() => setForecastTemplateFilter(value)}>{label}</Button>
+                ))}
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">Показано шаблонов: {forecastTemplates.filter((item) => forecastTemplateMatches(item, forecastTemplateFilter)).length}</p>
+                <Button onClick={() => { setEditingForecastTemplate(null); setForecastTemplateForm({ category: "entity", context: "transit", key: "mercury", title: "Новый шаблон", text: "В разработке", sourceNote: "", isActive: true }); setForecastTemplateEditorOpen(true); }}><Plus className="w-4 h-4 mr-2" />Добавить шаблон</Button>
+              </div>
+              {forecastTemplatesLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : forecastTemplates.filter((item) => forecastTemplateMatches(item, forecastTemplateFilter)).length === 0 ? <p className="text-sm text-muted-foreground">В этой категории шаблонов пока нет.</p> : (
                 <div className="space-y-3">
-                  {forecastTemplates.map((item) => (
+                  {forecastTemplates.filter((item) => forecastTemplateMatches(item, forecastTemplateFilter)).map((item) => (
                     <div key={item.id} className="rounded-lg border border-border p-4 space-y-3">
                       <div className="flex items-start justify-between gap-3">
                         <div>
