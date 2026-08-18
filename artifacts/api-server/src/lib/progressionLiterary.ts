@@ -285,8 +285,13 @@ function natalTechnicalBody(bodyKey: string, instrumental: string): string {
   return `${adjective} ${instrumental}`;
 }
 
-function technicalAspectFallback(_window: ProgressionAspectWindow, _sourceBody: string, _targetBody: string, _aspect: string): string {
-  return "В разработке";
+function technicalAspectFallback(window: ProgressionAspectWindow, sourceBody: string, targetBody: string, aspect: string): string {
+  const period = window.startDate === window.endDate
+    ? displayDate(window.startDate)
+    : `с ${displayDate(window.startDate)} по ${displayDate(window.endDate)}`;
+  const displayPeriod = period.startsWith("с") ? `С${period.slice(1)}` : period;
+  const technicalLine = `${displayPeriod}: ${sourceBody} образует ${aspect} с ${natalTechnicalBody(window.targetBodyKey, targetBody)}; точность — ${displayDate(window.peakDate)}, фаза ${phaseLabel(window.phase)}, орбис — ${window.orb.toFixed(2)}°.`;
+  return `${technicalLine}\nВ разработке`;
 }
 
 export async function renderProgressionAspectWindow(
