@@ -280,6 +280,15 @@ function phaseLabel(phase: ProgressionAspectWindow["phase"]): string {
       : "точной";
 }
 
+function natalTechnicalBody(bodyKey: string, instrumental: string): string {
+  const adjective = bodyKey === "moon" || bodyKey === "venus" ? "натальной" : bodyKey === "sun" ? "натальным" : "натальным";
+  return `${adjective} ${instrumental}`;
+}
+
+function technicalAspectFallback(_window: ProgressionAspectWindow, _sourceBody: string, _targetBody: string, _aspect: string): string {
+  return "В разработке";
+}
+
 export async function renderProgressionAspectWindow(
   window: ProgressionAspectWindow,
 ): Promise<string | null> {
@@ -293,7 +302,7 @@ export async function renderProgressionAspectWindow(
     ["progression_entity", "body", window.sourceBodyKey],
     ["entity", "natal", window.targetBodyKey],
   ]);
-  if (!selected) return null;
+  if (!selected) return technicalAspectFallback(window, sourceBody, targetBody, aspect);
   const rendered = renderTemplate(
     get(selected, "progression", "major_aspect", window.aspectKey),
     {
@@ -313,7 +322,9 @@ export async function renderProgressionAspectWindow(
       endDate: displayDate(window.endDate),
     },
   );
-  return hasUnresolvedTokens(rendered) ? null : rendered.trim();
+  return hasUnresolvedTokens(rendered)
+    ? technicalAspectFallback(window, sourceBody, targetBody, aspect)
+    : rendered.trim();
 }
 
 export async function renderProgressionLunationWindow(

@@ -153,6 +153,8 @@ function withoutExcludedLongTermBodies<T extends object>(result: T | null): T | 
 }
 
 const DIRECTION_NODE_PARTNERS = new Set(["mars", "uranus", "neptune", "pluto", "saturn"]);
+const DIRECTION_OUTER_PLANETS = new Set(["uranus", "neptune", "pluto"]);
+const DIRECTION_SOCIAL_PLANETS = new Set(["jupiter", "saturn"]);
 
 type DirectionWindow = {
   key: string;
@@ -218,6 +220,7 @@ function filterLongTermDirections(result: ProgressionResult): ProgressionResult 
       (targetIsNode && aspect.targetBodyKey === "southnode" && !LONG_TERM_EXCLUDED_BODY_KEYS.has(aspect.sourceBodyKey))
     );
     if (sourceIsNode || targetIsNode) return isNodeConjunction;
+    if (DIRECTION_OUTER_PLANETS.has(aspect.sourceBodyKey) && DIRECTION_SOCIAL_PLANETS.has(aspect.targetBodyKey)) return false;
     return !LONG_TERM_EXCLUDED_BODY_KEYS.has(aspect.sourceBodyKey) && !LONG_TERM_EXCLUDED_BODY_KEYS.has(aspect.targetBodyKey);
   });
   return { ...result, aspects };
@@ -396,7 +399,7 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
       calculationPayload: { natal, progressions, progressionWindows, progressionAspectWindows, progressionLunationWindows, progressionText, directions, transit, timeline },
       blocks: Array.isArray(body.blocks) ? body.blocks : [
         { id: "transits", method: "Транзиты", title: "Внешние триггеры периода", text: draftTexts.transits, dateFrom, dateTo, isVisible: true },
-        { id: "secondary", method: "Прогрессии", title: "Внутренняя динамика и развитие", text: progressionText ?? "Литературные шаблоны прогрессий ещё не заполнены в Oracle Studio.", dateFrom, dateTo, isVisible: true },
+        { id: "secondary", method: "Прогрессии", title: "Внутренняя динамика и развитие", text: progressionText ?? "", dateFrom, dateTo, isVisible: Boolean(progressionText) },
         { id: "solar-arc", method: "Дирекции", title: "Символические поворотные точки", text: draftTexts.directions, dateFrom, dateTo, isVisible: true },
       ],
       version: 1, createdBy: req.clerkUserId ?? "admin", updatedBy: req.clerkUserId ?? "admin",
