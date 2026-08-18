@@ -213,7 +213,10 @@ async function ensureAuthorTransitTemplateSeeds(): Promise<void> {
       ('long_term_transit', 'major_aspect', 'mars:square:pluto', 'Транзитный Марс в квадрате к натальному Плутону', '{technicalLine} Может усилиться напор и чувствительность к вопросам контроля. Лучше направить энергию в конкретную задачу, избегать силового давления и дать себе время проверить, действительно ли конфликт требует немедленного ответа.', 'Авторские карточки транзитов из проверочного прогноза, v1')
     ON CONFLICT (category, context, key) DO UPDATE
       SET title = EXCLUDED.title, text = EXCLUDED.text, source_note = EXCLUDED.source_note, updated_at = NOW()
-      WHERE forecast_text_templates.source_note = 'Авторские карточки транзитов из проверочного прогноза, v1'
+      WHERE forecast_text_templates.source_note IN (
+        'Авторские карточки транзитов из проверочного прогноза, v1',
+        'Авторский утверждённый шаблон Oracle Studio: Солнце–квадрат–Уран, 2-й и 5-й дома, v2'
+      )
   `);
 }
 
