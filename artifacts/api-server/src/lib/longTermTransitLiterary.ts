@@ -128,12 +128,20 @@ export async function renderLongTermTransit(
       item.text.trim() !== "В разработке",
   );
   if (!row) return "В разработке";
+  const transitHouseThemes = rows.find(
+    (item) => item.category === "house" && item.context === "transit" && item.key === transitHouse,
+  )?.text?.trim() ?? "";
+  const natalHouseThemes = rows.find(
+    (item) => item.category === "house" && item.context === "natal" && item.key === natalHouse,
+  )?.text?.trim() ?? "";
   const rendered = renderTemplate(row.text, {
     technicalLine,
     startDate: displayDate(startDate),
     endDate: displayDate(endDate),
     transitHouse,
     natalHouse,
+    transitHouseThemes,
+    natalHouseThemes,
     aspectName: ASPECT_KEYS[aspectKey],
   });
   return hasUnresolvedTokens(rendered) ? "В разработке" : rendered.trim();

@@ -268,7 +268,7 @@ function transitTechnicalLine(aspect: Record<string, unknown>): string {
 }
 
 async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progressionWindows: SecondaryProgressionWindow[], directionWindows: DirectionWindow[]) {
-  const transitEntries: Array<{ date: string; key: string; text: string }> = [];
+  const transitEntries: Array<{ date: string; key: string; text: string; transitHouse: number | null; natalHouse: number | null }> = [];
   const progressionLines: string[] = [];
   const directionEntries: Array<{ date: string; key: string; text: string }> = [];
   const fullDirectionLines = directionWindows.map((window) => {
@@ -289,7 +289,13 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
     const transit = point.transit as { aspects?: Array<Record<string, unknown>> } | null;
     for (const aspect of transit?.aspects ?? []) {
       const text = `${transitTechnicalLine(aspect)} Орбис — ${String(aspect.orb)}°.`;
-      transitEntries.push({ date, key: `${aspect.transitBodyKey ?? aspect.transitBody}|${aspect.natalBodyKey ?? aspect.natalBody}|${aspect.typeKey ?? aspect.type}`, text });
+      transitEntries.push({
+        date,
+        key: `${aspect.transitBodyKey ?? aspect.transitBody}|${aspect.natalBodyKey ?? aspect.natalBody}|${aspect.typeKey ?? aspect.type}`,
+        text,
+        transitHouse: typeof aspect.transitHouse === "number" ? aspect.transitHouse : null,
+        natalHouse: typeof aspect.natalHouse === "number" ? aspect.natalHouse : null,
+      });
     }
     const progressions = point.progressions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of progressions?.aspects ?? []) {
@@ -301,11 +307,11 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
       directionEntries.push({ date, key: `${aspect.sourceBodyKey ?? aspect.sourceBody}|${aspect.targetBodyKey ?? aspect.targetBody}|${aspect.aspectKey}`, text });
     }
   }
-  const grouped = (entries: Array<{ date: string; key: string; text: string }>) => {
-    const groups = new Map<string, { key: string; from: string; to: string; text: string }>();
+  const grouped = (entries: Array<{ date: string; key: string; text: string; transitHouse: number | null; natalHouse: number | null }>) => {
+    const groups = new Map<string, { key: string; from: string; to: string; text: string; transitHouse: number | null; natalHouse: number | null }>();
     for (const entry of entries) {
       const current = groups.get(entry.key);
-      if (!current) groups.set(entry.key, { key: entry.key, from: entry.date, to: entry.date, text: entry.text });
+      if (!current) groups.set(entry.key, { key: entry.key, from: entry.date, to: entry.date, text: entry.text, transitHouse: entry.transitHouse, natalHouse: entry.natalHouse });
       else { current.from = current.from < entry.date ? current.from : entry.date; current.to = current.to > entry.date ? current.to : entry.date; }
     }
     return [...groups.values()].sort((a, b) => a.from.localeCompare(b.from));
@@ -323,7 +329,16 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
     const aspectKey = ({ "соединение": "conjunction", "оппозиция": "opposition", "квадрат": "square", "тригон": "trine", "секстиль": "sextile" } as Record<string, string>)[rawAspectKey] ?? rawAspectKey;
     const period = item.from === item.to ? formatDisplayDate(item.from) : `с ${formatDisplayDate(item.from)} по ${formatDisplayDate(item.to)}`;
     const technicalLine = `${period}: ${item.text}`;
-    const literary = await renderLongTermTransit(technicalLine, transitBodyKey, aspectKey, natalBodyKey, item.from, item.to, "", "");
+    const literary = await renderLongTermTransit(
+      technicalLine,
+      transitBodyKey,
+      aspectKey,
+      natalBodyKey,
+      item.from,
+      item.to,
+      item.transitHouse == null ? "" : String(item.transitHouse),
+      item.natalHouse == null ? "" : String(item.natalHouse),
+    );
     transitLines.push(literary ?? technicalLine);
   }
   const draft = (lines: string[], empty: string) => lines.length ? lines.slice(0, 24).join("\n\n") : empty;
