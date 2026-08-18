@@ -1235,12 +1235,29 @@ export default function AdminStudioPage() {
     } finally { setForecastTemplatesSaving(false); }
   };
   const loadLongTermContacts = useCallback(async () => {
-    try {
-      const res = await apiFetch("/contacts");
-      const data = await res.json();
-      setLongTermContacts(res.ok && Array.isArray(data) ? data : []);
-    } catch { setLongTermContacts([]); }
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        const res = await apiFetch("/contacts");
+        const data = await res.json().catch(() => null);
+        if (res.ok) {
+          const contacts = Array.isArray(data) ? data : Array.isArray(data?.contacts) ? data.contacts : [];
+          setLongTermContacts(contacts);
+          return;
+        }
+        if (res.status !== 401 || attempt === 2) {
+          setLongTermContacts([]);
+          return;
+        }
+      } catch {
+        if (attempt === 2) setLongTermContacts([]);
+      }
+      await new Promise((resolve) => window.setTimeout(resolve, 500 * (attempt + 1)));
+    }
   }, []);
+
+  useEffect(() => {
+    if (longTermInputMode === "contact") void loadLongTermContacts();
+  }, [longTermInputMode, loadLongTermContacts]);
 
   useEffect(() => {
     const timer = setTimeout(() => setLongTermCityDebounced(longTermCityQuery.trim()), 250);
