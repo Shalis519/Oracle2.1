@@ -233,7 +233,7 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
     }
     const directions = point.directions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of directions?.aspects ?? []) {
-      const text = `направленный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`;
+      const text = `дирекционный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`;
       directionEntries.push({ date, key: `${aspect.sourceBodyKey ?? aspect.sourceBody}|${aspect.targetBodyKey ?? aspect.targetBody}|${aspect.aspectKey}`, text });
     }
   }
