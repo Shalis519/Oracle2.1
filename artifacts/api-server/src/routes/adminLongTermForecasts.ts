@@ -270,7 +270,7 @@ function transitTechnicalLine(aspect: Record<string, unknown>): string {
 async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progressionWindows: SecondaryProgressionWindow[], directionWindows: DirectionWindow[]) {
   const transitEntries: Array<{ date: string; key: string; text: string; transitHouse: number | null; natalHouse: number | null }> = [];
   const progressionLines: string[] = [];
-  const directionEntries: Array<{ date: string; key: string; text: string }> = [];
+  const directionEntries: Array<{ date: string; key: string; text: string; transitHouse: number | null; natalHouse: number | null }> = [];
   const fullDirectionLines = directionWindows.map((window) => {
     const period = window.from === window.to ? formatDisplayDate(window.from) : `с ${formatDisplayDate(window.from)} по ${formatDisplayDate(window.to)}`;
     const phase = window.phaseAtForecastStart === "separating" ? "расходящаяся" : window.phaseAtForecastStart === "applying" ? "сходящаяся" : "точная";
@@ -304,7 +304,7 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
     const directions = point.directions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of directions?.aspects ?? []) {
       const text = `дирекционный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`;
-      directionEntries.push({ date, key: `${aspect.sourceBodyKey ?? aspect.sourceBody}|${aspect.targetBodyKey ?? aspect.targetBody}|${aspect.aspectKey}`, text });
+      directionEntries.push({ date, key: `${aspect.sourceBodyKey ?? aspect.sourceBody}|${aspect.targetBodyKey ?? aspect.targetBody}|${aspect.aspectKey}`, text, transitHouse: null, natalHouse: null });
     }
   }
   const grouped = (entries: Array<{ date: string; key: string; text: string; transitHouse: number | null; natalHouse: number | null }>) => {

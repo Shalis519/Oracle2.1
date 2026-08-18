@@ -25,6 +25,7 @@ import type {
   BaziHoursResult,
   BaziSummary,
   CalculateContactSynastry422,
+  CalculateMoneyFormula400,
   CalculatePredictiveFormula400,
   ChatMessage,
   ChatMessageInput,
@@ -56,6 +57,7 @@ import type {
   LongTermForecastInput,
   LongTermForecastUpdate,
   MarriageFormulaResult,
+  MoneyFormulaResult,
   NatalChart,
   NotepadInput,
   NotepadItem,
@@ -1610,6 +1612,76 @@ export const useCalculatePredictiveFormula = <TError = ErrorType<CalculatePredic
         TContext
       > => {
       return useMutation(getCalculatePredictiveFormulaMutationOptions(options));
+    }
+
+export const getCalculateMoneyFormulaUrl = () => {
+
+
+
+
+  return `/api/astrology/money-formula`
+}
+
+/**
+ * @summary Calculate natal money-house formula on demand
+ */
+export const calculateMoneyFormula = async ( options?: RequestInit): Promise<MoneyFormulaResult> => {
+
+  return customFetch<MoneyFormulaResult>(getCalculateMoneyFormulaUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getCalculateMoneyFormulaMutationOptions = <TError = ErrorType<CalculateMoneyFormula400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof calculateMoneyFormula>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof calculateMoneyFormula>>, TError,void, TContext> => {
+
+const mutationKey = ['calculateMoneyFormula'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof calculateMoneyFormula>>, void> = () => {
+
+
+          return  calculateMoneyFormula(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CalculateMoneyFormulaMutationResult = NonNullable<Awaited<ReturnType<typeof calculateMoneyFormula>>>
+
+    export type CalculateMoneyFormulaMutationError = ErrorType<CalculateMoneyFormula400>
+
+    /**
+ * @summary Calculate natal money-house formula on demand
+ */
+export const useCalculateMoneyFormula = <TError = ErrorType<CalculateMoneyFormula400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof calculateMoneyFormula>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof calculateMoneyFormula>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getCalculateMoneyFormulaMutationOptions(options));
     }
 
 export const getListContactsUrl = () => {

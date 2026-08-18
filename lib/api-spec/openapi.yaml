@@ -355,6 +355,28 @@ paths:
                   error:
                     type: string
 
+  /astrology/money-formula:
+    post:
+      operationId: calculateMoneyFormula
+      tags: [systems]
+      summary: Calculate natal money-house formula on demand
+      responses:
+        "200":
+          description: Money formula result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoneyFormulaResult"
+        "400":
+          description: Missing birth data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
   /contacts:
     get:
       operationId: listContacts
@@ -1667,6 +1689,14 @@ components:
           hourLabel,
           direction,
           directionLoc,
+          yearPalace,
+          monthPalace,
+          dayPalace,
+          hourPalace,
+          yearDirection,
+          monthDirection,
+          dayDirection,
+          hourDirection,
           strength,
           matchYear,
           matchMonth,
@@ -1686,6 +1716,22 @@ components:
         direction:
           type: string
         directionLoc:
+          type: string
+        yearPalace:
+          type: integer
+        monthPalace:
+          type: integer
+        dayPalace:
+          type: integer
+        hourPalace:
+          type: integer
+        yearDirection:
+          type: string
+        monthDirection:
+          type: string
+        dayDirection:
+          type: string
+        hourDirection:
           type: string
         strength:
           type: integer
@@ -2955,7 +3001,7 @@ components:
           type: string
         kind:
           type: string
-          enum: [natal, secondary_progression, retrograde_support]
+          enum: [natal, secondary_progression, fast_progression, solar_arc, transit, retrograde_support]
         label:
           type: string
         date:
@@ -2968,8 +3014,23 @@ components:
             type: integer
         method:
           type: [string, "null"]
+        progressionMethod:
+          type: [string, "null"]
+        formula:
+          type: [string, "null"]
+        sourceRole:
+          type: [string, "null"]
+        targetRole:
+          type: [string, "null"]
+        sourceBodyKey:
+          type: [string, "null"]
+        targetBodyKey:
+          type: [string, "null"]
         applying:
           type: [boolean, "null"]
+        phase:
+          type: string
+          enum: [applying, exact, separating]
         orb:
           type: [number, "null"]
 
@@ -3014,6 +3075,104 @@ components:
           items:
             $ref: "#/components/schemas/MarriageIndicator"
 
+    MarriageHouseElement:
+      type: object
+      required: [house, bodyKey, bodyName, role, repeatedRole, auxiliary]
+      properties:
+        house:
+          type: integer
+        bodyKey:
+          type: string
+        bodyName:
+          type: string
+        role:
+          type: string
+          enum: [ruler, retrograde_ruler, co_ruler, junior_co_ruler, planet_in_house, planet_near_next_cusp, symbolic]
+        signKey:
+          type: [string, "null"]
+        repeatedRole:
+          type: boolean
+        auxiliary:
+          type: boolean
+
+    MarriageHouseStructure:
+      type: object
+      required: [house, sign, signKey, width, large, elements]
+      properties:
+        house:
+          type: integer
+          enum: [5, 7, 10]
+        sign:
+          type: string
+        signKey:
+          type: string
+        width:
+          type: number
+        large:
+          type: boolean
+        elements:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarriageHouseElement"
+
+    MarriageHouseConnection:
+      type: object
+      required: [id, formula, fromHouse, toHouse, fromBodyKey, toBodyKey, fromRole, toRole, relation, auxiliary]
+      properties:
+        id:
+          type: string
+        formula:
+          type: string
+          enum: [V + VII, V + X, VII + X]
+        fromHouse:
+          type: integer
+        toHouse:
+          type: integer
+        fromBodyKey:
+          type: string
+        toBodyKey:
+          type: string
+        fromRole:
+          type: string
+        toRole:
+          type: string
+        relation:
+          type: string
+          enum: [aspect, shared_body]
+        aspect:
+          allOf:
+            - $ref: "#/components/schemas/NatalMarriageAspect"
+          nullable: true
+        auxiliary:
+          type: boolean
+
+    StrictNatalMarriageProfile:
+      type: object
+      required: [gender, sect, firstMarriageSignificator, firstMarriageSignificatorName, houses, connections, formulas]
+      properties:
+        gender:
+          type: [string, "null"]
+          enum: [мужчина, женщина, null]
+        sect:
+          type: string
+          enum: [дневная, ночная, неопределённая]
+        firstMarriageSignificator:
+          type: [string, "null"]
+        firstMarriageSignificatorName:
+          type: [string, "null"]
+        houses:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarriageHouseStructure"
+        connections:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarriageHouseConnection"
+        formulas:
+          type: array
+          items:
+            type: string
+
     NatalMarriageAspect:
       type: object
       required: [body1, body2, type, typeKey, orb, quality]
@@ -3053,6 +3212,35 @@ components:
         summary:
           type: string
 
+    NatalMarriageCycle:
+      type: object
+      required: [loveFormulaStatus, loveFormulas, officialMarriageStatus, officialMarriageFormula, connectionCount, officialConnectionCount, celibacyAssessment, celibacyNote, summary]
+      properties:
+        loveFormulaStatus:
+          type: string
+          enum: [confirmed, not_confirmed]
+        loveFormulas:
+          type: array
+          items:
+            type: string
+        officialMarriageStatus:
+          type: string
+          enum: [confirmed, not_confirmed]
+        officialMarriageFormula:
+          type: string
+          enum: [VII + X]
+        connectionCount:
+          type: integer
+        officialConnectionCount:
+          type: integer
+        celibacyAssessment:
+          type: string
+          enum: [not_established]
+        celibacyNote:
+          type: string
+        summary:
+          type: string
+
     MarriageWindow:
       type: object
       required: [dateFrom, dateTo, ageFrom, ageTo, confirmations, strength, indicators]
@@ -3077,7 +3265,7 @@ components:
 
     MarriageFormulaResult:
       type: object
-      required: [formula, formulaLabel, searchFrom, searchTo, ageFrom, ageTo, natalBasis, natalProfile, natalCharacter, windows, methodology]
+      required: [formula, formulaLabel, searchFrom, searchTo, ageFrom, ageTo, natalBasis, natalProfile, natalCharacter, natalCycle, strictNatalProfile, windows, methodology]
       properties:
         formula:
           type: string
@@ -3100,6 +3288,10 @@ components:
           $ref: "#/components/schemas/NatalMarriageProfile"
         natalCharacter:
           $ref: "#/components/schemas/NatalMarriageCharacter"
+        natalCycle:
+          $ref: "#/components/schemas/NatalMarriageCycle"
+        strictNatalProfile:
+          $ref: "#/components/schemas/StrictNatalMarriageProfile"
         windows:
           type: array
           items:
@@ -3120,6 +3312,49 @@ components:
               type: string
               enum: [flagged]
 
+    MoneyFormulaSection:
+      type: object
+      required: [key, title, paragraphs]
+      properties:
+        key:
+          type: string
+        title:
+          type: string
+        paragraphs:
+          type: array
+          items:
+            type: string
+    MoneyFormulaResult:
+      type: object
+      required: [formula, formulaLabel, title, sections, methodology]
+      properties:
+        formula:
+          type: string
+          enum: [money]
+        formulaLabel:
+          type: string
+        title:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/MoneyFormulaSection"
+        methodology:
+          type: object
+          required: [houseSystem, source, includedHouses, note]
+          properties:
+            houseSystem:
+              type: string
+              enum: [Placidus]
+            source:
+              type: string
+              enum: [Денежные дома]
+            includedHouses:
+              type: array
+              items:
+                type: integer
+            note:
+              type: string
     LongTermForecast:
       type: object
       additionalProperties: true

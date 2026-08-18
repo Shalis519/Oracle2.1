@@ -647,6 +647,14 @@ export const GetQimenResponse = zod.object({
   "hourLabel": zod.string(),
   "direction": zod.string(),
   "directionLoc": zod.string(),
+  "yearPalace": zod.number(),
+  "monthPalace": zod.number(),
+  "dayPalace": zod.number(),
+  "hourPalace": zod.number(),
+  "yearDirection": zod.string(),
+  "monthDirection": zod.string(),
+  "dayDirection": zod.string(),
+  "hourDirection": zod.string(),
   "strength": zod.number(),
   "matchYear": zod.boolean(),
   "matchMonth": zod.boolean(),
@@ -860,13 +868,20 @@ export const CalculatePredictiveFormulaResponse = zod.object({
   "ageTo": zod.number(),
   "natalBasis": zod.array(zod.object({
   "id": zod.string(),
-  "kind": zod.enum(['natal', 'secondary_progression', 'retrograde_support']),
+  "kind": zod.enum(['natal', 'secondary_progression', 'fast_progression', 'solar_arc', 'transit', 'retrograde_support']),
   "label": zod.string(),
   "date": zod.string().nullish(),
   "age": zod.number().nullish(),
   "houses": zod.array(zod.number()),
   "method": zod.string().nullish(),
+  "progressionMethod": zod.string().nullish(),
+  "formula": zod.string().nullish(),
+  "sourceRole": zod.string().nullish(),
+  "targetRole": zod.string().nullish(),
+  "sourceBodyKey": zod.string().nullish(),
+  "targetBodyKey": zod.string().nullish(),
   "applying": zod.boolean().nullish(),
+  "phase": zod.enum(['applying', 'exact', 'separating']).optional(),
   "orb": zod.number().nullish()
 })),
   "natalProfile": zod.object({
@@ -881,13 +896,20 @@ export const CalculatePredictiveFormulaResponse = zod.object({
   "formulas": zod.array(zod.string()),
   "connections": zod.array(zod.object({
   "id": zod.string(),
-  "kind": zod.enum(['natal', 'secondary_progression', 'retrograde_support']),
+  "kind": zod.enum(['natal', 'secondary_progression', 'fast_progression', 'solar_arc', 'transit', 'retrograde_support']),
   "label": zod.string(),
   "date": zod.string().nullish(),
   "age": zod.number().nullish(),
   "houses": zod.array(zod.number()),
   "method": zod.string().nullish(),
+  "progressionMethod": zod.string().nullish(),
+  "formula": zod.string().nullish(),
+  "sourceRole": zod.string().nullish(),
+  "targetRole": zod.string().nullish(),
+  "sourceBodyKey": zod.string().nullish(),
+  "targetBodyKey": zod.string().nullish(),
   "applying": zod.boolean().nullish(),
+  "phase": zod.enum(['applying', 'exact', 'separating']).optional(),
   "orb": zod.number().nullish()
 }))
 }),
@@ -906,6 +928,60 @@ export const CalculatePredictiveFormulaResponse = zod.object({
 })),
   "summary": zod.string()
 }),
+  "natalCycle": zod.object({
+  "loveFormulaStatus": zod.enum(['confirmed', 'not_confirmed']),
+  "loveFormulas": zod.array(zod.string()),
+  "officialMarriageStatus": zod.enum(['confirmed', 'not_confirmed']),
+  "officialMarriageFormula": zod.enum(['VII + X']),
+  "connectionCount": zod.number(),
+  "officialConnectionCount": zod.number(),
+  "celibacyAssessment": zod.enum(['not_established']),
+  "celibacyNote": zod.string(),
+  "summary": zod.string()
+}),
+  "strictNatalProfile": zod.object({
+  "gender": zod.union([zod.literal('мужчина'),zod.literal('женщина'),zod.literal(null)]).nullable(),
+  "sect": zod.enum(['дневная', 'ночная', 'неопределённая']),
+  "firstMarriageSignificator": zod.string().nullable(),
+  "firstMarriageSignificatorName": zod.string().nullable(),
+  "houses": zod.array(zod.object({
+  "house": zod.union([zod.literal(5),zod.literal(7),zod.literal(10)]),
+  "sign": zod.string(),
+  "signKey": zod.string(),
+  "width": zod.number(),
+  "large": zod.boolean(),
+  "elements": zod.array(zod.object({
+  "house": zod.number(),
+  "bodyKey": zod.string(),
+  "bodyName": zod.string(),
+  "role": zod.enum(['ruler', 'retrograde_ruler', 'co_ruler', 'junior_co_ruler', 'planet_in_house', 'planet_near_next_cusp', 'symbolic']),
+  "signKey": zod.string().nullish(),
+  "repeatedRole": zod.boolean(),
+  "auxiliary": zod.boolean()
+}))
+})),
+  "connections": zod.array(zod.object({
+  "id": zod.string(),
+  "formula": zod.enum(['V + VII', 'V + X', 'VII + X']),
+  "fromHouse": zod.number(),
+  "toHouse": zod.number(),
+  "fromBodyKey": zod.string(),
+  "toBodyKey": zod.string(),
+  "fromRole": zod.string(),
+  "toRole": zod.string(),
+  "relation": zod.enum(['aspect', 'shared_body']),
+  "aspect": zod.object({
+  "body1": zod.string(),
+  "body2": zod.string(),
+  "type": zod.string(),
+  "typeKey": zod.string(),
+  "orb": zod.number(),
+  "quality": zod.enum(['harmonious', 'tense', 'neutral'])
+}).nullish(),
+  "auxiliary": zod.boolean()
+})),
+  "formulas": zod.array(zod.string())
+}),
   "windows": zod.array(zod.object({
   "dateFrom": zod.string(),
   "dateTo": zod.string(),
@@ -915,13 +991,20 @@ export const CalculatePredictiveFormulaResponse = zod.object({
   "strength": zod.enum(['strong', 'moderate']),
   "indicators": zod.array(zod.object({
   "id": zod.string(),
-  "kind": zod.enum(['natal', 'secondary_progression', 'retrograde_support']),
+  "kind": zod.enum(['natal', 'secondary_progression', 'fast_progression', 'solar_arc', 'transit', 'retrograde_support']),
   "label": zod.string(),
   "date": zod.string().nullish(),
   "age": zod.number().nullish(),
   "houses": zod.array(zod.number()),
   "method": zod.string().nullish(),
+  "progressionMethod": zod.string().nullish(),
+  "formula": zod.string().nullish(),
+  "sourceRole": zod.string().nullish(),
+  "targetRole": zod.string().nullish(),
+  "sourceBodyKey": zod.string().nullish(),
+  "targetBodyKey": zod.string().nullish(),
   "applying": zod.boolean().nullish(),
+  "phase": zod.enum(['applying', 'exact', 'separating']).optional(),
   "orb": zod.number().nullish()
 }))
 })),
@@ -930,6 +1013,27 @@ export const CalculatePredictiveFormulaResponse = zod.object({
   "progression": zod.enum(['day-for-a-year']),
   "minConfirmations": zod.number(),
   "retrogradeProgressivePlanets": zod.enum(['flagged'])
+})
+})
+
+
+/**
+ * @summary Calculate natal money-house formula on demand
+ */
+export const CalculateMoneyFormulaResponse = zod.object({
+  "formula": zod.enum(['money']),
+  "formulaLabel": zod.string(),
+  "title": zod.string(),
+  "sections": zod.array(zod.object({
+  "key": zod.string(),
+  "title": zod.string(),
+  "paragraphs": zod.array(zod.string())
+})),
+  "methodology": zod.object({
+  "houseSystem": zod.enum(['Placidus']),
+  "source": zod.enum(['Денежные дома']),
+  "includedHouses": zod.array(zod.number()),
+  "note": zod.string()
 })
 })
 

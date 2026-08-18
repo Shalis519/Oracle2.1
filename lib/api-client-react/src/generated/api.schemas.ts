@@ -527,6 +527,14 @@ export interface JiFuWish {
   hourLabel: string;
   direction: string;
   directionLoc: string;
+  yearPalace: number;
+  monthPalace: number;
+  dayPalace: number;
+  hourPalace: number;
+  yearDirection: string;
+  monthDirection: string;
+  dayDirection: string;
+  hourDirection: string;
   strength: number;
   matchYear: boolean;
   matchMonth: boolean;
@@ -1125,7 +1133,19 @@ export type MarriageIndicatorKind = typeof MarriageIndicatorKind[keyof typeof Ma
 export const MarriageIndicatorKind = {
   natal: 'natal',
   secondary_progression: 'secondary_progression',
+  fast_progression: 'fast_progression',
+  solar_arc: 'solar_arc',
+  transit: 'transit',
   retrograde_support: 'retrograde_support',
+} as const;
+
+export type MarriageIndicatorPhase = typeof MarriageIndicatorPhase[keyof typeof MarriageIndicatorPhase];
+
+
+export const MarriageIndicatorPhase = {
+  applying: 'applying',
+  exact: 'exact',
+  separating: 'separating',
 } as const;
 
 export interface MarriageIndicator {
@@ -1140,7 +1160,20 @@ export interface MarriageIndicator {
   /** @nullable */
   method?: string | null;
   /** @nullable */
+  progressionMethod?: string | null;
+  /** @nullable */
+  formula?: string | null;
+  /** @nullable */
+  sourceRole?: string | null;
+  /** @nullable */
+  targetRole?: string | null;
+  /** @nullable */
+  sourceBodyKey?: string | null;
+  /** @nullable */
+  targetBodyKey?: string | null;
+  /** @nullable */
   applying?: boolean | null;
+  phase?: MarriageIndicatorPhase;
   /** @nullable */
   orb?: number | null;
 }
@@ -1169,6 +1202,65 @@ export interface NatalMarriageProfile {
   connections: MarriageIndicator[];
 }
 
+export type MarriageHouseElementRole = typeof MarriageHouseElementRole[keyof typeof MarriageHouseElementRole];
+
+
+export const MarriageHouseElementRole = {
+  ruler: 'ruler',
+  retrograde_ruler: 'retrograde_ruler',
+  co_ruler: 'co_ruler',
+  junior_co_ruler: 'junior_co_ruler',
+  planet_in_house: 'planet_in_house',
+  planet_near_next_cusp: 'planet_near_next_cusp',
+  symbolic: 'symbolic',
+} as const;
+
+export interface MarriageHouseElement {
+  house: number;
+  bodyKey: string;
+  bodyName: string;
+  role: MarriageHouseElementRole;
+  /** @nullable */
+  signKey?: string | null;
+  repeatedRole: boolean;
+  auxiliary: boolean;
+}
+
+export type MarriageHouseStructureHouse = typeof MarriageHouseStructureHouse[keyof typeof MarriageHouseStructureHouse];
+
+
+export const MarriageHouseStructureHouse = {
+  NUMBER_5: 5,
+  NUMBER_7: 7,
+  NUMBER_10: 10,
+} as const;
+
+export interface MarriageHouseStructure {
+  house: MarriageHouseStructureHouse;
+  sign: string;
+  signKey: string;
+  width: number;
+  large: boolean;
+  elements: MarriageHouseElement[];
+}
+
+export type MarriageHouseConnectionFormula = typeof MarriageHouseConnectionFormula[keyof typeof MarriageHouseConnectionFormula];
+
+
+export const MarriageHouseConnectionFormula = {
+  'V_+_VII': 'V + VII',
+  'V_+_X': 'V + X',
+  'VII_+_X': 'VII + X',
+} as const;
+
+export type MarriageHouseConnectionRelation = typeof MarriageHouseConnectionRelation[keyof typeof MarriageHouseConnectionRelation];
+
+
+export const MarriageHouseConnectionRelation = {
+  aspect: 'aspect',
+  shared_body: 'shared_body',
+} as const;
+
 export type NatalMarriageAspectQuality = typeof NatalMarriageAspectQuality[keyof typeof NatalMarriageAspectQuality];
 
 
@@ -1187,12 +1279,101 @@ export interface NatalMarriageAspect {
   quality: NatalMarriageAspectQuality;
 }
 
+export interface MarriageHouseConnection {
+  id: string;
+  formula: MarriageHouseConnectionFormula;
+  fromHouse: number;
+  toHouse: number;
+  fromBodyKey: string;
+  toBodyKey: string;
+  fromRole: string;
+  toRole: string;
+  relation: MarriageHouseConnectionRelation;
+  aspect?: NatalMarriageAspect | null;
+  auxiliary: boolean;
+}
+
+/**
+ * @nullable
+ */
+export type StrictNatalMarriageProfileGender = typeof StrictNatalMarriageProfileGender[keyof typeof StrictNatalMarriageProfileGender] | null;
+
+
+export const StrictNatalMarriageProfileGender = {
+  мужчина: 'мужчина',
+  женщина: 'женщина',
+} as const;
+
+export type StrictNatalMarriageProfileSect = typeof StrictNatalMarriageProfileSect[keyof typeof StrictNatalMarriageProfileSect];
+
+
+export const StrictNatalMarriageProfileSect = {
+  дневная: 'дневная',
+  ночная: 'ночная',
+  неопределённая: 'неопределённая',
+} as const;
+
+export interface StrictNatalMarriageProfile {
+  /** @nullable */
+  gender: StrictNatalMarriageProfileGender;
+  sect: StrictNatalMarriageProfileSect;
+  /** @nullable */
+  firstMarriageSignificator: string | null;
+  /** @nullable */
+  firstMarriageSignificatorName: string | null;
+  houses: MarriageHouseStructure[];
+  connections: MarriageHouseConnection[];
+  formulas: string[];
+}
+
 export interface NatalMarriageCharacter {
   participantNames: string[];
   harmoniousCount: number;
   tenseCount: number;
   neutralCount: number;
   aspects: NatalMarriageAspect[];
+  summary: string;
+}
+
+export type NatalMarriageCycleLoveFormulaStatus = typeof NatalMarriageCycleLoveFormulaStatus[keyof typeof NatalMarriageCycleLoveFormulaStatus];
+
+
+export const NatalMarriageCycleLoveFormulaStatus = {
+  confirmed: 'confirmed',
+  not_confirmed: 'not_confirmed',
+} as const;
+
+export type NatalMarriageCycleOfficialMarriageStatus = typeof NatalMarriageCycleOfficialMarriageStatus[keyof typeof NatalMarriageCycleOfficialMarriageStatus];
+
+
+export const NatalMarriageCycleOfficialMarriageStatus = {
+  confirmed: 'confirmed',
+  not_confirmed: 'not_confirmed',
+} as const;
+
+export type NatalMarriageCycleOfficialMarriageFormula = typeof NatalMarriageCycleOfficialMarriageFormula[keyof typeof NatalMarriageCycleOfficialMarriageFormula];
+
+
+export const NatalMarriageCycleOfficialMarriageFormula = {
+  'VII_+_X': 'VII + X',
+} as const;
+
+export type NatalMarriageCycleCelibacyAssessment = typeof NatalMarriageCycleCelibacyAssessment[keyof typeof NatalMarriageCycleCelibacyAssessment];
+
+
+export const NatalMarriageCycleCelibacyAssessment = {
+  not_established: 'not_established',
+} as const;
+
+export interface NatalMarriageCycle {
+  loveFormulaStatus: NatalMarriageCycleLoveFormulaStatus;
+  loveFormulas: string[];
+  officialMarriageStatus: NatalMarriageCycleOfficialMarriageStatus;
+  officialMarriageFormula: NatalMarriageCycleOfficialMarriageFormula;
+  connectionCount: number;
+  officialConnectionCount: number;
+  celibacyAssessment: NatalMarriageCycleCelibacyAssessment;
+  celibacyNote: string;
   summary: string;
 }
 
@@ -1259,8 +1440,52 @@ export interface MarriageFormulaResult {
   natalBasis: MarriageIndicator[];
   natalProfile: NatalMarriageProfile;
   natalCharacter: NatalMarriageCharacter;
+  natalCycle: NatalMarriageCycle;
+  strictNatalProfile: StrictNatalMarriageProfile;
   windows: MarriageWindow[];
   methodology: MarriageFormulaResultMethodology;
+}
+
+export interface MoneyFormulaSection {
+  key: string;
+  title: string;
+  paragraphs: string[];
+}
+
+export type MoneyFormulaResultFormula = typeof MoneyFormulaResultFormula[keyof typeof MoneyFormulaResultFormula];
+
+
+export const MoneyFormulaResultFormula = {
+  money: 'money',
+} as const;
+
+export type MoneyFormulaResultMethodologyHouseSystem = typeof MoneyFormulaResultMethodologyHouseSystem[keyof typeof MoneyFormulaResultMethodologyHouseSystem];
+
+
+export const MoneyFormulaResultMethodologyHouseSystem = {
+  Placidus: 'Placidus',
+} as const;
+
+export type MoneyFormulaResultMethodologySource = typeof MoneyFormulaResultMethodologySource[keyof typeof MoneyFormulaResultMethodologySource];
+
+
+export const MoneyFormulaResultMethodologySource = {
+  Денежные_дома: 'Денежные дома',
+} as const;
+
+export type MoneyFormulaResultMethodology = {
+  houseSystem: MoneyFormulaResultMethodologyHouseSystem;
+  source: MoneyFormulaResultMethodologySource;
+  includedHouses: number[];
+  note: string;
+};
+
+export interface MoneyFormulaResult {
+  formula: MoneyFormulaResultFormula;
+  formulaLabel: string;
+  title: string;
+  sections: MoneyFormulaSection[];
+  methodology: MoneyFormulaResultMethodology;
 }
 
 export type LongTermForecastPeriodType = typeof LongTermForecastPeriodType[keyof typeof LongTermForecastPeriodType];
@@ -1381,6 +1606,10 @@ export type GetNatalChart400 = {
 };
 
 export type CalculatePredictiveFormula400 = {
+  error?: string;
+};
+
+export type CalculateMoneyFormula400 = {
   error?: string;
 };
 

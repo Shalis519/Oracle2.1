@@ -6,6 +6,7 @@ import { computeLunarForProfile, hydrateLunarRecommendations } from "../lib/luna
 import { hydrateCinderellaGates } from "../lib/cinderellaGates";
 import { todayString } from "../lib/oracle";
 import { computeMarriageFormula } from "../lib/predictiveFormulas";
+import { computeMoneyFormula } from "../lib/moneyFormula";
 
 const router: IRouter = Router();
 
@@ -75,6 +76,36 @@ router.get("/astrology/natal", requireAuth, async (req, res): Promise<void> => {
   res.json(GetNatalChartResponse.parse({ ...chartWithInterpretations, lunarReturn: hydratedLunarReturn }));
 });
 
+router.post("/astrology/money-formula", requireAuth, async (req, res): Promise<void> => {
+  const user = req.localUser!;
+  if (!user.birthDate || !user.birthTime || user.birthLatitude == null || user.birthLongitude == null) {
+    res.status(400).json({ error: "Для расчёта денежной формулы заполните дату, точное время и место рождения в профиле." });
+    return;
+  }
+  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})/.exec(user.birthDate);
+  const timeMatch = /^(\d{1,2}):(\d{2})/.exec(user.birthTime);
+  if (!dateMatch || !timeMatch) {
+    res.status(400).json({ error: "Некорректный формат даты или времени рождения." });
+    return;
+  }
+  try {
+    const chart = computeNatalChart({
+      year: Number(dateMatch[1]),
+      month: Number(dateMatch[2]),
+      day: Number(dateMatch[3]),
+      hour: Number(timeMatch[1]),
+      minute: Number(timeMatch[2]),
+      latitude: user.birthLatitude,
+      longitude: user.birthLongitude,
+      timezone: user.birthTimezone,
+    });
+    res.json(computeMoneyFormula(chart));
+  } catch (error) {
+    console.error("Money formula calculation failed", error);
+    res.status(500).json({ error: "Не удалось рассчитать денежную формулу." });
+  }
+});
+
 router.post("/astrology/predictive-formula", requireAuth, async (req, res): Promise<void> => {
   const formula = typeof req.body?.formula === "string" ? req.body.formula : "";
   if (formula !== "marriage") {
@@ -83,9 +114,9 @@ router.post("/astrology/predictive-formula", requireAuth, async (req, res): Prom
   }
 
   const user = req.localUser!;
-  if (!user.birthDate || user.birthLatitude == null || user.birthLongitude == null || !user.birthTimezone) {
+  if (!user.birthDate || user.birthLatitude == null || user.birthLongitude == null || !user.birthTimezone || (user.gender !== "мужчина" && user.gender !== "женщина")) {
     res.status(400).json({
-      error: "Для расчёта формулы заполните дату, точное время, город рождения, координаты и часовой пояс в профиле.",
+      error: "Для расчёта формулы заполните дату, точное время, пол, город рождения, координаты и часовой пояс в профиле.",
     });
     return;
   }
@@ -107,7 +138,7 @@ router.post("/astrology/predictive-formula", requireAuth, async (req, res): Prom
       latitude: user.birthLatitude,
       longitude: user.birthLongitude,
       timezone: user.birthTimezone,
-    });
+    }, user.gender);
     res.json(result);
   } catch (error) {
     console.error("Marriage formula calculation failed", error);

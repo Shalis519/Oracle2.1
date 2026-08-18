@@ -3,6 +3,7 @@ import {
   useGetNatalChart,
   getGetNatalChartQueryKey,
   useCalculatePredictiveFormula,
+  useCalculateMoneyFormula,
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,6 +52,7 @@ export default function AstrologyPage() {
     query: { retry: false, queryKey: getGetNatalChartQueryKey() },
   });
   const marriageFormula = useCalculatePredictiveFormula();
+  const moneyFormula = useCalculateMoneyFormula();
 
   if (isLoading) {
     return (
@@ -360,13 +362,44 @@ export default function AstrologyPage() {
             <p className="font-medium">Возможный период бракосочетания</p>
             <p className="mt-1 text-muted-foreground">Расчёт выполняется только после нажатия кнопки и охватывает возраст от 15-го до 79-го года жизни.</p>
           </div>
-          <Button
-            type="button"
-            onClick={() => marriageFormula.mutate({ data: { formula: "marriage" } })}
-            disabled={marriageFormula.isPending}
-          >
-            {marriageFormula.isPending ? "Расчёт выполняется…" : "Рассчитать период брака"}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              onClick={() => marriageFormula.mutate({ data: { formula: "marriage" } })}
+              disabled={marriageFormula.isPending}
+            >
+              {marriageFormula.isPending ? "Расчёт выполняется…" : "Рассчитать период брака"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => moneyFormula.mutate()}
+              disabled={moneyFormula.isPending}
+            >
+              {moneyFormula.isPending ? "Расчёт выполняется…" : "Рассчитать денежные дома"}
+            </Button>
+          </div>
+          {moneyFormula.isError && (
+            <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              Не удалось выполнить расчёт денежных домов. Проверьте дату, точное время и место рождения в профиле.
+            </p>
+          )}
+          {moneyFormula.data && (
+            <section className="space-y-4 border-t border-border/60 pt-4">
+              <h2 className="font-serif text-xl font-semibold">{moneyFormula.data.title}</h2>
+              <p className="text-xs text-muted-foreground">Источник: {moneyFormula.data.methodology.source}. Дома: {moneyFormula.data.methodology.includedHouses.join(", ")}. Система домов: {moneyFormula.data.methodology.houseSystem}.</p>
+              <div className="space-y-5">
+                {moneyFormula.data.sections.map((section) => (
+                  <section key={section.key} className="space-y-2 border-t border-border/40 pt-4 first:border-t-0 first:pt-0">
+                    <h3 className="font-medium">{section.title}</h3>
+                    {section.paragraphs.map((paragraph, index) => (
+                      <p key={`${section.key}-${index}`} className="whitespace-pre-line leading-relaxed text-muted-foreground">{paragraph}</p>
+                    ))}
+                  </section>
+                ))}
+              </div>
+            </section>
+          )}
           {marriageFormula.isError && (
             <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
               Не удалось выполнить расчёт. Проверьте данные рождения в профиле и попробуйте ещё раз.
