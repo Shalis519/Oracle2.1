@@ -211,7 +211,10 @@ function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progress
       if (!current) groups.set(entry.key, { from: entry.date, to: entry.date, text: entry.text });
       else { current.from = current.from < entry.date ? current.from : entry.date; current.to = current.to > entry.date ? current.to : entry.date; }
     }
-    return [...groups.values()].sort((a, b) => a.from.localeCompare(b.from)).map((item) => `с ${formatDisplayDate(item.from)} по ${formatDisplayDate(item.to)}: ${item.text}`);
+    return [...groups.values()].sort((a, b) => a.from.localeCompare(b.from)).map((item) => {
+      const period = item.from === item.to ? formatDisplayDate(item.from) : `с ${formatDisplayDate(item.from)} по ${formatDisplayDate(item.to)}`;
+      return `${period}: ${item.text}`;
+    });
   };
   const draft = (lines: string[], empty: string) => lines.length ? lines.slice(0, 24).join("\\n") : empty;
   return {
