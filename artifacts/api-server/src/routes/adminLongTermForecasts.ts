@@ -457,7 +457,9 @@ router.get("/admin/long-term-forecasts/:id/export", requireAuth, requireAdmin, a
     const text = typeof block.text === "string" ? block.text.trim() : "";
     if (!text) continue;
     children.push(new Paragraph({ text: String(title), heading: HeadingLevel.HEADING_2 }));
-    children.push(new Paragraph(text));
+    for (const paragraphText of text.split(/\r?\n+/).map((part) => part.trim()).filter(Boolean)) {
+      children.push(new Paragraph(paragraphText));
+    }
     if (typeof block.method === "string" && block.method.trim()) children.push(new Paragraph({ children: [new TextRun({ text: `Источник: ${block.method}`, italics: true, color: "777777" })] }));
   }
   const buffer = await Packer.toBuffer(new Document({ sections: [{ children }] }));
