@@ -341,7 +341,7 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
     );
     transitLines.push(literary ?? technicalLine);
   }
-  const draft = (lines: string[], empty: string) => lines.length ? lines.slice(0, 24).join("\n\n") : empty;
+  const draft = (lines: string[], empty: string) => lines.length ? lines.join("\n\n") : empty;
   return {
     transits: draft(transitLines, "За выбранный период значимые транзитные аспекты не выделены."),
     progressions: draft(progressionLines, "За выбранный период точные аспекты вторичных прогрессий не выделены."),
