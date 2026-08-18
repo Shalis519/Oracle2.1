@@ -200,9 +200,9 @@ export async function renderProgressionAspectWindow(window: ProgressionAspectWin
     targetThemes: get(selected, "entity", "natal", window.targetBodyKey),
     aspect,
     phase: phaseLabel(window.phase),
-    startDate: window.startDate,
-    peakDate: window.peakDate,
-    endDate: window.endDate,
+    startDate: displayDate(window.startDate),
+    peakDate: displayDate(window.peakDate),
+    endDate: displayDate(window.endDate),
   });
   return hasUnresolvedTokens(rendered) ? null : rendered.trim();
 }
@@ -218,9 +218,9 @@ export async function renderProgressionLunationWindow(window: ProgressionLunatio
   ]);
   if (!selected) return null;
   const rendered = renderTemplate(get(selected, "progression", "lunation", window.eventType), {
-    startDate: window.startDate,
-    peakDate: window.peakDate,
-    endDate: window.endDate,
+    startDate: displayDate(window.startDate),
+    peakDate: displayDate(window.peakDate),
+    endDate: displayDate(window.endDate),
     natalContactBody: targetBody,
     natalContactAspect: aspect,
     natalContactThemes: get(selected, "entity", "natal", window.natalContactBodyKey),

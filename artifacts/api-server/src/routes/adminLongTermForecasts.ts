@@ -154,6 +154,61 @@ function withoutExcludedLongTermBodies<T extends object>(result: T | null): T | 
 
 const DIRECTION_NODE_PARTNERS = new Set(["mars", "uranus", "neptune", "pluto", "saturn"]);
 
+type DirectionWindow = {
+  key: string;
+  from: string;
+  to: string;
+  exactDate: string;
+  phaseAtForecastStart: "applying" | "exact" | "separating";
+  orbAtForecastStart: number;
+  sourceBody: string;
+  targetBody: string;
+  aspectKey: string;
+};
+
+function computeDirectionWindows(input: NatalChartInput, dateFrom: Date, dateTo: Date): DirectionWindow[] {
+  const samples: Array<{ date: string; result: ProgressionResult }> = [];
+  const cursor = new Date(dateFrom);
+  cursor.setUTCDate(cursor.getUTCDate() - 450);
+  const end = new Date(dateTo);
+  end.setUTCDate(end.getUTCDate() + 450);
+  while (cursor <= end) {
+    const date = isoDate(cursor);
+    samples.push({ date, result: filterLongTermDirections(computeSolarArcDirections(input, cursor)) });
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+
+  const byKey = new Map<string, Array<{ date: string; aspect: ProgressionResult["aspects"][number] }>>();
+  for (const sample of samples) {
+    for (const aspect of sample.result.aspects) {
+      const key = `${aspect.sourceBodyKey}|${aspect.targetBodyKey}|${aspect.aspectKey}`;
+      const entries = byKey.get(key) ?? [];
+      entries.push({ date: sample.date, aspect });
+      byKey.set(key, entries);
+    }
+  }
+
+  const forecastStart = isoDate(dateFrom);
+  return [...byKey.entries()].map(([key, entries]) => {
+    const peak = entries.reduce((best, entry) => entry.aspect.orb < best.aspect.orb ? entry : best, entries[0]);
+    const startEntry = entries.find((entry) => entry.date === forecastStart) ?? entries.find((entry) => entry.date > forecastStart) ?? entries[0];
+    const first = entries[0];
+    const last = entries[entries.length - 1];
+    return {
+      key,
+      from: first.date,
+      to: last.date,
+      exactDate: peak.date,
+      phaseAtForecastStart: startEntry.aspect.phase,
+      orbAtForecastStart: startEntry.aspect.orb,
+      sourceBody: startEntry.aspect.sourceBody,
+      targetBody: startEntry.aspect.targetBody,
+      aspectKey: startEntry.aspect.aspectKey,
+    };
+  }).filter((window) => window.to >= isoDate(dateFrom) && window.from <= isoDate(dateTo))
+    .sort((a, b) => a.from.localeCompare(b.from) || a.sourceBody.localeCompare(b.sourceBody));
+}
+
 function filterLongTermDirections(result: ProgressionResult): ProgressionResult {
   const aspects = result.aspects.filter((aspect) => {
     const sourceIsNode = aspect.sourceBodyKey === "northnode" || aspect.sourceBodyKey === "southnode";
@@ -209,10 +264,15 @@ function transitTechnicalLine(aspect: Record<string, unknown>): string {
   return `${transitBody}${transitHouse} образует ${aspectName} с ${natalBody}${natalHouse}.`;
 }
 
-async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progressionWindows: SecondaryProgressionWindow[]) {
+async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progressionWindows: SecondaryProgressionWindow[], directionWindows: DirectionWindow[]) {
   const transitEntries: Array<{ date: string; key: string; text: string }> = [];
   const progressionLines: string[] = [];
   const directionEntries: Array<{ date: string; key: string; text: string }> = [];
+  const fullDirectionLines = directionWindows.map((window) => {
+    const period = window.from === window.to ? formatDisplayDate(window.from) : `с ${formatDisplayDate(window.from)} по ${formatDisplayDate(window.to)}`;
+    const phase = window.phaseAtForecastStart === "separating" ? "расходящаяся" : window.phaseAtForecastStart === "applying" ? "сходящаяся" : "точная";
+    return `${period.charAt(0) === "с" ? "С" : period}: дирекционный ${window.sourceBody} образует ${ASPECT_LABELS[window.aspectKey] ?? window.aspectKey} к ${window.targetBody}; экзакт — ${formatDisplayDate(window.exactDate)}, на начало выбранного периода фаза ${phase}, орбис — ${window.orbAtForecastStart.toFixed(2)}°.`;
+  });
   for (const window of progressionWindows) {
     if (window.eventType === "sign_ingress") {
       progressionLines.push(`${formatDisplayDate(window.startDate)} — ${formatDisplayDate(window.endDate)}: прогрессивная Луна в ${window.sourceSign}; длительный эмоционально-психологический фон.`);
@@ -260,11 +320,11 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
     const literary = await renderLongTermTransit(technicalLine, transitBodyKey, aspectKey, natalBodyKey, item.from, item.to, "", "");
     transitLines.push(literary ?? technicalLine);
   }
-  const draft = (lines: string[], empty: string) => lines.length ? lines.slice(0, 24).join("\\n") : empty;
+  const draft = (lines: string[], empty: string) => lines.length ? lines.slice(0, 24).join("\n\n") : empty;
   return {
     transits: draft(transitLines, "За выбранный период значимые транзитные аспекты не выделены."),
     progressions: draft(progressionLines, "За выбранный период точные аспекты вторичных прогрессий не выделены."),
-    directions: draft(formatGrouped(grouped(directionEntries)), "За выбранный период точные аспекты солнечных дуг не выделены."),
+    directions: draft(fullDirectionLines.length ? fullDirectionLines : formatGrouped(grouped(directionEntries)), "За выбранный период точные аспекты солнечных дуг не выделены."),
   };
 }
 
@@ -324,7 +384,8 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
     const directions = filterLongTermDirections(computeSolarArcDirections(input, parsedDateFrom));
     const transit = withoutExcludedLongTermBodies(computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const timeline = buildForecastTimeline(input, natal, parsedDateFrom, parsedDateTo);
-    const draftTexts = await buildDraftBlockTexts(timeline, progressionWindows);
+    const directionWindows = computeDirectionWindows(input, parsedDateFrom, parsedDateTo);
+    const draftTexts = await buildDraftBlockTexts(timeline, progressionWindows, directionWindows);
     const [row] = await db.insert(longTermForecastsTable).values({
       userId: typeof body.userId === "number" ? body.userId : null,
       clientName: body.clientName.trim(), periodType: String(body.periodType), dateFrom, dateTo,
