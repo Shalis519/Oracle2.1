@@ -494,7 +494,7 @@ export class FuturisticGenerator {
 
       // Мотивационная фраза из Studio — последним предложением.
       if (motivationPhrase?.trim()) {
-        paragraphs.push(lowerFirst(ensureSentence(motivationPhrase)));
+        paragraphs.push(ensureSentence(motivationPhrase));
       }
 
       return renderParagraphs(paragraphs);
