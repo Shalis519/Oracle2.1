@@ -113,7 +113,7 @@ export async function renderLongTermTransit(
 ): Promise<string | null> {
   if (
     !ASPECT_KEYS[aspectKey] ||
-    !["uranus", "neptune", "pluto"].includes(transitBodyKey)
+    !["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"].includes(transitBodyKey)
   )
     return null;
   const rows = await loadRows();
@@ -127,13 +127,7 @@ export async function renderLongTermTransit(
       item.text.trim() &&
       item.text.trim() !== "В разработке",
   );
-  if (!row)
-    return fallbackLiteraryText(
-      technicalLine,
-      transitBodyKey,
-      aspectKey,
-      natalBodyKey,
-    );
+  if (!row) return "В разработке";
   const rendered = renderTemplate(row.text, {
     technicalLine,
     startDate: displayDate(startDate),
@@ -142,5 +136,5 @@ export async function renderLongTermTransit(
     natalHouse,
     aspectName: ASPECT_KEYS[aspectKey],
   });
-  return hasUnresolvedTokens(rendered) ? null : rendered.trim();
+  return hasUnresolvedTokens(rendered) ? "В разработке" : rendered.trim();
 }
