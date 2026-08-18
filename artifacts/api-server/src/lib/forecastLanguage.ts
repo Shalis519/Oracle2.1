@@ -261,7 +261,13 @@ export function buildTransitOpening(input: {
   natalBody: string;
   natalSign: string;
   transitHouse?: number | null;
+  natalHouse?: number | null;
 }): string {
+  if (input.transitHouse && input.natalHouse) {
+    const body = transitBodyPhrase(input.transitBody);
+    const capitalizedBody = body.charAt(0).toUpperCase() + body.slice(1);
+    return `${capitalizedBody}, проходя по Вашему ${input.transitHouse}-му дому, образует ${aspectAccusative(input.aspect)} с ${natalBodyInstrumental(input.natalBody)} в ${input.natalHouse}-м доме.`;
+  }
   const housePart = input.transitHouse ? ` Транзит проходит через Ваш ${input.transitHouse}-й дом.` : "";
   return `Сегодня ${transitBodyPhrase(input.transitBody)} находится ${signInPrepositional(input.transitSign)} и образует ${aspectAccusative(input.aspect)} с ${natalBodyInstrumental(input.natalBody)} ${signInPrepositional(input.natalSign)}.${housePart}`;
 }

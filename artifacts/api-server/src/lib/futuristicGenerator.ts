@@ -346,7 +346,7 @@ async function describeContextualMainTransit(s: TransitSemantics): Promise<strin
   });
   if (hasUnresolvedTemplateTokens(rendered)) return null;
   return [
-    buildTransitOpening({ transitBody: t.transitBody, transitSign: t.transitSign, aspect: t.type, natalBody: t.natalBody, natalSign: t.natalSign, transitHouse: houses.transitHouse }),
+    buildTransitOpening({ transitBody: t.transitBody, transitSign: t.transitSign, aspect: t.type, natalBody: t.natalBody, natalSign: t.natalSign, transitHouse: houses.transitHouse, natalHouse: houses.natalHouse }),
     ensureSentence(rendered),
   ];
 }
@@ -367,6 +367,7 @@ async function describeMainTransit(s: TransitSemantics): Promise<string[] | null
         natalBody: s.transit.natalBody,
         natalSign: s.transit.natalSign,
         transitHouse: s.transit.transitHouse,
+        natalHouse: s.transit.natalHouse,
       }),
       normalizeRelationDescription(s.relation.description),
     ];
