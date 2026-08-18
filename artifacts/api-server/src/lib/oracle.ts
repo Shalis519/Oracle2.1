@@ -1077,7 +1077,10 @@ export async function computeDailyForecast(
   const arcanaNum = computeArcanaOfDay(birthDate, today);
   const arcana = getArcana(arcanaNum);
 
-  const transitAspects = transits?.aspects ?? [];
+  const forbiddenDailyBodies = new Set(["Хирон", "Лилит", "Северный узел", "Южный узел"]);
+  const transitAspects = (transits?.aspects ?? []).filter(
+    (aspect) => !forbiddenDailyBodies.has(aspect.transitBody) && !forbiddenDailyBodies.has(aspect.natalBody),
+  );
 
   // Предупреждения и конфликты теперь формируются только из семантических
   // данных выбранных факторов, а не из жёстко заданных абзацев.

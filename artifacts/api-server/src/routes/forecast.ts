@@ -150,7 +150,9 @@ async function getOrComputeToday(
 
   const transits = natalChart
     ? computeTransits(natalChart, date, birthLatitude, birthLongitude, birthTimezone, {
-        excludedNatalBodies: ["chiron"],
+        // В ежедневном синтезе Хирон, Лилит и узлы не участвуют;
+        // Хирон рассчитывается отдельно только для «Врат Золушки».
+        excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"],
       })
     : null;
 
