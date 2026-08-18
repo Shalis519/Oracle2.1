@@ -271,7 +271,8 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
   const fullDirectionLines = directionWindows.map((window) => {
     const period = window.from === window.to ? formatDisplayDate(window.from) : `с ${formatDisplayDate(window.from)} по ${formatDisplayDate(window.to)}`;
     const phase = window.phaseAtForecastStart === "separating" ? "расходящаяся" : window.phaseAtForecastStart === "applying" ? "сходящаяся" : "точная";
-    return `${period.charAt(0) === "с" ? "С" : period}: дирекционный ${window.sourceBody} образует ${ASPECT_LABELS[window.aspectKey] ?? window.aspectKey} к ${window.targetBody}; экзакт — ${formatDisplayDate(window.exactDate)}, на начало выбранного периода фаза ${phase}, орбис — ${window.orbAtForecastStart.toFixed(2)}°.`;
+    const displayPeriod = period.startsWith("с") ? `С${period.slice(1)}` : period;
+    return `${displayPeriod}: дирекционный ${window.sourceBody} образует ${ASPECT_LABELS[window.aspectKey] ?? window.aspectKey} к ${window.targetBody}; экзакт — ${formatDisplayDate(window.exactDate)}, на начало выбранного периода фаза ${phase}, орбис — ${window.orbAtForecastStart.toFixed(2)}°.`;
   });
   for (const window of progressionWindows) {
     if (window.eventType === "sign_ingress") {
