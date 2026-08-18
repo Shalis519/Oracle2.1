@@ -317,7 +317,9 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
   const groupedTransitEntries = grouped(transitEntries);
   const transitLines: string[] = [];
   for (const item of groupedTransitEntries) {
-    const [transitBodyKey, natalBodyKey, rawAspectKey] = item.key.split("|");
+    const [rawTransitBodyKey, rawNatalBodyKey, rawAspectKey] = item.key.split("|");
+    const transitBodyKey = bodyKey(rawTransitBodyKey);
+    const natalBodyKey = bodyKey(rawNatalBodyKey);
     const aspectKey = ({ "соединение": "conjunction", "оппозиция": "opposition", "квадрат": "square", "тригон": "trine", "секстиль": "sextile" } as Record<string, string>)[rawAspectKey] ?? rawAspectKey;
     const period = item.from === item.to ? formatDisplayDate(item.from) : `с ${formatDisplayDate(item.from)} по ${formatDisplayDate(item.to)}`;
     const technicalLine = `${period}: ${item.text}`;
