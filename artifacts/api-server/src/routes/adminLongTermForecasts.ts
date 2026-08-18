@@ -56,12 +56,17 @@ function isoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+function formatDisplayDate(value: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  return match ? `${match[3]}.${match[2]}.${match[1]}` : value;
+}
+
 function formatBirthDate(snapshot: Record<string, unknown>): string {
   const day = Number(snapshot.day);
   const month = Number(snapshot.month);
   const year = Number(snapshot.year);
   if (![day, month, year].every(Number.isFinite)) return "дата рождения не указана";
-  return `${day}.${String(month).padStart(2, "0")}.${year}`;
+  return `${String(day).padStart(2, "0")}.${String(month).padStart(2, "0")}.${year}`;
 }
 
 function formatBirthTime(snapshot: Record<string, unknown>): string {
@@ -161,24 +166,24 @@ function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progress
   const directionLines: string[] = [];
   for (const window of progressionWindows) {
     if (window.eventType === "sign_ingress") {
-      progressionLines.push(`${window.startDate} — ${window.endDate}: прогрессивная Луна в ${window.sourceSign}; длительный эмоционально-психологический фон.`);
+      progressionLines.push(`${formatDisplayDate(window.startDate)} — ${formatDisplayDate(window.endDate)}: прогрессивная Луна в ${window.sourceSign}; длительный эмоционально-психологический фон.`);
     } else {
-      progressionLines.push(`${window.startDate} — ${window.endDate}: прогрессивный ${window.sourceBody} — влияние на куспид ${window.targetHouse}-го дома, точность ${window.peakDate}, орбис ${window.orb}°.`);
+      progressionLines.push(`${formatDisplayDate(window.startDate)} — ${formatDisplayDate(window.endDate)}: прогрессивный ${window.sourceBody} — влияние на куспид ${window.targetHouse}-го дома, точность ${formatDisplayDate(window.peakDate)}, орбис ${window.orb}°.`);
     }
   }
   for (const point of timeline) {
     const date = String(point.date);
     const transit = point.transit as { aspects?: Array<Record<string, unknown>> } | null;
     for (const aspect of transit?.aspects ?? []) {
-      transitLines.push(`${date}: транзитный ${String(aspect.transitBody)} образует ${String(aspect.type).toLowerCase()} с ${String(aspect.natalBody)}; дом транзита — ${String(aspect.transitHouse ?? "не указан")}, орбис — ${String(aspect.orb)}°.`);
+      transitLines.push(`${formatDisplayDate(date)}: транзитный ${String(aspect.transitBody)} образует ${String(aspect.type).toLowerCase()} с ${String(aspect.natalBody)}; дом транзита — ${String(aspect.transitHouse ?? "не указан")}, орбис — ${String(aspect.orb)}°.`);
     }
     const progressions = point.progressions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of progressions?.aspects ?? []) {
-      progressionLines.push(`${date}: прогрессивный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`);
+      progressionLines.push(`${formatDisplayDate(date)}: прогрессивный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`);
     }
     const directions = point.directions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of directions?.aspects ?? []) {
-      directionLines.push(`${date}: направленный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`);
+      directionLines.push(`${formatDisplayDate(date)}: направленный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`);
     }
   }
   const draft = (lines: string[], empty: string) => lines.length ? lines.slice(0, 24).join("\\n") : empty;

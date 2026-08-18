@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { userProfileAppearance } from "@/lib/clerk-appearance";
 import { DailyNotepad } from "@/components/daily-notepad";
+import { formatDisplayDate } from "@/lib/dateFormat";
 
 export default function DashboardPage() {
   const { data: dashboard, isLoading: dashboardLoading } = useGetDashboard();
@@ -122,9 +123,7 @@ export default function DashboardPage() {
                     <h4 className="font-semibold text-primary mb-3">Врата Золушки</h4>
                     <div className="space-y-4">
                       {forecast.cinderellaGates.map((gate, i) => {
-                        const formatGateDate = (value: string | null) => value
-                          ? new Date(`${value}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
-                          : "";
+                        const formatGateDate = (value: string | null) => formatDisplayDate(value);
                         return (
                           <div key={gate.id ?? i} className="space-y-1 text-sm">
                             <p><span className="font-medium">Период:</span> с {formatGateDate(gate.activeFrom)} по {formatGateDate(gate.activeTo)}</p>

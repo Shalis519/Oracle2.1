@@ -10,10 +10,11 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Sparkles, AlertCircle, ChevronDown } from "lucide-react";
 import NatalWheel from "@/components/natal-wheel";
+import { formatDisplayDate } from "@/lib/dateFormat";
 
 const VS = "\uFE0E";
 const glyph = (s: string) => (s ? s + VS : s);
-const formatRuDate = (value: string) => new Date(`${value}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+const formatRuDate = formatDisplayDate;
 
 const ROMAN = [
   "I",
@@ -30,6 +31,15 @@ const ROMAN = [
   "XII",
 ];
 const toRoman = (n: number) => ROMAN[n - 1] ?? String(n);
+const houseRoleLabel = (role: string) => ({
+  ruler: "управитель",
+  retrograde_ruler: "дополнительный управитель по ретроградности",
+  co_ruler: "соуправитель",
+  junior_co_ruler: "младший соуправитель",
+  planet_in_house: "планета в доме",
+  planet_near_next_cusp: "планета у следующего куспида",
+  symbolic: "символический управитель",
+}[role] ?? role);
 
 export default function AstrologyPage() {
   const [lunarRecommendationsOpen, setLunarRecommendationsOpen] = useState(false);
@@ -313,10 +323,10 @@ export default function AstrologyPage() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <p>
-              <span className="font-medium">Период:</span> с {new Date(`${chart.lunarReturn.periodStart}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })} по {new Date(`${chart.lunarReturn.periodEnd}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}
+              <span className="font-medium">Период:</span> с {formatDisplayDate(chart.lunarReturn.periodStart)} по {formatDisplayDate(chart.lunarReturn.periodEnd)}
             </p>
             <p>
-              <span className="font-medium">Момент возвращения:</span> {new Date(`${chart.lunarReturn.returnDate}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}, {chart.lunarReturn.returnTime}
+              <span className="font-medium">Момент возвращения:</span> {formatDisplayDate(chart.lunarReturn.returnDate)}, {chart.lunarReturn.returnTime}
             </p>
             <p><span className="font-medium">Город расчёта:</span> {chart.lunarReturn.location.city ?? "не указан"}</p>
             {chart.lunarReturn.warning && (
@@ -366,30 +376,55 @@ export default function AstrologyPage() {
             <div className="space-y-4 text-sm">
               <section className="space-y-3">
                 <h3 className="font-medium">1. Показатели брака в натальной карте</h3>
-                <p className="text-muted-foreground">Сначала карта показывает, как в натале связаны темы V дома, VII дома и официального статуса X дома.</p>
+                <p className="text-muted-foreground">Элементы домов рассчитаны по иерархии Шестопалова: управитель, ретроградный управитель, соуправитель, младший соуправитель и планеты в доме. Повторные роли одной планеты не объединяются.</p>
+                <div className="rounded-md border border-primary/15 bg-primary/5 p-3">
+                  <p className="font-medium">Первый брак</p>
+                  <p className="mt-1 text-muted-foreground">Карта: {marriageFormula.data.strictNatalProfile.sect}. Сигнификатор: {marriageFormula.data.strictNatalProfile.firstMarriageSignificatorName ?? "не определён"}.</p>
+                </div>
                 <div className="grid gap-2 sm:grid-cols-3">
-                  {marriageFormula.data.natalProfile.houses.map((house) => (
-                    <div key={house.number} className="rounded-md border border-primary/15 bg-primary/5 p-3">
-                      <p className="font-medium">{house.number === 5 ? "V дом" : house.number === 7 ? "VII дом" : "X дом"} · {house.sign}</p>
-                      <p className="mt-2 text-xs text-muted-foreground">Управитель: {house.rulers.length ? house.rulers.join(", ") : "не определён"}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">Планеты в доме: {house.planets.length ? house.planets.join(", ") : "нет"}</p>
+                  {marriageFormula.data.strictNatalProfile.houses.map((house) => (
+                    <div key={house.house} className="rounded-md border border-primary/15 bg-primary/5 p-3">
+                      <p className="font-medium">{house.house === 5 ? "V дом" : house.house === 7 ? "VII дом" : "X дом"} · {house.sign}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Протяжённость: {house.width.toFixed(2)}° ({house.large ? "большой дом" : "малый дом"})</p>
+                      <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                        {house.elements.length ? house.elements.map((element, index) => <p key={`${element.bodyKey}-${element.role}-${index}`}>{element.bodyName} — {houseRoleLabel(element.role)}{element.repeatedRole ? " · повторная роль" : ""}{element.auxiliary ? " · вспомогательный элемент" : ""}</p>) : <p>Элементы не определены.</p>}
+                      </div>
                     </div>
                   ))}
                 </div>
-                {marriageFormula.data.natalProfile.formulas.length > 0 ? (
+                {marriageFormula.data.strictNatalProfile.formulas.length > 0 ? (
                   <div className="rounded-md border border-primary/15 p-3">
-                    <p className="font-medium">Найденные натальные связи</p>
+                    <p className="font-medium">Формулы, подтверждённые натальными элементами</p>
+                    <p className="mt-1 text-muted-foreground">{marriageFormula.data.strictNatalProfile.formulas.join(", ")}</p>
                     <div className="mt-2 space-y-1 text-muted-foreground">
-                      {marriageFormula.data.natalProfile.connections.map((indicator) => <p key={indicator.id}>{indicator.label}</p>)}
+                      {marriageFormula.data.strictNatalProfile.connections.map((connection) => <p key={connection.id}>{connection.formula}: {connection.fromBodyKey} ({connection.fromRole}) — {connection.toBodyKey} ({connection.toRole}){connection.relation === "shared_body" ? " · общая планета" : connection.aspect ? ` · ${connection.aspect.type}, орбис ${connection.aspect.orb.toFixed(2)}°` : ""}</p>)}
                     </div>
                   </div>
                 ) : (
-                  <p className="rounded-md border border-border p-3 text-muted-foreground">В этой карте не выделена прямая связь V, VII и X домов по текущей формуле.</p>
+                  <p className="rounded-md border border-border p-3 text-muted-foreground">В строгом расчёте не сформирована полноправная связь элементов V, VII и X домов.</p>
                 )}
               </section>
 
               <section className="space-y-3 border-t border-border/60 pt-4">
-                <h3 className="font-medium">2. Характер брачной темы</h3>
+                <h3 className="font-medium">2. Первый натальный цикл</h3>
+                <p className="leading-relaxed text-muted-foreground">{marriageFormula.data.natalCycle.summary}</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-md border border-primary/15 bg-primary/5 p-3">
+                    <p className="text-xs text-muted-foreground">Формула любви</p>
+                    <p className="mt-1 font-medium">{marriageFormula.data.natalCycle.loveFormulaStatus === "confirmed" ? "подтверждена" : "не подтверждена"}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{marriageFormula.data.natalCycle.loveFormulas.length ? marriageFormula.data.natalCycle.loveFormulas.join(", ") : "Связи не найдены"}</p>
+                  </div>
+                  <div className="rounded-md border border-primary/15 bg-primary/5 p-3">
+                    <p className="text-xs text-muted-foreground">Официальный брак</p>
+                    <p className="mt-1 font-medium">{marriageFormula.data.natalCycle.officialMarriageStatus === "confirmed" ? "VII + X подтверждена" : "VII + X не подтверждена"}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Связей VII + X: {marriageFormula.data.natalCycle.officialConnectionCount}</p>
+                  </div>
+                </div>
+                <div className="rounded-md border border-border p-3 text-sm text-muted-foreground"><span className="font-medium text-foreground">Показатели безбрачия:</span> {marriageFormula.data.natalCycle.celibacyNote}</div>
+              </section>
+
+              <section className="space-y-3 border-t border-border/60 pt-4">
+                <h3 className="font-medium">3. Характер брачной темы</h3>
                 <p className="leading-relaxed text-muted-foreground">{marriageFormula.data.natalCharacter.summary}</p>
                 <div className="grid gap-2 sm:grid-cols-3">
                   <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 p-3"><span className="text-xs text-muted-foreground">Гармоничные аспекты</span><p className="mt-1 text-lg font-medium">{marriageFormula.data.natalCharacter.harmoniousCount}</p></div>
@@ -407,7 +442,7 @@ export default function AstrologyPage() {
               </section>
 
               <section className="space-y-3 border-t border-border/60 pt-4">
-                <h3 className="font-medium">3. Поиск прогностических периодов</h3>
+                <h3 className="font-medium">4. Поиск прогностических периодов</h3>
                 <p className="text-muted-foreground">Период анализа: <span className="text-foreground">{formatRuDate(marriageFormula.data.searchFrom)} — {formatRuDate(marriageFormula.data.searchTo)}</span>.</p>
                 {marriageFormula.data.windows.length === 0 ? (
                   <p className="rounded-md border border-border p-3 text-muted-foreground">В заданном диапазоне не найдено окон с тремя независимыми подтверждениями.</p>
@@ -418,7 +453,7 @@ export default function AstrologyPage() {
                       <details key={`${window.dateFrom}-${window.dateTo}`} className="rounded-md border border-primary/15 bg-primary/5 p-3">
                         <summary className="cursor-pointer font-medium">{formatRuDate(window.dateFrom)} — {formatRuDate(window.dateTo)} · {window.confirmations} подтверждения</summary>
                         <div className="mt-3 space-y-2 text-muted-foreground">
-                          {window.indicators.map((indicator) => <p key={indicator.id}>{indicator.label}{indicator.date ? ` — ${formatRuDate(indicator.date)}` : ""}</p>)}
+                          {window.indicators.map((indicator) => <p key={indicator.id}>{indicator.label}{indicator.date ? ` — ${formatRuDate(indicator.date)}` : ""}{indicator.phase ? ` · ${indicator.phase === "applying" ? "сходящийся аспект" : indicator.phase === "exact" ? "точный аспект" : "расходящийся аспект"}` : ""}</p>)}
                         </div>
                       </details>
                     ))}
