@@ -62,6 +62,8 @@ export interface SecondaryProgressionWindow {
   startDate: string;
   peakDate: string;
   endDate: string;
+  exactStartDate?: string;
+  exactEndDate?: string;
   orb: number;
   descriptionKey: "house_cusp" | "moon_sign";
 }
@@ -415,6 +417,8 @@ export function computeSecondaryProgressionWindows(
         }
         if (endIndex > startIndex || peakOrb <= 0.05) {
           const point = samples[peakIndex].result.points.find((item) => item.key === bodyKey)!;
+          const exactStartIndex = Math.max(startIndex, peakIndex - 3);
+          const exactEndIndex = Math.min(endIndex, peakIndex + 3);
           windows.push({
             method: "secondary",
             eventType: "ingress_house_cusp",
@@ -425,6 +429,8 @@ export function computeSecondaryProgressionWindows(
             startDate: isoDate(samples[startIndex].date),
             peakDate: isoDate(samples[peakIndex].date),
             endDate: isoDate(samples[endIndex].date),
+            exactStartDate: isoDate(samples[exactStartIndex].date),
+            exactEndDate: isoDate(samples[exactEndIndex].date),
             orb: Number(peakOrb.toFixed(2)),
             descriptionKey: "house_cusp",
           });

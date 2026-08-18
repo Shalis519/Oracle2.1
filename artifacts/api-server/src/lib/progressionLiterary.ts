@@ -23,6 +23,12 @@ function hasUnresolvedTokens(text: string): boolean {
   return /\{[a-zA-Z0-9_]+\}/.test(text);
 }
 
+function displayDate(value: string | undefined): string {
+  if (!value) return "";
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  return match ? `${match[3]}.${match[2]}.${match[1]}` : value;
+}
+
 function bodyPhrase(bodyKey: string): string | null {
   const phrases: Record<string, string> = {
     sun: "Прогрессивное Солнце",
@@ -83,8 +89,8 @@ export async function renderProgressionWindow(window: SecondaryProgressionWindow
       sourceBody: phrase,
       sourceSign: window.sourceSign,
       signThemes: get(selected, "progression_sign", "moon", window.sourceSignKey),
-      startDate: window.startDate,
-      endDate: window.endDate,
+      startDate: displayDate(window.startDate),
+      endDate: displayDate(window.endDate),
     });
     return hasUnresolvedTokens(rendered) ? null : rendered.trim();
   }
@@ -95,14 +101,34 @@ export async function renderProgressionWindow(window: SecondaryProgressionWindow
     ["progression_entity", "body", window.sourceBodyKey],
     ["house", "natal", String(window.targetHouse)],
   ]);
+  const specialized = selectRequired(rows, [
+    ["progression_ingress_house", `${window.sourceBodyKey}:${window.targetHouse}`, "default"],
+  ]);
+  if (specialized && selected) {
+    const rendered = renderTemplate(get(specialized, "progression_ingress_house", `${window.sourceBodyKey}:${window.targetHouse}`, "default"), {
+      sourceBody: phrase,
+      bodyThemes: get(selected, "progression_entity", "body", window.sourceBodyKey),
+      targetHouse: String(window.targetHouse),
+      startDate: displayDate(window.startDate),
+      peakDate: displayDate(window.peakDate),
+      endDate: displayDate(window.endDate),
+      exactStartDate: displayDate(window.exactStartDate ?? window.peakDate),
+      exactEndDate: displayDate(window.exactEndDate ?? window.peakDate),
+      orb: `${window.orb}°`,
+      houseThemes: get(selected, "house", "natal", String(window.targetHouse)),
+    });
+    return hasUnresolvedTokens(rendered) ? null : rendered.trim();
+  }
   if (!selected) return null;
   const rendered = renderTemplate(get(selected, "progression", "ingress_house_cusp", "default"), {
     sourceBody: phrase,
     bodyThemes: get(selected, "progression_entity", "body", window.sourceBodyKey),
     targetHouse: String(window.targetHouse),
-    startDate: window.startDate,
-    peakDate: window.peakDate,
-    endDate: window.endDate,
+    startDate: displayDate(window.startDate),
+    peakDate: displayDate(window.peakDate),
+    endDate: displayDate(window.endDate),
+    exactStartDate: displayDate(window.exactStartDate ?? window.peakDate),
+    exactEndDate: displayDate(window.exactEndDate ?? window.peakDate),
     orb: `${window.orb}°`,
     houseThemes: get(selected, "house", "natal", String(window.targetHouse)),
   });
