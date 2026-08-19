@@ -46,6 +46,10 @@ describe("audit regressions", () => {
     expect(runtimeSchema).toContain("('entity', 'transit', 'sun'");
     expect(runtimeSchema).toContain("('entity', 'natal', 'mercury'");
     expect(runtimeSchema).toContain("('aspect', 'opposition', 'default'");
+    expect(runtimeSchema).toContain("('house', 'transit', '2'");
+    expect(runtimeSchema).toContain("('house', 'transit', '8'");
+    expect(runtimeSchema).toContain("('house', 'natal', '2'");
+    expect(runtimeSchema).toContain("('house', 'natal', '8'");
     expect(runtimeSchema).toContain("'composition',\n      'opposition'");
   });
 });
