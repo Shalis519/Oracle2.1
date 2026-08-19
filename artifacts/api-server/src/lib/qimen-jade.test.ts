@@ -15,5 +15,13 @@ describe("Нефритовая Дева: запрет по столкновен�
     expect(monkeyBirth.jadeMaidens.some((hit) => hit.date === "2026-08-20")).toBe(false);
     // Остальные дни семидневного окна не должны исчезать из-за одного столкновения.
     expect(monkeyBirth.jadeMaidens.some((hit) => hit.date !== "2026-08-20")).toBe(true);
+
+    const hourOrder = new Map([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0].map((branch, index) => [branch, index]));
+    const keys = withoutBirth.jadeMaidens.map((hit) => ({
+      date: hit.date,
+      hour: hourOrder.get(hit.hourBranch) ?? -1,
+    }));
+    const sortedKeys = [...keys].sort((a, b) => a.date.localeCompare(b.date) || a.hour - b.hour);
+    expect(keys).toEqual(sortedKeys);
   });
 });
