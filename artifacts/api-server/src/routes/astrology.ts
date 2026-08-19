@@ -7,50 +7,22 @@ import { hydrateCinderellaGates } from "../lib/cinderellaGates";
 import { todayString } from "../lib/oracle";
 import { computeMarriageFormula } from "../lib/predictiveFormulas";
 import { computeMoneyFormula } from "../lib/moneyFormula";
+import { parseNatalChartInput } from "../lib/birthInput";
 
 const router: IRouter = Router();
 
 router.get("/astrology/natal", requireAuth, async (req, res): Promise<void> => {
   const user = req.localUser!;
 
-  const { birthDate, birthTime, birthLatitude, birthLongitude, birthTimezone } =
-    user;
-
-  if (
-    !birthDate ||
-    !birthTime ||
-    birthLatitude === null ||
-    birthLatitude === undefined ||
-    birthLongitude === null ||
-    birthLongitude === undefined
-  ) {
+  const chartInput = parseNatalChartInput(user);
+  if (!chartInput) {
     res.status(400).json({
-      error:
-        "Для построения натальной карты нужны дата, точное время и координаты места рождения.",
+      error: "Для построения натальной карты нужны корректные дата, точное время, координаты и часовой пояс места рождения.",
     });
     return;
   }
 
-  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})/.exec(birthDate);
-  const timeMatch = /^(\d{1,2}):(\d{2})/.exec(birthTime);
-
-  if (!dateMatch || !timeMatch) {
-    res.status(400).json({
-      error: "Некорректный формат даты или времени рождения.",
-    });
-    return;
-  }
-
-  const chart = computeNatalChart({
-    year: Number(dateMatch[1]),
-    month: Number(dateMatch[2]),
-    day: Number(dateMatch[3]),
-    hour: Number(timeMatch[1]),
-    minute: Number(timeMatch[2]),
-    latitude: birthLatitude,
-    longitude: birthLongitude,
-    timezone: birthTimezone,
-  });
+  const chart = computeNatalChart(chartInput);
 
   const hydratedGates = await hydrateCinderellaGates(chart.cinderellaGates);
   const chartWithInterpretations = { ...chart, cinderellaGates: hydratedGates };
@@ -78,27 +50,13 @@ router.get("/astrology/natal", requireAuth, async (req, res): Promise<void> => {
 
 router.post("/astrology/money-formula", requireAuth, async (req, res): Promise<void> => {
   const user = req.localUser!;
-  if (!user.birthDate || !user.birthTime || user.birthLatitude == null || user.birthLongitude == null) {
-    res.status(400).json({ error: "Для расчёта денежной формулы заполните дату, точное время и место рождения в профиле." });
-    return;
-  }
-  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})/.exec(user.birthDate);
-  const timeMatch = /^(\d{1,2}):(\d{2})/.exec(user.birthTime);
-  if (!dateMatch || !timeMatch) {
-    res.status(400).json({ error: "Некорректный формат даты или времени рождения." });
+  const chartInput = parseNatalChartInput(user);
+  if (!chartInput) {
+    res.status(400).json({ error: "Для расчёта денежной формулы заполните корректные дату, точное время, место рождения и часовой пояс в профиле." });
     return;
   }
   try {
-    const chart = computeNatalChart({
-      year: Number(dateMatch[1]),
-      month: Number(dateMatch[2]),
-      day: Number(dateMatch[3]),
-      hour: Number(timeMatch[1]),
-      minute: Number(timeMatch[2]),
-      latitude: user.birthLatitude,
-      longitude: user.birthLongitude,
-      timezone: user.birthTimezone,
-    });
+    const chart = computeNatalChart(chartInput);
     res.json(computeMoneyFormula(chart));
   } catch (error) {
     console.error("Money formula calculation failed", error);
