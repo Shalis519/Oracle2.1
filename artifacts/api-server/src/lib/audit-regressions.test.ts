@@ -52,4 +52,13 @@ describe("audit regressions", () => {
     expect(runtimeSchema).toContain("('house', 'natal', '8'");
     expect(runtimeSchema).toContain("'composition',\n      'opposition'");
   });
+
+  it("bumps the persisted daily forecast cache after semantic changes", () => {
+    const forecastRoute = readFileSync(
+      resolve(process.cwd(), "src/routes/forecast.ts"),
+      "utf8",
+    );
+    expect(forecastRoute).toContain("CURRENT_FORECAST_VERSION = 62");
+    expect(forecastRoute).toContain("serving stale prose");
+  });
 });

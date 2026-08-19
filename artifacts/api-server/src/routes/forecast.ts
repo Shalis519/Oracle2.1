@@ -92,7 +92,9 @@ function buildForecast(
   };
 }
 
-export const CURRENT_FORECAST_VERSION = 61;
+// Increment when forecast semantics, Studio seed data, or rendering logic changes.
+// This forces persisted daily rows to regenerate instead of serving stale prose.
+export const CURRENT_FORECAST_VERSION = 62;
 
 async function getOrComputeToday(
   userId: number,
