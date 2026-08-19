@@ -57,7 +57,7 @@ router.post("/astrology/money-formula", requireAuth, async (req, res): Promise<v
   }
   try {
     const chart = computeNatalChart(chartInput);
-    res.json(computeMoneyFormula(chart));
+    res.json(await computeMoneyFormula(chart));
   } catch (error) {
     console.error("Money formula calculation failed", error);
     res.status(500).json({ error: "Не удалось рассчитать денежную формулу." });

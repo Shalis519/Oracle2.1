@@ -1,5 +1,7 @@
+import { eq } from "drizzle-orm";
+import { db, forecastTextTemplatesTable } from "@workspace/db";
 import type { NatalChart } from "./astrology";
-import { activeMoneyCards, hasCompleteIlyaSet } from "./moneyCards";
+import { ensureForecastTemplateSeeds } from "./runtimeSchema";
 
 export type MoneySection = {
   key: string;
@@ -14,62 +16,93 @@ export type MoneyFormulaResult = {
   sections: MoneySection[];
   methodology: {
     houseSystem: "Placidus";
-    source: "Денежные дома";
+    source: "Деньги в натальной карте";
     includedHouses: number[];
     note: string;
   };
 };
 
+type MoneyStudioRow = {
+  context: string;
+  key: string;
+  title: string;
+  text: string;
+};
+
+const MONEY_HOUSES = [2, 5, 8, 11] as const;
 const HOUSE_ROMAN: Record<number, string> = { 2: "II", 5: "V", 8: "VIII", 11: "XI" };
-const SIGN_LOCATIVE: Record<string, string> = {
-  aries: "Овне", taurus: "Тельце", gemini: "Близнецах", cancer: "Раке",
-  leo: "Льве", virgo: "Деве", libra: "Весах", scorpio: "Скорпионе",
-  sagittarius: "Стрельце", capricorn: "Козероге", aquarius: "Водолее", pisces: "Рыбах",
-};
-const BODY_NAMES: Record<string, string> = {
-  sun: "Солнце", moon: "Луна", mercury: "Меркурий", venus: "Венера", mars: "Марс",
-  jupiter: "Юпитер", saturn: "Сатурн", uranus: "Уран", neptune: "Нептун", pluto: "Плутон",
+const RULER_BODIES: Record<string, string[]> = {
+  aries: ["mars"], taurus: ["venus"], gemini: ["mercury"], cancer: ["moon"],
+  leo: ["sun"], virgo: ["mercury"], libra: ["venus"], scorpio: ["mars", "pluto"],
+  sagittarius: ["jupiter"], capricorn: ["saturn"], aquarius: ["saturn", "uranus"],
+  pisces: ["jupiter", "neptune"],
 };
 
-function houseTitle(chart: NatalChart, house: number): string {
-  const item = chart.houses.find((entry) => entry.number === house);
-  return `${HOUSE_ROMAN[house]} дом в ${SIGN_LOCATIVE[item?.signKey ?? ""] ?? item?.sign ?? "неопределённом знаке"}`;
+function houseSign(chart: NatalChart, house: number): string | undefined {
+  return chart.houses.find((item) => item.number === house)?.signKey;
 }
 
-function titleForCard(chart: NatalChart, card: ReturnType<typeof activeMoneyCards>[number]): string {
-  if (card.kind === "house") return houseTitle(chart, card.house);
-  return card.title;
+function bodyHouse(chart: NatalChart, bodyKey: string): number | undefined {
+  return chart.bodies.find((item) => item.key === bodyKey)?.house ?? undefined;
 }
 
-export function computeMoneyFormula(chart: NatalChart): MoneyFormulaResult {
-  const cards = activeMoneyCards(chart);
-  const sections: MoneySection[] = [];
-  const seenHouses = new Set<number>();
+function cardOrder(row: MoneyStudioRow): number {
+  if (row.context === "house") return Number(row.key.split(":")[1]) * 10;
+  if (row.context === "house-sign") return 20;
+  if (row.context === "planet-house") return row.key.endsWith(":2") ? 40 : 90;
+  if (row.context === "ruler-house-II") return 120 + Number(row.key.split(":").pop());
+  if (row.context === "ruler-house-V") return 180 + Number(row.key.split(":").pop());
+  if (row.context === "ruler-house-VIII") return 150 + Number(row.key.split(":").pop());
+  if (row.context === "ruler-house-XI") return 210 + Number(row.key.split(":").pop());
+  return 999;
+}
 
-  for (const card of cards) {
-    if (card.kind === "house") {
-      seenHouses.add(card.house);
+async function loadMoneyStudioRows(): Promise<MoneyStudioRow[]> {
+  await ensureForecastTemplateSeeds();
+  return db
+    .select({
+      context: forecastTextTemplatesTable.context,
+      key: forecastTextTemplatesTable.key,
+      title: forecastTextTemplatesTable.title,
+      text: forecastTextTemplatesTable.text,
+    })
+    .from(forecastTextTemplatesTable)
+    .where(eq(forecastTextTemplatesTable.category, "money"))
+    .then((rows) => rows.filter((row) => row.text.trim() && row.text.trim() !== "В разработке"));
+}
+
+function activeKeys(chart: NatalChart): Set<string> {
+  const keys = new Set<string>();
+  for (const house of MONEY_HOUSES) {
+    keys.add(`house:${house}`);
+    const sign = houseSign(chart, house);
+    if (house === 2 && sign) keys.add(`house-sign:2:${sign}`);
+    for (const body of chart.bodies) {
+      if ((house === 2 || house === 8) && body.house === house) {
+        keys.add(`planet-house:${body.key}:${house}`);
+      }
     }
-    sections.push({
-      key: card.key,
-      title: titleForCard(chart, card),
-      paragraphs: card.paragraphs,
-    });
+    const rulers = RULER_BODIES[sign ?? ""] ?? [];
+    const context = `ruler-house-${house === 2 ? "II" : house === 5 ? "V" : house === 8 ? "VIII" : "XI"}`;
+    for (const ruler of rulers) {
+      const rulerPosition = bodyHouse(chart, ruler);
+      if (rulerPosition) keys.add(`ruler-house:${house === 2 ? "II" : house === 5 ? "V" : house === 8 ? "VIII" : "XI"}:${rulerPosition}`);
+    }
+    void context;
   }
+  return keys;
+}
 
-  // The source has an итоговый текст only for the complete example set.
-  // Never synthesize a new итоговый текст from partial indicators.
-  if (hasCompleteIlyaSet(chart)) {
-    sections.push({
-      key: "summary:ilya-complete",
-      title: "Итог",
-      paragraphs: [
-        "Ваш денежный потенциал связан с сочетанием трех основных направлений: системной и официальной работы, семейно-имущественных вопросов и образования либо международной деятельности.",
-        "Наиболее подходящая финансовая стратегия: действовать последовательно, вести учет, планировать накопления, внимательно работать с документами и постепенно создавать устойчивую материальную базу. Дополнительные возможности могут открываться через недвижимость, семейные проекты, обучение, путешествия, творческие направления и работу с коллективами.",
-        "В денежных вопросах важно сохранять ясность, не принимать решения только под влиянием эмоций и тщательно проверять финансовые предложения, особенно если они кажутся слишком легкими или быстро доходными. Обязательно иметь подушку безопасности.",
-      ],
-    });
-  }
+export async function computeMoneyFormula(chart: NatalChart): Promise<MoneyFormulaResult> {
+  const [rows, keys] = await Promise.all([loadMoneyStudioRows(), Promise.resolve(activeKeys(chart))]);
+  const sections = rows
+    .filter((row) => keys.has(row.key))
+    .sort((a, b) => cardOrder(a) - cardOrder(b))
+    .map((row) => ({
+      key: row.key,
+      title: row.title,
+      paragraphs: row.text.split(/\n\s*\n|\n/).map((text) => text.trim()).filter(Boolean),
+    }));
 
   return {
     formula: "money",
@@ -78,15 +111,9 @@ export function computeMoneyFormula(chart: NatalChart): MoneyFormulaResult {
     sections,
     methodology: {
       houseSystem: "Placidus",
-      source: "Денежные дома",
-      includedHouses: [2, 5, 8, 11],
-      note: `Расчёт определяет активные показатели карты, а тексты подбираются из библиотеки файла «Денежные дома». Активные денежные дома: ${[...seenHouses].sort((a, b) => a - b).map((house) => HOUSE_ROMAN[house]).join(", ") || "нет карточек"}.`,
+      source: "Деньги в натальной карте",
+      includedHouses: [...MONEY_HOUSES],
+      note: "Расчёт определяет активные показатели натальной карты, а интерпретации подбираются из карточек Oracle Studio, перенесённых из полного PDF «Деньги в натальной карте». Образец Ильи используется только для порядка и оформления результата.",
     },
   };
-}
-
-export function getBodyHouseLabel(chart: NatalChart, bodyKey: string): string {
-  const body = chart.bodies.find((item) => item.key === bodyKey);
-  if (!body?.house) return `${BODY_NAMES[bodyKey] ?? bodyKey} в доме не определён.`;
-  return `${BODY_NAMES[bodyKey] ?? bodyKey} находится в ${HOUSE_ROMAN[body.house] ?? body.house} доме.`;
 }

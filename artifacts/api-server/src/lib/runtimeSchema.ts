@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
-import { db } from "@workspace/db";
+import { db, forecastTextTemplatesTable } from "@workspace/db";
+import { MONEY_STUDIO_SEEDS } from "./moneyStudioSeeds";
 
 /**
  * Creates small runtime support tables that are not part of the deployment shell
@@ -296,4 +297,28 @@ export async function ensureForecastTemplateSeeds(): Promise<void> {
   `);
   await ensureApprovedForecastTemplateSeeds();
   await ensureAuthorTransitTemplateSeeds();
+  await ensureMoneyStudioSeeds();
+}
+
+async function ensureMoneyStudioSeeds(): Promise<void> {
+  for (const seed of MONEY_STUDIO_SEEDS) {
+    await db
+      .insert(forecastTextTemplatesTable)
+      .values({
+        category: seed.category,
+        context: seed.context,
+        key: seed.key,
+        title: seed.title,
+        text: seed.text,
+        sourceNote: seed.sourceNote,
+        isActive: true,
+      })
+      .onConflictDoNothing({
+        target: [
+          forecastTextTemplatesTable.category,
+          forecastTextTemplatesTable.context,
+          forecastTextTemplatesTable.key,
+        ],
+      });
+  }
 }
