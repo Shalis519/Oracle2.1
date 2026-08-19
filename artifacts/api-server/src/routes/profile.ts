@@ -75,9 +75,22 @@ router.put("/profile", requireAuth, async (req, res) => {
     return res.status(400).json({ error: parsed.error.message });
   }
 
+  const natalInputFields = [
+    "birthDate",
+    "birthTime",
+    "birthPlace",
+    "birthLatitude",
+    "birthLongitude",
+    "birthTimezone",
+  ] as const;
+  const natalInputChanged = natalInputFields.some((field) => field in parsed.data);
+  const updateValues = natalInputChanged
+    ? { ...parsed.data, natalChart: null }
+    : parsed.data;
+
   const [updated] = await db
     .update(usersTable)
-    .set(parsed.data)
+    .set(updateValues)
     .where(eq(usersTable.id, req.localUser!.id))
     .returning();
 
