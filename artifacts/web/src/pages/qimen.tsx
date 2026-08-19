@@ -545,10 +545,6 @@ export default function QimenPage() {
             </Dialog>
           </h2>
         </div>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Нефритовая Дева ищется только в часовых раскладах Ци Мэнь. Годовые, месячные и дневные карты в этот поиск не включаются.
-        </p>
-
         {jadeMaidens.length > 0 ? (
           <div className="space-y-3">
             {jadeMaidens.map((m, i) => (
