@@ -152,18 +152,24 @@ function buildEleventhHouseSection(chart: NatalChart): MoneySection {
   return section("house-11", houseTitle(chart, 11), paragraphs);
 }
 
-function buildSummary(chart: NatalChart): MoneySection {
+function buildSummary(chart: NatalChart): MoneySection | null {
   const house2 = chart.houses.find((item) => item.number === 2);
   const house8 = chart.houses.find((item) => item.number === 8);
   const house5 = chart.houses.find((item) => item.number === 5);
-  const house11 = chart.houses.find((item) => item.number === 11);
   const clauses: string[] = [];
   if (house2?.signKey === "capricorn") clauses.push("системной и официальной работы");
   if (house8?.signKey === "cancer") clauses.push("семейно-имущественных вопросов");
   if (house5 && rulerKeys(chart, 5).includes("venus") && chart.bodies.find((body) => body.key === "venus")?.house === 9) clauses.push("образования либо международной деятельности");
-  if (house11?.signKey === "scorpio" && chart.bodies.find((body) => body.key === "pluto")?.house === 11) clauses.push("работы с коллективами");
-  const first = clauses.length ? `Ваш денежный потенциал связан с сочетанием следующих направлений: ${clauses.join(", ")}.` : "Ваш денежный потенциал уточняется по активным показателям денежных домов.";
-  return section("summary", "Итог", [first, "Наиболее подходящая финансовая стратегия: действовать последовательно, вести учет, планировать накопления, внимательно работать с документами и постепенно создавать устойчивую материальную базу. Дополнительные возможности могут открываться через недвижимость, семейные проекты, обучение, путешествия, творческие направления и работу с коллективами.", "В денежных вопросах важно сохранять ясность, не принимать решения только под влиянием эмоций и тщательно проверять финансовые предложения, особенно если они кажутся слишком легкими или быстро доходными. Обязательно иметь подушку безопасности."]);
+
+  // The source document contains this synthesis only for the complete
+  // three-indicator configuration above. Do not reuse it for another chart.
+  if (clauses.length !== 3) return null;
+
+  return section("summary", "Итог", [
+    "Ваш денежный потенциал связан с сочетанием трех основных направлений: системной и официальной работы, семейно-имущественных вопросов и образования либо международной деятельности.",
+    "Наиболее подходящая финансовая стратегия: действовать последовательно, вести учет, планировать накопления, внимательно работать с документами и постепенно создавать устойчивую материальную базу. Дополнительные возможности могут открываться через недвижимость, семейные проекты, обучение, путешествия, творческие направления и работу с коллективами.",
+    "В денежных вопросах важно сохранять ясность, не принимать решения только под влиянием эмоций и тщательно проверять финансовые предложения, особенно если они кажутся слишком легкими или быстро доходными. Обязательно иметь подушку безопасности.",
+  ]);
 }
 
 export function computeMoneyFormula(chart: NatalChart): MoneyFormulaResult {
