@@ -375,7 +375,7 @@ export default function QimenPage() {
   const [jadeInfoOpen, setJadeInfoOpen] = useState(false);
   const [doorInfoOpen, setDoorInfoOpen] = useState(false);
   const [genInfoOpen, setGenInfoOpen] = useState(false);
-  const { data, isLoading } = useGetQimen({
+  const { data, isLoading, isError } = useGetQimen({
     query: { retry: false, queryKey: getGetQimenQueryKey() },
   });
   const { data: activations } = useGetTodayActivations({
@@ -386,6 +386,22 @@ export default function QimenPage() {
     return (
       <div className="flex h-[50vh] items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center p-6">
+        <Card className="max-w-xl border-destructive/30 bg-card/40">
+          <CardContent className="flex items-start gap-3 p-6 text-sm text-muted-foreground">
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+            <div>
+              <p className="font-medium text-foreground">Не удалось загрузить расчёт Ци Мэнь</p>
+              <p className="mt-1">Сервер не вернул данные Джи Фу и личных структур. Обновите страницу после завершения деплоя API.</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
