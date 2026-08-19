@@ -343,17 +343,19 @@ async function ensureMoneyStudioSeeds(): Promise<void> {
       });
   }
 
-  const vHouseSeed = MONEY_STUDIO_SEEDS.find((seed) => seed.context === "house" && seed.key === "house:5");
-  if (vHouseSeed) {
+  for (const houseKey of ["house:2", "house:5", "house:8"]) {
+    const houseSeed = MONEY_STUDIO_SEEDS.find((seed) => seed.context === "house" && seed.key === houseKey);
+    if (!houseSeed) continue;
+
     await db.execute(sql`
       UPDATE forecast_text_templates
-      SET title = ${vHouseSeed.title},
-          text = ${vHouseSeed.text},
-          source_note = ${vHouseSeed.sourceNote},
+      SET title = ${houseSeed.title},
+          text = ${houseSeed.text},
+          source_note = ${houseSeed.sourceNote},
           updated_at = NOW()
       WHERE category = 'money'
         AND context = 'house'
-        AND key = 'house:5'
+        AND key = ${houseKey}
         AND BTRIM(text) IN ('', 'В разработке')
     `);
   }

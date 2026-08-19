@@ -70,10 +70,16 @@ describe("audit regressions", () => {
     expect(moneyFormula).toContain('textParagraphs.join("\\n")');
   });
 
-  it("keeps the V house base description before ruler interpretation", () => {
-    const vHouse = MONEY_STUDIO_SEEDS.find((seed) => seed.context === "house" && seed.key === "house:5");
-    expect(vHouse?.text).toContain("дом радости планеты Венера");
-    expect(vHouse?.text).toContain("удача, везение, подарки, выигрыши, лотереи");
+  it("keeps the base descriptions for the II, V, and VIII money houses", () => {
+    const houseSeeds = new Map(
+      MONEY_STUDIO_SEEDS
+        .filter((seed) => seed.context === "house")
+        .map((seed) => [seed.key, seed.text]),
+    );
+    expect(houseSeeds.get("house:2")).toContain("Заработки и деньги");
+    expect(houseSeeds.get("house:5")).toContain("дом радости планеты Венера");
+    expect(houseSeeds.get("house:5")).toContain("удача, везение, подарки, выигрыши, лотереи");
+    expect(houseSeeds.get("house:8")).toContain("Все кризисные ситуации");
   });
 
   it("keeps the complete Money Houses Studio library", () => {
