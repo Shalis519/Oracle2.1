@@ -30,6 +30,7 @@ import {
   signInPrepositional,
   transitBodyPhrase,
   toAccusativeThemes,
+  toGenitiveThemes,
   toPersonalThemes,
 } from "./forecastLanguage";
 
@@ -256,7 +257,7 @@ async function describeMainTransit(s: TransitSemantics, date: Date): Promise<str
     const themes = formatList(profileListText(s.natalHouseProfile), 3);
     if (themes) contextTexts.push(`Связь с натальным ${t.natalHouse}-м домом добавляет темы: ${themes}`);
   }
-  if (signThemes) contextTexts.push(`Знак добавляет оттенок: ${signThemes}`);
+  if (signThemes) contextTexts.push(`Знак добавляет оттенок тем ${toGenitiveThemes(signThemes)}`);
   if (contextTexts.length > 0) parts.push(`${contextTexts.join(". ")}.`);
 
   const emotions = s.polarity === "negative" ? s.planetProfile?.negativeEmotions : s.planetProfile?.positiveEmotions;
@@ -277,11 +278,13 @@ async function describeSecondaryTransit(s: TransitSemantics, index: number): Pro
     transitHouse: s.transit.transitHouse,
     natalHouse: s.transit.natalHouse,
   });
-  const meaning = s.relation?.description?.trim()
-    ? normalizeRelationDescription(s.relation.description)
-    : formatList(profileListText(s.planetProfile), 1);
-  if (!meaning) return null;
-  return `${connective} ${lowerFirst(opening)} ${lowerFirst(meaning)}`;
+  const relationMeaning = s.relation?.description?.trim();
+  if (relationMeaning) {
+    return `${connective} ${opening} ${normalizeRelationDescription(relationMeaning)}`;
+  }
+  const profileMeaning = formatList(profileListText(s.planetProfile), 1);
+  if (!profileMeaning) return null;
+  return `${connective} ${opening} Это может проявляться через ${toAccusativeThemes(profileMeaning)}.`;
 }
 
 /** Совет дня из профилей доминирующего транзита (по полярности). */

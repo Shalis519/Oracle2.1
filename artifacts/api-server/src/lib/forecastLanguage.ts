@@ -125,6 +125,17 @@ export function toPersonalThemes(text: string): string {
     .replace(/\bобщение\b/gi, "Ваше общение");
 }
 
+export function toGenitiveThemes(text: string): string {
+  return text
+    .replace(/самовыражение/gi, "самовыражения")
+    .replace(/творчество/gi, "творчества")
+    .replace(/сила воли/gi, "силы воли")
+    .replace(/личная позиция/gi, "личной позиции")
+    .replace(/жизненная сила/gi, "жизненной силы")
+    .replace(/интуиция/gi, "интуиции")
+    .replace(/эмоциональная безопасность/gi, "эмоциональной безопасности");
+}
+
 export function toAccusativeThemes(text: string): string {
   return text
     .replace(/\bмышление\b/gi, "мышление")

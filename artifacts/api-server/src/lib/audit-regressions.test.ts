@@ -3,6 +3,7 @@ import { parseNatalChartInput } from "./birthInput";
 import { MONEY_STUDIO_SEEDS } from "./moneyStudioSeeds";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { buildTransitOpening, toGenitiveThemes } from "./forecastLanguage";
 
 const validBirth = {
   birthDate: "1980-02-05",
@@ -36,6 +37,41 @@ describe("audit regressions", () => {
       new Set(MONEY_STUDIO_SEEDS.map((seed) => `${seed.category}:${seed.context}:${seed.key}`)).size,
     ).toBe(84);
     expect(MONEY_STUDIO_SEEDS.every((seed) => seed.sourceNote.includes("ДЕНЬГИВНАТАЛЬНОЙКАРТЕ"))).toBe(true);
+  });
+
+  it("keeps planet and aspect declension grammatically correct", () => {
+    expect(buildTransitOpening({
+      transitBody: "Солнце",
+      transitSign: "Лев",
+      aspect: "Оппозиция",
+      natalBody: "Меркурий",
+      natalSign: "Водолей",
+      transitHouse: 2,
+      natalHouse: 8,
+    })).toBe("Транзитное Солнце, проходя по Вашему 2-му дому, образует оппозицию с натальным Меркурием в 8-м доме.");
+    expect(buildTransitOpening({
+      transitBody: "Луна",
+      transitSign: "Лев",
+      aspect: "Квадрат",
+      natalBody: "Солнце",
+      natalSign: "Водолей",
+      transitHouse: 5,
+      natalHouse: 7,
+    })).toBe("Транзитная Луна, проходя по Вашему 5-му дому, образует квадрат с натальным Солнцем в 7-м доме.");
+    expect(buildTransitOpening({
+      transitBody: "Марс",
+      transitSign: "Рак",
+      aspect: "Квадрат",
+      natalBody: "Луна",
+      natalSign: "Весы",
+      transitHouse: 12,
+      natalHouse: 4,
+    })).toBe("Транзитный Марс, проходя по Вашему 12-му дому, образует квадрат с натальной Луной в 4-м доме.");
+  });
+
+  it("declines sign themes after the word `тем`", () => {
+    expect(toGenitiveThemes("самовыражение, творчество и сила воли")).toBe("самовыражения, творчества и силы воли");
+    expect(toGenitiveThemes("интуиция и эмоциональная безопасность")).toBe("интуиции и эмоциональной безопасности");
   });
 
   it("keeps the daily Sun-opposition-Mercury Studio components seeded", () => {
