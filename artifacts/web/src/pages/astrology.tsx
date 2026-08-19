@@ -44,6 +44,7 @@ const houseRoleLabel = (role: string) => ({
 
 export default function AstrologyPage() {
   const [lunarRecommendationsOpen, setLunarRecommendationsOpen] = useState(false);
+  const [selectedFormula, setSelectedFormula] = useState<"marriage" | "money">("marriage");
   const {
     data: chart,
     isLoading,
@@ -359,32 +360,33 @@ export default function AstrologyPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-md border border-primary/15 bg-primary/5 p-3 text-sm">
-            <p className="font-medium">Возможный период бракосочетания</p>
-            <p className="mt-1 text-muted-foreground">Расчёт выполняется только после нажатия кнопки и охватывает возраст от 15-го до 79-го года жизни.</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              onClick={() => marriageFormula.mutate({ data: { formula: "marriage" } })}
-              disabled={marriageFormula.isPending}
+            <label htmlFor="predictive-formula" className="font-medium">Выберите формулу</label>
+            <select
+              id="predictive-formula"
+              value={selectedFormula}
+              onChange={(event) => setSelectedFormula(event.target.value as "marriage" | "money")}
+              className="mt-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
             >
-              {marriageFormula.isPending ? "Расчёт выполняется…" : "Рассчитать период брака"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => moneyFormula.mutate()}
-              disabled={moneyFormula.isPending}
-            >
-              {moneyFormula.isPending ? "Расчёт выполняется…" : "Рассчитать денежные дома"}
-            </Button>
+              <option value="marriage">Возможный период бракосочетания</option>
+              <option value="money">Денежные дома</option>
+            </select>
+            <p className="mt-2 text-muted-foreground">
+              Расчёт выполняется только после нажатия кнопки «Рассчитать».
+            </p>
           </div>
-          {moneyFormula.isError && (
+          <Button
+            type="button"
+            onClick={() => selectedFormula === "money" ? moneyFormula.mutate() : marriageFormula.mutate({ data: { formula: "marriage" } })}
+            disabled={selectedFormula === "money" ? moneyFormula.isPending : marriageFormula.isPending}
+          >
+            {(selectedFormula === "money" ? moneyFormula.isPending : marriageFormula.isPending) ? "Расчёт выполняется…" : "Рассчитать"}
+          </Button>
+          {selectedFormula === "money" && moneyFormula.isError && (
             <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
               Не удалось выполнить расчёт денежных домов. Проверьте дату, точное время и место рождения в профиле.
             </p>
           )}
-          {moneyFormula.data && (
+          {selectedFormula === "money" && moneyFormula.data && (
             <section className="space-y-4 border-t border-border/60 pt-4">
               <h2 className="font-serif text-xl font-semibold">{moneyFormula.data.title}</h2>
               <p className="text-xs text-muted-foreground">Источник: {moneyFormula.data.methodology.source}. Дома: {moneyFormula.data.methodology.includedHouses.join(", ")}. Система домов: {moneyFormula.data.methodology.houseSystem}.</p>
@@ -400,12 +402,12 @@ export default function AstrologyPage() {
               </div>
             </section>
           )}
-          {marriageFormula.isError && (
+          {selectedFormula === "marriage" && marriageFormula.isError && (
             <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
               Не удалось выполнить расчёт. Проверьте данные рождения в профиле и попробуйте ещё раз.
             </p>
           )}
-          {marriageFormula.data && (
+          {selectedFormula === "marriage" && marriageFormula.data && (
             <div className="space-y-4 text-sm">
               <section className="space-y-3">
                 <h3 className="font-medium">1. Показатели брака в натальной карте</h3>

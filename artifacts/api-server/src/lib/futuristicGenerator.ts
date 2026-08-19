@@ -355,24 +355,46 @@ function normalizeRelationDescription(description: string): string {
   return relationToPersonalInfluence(description) ?? ensureSentence(description);
 }
 
-async function describeMainTransit(s: TransitSemantics): Promise<string[] | null> {
+async function describeMainTransit(s: TransitSemantics, date: Date): Promise<string[] | null> {
+  const t = s.transit;
   const contextual = ENABLE_CONTEXTUAL_FORECAST_TEMPLATES ? await describeContextualMainTransit(s) : null;
   if (contextual) return contextual;
+
+  const parts: string[] = [buildTransitOpening({
+    transitBody: t.transitBody,
+    transitSign: t.transitSign,
+    aspect: t.type,
+    natalBody: t.natalBody,
+    natalSign: t.natalSign,
+    transitHouse: t.transitHouse,
+    natalHouse: t.natalHouse,
+  })];
+
   if (s.relation?.description?.trim()) {
-    return [
-      buildTransitOpening({
-        transitBody: s.transit.transitBody,
-        transitSign: s.transit.transitSign,
-        aspect: s.transit.type,
-        natalBody: s.transit.natalBody,
-        natalSign: s.transit.natalSign,
-        transitHouse: s.transit.transitHouse,
-        natalHouse: s.transit.natalHouse,
-      }),
-      normalizeRelationDescription(s.relation.description),
-    ];
+    parts.push(normalizeRelationDescription(s.relation.description));
+  } else {
+    const planetThemes = formatList(profileListText(s.planetProfile), 3);
+    if (planetThemes) parts.push(`Этот транзит делает особенно заметными темы: ${planetThemes}.`);
   }
-  return null;
+
+  const signThemes = formatList(profileListText(s.signProfile), 3);
+  const contextTexts: string[] = [];
+  if (t.transitHouse && s.houseProfile) {
+    const themes = formatList(profileListText(s.houseProfile), 3);
+    if (themes) contextTexts.push(`В Вашем ${t.transitHouse}-м доме это проявляется через темы: ${themes}`);
+  }
+  if (t.natalHouse && s.natalHouseProfile && t.natalHouse !== t.transitHouse) {
+    const themes = formatList(profileListText(s.natalHouseProfile), 3);
+    if (themes) contextTexts.push(`Связь с натальным ${t.natalHouse}-м домом добавляет темы: ${themes}`);
+  }
+  if (signThemes) contextTexts.push(`Знак добавляет оттенок: ${signThemes}`);
+  if (contextTexts.length > 0) parts.push(`${contextTexts.join(". ")}.`);
+
+  const emotions = s.polarity === "negative" ? s.planetProfile?.negativeEmotions : s.planetProfile?.positiveEmotions;
+  const emotion = emotions && emotions.length > 0 ? pickByDate(emotions, date, 1) : null;
+  if (emotion) parts.push(`Это может ощущаться как ${emotion.toLowerCase()}.`);
+
+  return parts.length > 1 ? parts : null;
 }
 
 async function describeSecondaryTransit(s: TransitSemantics, index: number): Promise<string | null> {
@@ -467,7 +489,7 @@ export class FuturisticGenerator {
 
       // Абзац 1: главный транзит. Без Studio-композиции или relation.description
       // не подставляем keyMeaningsArr и не создаём скрытый fallback.
-      const mainDescription = await describeMainTransit(main);
+      const mainDescription = await describeMainTransit(main, date);
       if (!mainDescription) {
         logger.warn(
           { transit: `${main.transit.transitBody} ${main.transit.type} ${main.transit.natalBody}` },
