@@ -1,11 +1,5 @@
 import { logger } from "./logger";
-import { eq } from "drizzle-orm";
-import { db, forecastTextTemplatesTable } from "@workspace/db";
 import { type TransitAspect } from "./astrology";
-import { ensureForecastTemplateSeeds } from "./runtimeSchema";
-function forecastTemplateKey(category: string, context: string, key: string): string {
-  return `${category}:${context}:${key}`;
-}
 import {
   getEntity,
   getEntityThemes,
@@ -92,15 +86,6 @@ interface ThemeEvidence {
   name: string;
   score: number;
   sources: string[];
-}
-
-interface ForecastTemplateRow {
-  category: string;
-  context: string;
-  key: string;
-  text: string;
-  sourceNote: string | null;
-  isActive: boolean;
 }
 
 interface TransitSemantics {
@@ -237,128 +222,12 @@ function contradicts(a: TransitSemantics, b: TransitSemantics): boolean {
 
 /* ─── Построение текста ─── */
 
-// Шаблонная сборка использует литературные формулировки из Oracle Studio.
-const ENABLE_CONTEXTUAL_FORECAST_TEMPLATES = true;
-
-const ASPECT_TEMPLATE_KEYS: Record<string, string> = {
-  "соединение": "conjunction",
-  "секстиль": "sextile",
-  "квадрат": "square",
-  "тригон": "trine",
-  "оппозиция": "opposition",
-};
-const BODY_TEMPLATE_KEYS: Record<string, string> = {
-  "солнце": "sun",
-  "луна": "moon",
-  "меркурий": "mercury",
-  "венера": "venus",
-  "марс": "mars",
-  "юпитер": "jupiter",
-  "сатурн": "saturn",
-  "уран": "uranus",
-  "нептун": "neptune",
-  "плутон": "pluto",
-  "хирон": "chiron",
-};
-function bodyTemplateKey(body: string): string {
-  return BODY_TEMPLATE_KEYS[body.trim().toLowerCase()] ?? body.trim().toLowerCase();
-}
-
-function renderForecastTemplate(text: string, values: Record<string, string>): string {
-  return text.replace(/\{([a-zA-Z0-9_]+)\}/g, (full, key: string) => values[key] ?? full);
-}
-
-function hasUnresolvedTemplateTokens(text: string): boolean {
-  return /\{[a-zA-Z0-9_]+\}/.test(text);
-}
-
-function resolveTemplateHouses(t: TransitAspect): { transitHouse: number | null; natalHouse: number | null } {
-  return { transitHouse: t.transitHouse, natalHouse: t.natalHouse };
-}
-
-async function loadForecastTemplateSet(t: TransitAspect): Promise<ForecastTemplateRow[] | null> {
-  const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()] ?? t.typeKey?.toLowerCase();
-  const houses = resolveTemplateHouses(t);
-  if (!aspectKey || !houses.transitHouse || !houses.natalHouse) return null;
-  let rows: ForecastTemplateRow[] = [];
-  try {
-    await ensureForecastTemplateSeeds();
-    rows = await db
-      .select({ category: forecastTextTemplatesTable.category, context: forecastTextTemplatesTable.context, key: forecastTextTemplatesTable.key, text: forecastTextTemplatesTable.text, sourceNote: forecastTextTemplatesTable.sourceNote, isActive: forecastTextTemplatesTable.isActive })
-      .from(forecastTextTemplatesTable)
-      .where(eq(forecastTextTemplatesTable.isActive, true));
-  } catch (error) {
-    logger.warn({ error }, "forecast templates unavailable in Oracle Studio");
-  }
-  const required = [
-    ["entity", "transit", bodyTemplateKey(t.transitBody)],
-    ["entity", "natal", bodyTemplateKey(t.natalBody)],
-    ["aspect", aspectKey, "default"],
-    ["house", "transit", String(houses.transitHouse)],
-    ["house", "natal", String(houses.natalHouse)],
-    ["composition", aspectKey, "default"],
-  ] as const;
-  const byKey = new Map(rows.map((row) => [forecastTemplateKey(row.category, row.context, row.key), row]));
-  const selected = required
-    .map(([category, context, key]) => byKey.get(forecastTemplateKey(category, context, key)) ?? null)
-    .filter((row): row is ForecastTemplateRow => Boolean(row && row.text.trim() && row.text.trim() !== "В разработке"));
-  if (selected.length !== required.length) {
-    const missing = required
-      .filter(([category, context, key]) => !byKey.has(forecastTemplateKey(category, context, key)))
-      .map(([category, context, key]) => `${category}:${context}:${key}`);
-    logger.warn({
-      transitBody: t.transitBody,
-      natalBody: t.natalBody,
-      aspect: aspectKey,
-      transitHouse: houses.transitHouse,
-      natalHouse: houses.natalHouse,
-      missing,
-    }, "forecast template set incomplete in Oracle Studio");
-  }
-  return selected.length === required.length ? selected : null;
-}
-
-async function describeContextualMainTransit(s: TransitSemantics): Promise<string[] | null> {
-  const t = s.transit;
-  const houses = resolveTemplateHouses(t);
-  const rows = await loadForecastTemplateSet(t);
-  if (!rows) return null;
-  const get = (category: string, context: string, key: string) => rows.find((row) => row.category === category && row.context === context && row.key === key)?.text ?? "";
-  const aspectKey = ASPECT_TEMPLATE_KEYS[t.type.toLowerCase()] ?? t.typeKey?.toLowerCase();
-  const composition = get("composition", aspectKey, `${bodyTemplateKey(t.transitBody)}:${bodyTemplateKey(t.natalBody)}`) || get("composition", aspectKey, "default");
-  const natalHouseThemeNames = houses.natalHouse === 5
-    ? s.themeEvidence
-        .filter((evidence) => evidence.sources.includes("Дом 5"))
-        .map((evidence) => evidence.name)
-    : [];
-  if (houses.natalHouse === 5 && natalHouseThemeNames.length === 0) return null;
-  const natalHouseThemes = houses.natalHouse === 5
-    ? formatHouse5Themes(natalHouseThemeNames, "instrumental")
-    : get("house", "natal", String(houses.natalHouse));
-  const rendered = renderForecastTemplate(composition, {
-    transitEntity: get("entity", "transit", bodyTemplateKey(t.transitBody)),
-    natalPlanet: bodyDative(t.natalBody),
-    natalEntity: get("entity", "natal", bodyTemplateKey(t.natalBody)),
-    aspectName: t.type,
-    aspectMeaning: get("aspect", aspectKey, "default"),
-    transitHouse: get("house", "transit", String(houses.transitHouse)),
-    natalHouse: natalHouseThemes,
-  });
-  if (hasUnresolvedTemplateTokens(rendered)) return null;
-  return [
-    buildTransitOpening({ transitBody: t.transitBody, transitSign: t.transitSign, aspect: t.type, natalBody: t.natalBody, natalSign: t.natalSign, transitHouse: houses.transitHouse, natalHouse: houses.natalHouse }),
-    ensureSentence(rendered),
-  ];
-}
-
 function normalizeRelationDescription(description: string): string {
   return relationToPersonalInfluence(description) ?? ensureSentence(description);
 }
 
 async function describeMainTransit(s: TransitSemantics, date: Date): Promise<string[] | null> {
   const t = s.transit;
-  const contextual = ENABLE_CONTEXTUAL_FORECAST_TEMPLATES ? await describeContextualMainTransit(s) : null;
-  if (contextual) return contextual;
 
   const parts: string[] = [buildTransitOpening({
     transitBody: t.transitBody,
@@ -399,12 +268,20 @@ async function describeMainTransit(s: TransitSemantics, date: Date): Promise<str
 
 async function describeSecondaryTransit(s: TransitSemantics, index: number): Promise<string | null> {
   const connective = index === 0 ? "Одновременно" : "Кроме того,";
-  const contextual = await describeContextualMainTransit(s);
-  if (contextual?.[1]) {
-    return `${connective} ${lowerFirst(contextual[1])}`;
-  }
-
-  return null;
+  const opening = buildTransitOpening({
+    transitBody: s.transit.transitBody,
+    transitSign: s.transit.transitSign,
+    aspect: s.transit.type,
+    natalBody: s.transit.natalBody,
+    natalSign: s.transit.natalSign,
+    transitHouse: s.transit.transitHouse,
+    natalHouse: s.transit.natalHouse,
+  });
+  const meaning = s.relation?.description?.trim()
+    ? normalizeRelationDescription(s.relation.description)
+    : formatList(profileListText(s.planetProfile), 1);
+  if (!meaning) return null;
+  return `${connective} ${lowerFirst(opening)} ${lowerFirst(meaning)}`;
 }
 
 /** Совет дня из профилей доминирующего транзита (по полярности). */

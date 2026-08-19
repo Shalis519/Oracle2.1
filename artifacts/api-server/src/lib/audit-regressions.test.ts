@@ -53,6 +53,17 @@ describe("audit regressions", () => {
     expect(runtimeSchema).toContain("'composition',\n      'opposition'");
   });
 
+  it("keeps daily synthesis independent from long-term forecast templates", () => {
+    const dailyGenerator = readFileSync(
+      resolve(process.cwd(), "src/lib/futuristicGenerator.ts"),
+      "utf8",
+    );
+    expect(dailyGenerator).not.toContain("forecastTextTemplatesTable");
+    expect(dailyGenerator).not.toContain("ensureForecastTemplateSeeds");
+    expect(dailyGenerator).toContain("findRelation");
+    expect(dailyGenerator).toContain("getEntityThemes");
+  });
+
   it("bumps the persisted daily forecast cache after semantic changes", () => {
     const forecastRoute = readFileSync(
       resolve(process.cwd(), "src/routes/forecast.ts"),
