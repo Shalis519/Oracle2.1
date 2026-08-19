@@ -32,6 +32,17 @@ const ROMAN = [
   "XII",
 ];
 const toRoman = (n: number) => ROMAN[n - 1] ?? String(n);
+const renderMoneyParagraph = (paragraph: string) => {
+  const match = paragraph.match(/^([^:\n]+:)([\s\S]*)$/);
+  if (!match) return paragraph;
+  return (
+    <>
+      <strong className="font-semibold text-foreground">{match[1]}</strong>
+      {match[2]}
+    </>
+  );
+};
+
 const houseRoleLabel = (role: string) => ({
   ruler: "управитель",
   retrograde_ruler: "дополнительный управитель по ретроградности",
@@ -390,12 +401,12 @@ export default function AstrologyPage() {
             <section className="space-y-4 border-t border-border/60 pt-4">
               <h2 className="font-serif text-xl font-semibold">{moneyFormula.data.title}</h2>
               <p className="text-xs text-muted-foreground">Источник: {moneyFormula.data.methodology.source}. Дома: {moneyFormula.data.methodology.includedHouses.join(", ")}. Система домов: {moneyFormula.data.methodology.houseSystem}.</p>
-              <div className="space-y-5">
+              <div className="space-y-0">
                 {moneyFormula.data.sections.map((section) => (
-                  <section key={section.key} className="space-y-2 border-t border-border/40 pt-4 first:border-t-0 first:pt-0">
+                  <section key={section.key} className="space-y-1.5 border-t border-border/60 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0 pb-2">
                     <h3 className="font-medium">{section.title}</h3>
                     {section.paragraphs.map((paragraph, index) => (
-                      <p key={`${section.key}-${index}`} className="whitespace-pre-line leading-relaxed text-muted-foreground">{paragraph}</p>
+                      <p key={`${section.key}-${index}`} className="whitespace-pre-line leading-relaxed text-sm text-muted-foreground">{renderMoneyParagraph(paragraph)}</p>
                     ))}
                   </section>
                 ))}

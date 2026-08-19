@@ -41,6 +41,14 @@ describe("audit regressions", () => {
     expect(moneyFormula).not.toContain('scorpio: ["mars", "pluto"]');
   });
 
+  it("keeps money subsection labels ready for bold rendering", () => {
+    const moneyFormula = readFileSync(
+      resolve(process.cwd(), "src/lib/moneyFormula.ts"),
+      "utf8",
+    );
+    expect(moneyFormula).toContain("return [`${row.title}:\\n\\n");
+  });
+
   it("groups ruler cards under their corresponding money house", () => {
     const moneyFormula = readFileSync(
       resolve(process.cwd(), "src/lib/moneyFormula.ts"),
