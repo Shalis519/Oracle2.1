@@ -32,6 +32,7 @@ type MoneyStudioRow = {
 
 const MONEY_HOUSES = [2, 5, 8, 11] as const;
 const HOUSE_ROMAN: Record<number, string> = { 2: "II", 5: "V", 8: "VIII", 11: "XI" };
+const ROMAN_HOUSE: Record<string, number> = { II: 2, V: 5, VIII: 8, XI: 11 };
 const RULER_BODIES: Record<string, string[]> = {
   aries: ["mars"], taurus: ["venus"], gemini: ["mercury"], cancer: ["moon"],
   leo: ["sun"], virgo: ["mercury"], libra: ["venus"], scorpio: ["pluto"],
@@ -47,15 +48,28 @@ function bodyHouse(chart: NatalChart, bodyKey: string): number | undefined {
   return chart.bodies.find((item) => item.key === bodyKey)?.house ?? undefined;
 }
 
-function cardOrder(row: MoneyStudioRow): number {
-  if (row.context === "house") return Number(row.key.split(":")[1]) * 10;
-  if (row.context === "house-sign") return 20;
-  if (row.context === "planet-house") return row.key.endsWith(":2") ? 40 : 90;
-  if (row.context === "ruler-house-II") return 120 + Number(row.key.split(":").pop());
-  if (row.context === "ruler-house-V") return 180 + Number(row.key.split(":").pop());
-  if (row.context === "ruler-house-VIII") return 150 + Number(row.key.split(":").pop());
-  if (row.context === "ruler-house-XI") return 210 + Number(row.key.split(":").pop());
-  return 999;
+function parentHouse(row: MoneyStudioRow): number | null {
+  if (row.context === "house") {
+    return Number(row.key.split(":").pop()) || null;
+  }
+  if (row.context === "house-sign") {
+    const house = Number(row.key.split(":")[1]);
+    return Number.isFinite(house) ? house : null;
+  }
+  if (row.context === "planet-house") {
+    return Number(row.key.split(":").pop()) || null;
+  }
+  const rulerMatch = row.key.match(/^ruler-house:(II|V|VIII|XI):/);
+  if (rulerMatch) return ROMAN_HOUSE[rulerMatch[1]] ?? null;
+  return null;
+}
+
+function sectionOrder(row: MoneyStudioRow): number {
+  if (row.context === "house") return 0;
+  if (row.context === "house-sign") return 1;
+  if (row.context === "planet-house") return 2;
+  if (row.context.startsWith("ruler-house-")) return 3;
+  return 9;
 }
 
 async function loadMoneyStudioRows(): Promise<MoneyStudioRow[]> {
@@ -96,14 +110,26 @@ function activeKeys(chart: NatalChart): Set<string> {
 
 export async function computeMoneyFormula(chart: NatalChart): Promise<MoneyFormulaResult> {
   const [rows, keys] = await Promise.all([loadMoneyStudioRows(), Promise.resolve(activeKeys(chart))]);
-  const sections = rows
-    .filter((row) => keys.has(row.key))
-    .sort((a, b) => cardOrder(a) - cardOrder(b))
-    .map((row) => ({
-      key: row.key,
-      title: row.title,
-      paragraphs: splitMoneyCardText(row.text),
-    }));
+  const activeRows = rows.filter((row) => keys.has(row.key));
+  const sections = MONEY_HOUSES.flatMap((house) => {
+    const group = activeRows
+      .filter((row) => parentHouse(row) === house)
+      .sort((a, b) => sectionOrder(a) - sectionOrder(b));
+    if (group.length === 0) return [];
+
+    const base = group.find((row) => row.context === "house");
+    const paragraphs = group.flatMap((row) => {
+      const textParagraphs = splitMoneyCardText(row.text);
+      if (row === base) return textParagraphs;
+      return [`${row.title}\n\n${textParagraphs.join("\n\n")}`];
+    });
+
+    return [{
+      key: `house:${house}`,
+      title: base?.title ?? `${house}-й дом`,
+      paragraphs,
+    }];
+  });
 
   return {
     formula: "money",

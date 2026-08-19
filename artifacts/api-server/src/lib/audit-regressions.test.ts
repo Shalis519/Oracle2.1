@@ -41,6 +41,17 @@ describe("audit regressions", () => {
     expect(moneyFormula).not.toContain('scorpio: ["mars", "pluto"]');
   });
 
+  it("groups ruler cards under their corresponding money house", () => {
+    const moneyFormula = readFileSync(
+      resolve(process.cwd(), "src/lib/moneyFormula.ts"),
+      "utf8",
+    );
+    expect(moneyFormula).toContain("const sections = MONEY_HOUSES.flatMap((house)");
+    expect(moneyFormula).toContain(".filter((row) => parentHouse(row) === house)");
+    expect(moneyFormula).toContain("ROMAN_HOUSE[rulerMatch[1]]");
+    expect(moneyFormula).toContain('textParagraphs.join("\\n\\n")');
+  });
+
   it("keeps the complete Money Houses Studio library", () => {
     expect(MONEY_STUDIO_SEEDS).toHaveLength(84);
     expect(
