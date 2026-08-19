@@ -2855,6 +2855,76 @@ export const useUpdateTask = <TError = ErrorType<unknown>,
       return useMutation(getUpdateTaskMutationOptions(options));
     }
 
+export const getReconcileNotepadUrl = () => {
+
+
+
+
+  return `/api/notepad/reconcile`
+}
+
+/**
+ * @summary Reconcile automatic reminders for today
+ */
+export const reconcileNotepad = async ( options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getReconcileNotepadUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getReconcileNotepadMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reconcileNotepad>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof reconcileNotepad>>, TError,void, TContext> => {
+
+const mutationKey = ['reconcileNotepad'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof reconcileNotepad>>, void> = () => {
+
+
+          return  reconcileNotepad(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ReconcileNotepadMutationResult = NonNullable<Awaited<ReturnType<typeof reconcileNotepad>>>
+
+    export type ReconcileNotepadMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Reconcile automatic reminders for today
+ */
+export const useReconcileNotepad = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reconcileNotepad>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof reconcileNotepad>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getReconcileNotepadMutationOptions(options));
+    }
+
 export const getGetNotepadUrl = () => {
 
 
@@ -2864,7 +2934,7 @@ export const getGetNotepadUrl = () => {
 }
 
 /**
- * @summary Today's notepad items (auto reminders reconciled + personal notes)
+ * @summary Today's notepad items (read-only)
  */
 export const getNotepad = async ( options?: RequestInit): Promise<NotepadItem[]> => {
 
@@ -2911,7 +2981,7 @@ export type GetNotepadQueryError = ErrorType<unknown>
 
 
 /**
- * @summary Today's notepad items (auto reminders reconciled + personal notes)
+ * @summary Today's notepad items (read-only)
  */
 
 export function useGetNotepad<TData = Awaited<ReturnType<typeof getNotepad>>, TError = ErrorType<unknown>>(

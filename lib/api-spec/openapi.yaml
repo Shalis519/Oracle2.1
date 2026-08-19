@@ -664,11 +664,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/Task"
 
+  /notepad/reconcile:
+    post:
+      operationId: reconcileNotepad
+      tags: [notepad]
+      summary: Reconcile automatic reminders for today
+      responses:
+        "204":
+          description: Automatic reminders reconciled
+
   /notepad/today:
     get:
       operationId: getNotepad
       tags: [notepad]
-      summary: Today's notepad items (auto reminders reconciled + personal notes)
+      summary: Today's notepad items (read-only)
+
       responses:
         "200":
           description: Notepad items

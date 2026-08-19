@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useGetNotepad,
+  useReconcileNotepad,
   useCreateNotepadItem,
   useUpdateNotepadItem,
   useDeleteNotepadItem,
@@ -12,6 +13,7 @@ import { Check, Plus, Trash2, NotebookPen } from "lucide-react";
 
 export function DailyNotepad() {
   const queryClient = useQueryClient();
+  const reconcile = useReconcileNotepad();
   const { data: items } = useGetNotepad({
     query: { queryKey: getGetNotepadQueryKey() },
   });
@@ -22,6 +24,14 @@ export function DailyNotepad() {
   const [newText, setNewText] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState("");
+
+  useEffect(() => {
+    reconcile.mutate(undefined, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getGetNotepadQueryKey() });
+      },
+    });
+  }, []);
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: getGetNotepadQueryKey() });

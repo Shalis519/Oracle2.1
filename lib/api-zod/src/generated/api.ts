@@ -1428,7 +1428,13 @@ export const UpdateTaskResponse = zod.object({
 
 
 /**
- * @summary Today's notepad items (auto reminders reconciled + personal notes)
+ * @summary Reconcile automatic reminders for today
+ */
+export const ReconcileNotepadResponse = zod.void()
+
+
+/**
+ * @summary Today's notepad items (read-only)
  */
 export const GetNotepadResponseItem = zod.object({
   "id": zod.number(),

@@ -255,26 +255,35 @@ async function reconcileAutoItems(
   }
 }
 
+function userBirthLocation(user: NonNullable<Express.Request["localUser"]>) {
+  return {
+    latitude: user.birthLatitude,
+    longitude: user.birthLongitude,
+    timezone: user.birthTimezone,
+    city: user.city,
+    cityLatitude: user.cityLatitude,
+    cityLongitude: user.cityLongitude,
+    cityTimezone: user.cityTimezone,
+    birthPlace: user.birthPlace,
+  };
+}
+
+router.post("/notepad/reconcile", requireAuth, async (req, res): Promise<void> => {
+  const user = req.localUser!;
+  await reconcileAutoItems(
+    user.id,
+    todayString(),
+    user.birthDate,
+    user.birthTime,
+    userBirthLocation(user),
+  );
+  res.status(204).end();
+});
+
 router.get("/notepad/today", requireAuth, async (req, res): Promise<void> => {
   const user = req.localUser!;
   const userId = user.id;
   const date = todayString();
-  await reconcileAutoItems(
-    userId,
-    date,
-    user.birthDate,
-    user.birthTime,
-    {
-      latitude: user.birthLatitude,
-      longitude: user.birthLongitude,
-      timezone: user.birthTimezone,
-      city: user.city,
-      cityLatitude: user.cityLatitude,
-      cityLongitude: user.cityLongitude,
-      cityTimezone: user.cityTimezone,
-      birthPlace: user.birthPlace,
-    },
-  );
   const rows = await db
     .select()
     .from(notepadItemsTable)

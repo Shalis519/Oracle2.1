@@ -196,7 +196,10 @@ router.patch("/contacts/:id", requireAuth, async (req, res): Promise<void> => {
   const [row] = await db
     .update(contactsTable)
     .set({ ...body.data, ...synastryReset })
-    .where(eq(contactsTable.id, params.data.id))
+    .where(and(
+      eq(contactsTable.id, params.data.id),
+      eq(contactsTable.userId, req.localUser!.id),
+    ))
     .returning();
   if (!row) {
     res.status(404).json({ error: "Контакт не найден." });
@@ -226,7 +229,10 @@ router.post("/contacts/:id/synastry", requireAuth, async (req, res): Promise<voi
       synastryCalculatedAt: null,
       synastryInputHash: null,
       synastryData: null,
-    }).where(eq(contactsTable.id, contact.id)).returning();
+    }).where(and(
+      eq(contactsTable.id, contact.id),
+      eq(contactsTable.userId, req.localUser!.id),
+    )).returning();
     res.status(422).json({ contact: serialize(updated), status: "insufficient_data", error: "Для синастрии нужны дата, точное время и город рождения пользователя и контакта. Город должен быть выбран из встроенной базы городов." });
     return;
   }
@@ -251,10 +257,16 @@ router.post("/contacts/:id/synastry", requireAuth, async (req, res): Promise<voi
       synastryCalculatedAt: new Date(result.calculatedAt),
       synastryInputHash: result.inputHash,
       synastryData: JSON.stringify(result),
-    }).where(eq(contactsTable.id, contact.id)).returning();
+    }).where(and(
+      eq(contactsTable.id, contact.id),
+      eq(contactsTable.userId, req.localUser!.id),
+    )).returning();
     res.json({ contact: serialize(updated), result });
   } catch (error) {
-    await db.update(contactsTable).set({ synastryEnabled: true, synastryStatus: "error" }).where(eq(contactsTable.id, contact.id));
+    await db.update(contactsTable).set({ synastryEnabled: true, synastryStatus: "error" }).where(and(
+      eq(contactsTable.id, contact.id),
+      eq(contactsTable.userId, req.localUser!.id),
+    ));
     res.status(500).json({ error: error instanceof Error ? error.message : "Не удалось рассчитать синастрию" });
   }
 });
