@@ -197,8 +197,17 @@ async function getOrComputeToday(
       version: CURRENT_FORECAST_VERSION,
       payload,
     })
+    .onConflictDoNothing({
+      target: [forecastsTable.userId, forecastsTable.date],
+    })
     .returning();
-  return created;
+  if (created) return created;
+
+  const [raced] = await db
+    .select()
+    .from(forecastsTable)
+    .where(and(eq(forecastsTable.userId, userId), eq(forecastsTable.date, date)));
+  return raced ?? null;
 }
 
 router.get("/forecast/today", requireAuth, async (req, res): Promise<void> => {

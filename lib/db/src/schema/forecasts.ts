@@ -5,8 +5,9 @@ import {
   integer,
   boolean,
   date,
-  timestamp,
   jsonb,
+  timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
@@ -24,7 +25,9 @@ export const forecastsTable = pgTable("daily_forecasts", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => [
+  uniqueIndex("daily_forecasts_user_date_unique").on(table.userId, table.date),
+]);
 
 export const insertForecastSchema = createInsertSchema(forecastsTable).omit({
   id: true,
