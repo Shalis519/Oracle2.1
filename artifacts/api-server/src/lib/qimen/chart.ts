@@ -54,8 +54,9 @@ export interface Chart {
   ju: JuResult;
   fuYin: boolean;
   zhiFuStar: string; // 值符 (Дух Джи Фу)
-  zhiShiDoor: string; // 值使
-  zhiFuPalace: number; // palace carrying 值符 star (= period stem palace)
+  zhiShiDoor: string; // 直使, Главные Врата
+  zhiShiPalace: number; // palace where 直使 is placed
+  zhiFuPalace: number; // palace where 直符 star is placed
   cells: Record<number, PalaceCell>; // outer palaces 1,2,3,4,6,7,8,9 (+5 minimal)
 }
 
@@ -93,37 +94,54 @@ function buildPeriodChart(
     stemPalace[SEQ[p]] = palace;
   }
 
-  // 值符 anchor (旬首仪 palace) and 时干 palace.
+  // Учебник: сначала определяем Главную звезду и Главные Врата по номеру
+  // расклада и номеру декады часа, затем отдельно вычисляем их дворцы.
   const yiStem = xun.yiStem;
-  const pFu = adjust(stemPalace[yiStem]);
-  const effHourStem = hs === 0 ? yiStem : hs; // 甲 hides as the 旬首仪
+  const pFuRaw = stemPalace[yiStem];
+  const pFu = adjust(pFuRaw);
+  const effHourStem = hs === 0 ? yiStem : hs; // 甲 скрывается под 旬首仪
   const pHour = adjust(stemPalace[effHourStem]);
   const fuYin = pFu === pHour;
 
+  // Номер декады в цикле 甲子: 甲子=1, 甲戌=2, ..., 甲寅=6.
+  const decadeNumber = xun.xunNo + 1;
+  const wrapPalace = (value: number) => ((value - 1) % 9 + 9) % 9 + 1;
+  const mainNumber = yin
+    ? wrapPalace(1 + ju.ju - decadeNumber)
+    : wrapPalace(ju.ju + decadeNumber - 1);
+  const mainStar = mainNumber === 5 ? "天禽" : STAR_AT[mainNumber];
+  const mainGate = mainNumber === 5 ? "死门" : DOOR_AT[mainNumber];
+
+  // Положение Главной звезды: номер НС часа в таблице «6 инструментов и
+  // 3 Непарных» плюс/минус номер расклада. Для 甲 используется инструмент
+  // декады, как предписано в учебнике.
+  const starStem = hs === 0 ? yiStem : hs;
+  const yangStarStemNumbers: Record<number, number> = {
+    4: 1, 5: 2, 6: 3, 7: 4, 8: 5, 9: 6, 3: 7, 2: 8, 1: 9,
+  };
+  const yinStarStemNumbers: Record<number, number> = {
+    4: 1, 5: 9, 6: 8, 7: 7, 8: 6, 9: 5, 3: 4, 2: 3, 1: 2,
+  };
+  const starStemNumber = (yin ? yinStarStemNumbers : yangStarStemNumbers)[starStem];
+  const starTargetRaw = yin
+    ? wrapPalace(1 + ju.ju - starStemNumber)
+    : wrapPalace(starStemNumber + ju.ju - 1);
+  const zhiFuPalace = adjust(starTargetRaw);
+
+  // Положение Главных Врат: домашний номер Главных Врат плюс число НС часа
+  // по таблице Ян/Инь Дунь минус один. Для 甲 здесь используется 1.
+  const yangGateStemNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const yinGateStemNumbers = [1, 9, 8, 7, 6, 5, 4, 3, 2, 10];
+  const gateStemNumber = (yin ? yinGateStemNumbers : yangGateStemNumbers)[hs];
+  const gateTargetRaw = wrapPalace(mainNumber + gateStemNumber - 1);
+  const zhiShiPalace = adjust(gateTargetRaw);
+
   const iFu = pathIndex(pFu);
   const iHour = pathIndex(pHour);
-  const kStar = (((iHour - iFu) % 8) + 8) % 8;
-
-  // 八门 in 置闰法: the original 值使 gate is the gate whose home palace
-  // carries the 旬首仪 (pFu). Its target palace is found by advancing the
-  // position inside the current 旬 in the dun direction. This is different
-  // from the star shift: the hour-stem palace (pHour) is not the gate anchor.
   const dir = yin ? -1 : 1;
-  let gateTargetRaw = stemPalace[yiStem];
-  for (let step = 0; step < xun.pos; step += 1) {
-    gateTargetRaw += dir;
-    if (gateTargetRaw > 9) gateTargetRaw = 1;
-    if (gateTargetRaw < 1) gateTargetRaw = 9;
-  }
-  // The center has no gate; when the target lands there, continue one palace
-  // in the same direction, matching the standard 寄宫 handling.
-  if (gateTargetRaw === 5) {
-    gateTargetRaw += dir;
-    if (gateTargetRaw > 9) gateTargetRaw = 1;
-    if (gateTargetRaw < 1) gateTargetRaw = 9;
-  }
-  const gateTarget = adjust(gateTargetRaw);
-  const doorShift = (((pathIndex(gateTarget) - pathIndex(pFu)) % 8) + 8) % 8;
+  const iStar = pathIndex(zhiFuPalace);
+  const kStar = (((iStar - iFu) % 8) + 8) % 8;
+  const doorShift = (((pathIndex(zhiShiPalace) - pathIndex(pFu)) % 8) + 8) % 8;
 
   const cells: Record<number, PalaceCell> = {};
   for (let i = 0; i < 8; i++) {
@@ -159,9 +177,10 @@ function buildPeriodChart(
     hourGz,
     ju,
     fuYin,
-    zhiFuStar: STAR_AT[pFu],
-    zhiShiDoor: DOOR_AT[pFu],
-    zhiFuPalace: pHour,
+    zhiFuStar: mainStar,
+    zhiShiDoor: mainGate,
+    zhiShiPalace,
+    zhiFuPalace,
     cells,
   };
 }
@@ -193,32 +212,17 @@ export function buildPeriodMap(
   return buildPeriodChart(date, period, pillar, ju);
 }
 
-/**
- * Главные Врата / Главная звезда for an hour chart (метод literaqimen.ru):
- * 1) find the hour stem on the earth plate -> palace A (= 时干宫 = zhiFuPalace;
- *    already handles 甲 hiding via 旬首仪);
- * 2) read the stem standing above it (heaven plate at A) -> stem X;
- * 3) find X on the earth plate -> palace B (X is never 甲, so always found);
- * 4) the gate/star whose HOME palace is B are the Main Gate / Main Star.
- */
+/** Главные Врата и Главная звезда по формуле учебника. */
 export function mainGateStar(chart: Chart): {
   gate: string;
   star: string;
   palace: number;
 } {
-  const a = chart.zhiFuPalace;
-  const x = chart.cells[a]?.heavenStem;
-  let b = -1;
-  for (let p = 1; p <= 9; p++) {
-    if (chart.cells[p]?.earthStem === x) {
-      b = p;
-      break;
-    }
-  }
-  const home = b === 5 ? 2 : b; // 寄宫: center lodges with 坤2
-  const gate = DOORS.find((d) => d.palace === home)?.name ?? "";
-  const star = STARS.find((s) => s.palace === home)?.name ?? "";
-  return { gate, star, palace: home };
+  return {
+    gate: chart.zhiShiDoor,
+    star: chart.zhiFuStar,
+    palace: chart.zhiShiPalace,
+  };
 }
 
 export { STAR_ELEMENT, DOOR_ELEMENT, PALACES };
