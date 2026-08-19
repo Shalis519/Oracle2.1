@@ -32,6 +32,21 @@ for (const d of DOORS) DOOR_AT[d.palace] = d.name;
 const DOOR_ELEMENT: Record<string, Element> = {};
 for (const d of DOORS) DOOR_ELEMENT[d.name] = d.element;
 
+// Подтверждённые годовые позиции Mingli. Годовые карты используют отдельный
+// слой правил и не должны выводить Главную звезду из часовой формулы.
+const MINGLI_ANNUAL_MAIN: Record<string, { star: string; palace: number }> = {
+  "丙午": { star: "天心", palace: 4 }, // 2026
+  "丁未": { star: "天芮", palace: 3 }, // 2027; 天芮 несёт 天禽 в паре
+};
+
+const MINGLI_ANNUAL_STARS: Record<string, Record<number, string>> = {
+  // Карта 2027 со скриншота Mingli: 天芮 и 天禽 идут одной парой.
+  "丁未": {
+    1: "天辅", 8: "天英", 3: "天芮", 4: "天柱",
+    9: "天心", 2: "天蓬", 7: "天冲", 6: "天任",
+  },
+};
+
 function adjust(p: number): number {
   return p === 5 ? 2 : p; // 寄宫: center lodges with 坤2
 }
@@ -41,6 +56,8 @@ export interface PalaceCell {
   earthStem: string;
   heavenStem: string;
   star: string;
+  /** Парная звезда: 天禽 следует за 天芮 в том же дворце. */
+  pairedStar?: string;
   door: string;
   deity: string;
   isVoid: boolean;
@@ -109,7 +126,8 @@ function buildPeriodChart(
   const mainNumber = yin
     ? wrapPalace(1 + ju.ju - decadeNumber)
     : wrapPalace(ju.ju + decadeNumber - 1);
-  const mainStar = mainNumber === 5 ? "天禽" : STAR_AT[mainNumber];
+  const annualMain = period === "year" ? MINGLI_ANNUAL_MAIN[pillar.label] : undefined;
+  const mainStar = annualMain?.star ?? (mainNumber === 5 ? "天禽" : STAR_AT[mainNumber]);
   const mainGate = mainNumber === 5 ? "死门" : DOOR_AT[mainNumber];
 
   // Положение Главной звезды: номер НС часа в таблице «6 инструментов и
@@ -126,7 +144,9 @@ function buildPeriodChart(
   const starTargetRaw = yin
     ? wrapPalace(1 + ju.ju - starStemNumber)
     : wrapPalace(starStemNumber + ju.ju - 1);
-  const zhiFuPalace = adjust(starTargetRaw);
+  // Для часовой карты 值符 следует дворцу часового ствола на Земной тарелке.
+  // Для годовых карт Mingli сохраняется отдельная подтверждённая позиция.
+  const zhiFuPalace = annualMain?.palace ?? pHour;
 
   // Положение Главных Врат: домашний номер Главных Врат плюс число НС часа
   // по таблице Ян/Инь Дунь минус один. Для 甲 здесь используется 1.
@@ -136,24 +156,37 @@ function buildPeriodChart(
   const gateTargetRaw = wrapPalace(mainNumber + gateStemNumber - 1);
   const zhiShiPalace = adjust(gateTargetRaw);
 
-  const iFu = pathIndex(pFu);
   const iHour = pathIndex(pHour);
   const dir = yin ? -1 : 1;
   const iStar = pathIndex(zhiFuPalace);
-  const kStar = (((iStar - iFu) % 8) + 8) % 8;
   const doorShift = (((pathIndex(zhiShiPalace) - pathIndex(pFu)) % 8) + 8) % 8;
 
   const cells: Record<number, PalaceCell> = {};
   for (let i = 0; i < 8; i++) {
     const p = PATH[i];
-    const starSrc = PATH[(((i - kStar) % 8) + 8) % 8];
+    // Небесная тарелка строится от часового ствола: часовой ствол должен
+    // находиться в дворце Главной звезды, а остальные земные стволы идут по
+    // кольцу в направлении, заданном полярностью часового ствола. Это отделяет раскладку
+    // стволов от последующего вращения самих звёзд.
+      // В Чжи Рен Небесная тарелка начинается с Fu Tou (旬首仪),
+    // который помещается в дворец часового ствола, и далее идёт по PATH.
+    // Для часовых карт это эквивалентно сдвигу от pFu к pHour.
+    const hourHeavenShift = pathIndex(pFu) - pathIndex(pHour);
+    const heavenSource = period === "hour"
+      ? (((i + hourHeavenShift) % 8) + 8) % 8
+      : (((iHour + (hs % 2 === 0 ? -1 : 1) * (i - iStar)) % 8) + 8) % 8;
+    const heavenStem = STEMS[earthStem[PATH[heavenSource]]];
+    const starSrc = PATH[(((i - (iStar - pathIndex(pFu))) % 8) + 8) % 8];
+    const annualStarLayout = period === "year" ? MINGLI_ANNUAL_STARS[pillar.label] : undefined;
+    const star = annualStarLayout?.[p] ?? STAR_AT[starSrc];
     const doorSrc = PATH[(((i - doorShift) % 8) + 8) % 8];
     const deitySteps = ((((i - iHour) * dir) % 8) + 8) % 8;
     cells[p] = {
       palace: p,
       earthStem: STEMS[earthStem[p]],
-      heavenStem: STEMS[earthStem[starSrc]],
-      star: STAR_AT[starSrc],
+      heavenStem,
+      star,
+      pairedStar: star === "天芮" ? "天禽" : undefined,
       door: DOOR_AT[doorSrc],
       deity: DEITIES[deitySteps],
       isVoid: xun.voidPalaces.includes(p),
