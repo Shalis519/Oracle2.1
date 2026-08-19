@@ -65,8 +65,8 @@ function parentHouse(row: MoneyStudioRow): number | null {
 }
 
 function sectionOrder(row: MoneyStudioRow): number {
-  if (row.context.startsWith("ruler-house-")) return 0;
-  if (row.context === "house") return 1;
+  if (row.context === "house") return 0;
+  if (row.context.startsWith("ruler-house-")) return 1;
   if (row.context === "house-sign") return 2;
   if (row.context === "planet-house") return 3;
   return 9;
