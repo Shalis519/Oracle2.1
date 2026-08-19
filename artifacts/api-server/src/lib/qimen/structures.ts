@@ -87,7 +87,9 @@ export function detectThreeGenerals(date: Date, hourBranch: number): GeneralsHit
 }
 
 // --- "Нефритовая Дева" (玉女守门) -------------------------------------------
-// Universal (hour-chart only). Signal stem 丁 (Огонь Инь); Мистики = 乙丙丁.
+// Universal structure evaluated only on hourly charts. When a birth year is supplied,
+// the public scan applies the day-vs-birth-year clash prohibition before publishing hits.
+// Signal stem 丁 (Огонь Инь); Мистики = 乙丙丁.
 // Variants (per structure palace p), following the four-row one-page scheme:
 //   1: H=丁 & E=丁 & door = Главные Врата (самый сильный)
 //   2: H=丁 & E=丁 (без учёта Главных Врат)

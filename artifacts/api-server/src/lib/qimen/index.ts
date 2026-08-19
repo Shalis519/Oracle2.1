@@ -141,6 +141,10 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     date.setDate(mStart.getDate() + d);
     const day = dayInfo(date);
     const dayGz = STEMS[day.stem] + BRANCHES[day.branch];
+    // Для прогулки действует запрет личного столкновения: если ветвь дня
+    // конфликтует с ветвью года рождения, Нефритовую Деву не публикуем.
+    // Например, день Тигра исключает рождённых в год Обезьяны.
+    if (hasBirthDate && clashesBranch(yearBranch, day.branch)) continue;
     for (const h of CHRONOLOGICAL_HOUR_BRANCHES) {
       for (const hit of detectJadeMaiden(date, h)) {
         jadeMaidens.push({
