@@ -17,15 +17,11 @@ import {
   CHRONOLOGICAL_HOUR_BRANCHES,
   BRANCHES,
   STEMS,
-  XUN_YI_STEM,
   parseGanZhi,
 } from "./constants";
 import { buildChart, buildPeriodMap } from "./chart";
 import { dayJoeyYapJuForDate, juForDate } from "./ju";
 import { dateToIso } from "./calendar";
-
-// 旬首仪 stem (戊己庚辛壬癸) for a sexagenary index 0..59.
-const yiStemOf = (index: number): number => XUN_YI_STEM[Math.floor(index / 10)];
 
 // Full Russian direction per palace — nominative ("Восток") and prepositional
 // ("на Востоке"). Center (5) never occurs here (always 寄 to 2).
@@ -82,8 +78,9 @@ function yearNumberFor(date: Date, yearIndex: number): number {
 /**
  * Метод: годовой слой QMDJ проекта, солнечный год от 立春.
  * Годовой Джи Фу — годовая карта использует только Иньский Дунь.
- * Один Юань = 60 солнечных лет; стартовые дворцы: верхний 1, средний 4,
- * нижний 7. Цикл привязан к солнечному году от 立春, а не к календарному 1 января.
+ * Один Юань = 60 солнечных лет. Для годового слоя Mingli используем
+ * последовательность Инь 1 / Инь 7 / Инь 4, привязанную к солнечному году от
+ * 立春, а не к календарному 1 января.
  */
 export function yearJiFuPalace(date: Date): number {
   const { year } = pillarsOf(date);
@@ -92,13 +89,15 @@ export function yearJiFuPalace(date: Date): number {
     | 0
     | 1
     | 2;
-  const ju = [7, 1, 4][yuan]; // 1984-2043: 下元, 2044-2103: 上元, 2104-2163: 中元
+  const ju = [1, 7, 4][yuan]; // Эталон Mingli: 2026 попадает в Инь 1.
   return buildPeriodMap(
     date,
     "year",
     {
       stem: year.stem,
-      effectiveStem: yiStemOf(year.index),
+      // В годовой карте Mingli используется фактический годовой Драйвер,
+      // а не 旬首仪 часового слоя.
+      effectiveStem: year.stem,
       branch: year.branch,
       index: year.index,
       label: STEMS[year.stem] + BRANCHES[year.branch],
