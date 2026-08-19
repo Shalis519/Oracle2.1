@@ -172,9 +172,7 @@ function buildPeriodChart(
     // который помещается в дворец часового ствола, и далее идёт по PATH.
     // Для часовых карт это эквивалентно сдвигу от pFu к pHour.
     const hourHeavenShift = pathIndex(pFu) - pathIndex(pHour);
-    const heavenSource = period === "hour"
-      ? (((i + hourHeavenShift) % 8) + 8) % 8
-      : (((iHour + (hs % 2 === 0 ? -1 : 1) * (i - iStar)) % 8) + 8) % 8;
+    const heavenSource = (((i + hourHeavenShift) % 8) + 8) % 8;
     const heavenStem = STEMS[earthStem[PATH[heavenSource]]];
     const starSrc = PATH[(((i - (iStar - pathIndex(pFu))) % 8) + 8) % 8];
     const annualStarLayout = period === "year" ? MINGLI_ANNUAL_STARS[pillar.label] : undefined;
