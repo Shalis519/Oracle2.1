@@ -516,8 +516,8 @@ export default function QimenPage() {
         )}
       </section>
 
-      {/* Нефритовая Дева — отключено */}
-      {false && <section className="space-y-4">
+      {/* Нефритовая Дева: поиск выполняется только в часовых раскладах */}
+      <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Heart className="w-5 h-5 text-rose-300" />
           <h2 className="text-xl font-serif font-semibold">
@@ -545,6 +545,9 @@ export default function QimenPage() {
             </Dialog>
           </h2>
         </div>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Нефритовая Дева ищется только в часовых раскладах Ци Мэнь. Годовые, месячные и дневные карты в этот поиск не включаются.
+        </p>
 
         {jadeMaidens.length > 0 ? (
           <div className="space-y-3">
@@ -563,7 +566,7 @@ export default function QimenPage() {
             </CardContent>
           </Card>
         )}
-      </section>}
+      </section>
 
       {/* Девушка, открывающая дверь — отключено */}
       {false && <section className="space-y-4">
