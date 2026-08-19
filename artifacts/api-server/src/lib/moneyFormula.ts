@@ -34,7 +34,7 @@ const MONEY_HOUSES = [2, 5, 8, 11] as const;
 const HOUSE_ROMAN: Record<number, string> = { 2: "II", 5: "V", 8: "VIII", 11: "XI" };
 const RULER_BODIES: Record<string, string[]> = {
   aries: ["mars"], taurus: ["venus"], gemini: ["mercury"], cancer: ["moon"],
-  leo: ["sun"], virgo: ["mercury"], libra: ["venus"], scorpio: ["mars", "pluto"],
+  leo: ["sun"], virgo: ["mercury"], libra: ["venus"], scorpio: ["pluto"],
   sagittarius: ["jupiter"], capricorn: ["saturn"], aquarius: ["saturn", "uranus"],
   pisces: ["jupiter", "neptune"],
 };

@@ -32,6 +32,15 @@ describe("audit regressions", () => {
   });
 
 
+  it("uses Pluto as the sole ruler of Scorpio in the money formula", () => {
+    const moneyFormula = readFileSync(
+      resolve(process.cwd(), "src/lib/moneyFormula.ts"),
+      "utf8",
+    );
+    expect(moneyFormula).toContain('scorpio: ["pluto"]');
+    expect(moneyFormula).not.toContain('scorpio: ["mars", "pluto"]');
+  });
+
   it("keeps the complete Money Houses Studio library", () => {
     expect(MONEY_STUDIO_SEEDS).toHaveLength(84);
     expect(
