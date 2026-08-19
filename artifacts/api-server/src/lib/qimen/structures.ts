@@ -141,9 +141,9 @@ export function detectJadeMaiden(date: Date, hourBranch: number): JadeMaidenHit[
     // 五黄: сектор с годовой звездой «Жёлтая Пятёрка» в Ци Мэнь не используется
     // (в 2026 году — юг); такие структуры исключаем.
     if (annualYellowFive(p, date)) continue;
-    // В формуле участвуют только Открытие, Жизнь, Пейзаж и Тайник.
+    // В формуле участвуют только Отдых, Открытие, Жизнь, Пейзаж и Тайник.
     // Врата Тайника допустимы с отдельной оговоркой для скрытых встреч.
-    const jadeMaidenDoors = new Set(["开门", "生门", "景门", "杜门"]);
+    const jadeMaidenDoors = new Set(["休门", "开门", "生门", "景门", "杜门"]);
     if (!jadeMaidenDoors.has(c.door)) continue;
     hits.push({ palace: p, variant, heavenStem: h, earthStem: e, door: c.door, isMainGate: isMain });
   }
