@@ -37,7 +37,7 @@ const renderMoneyParagraph = (paragraph: string) => {
   if (!match) return paragraph;
   return (
     <>
-      <strong className="font-semibold text-foreground">{match[1]}</strong>
+      <strong className="font-bold text-foreground">{match[1]}</strong>
       {match[2]}
     </>
   );
