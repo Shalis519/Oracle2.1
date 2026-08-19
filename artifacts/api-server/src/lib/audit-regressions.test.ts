@@ -95,6 +95,12 @@ describe("audit regressions", () => {
     expect(toGenitiveThemes("интуиция и эмоциональная безопасность")).toBe("интуиции и эмоциональной безопасности");
   });
 
+  it("removes the empty additional-associations section", () => {
+    expect(splitMoneyCardText("Медицина: сердце. Дополнительно впиши свои ассоциации: ____________________")).toEqual([
+      "Медицина: сердце.",
+    ]);
+  });
+
   it("splits money card sections into separate paragraphs", () => {
     const paragraphs = splitMoneyCardText("Профессии: преподаватель. Территория: около театров. Услуги: подарки. Медицина: сердце. Денежный период: июль-август.");
     expect(paragraphs).toEqual([
