@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { db, forecastTextTemplatesTable } from "@workspace/db";
 import { MONEY_STUDIO_SEEDS } from "./moneyStudioSeeds";
+import { LONG_TERM_TRANSIT_CARD_SEEDS } from "./longTermTransitCardSeeds";
 
 /**
  * Creates small runtime support tables that are not part of the deployment shell
@@ -319,6 +320,30 @@ export async function ensureForecastTemplateSeeds(): Promise<void> {
   await ensureApprovedForecastTemplateSeeds();
   await ensureAuthorTransitTemplateSeeds();
   await ensureMoneyStudioSeeds();
+  await ensureLongTermTransitCardSeeds();
+}
+
+async function ensureLongTermTransitCardSeeds(): Promise<void> {
+  for (const seed of LONG_TERM_TRANSIT_CARD_SEEDS) {
+    await db
+      .insert(forecastTextTemplatesTable)
+      .values({
+        category: "long_term_transit",
+        context: "major_aspect_exact",
+        key: seed.key,
+        title: seed.title,
+        text: seed.text,
+        sourceNote: seed.sourceNote,
+        isActive: true,
+      })
+      .onConflictDoNothing({
+        target: [
+          forecastTextTemplatesTable.category,
+          forecastTextTemplatesTable.context,
+          forecastTextTemplatesTable.key,
+        ],
+      });
+  }
 }
 
 async function ensureMoneyStudioSeeds(): Promise<void> {

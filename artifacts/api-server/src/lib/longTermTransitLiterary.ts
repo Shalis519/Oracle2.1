@@ -118,15 +118,23 @@ export async function renderLongTermTransit(
     return null;
   const rows = await loadRows();
   const key = `${transitBodyKey}:${aspectKey}:${natalBodyKey}`;
-  const row = rows.find(
+  const exactKey = `${key}:transitHouse:${transitHouse}:natalHouse:${natalHouse}`;
+  const usable = (item: TransitTemplateRow | undefined) => Boolean(
+    item?.isActive && item.text.trim() && item.text.trim() !== "В разработке",
+  );
+  const exactRow = rows.find(
     (item) =>
-      item.isActive &&
+      item.category === "long_term_transit" &&
+      item.context === "major_aspect_exact" &&
+      item.key === exactKey,
+  );
+  const genericRow = rows.find(
+    (item) =>
       item.category === "long_term_transit" &&
       item.context === "major_aspect" &&
-      item.key === key &&
-      item.text.trim() &&
-      item.text.trim() !== "В разработке",
+      item.key === key,
   );
+  const row = usable(exactRow) ? exactRow : usable(genericRow) ? genericRow : undefined;
   if (!row) return `${technicalLine}\n\nВ разработке`;
   const transitHouseThemes = rows.find(
     (item) => item.category === "house" && item.context === "transit" && item.key === transitHouse,
@@ -134,7 +142,7 @@ export async function renderLongTermTransit(
   const natalHouseThemes = rows.find(
     (item) => item.category === "house" && item.context === "natal" && item.key === natalHouse,
   )?.text?.trim() ?? "";
-  const rendered = renderTemplate(row.text, {
+  const renderedTemplate = renderTemplate(row.text, {
     technicalLine,
     startDate: displayDate(startDate),
     endDate: displayDate(endDate),
@@ -144,5 +152,8 @@ export async function renderLongTermTransit(
     natalHouseThemes,
     aspectName: ASPECT_KEYS[aspectKey],
   });
+  const rendered = row.text.includes("{technicalLine}")
+    ? renderedTemplate
+    : `${technicalLine}\n\n${renderedTemplate}`;
   return hasUnresolvedTokens(rendered) ? `${technicalLine}\n\nВ разработке` : rendered.trim();
 }

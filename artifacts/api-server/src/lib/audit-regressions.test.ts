@@ -82,6 +82,25 @@ describe("audit regressions", () => {
     expect(houseSeeds.get("house:8")).toContain("Все кризисные ситуации");
   });
 
+  it("keeps the imported long-term transit card library and exact-house priority", () => {
+    const transitSeeds = readFileSync(
+      resolve(process.cwd(), "src/lib/longTermTransitCardSeeds.ts"),
+      "utf8",
+    );
+    const literary = readFileSync(
+      resolve(process.cwd(), "src/lib/longTermTransitLiterary.ts"),
+      "utf8",
+    );
+    const runtimeSchema = readFileSync(
+      resolve(process.cwd(), "src/lib/runtimeSchema.ts"),
+      "utf8",
+    );
+    expect((transitSeeds.match(/sourceNote: "Авторская база для карточек\.docx"/g) ?? [])).toHaveLength(21);
+    expect(literary).toContain('context === "major_aspect_exact"');
+    expect(literary).toContain("const row = usable(exactRow) ? exactRow : usable(genericRow) ? genericRow : undefined;");
+    expect(runtimeSchema).toContain("await ensureLongTermTransitCardSeeds();");
+  });
+
   it("keeps the complete Money Houses Studio library", () => {
     expect(MONEY_STUDIO_SEEDS).toHaveLength(84);
     expect(
