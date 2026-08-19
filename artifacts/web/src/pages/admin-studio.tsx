@@ -2296,18 +2296,20 @@ export default function AdminStudioPage() {
               <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
                 Каждый шаблон имеет контекст: транзитная или натальная сущность, аспект или дом. Пустые записи показываются как «В разработке» и не перезаписывают Ваши изменения.
               </div>
-              <div className="flex flex-wrap gap-2">
-                {([
-                  ["all", "Все шаблоны"],
-                  ["daily", "Ежедневный синтез"],
-                  ["progressions", "Прогрессии"],
-                  ["directions", "Дирекции"],
-                  ["transits", "Транзиты"],
-                  ["lunations", "Лунации"],
-                ] as const).map(([value, label]) => (
-                  <Button key={value} size="sm" variant={forecastTemplateFilter === value ? "default" : "outline"} onClick={() => setForecastTemplateFilter(value)}>{label}</Button>
-                ))}
-              </div>
+              {forecastTemplateFilter !== "money" && (
+                <div className="flex flex-wrap gap-2">
+                  {([
+                    ["all", "Все шаблоны"],
+                    ["daily", "Ежедневный синтез"],
+                    ["progressions", "Прогрессии"],
+                    ["directions", "Дирекции"],
+                    ["transits", "Транзиты"],
+                    ["lunations", "Лунации"],
+                  ] as const).map(([value, label]) => (
+                    <Button key={value} size="sm" variant={forecastTemplateFilter === value ? "default" : "outline"} onClick={() => setForecastTemplateFilter(value)}>{label}</Button>
+                  ))}
+                </div>
+              )}
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm text-muted-foreground">Показано шаблонов: {forecastTemplates.filter((item) => forecastTemplateMatches(item, forecastTemplateFilter)).length}</p>
                 <Button onClick={() => { const moneyMode = forecastTemplateFilter === "money"; setEditingForecastTemplate(null); setForecastTemplateForm({ category: moneyMode ? "money" : "entity", context: moneyMode ? "house" : "transit", key: moneyMode ? "house:2" : "mercury", title: moneyMode ? "Новая карточка денежной формулы" : "Новый шаблон", text: "В разработке", sourceNote: moneyMode ? "Источник: ДЕНЬГИВНАТАЛЬНОЙКАРТЕ(2).pdf" : "", isActive: true }); setForecastTemplateEditorOpen(true); }}><Plus className="w-4 h-4 mr-2" />Добавить шаблон</Button>
