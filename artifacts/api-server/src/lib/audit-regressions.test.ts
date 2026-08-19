@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { parseNatalChartInput } from "./birthInput";
 import { MONEY_STUDIO_SEEDS } from "./moneyStudioSeeds";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 
 const validBirth = {
   birthDate: "1980-02-05",
@@ -34,5 +36,16 @@ describe("audit regressions", () => {
       new Set(MONEY_STUDIO_SEEDS.map((seed) => `${seed.category}:${seed.context}:${seed.key}`)).size,
     ).toBe(84);
     expect(MONEY_STUDIO_SEEDS.every((seed) => seed.sourceNote.includes("ДЕНЬГИВНАТАЛЬНОЙКАРТЕ"))).toBe(true);
+  });
+
+  it("keeps the daily Sun-opposition-Mercury Studio components seeded", () => {
+    const runtimeSchema = readFileSync(
+      resolve(process.cwd(), "src/lib/runtimeSchema.ts"),
+      "utf8",
+    );
+    expect(runtimeSchema).toContain("('entity', 'transit', 'sun'");
+    expect(runtimeSchema).toContain("('entity', 'natal', 'mercury'");
+    expect(runtimeSchema).toContain("('aspect', 'opposition', 'default'");
+    expect(runtimeSchema).toContain("'composition',\n      'opposition'");
   });
 });
