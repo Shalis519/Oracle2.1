@@ -330,10 +330,31 @@ router.post("/connections", requireAuth, async (req, res): Promise<void> => {
     return;
   }
 
+  const [contactId1, contactId2] = [
+    parsed.data.contactId1,
+    parsed.data.contactId2,
+  ].sort((a, b) => a - b);
+
   const [row] = await db
     .insert(familyConnectionsTable)
-    .values({ ...parsed.data, userId: req.localUser!.id })
+    .values({
+      userId: req.localUser!.id,
+      contactId1,
+      contactId2,
+      connectionType: parsed.data.connectionType,
+    })
+    .onConflictDoNothing({
+      target: [
+        familyConnectionsTable.userId,
+        familyConnectionsTable.contactId1,
+        familyConnectionsTable.contactId2,
+      ],
+    })
     .returning();
+  if (!row) {
+    res.status(409).json({ error: "Такая родственная связь уже существует." });
+    return;
+  }
   res
     .status(201)
     .json(CreateFamilyConnectionResponse.parse(serializeConnection(row)));
