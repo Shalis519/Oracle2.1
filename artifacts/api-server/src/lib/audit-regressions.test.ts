@@ -39,6 +39,10 @@ describe("audit regressions", () => {
     );
     expect(moneyFormula).toContain('scorpio: ["pluto"]');
     expect(moneyFormula).not.toContain('scorpio: ["mars", "pluto"]');
+    expect(moneyFormula).toContain('aquarius: ["uranus"]');
+    expect(moneyFormula).not.toContain('aquarius: ["saturn", "uranus"]');
+    expect(moneyFormula).toContain('pisces: ["neptune"]');
+    expect(moneyFormula).not.toContain('pisces: ["jupiter", "neptune"]');
   });
 
   it("puts the base house card before ruler cards inside each money house", () => {

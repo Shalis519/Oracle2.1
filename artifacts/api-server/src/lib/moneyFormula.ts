@@ -36,8 +36,8 @@ const ROMAN_HOUSE: Record<string, number> = { II: 2, V: 5, VIII: 8, XI: 11 };
 const RULER_BODIES: Record<string, string[]> = {
   aries: ["mars"], taurus: ["venus"], gemini: ["mercury"], cancer: ["moon"],
   leo: ["sun"], virgo: ["mercury"], libra: ["venus"], scorpio: ["pluto"],
-  sagittarius: ["jupiter"], capricorn: ["saturn"], aquarius: ["saturn", "uranus"],
-  pisces: ["jupiter", "neptune"],
+  sagittarius: ["jupiter"], capricorn: ["saturn"], aquarius: ["uranus"],
+  pisces: ["neptune"],
 };
 
 function houseSign(chart: NatalChart, house: number): string | undefined {
