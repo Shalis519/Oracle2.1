@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildChart, buildPeriodMap, mainGateStar } from "./qimen/chart";
 import { Solar } from "lunar-typescript";
 import { parseGanZhi, STEMS, BRANCHES } from "./qimen/constants";
+import { jadeMaidenVariant } from "./qimen/structures";
 
 function chart(year: number, month: number, day: number, hourBranch: number) {
   return buildChart(new Date(year, month - 1, day, 12, 0, 0), hourBranch);
@@ -35,6 +36,16 @@ describe("Главная звезда и Главные Врата по учеб
       label: STEMS[year.stem] + BRANCHES[year.branch],
     }, { yin: true, ju: 1, term: "年家 Mingli", yuan: 0 });
     expect(mainGateStar(built)).toEqual({ gate: "开门", star: "天心", palace: 4 });
+  });
+
+  it("classifies all four Jade Maiden variants from the one-page scheme", () => {
+    expect(jadeMaidenVariant("丁", "丁", true)).toBe(1);
+    expect(jadeMaidenVariant("丁", "丁", false)).toBe(2);
+    expect(jadeMaidenVariant("丁", "戊", true)).toBe(3);
+    expect(jadeMaidenVariant("丁", "乙", true)).toBe(3);
+    expect(jadeMaidenVariant("戊", "丁", true)).toBe(4);
+    expect(jadeMaidenVariant("丙", "丁", true)).toBe(4);
+    expect(jadeMaidenVariant("丁", "己", true)).toBe(0);
   });
 
   it("matches the book examples with the center main star 28.01.2022", () => {

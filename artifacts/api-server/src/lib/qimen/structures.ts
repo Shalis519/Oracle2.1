@@ -88,11 +88,13 @@ export function detectThreeGenerals(date: Date, hourBranch: number): GeneralsHit
 
 // --- "Нефритовая Дева" (玉女守门) -------------------------------------------
 // Universal (hour-chart only). Signal stem 丁 (Огонь Инь); Мистики = 乙丙丁.
-// Variants (per structure palace p): H = heaven plate, E = earth plate,
+// Variants (per structure palace p), following the four-row one-page scheme:
 //   1: H=丁 & E=丁 & door = Главные Врата (самый сильный)
 //   2: H=丁 & E=丁 (без учёта Главных Врат)
-//   3: H=丁 & E∈{乙,丙} & door = Главные Врата
-//   4: H∈{乙,丙} & E=丁 & door = Главные Врата
+//   3: H=丁 & E=янский ствол или 三奇 & door = Главные Врата
+//   4: H=янский ствол или 三奇 & E=丁 & door = Главные Врата
+// 三奇 (Три Мистика) are 乙/丙/丁. 戊 is 六仪, but is included in the
+// positive/yang stem set for rows 3–4, as shown by the one-page scheme.
 export interface JadeMaidenHit {
   palace: number;
   variant: number;
@@ -100,6 +102,18 @@ export interface JadeMaidenHit {
   earthStem: string;
   door: string;
   isMainGate: boolean;
+}
+
+/** Classifies the four rows from the one-page Jade Maiden scheme. */
+export function jadeMaidenVariant(heavenStem: string, earthStem: string, isMainGate: boolean): number {
+  // 三奇 (乙/丙/丁) are Mystics. 戊/庚/壬 are yang stems and are accepted by
+  // the one-page scheme as a positive element; 戊 itself is not a Mystic.
+  const positiveOrMystic = (x: string) =>
+    ["乙", "丙", "丁", "戊", "庚", "壬"].includes(x);
+  if (heavenStem === "丁" && earthStem === "丁") return isMainGate ? 1 : 2;
+  if (heavenStem === "丁" && positiveOrMystic(earthStem) && isMainGate) return 3;
+  if (positiveOrMystic(heavenStem) && earthStem === "丁" && isMainGate) return 4;
+  return 0;
 }
 
 // Годовая летящая звезда сектора === 5 (五黄 «Жёлтая Пятёрка»): в Ци Мэнь такой
@@ -120,13 +134,7 @@ export function detectJadeMaiden(date: Date, hourBranch: number): JadeMaidenHit[
     const h = c.heavenStem;
     const e = c.earthStem;
     const isMain = main.gate !== "" && c.door === main.gate;
-    // "Позитивный элемент или Мистик" в паре с 丁 = второй Мистик (乙/丙): они же
-    // и поддерживающие Огонь стихии (Дерево рождает Огонь, Огонь усиливает Огонь).
-    const otherMystic = (x: string) => MYSTICS.has(x) && x !== "丁";
-    let variant = 0;
-    if (h === "丁" && e === "丁") variant = isMain ? 1 : 2;
-    else if (h === "丁" && otherMystic(e) && isMain) variant = 3;
-    else if (otherMystic(h) && e === "丁" && isMain) variant = 4;
+    const variant = jadeMaidenVariant(h, e, isMain);
     if (!variant) continue;
     // 五黄: сектор с годовой звездой «Жёлтая Пятёрка» в Ци Мэнь не используется
     // (в 2026 году — юг); такие структуры исключаем.
