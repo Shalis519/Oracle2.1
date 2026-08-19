@@ -55,7 +55,8 @@ describe("audit regressions", () => {
       resolve(process.cwd(), "src/lib/moneyFormula.ts"),
       "utf8",
     );
-    expect(moneyFormula).toContain("return [`${row.title}:\\n\\n");
+    expect(moneyFormula).toContain("return [`${row.title}:\\n");
+    expect(moneyFormula).not.toContain("return [`${row.title}:\\n\\n");
   });
 
   it("groups ruler cards under their corresponding money house", () => {
@@ -66,7 +67,7 @@ describe("audit regressions", () => {
     expect(moneyFormula).toContain("const sections = MONEY_HOUSES.flatMap((house)");
     expect(moneyFormula).toContain(".filter((row) => parentHouse(row) === house)");
     expect(moneyFormula).toContain("ROMAN_HOUSE[rulerMatch[1]]");
-    expect(moneyFormula).toContain('textParagraphs.join("\\n\\n")');
+    expect(moneyFormula).toContain('textParagraphs.join("\\n")');
   });
 
   it("keeps the complete Money Houses Studio library", () => {

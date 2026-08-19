@@ -121,7 +121,7 @@ export async function computeMoneyFormula(chart: NatalChart): Promise<MoneyFormu
     const paragraphs = group.flatMap((row) => {
       const textParagraphs = splitMoneyCardText(row.text);
       if (row === base) return textParagraphs;
-      return [`${row.title}:\n\n${textParagraphs.join("\n\n")}`];
+      return [`${row.title}:\n${textParagraphs.join("\n")}`];
     });
 
     return [{
