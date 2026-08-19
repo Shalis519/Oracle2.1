@@ -16,7 +16,7 @@ import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
 
 export type { JiFuWish } from "./jifu";
 
-const MAIDEN_DAYS = 7;
+const MAIDEN_DAYS = 1;
 
 const STRUCTURE_NAME = "Три Генерала";
 const STRUCTURE_GOAL = "Деньги, доход, материальное благополучие";
