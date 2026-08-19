@@ -4,6 +4,7 @@ import { MONEY_STUDIO_SEEDS } from "./moneyStudioSeeds";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { buildTransitOpening, toGenitiveThemes } from "./forecastLanguage";
+import { splitMoneyCardText } from "./moneyTextFormatting";
 
 const validBirth = {
   birthDate: "1980-02-05",
@@ -72,6 +73,17 @@ describe("audit regressions", () => {
   it("declines sign themes after the word `тем`", () => {
     expect(toGenitiveThemes("самовыражение, творчество и сила воли")).toBe("самовыражения, творчества и силы воли");
     expect(toGenitiveThemes("интуиция и эмоциональная безопасность")).toBe("интуиции и эмоциональной безопасности");
+  });
+
+  it("splits money card sections into separate paragraphs", () => {
+    const paragraphs = splitMoneyCardText("Профессии: преподаватель. Территория: около театров. Услуги: подарки. Медицина: сердце. Денежный период: июль-август.");
+    expect(paragraphs).toEqual([
+      "Профессии: преподаватель.",
+      "Территория: около театров.",
+      "Услуги: подарки.",
+      "Медицина: сердце.",
+      "Денежный период: июль-август.",
+    ]);
   });
 
   it("keeps the daily Sun-opposition-Mercury Studio components seeded", () => {

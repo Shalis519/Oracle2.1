@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db, forecastTextTemplatesTable } from "@workspace/db";
 import type { NatalChart } from "./astrology";
 import { ensureForecastTemplateSeeds } from "./runtimeSchema";
+import { splitMoneyCardText } from "./moneyTextFormatting";
 
 export type MoneySection = {
   key: string;
@@ -101,7 +102,7 @@ export async function computeMoneyFormula(chart: NatalChart): Promise<MoneyFormu
     .map((row) => ({
       key: row.key,
       title: row.title,
-      paragraphs: row.text.split(/\n\s*\n|\n/).map((text) => text.trim()).filter(Boolean),
+      paragraphs: splitMoneyCardText(row.text),
     }));
 
   return {
