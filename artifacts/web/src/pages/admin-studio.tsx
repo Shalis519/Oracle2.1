@@ -30,6 +30,7 @@ import {
   BookOpen,
   ArrowLeft,
   BrainCircuit,
+  Coins,
   Sparkles,
   Link2,
   XCircle,
@@ -1009,7 +1010,7 @@ export default function AdminStudioPage() {
   const [forecastTemplatesSaving, setForecastTemplatesSaving] = useState(false);
   const [editingForecastTemplate, setEditingForecastTemplate] = useState<ForecastTextTemplate | null>(null);
   const [forecastTemplateEditorOpen, setForecastTemplateEditorOpen] = useState(false);
-  const [forecastTemplateFilter, setForecastTemplateFilter] = useState<"all" | "daily" | "progressions" | "directions" | "transits" | "lunations">("all");
+  const [forecastTemplateFilter, setForecastTemplateFilter] = useState<"all" | "daily" | "progressions" | "directions" | "transits" | "lunations" | "money">("all");
   const [forecastTemplateForm, setForecastTemplateForm] = useState({ category: "entity", context: "transit", key: "mercury", title: "Меркурий в транзитном контексте", text: "В разработке", sourceNote: "", isActive: true });
   const [longTermForecasts, setLongTermForecasts] = useState<LongTermForecast[]>([]);
   const [longTermContacts, setLongTermContacts] = useState<LongTermContact[]>([]);
@@ -1359,9 +1360,10 @@ export default function AdminStudioPage() {
     const res = await apiFetch(`/admin/forecast-text-templates/${id}`, { method: "DELETE" });
     if (res.ok) { await loadForecastTemplates(); toast({ title: "Шаблон прогноза удалён" }); }
   };
-  const forecastCategoryLabel = (category: string) => ({ entity: "Сущность", aspect: "Аспект", house: "Дом", composition: "Сборка", progression: "Прогрессии", progression_ingress_house: "Прогрессии: ингрессии", long_term_transit: "Транзиты", solar_arc: "Дирекции", lunation: "Лунации", progression_lunation: "Лунации" } as Record<string, string>)[category] ?? category;
+  const forecastCategoryLabel = (category: string) => ({ entity: "Сущность", aspect: "Аспект", house: "Дом", composition: "Сборка", progression: "Прогрессии", progression_ingress_house: "Прогрессии: ингрессии", long_term_transit: "Транзиты", solar_arc: "Дирекции", lunation: "Лунации", progression_lunation: "Лунации", money: "Денежная формула" } as Record<string, string>)[category] ?? category;
   const forecastContextLabel = (context: string) => ({ transit: "Транзит", natal: "Натал", square: "Квадрат", trine: "Тригон", opposition: "Оппозиция", conjunction: "Соединение", ingress_house_cusp: "Куспид дома", moon_sign: "Луна в знаке", major_aspect: "Мажорный аспект" } as Record<string, string>)[context] ?? context;
   const forecastTemplateMatches = (item: ForecastTextTemplate, filter: typeof forecastTemplateFilter) => {
+    if (filter === "money") return item.category === "money";
     if (filter === "all") return true;
     if (filter === "daily") return ["entity", "aspect", "house", "composition"].includes(item.category);
     if (filter === "progressions") return item.category.startsWith("progression");
@@ -1808,7 +1810,8 @@ export default function AdminStudioPage() {
           <TabsTrigger value="cinderella" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><Sparkles className="w-4 h-4 mr-2" />Врата Золушки</TabsTrigger>
           <TabsTrigger value="synastry" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><Link2 className="w-4 h-4 mr-2" />Общая синастрия</TabsTrigger>
           <TabsTrigger value="lunar" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><span className="mr-2">☾</span>Лунар</TabsTrigger>
-          <TabsTrigger value="forecastTemplates" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><BrainCircuit className="w-4 h-4 mr-2" />Шаблоны прогноза</TabsTrigger>
+          <TabsTrigger value="forecastTemplates" onClick={() => setForecastTemplateFilter("all")} className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><BrainCircuit className="w-4 h-4 mr-2" />Шаблоны прогноза</TabsTrigger>
+          <TabsTrigger value="money" onClick={() => setForecastTemplateFilter("money")} className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><Coins className="w-4 h-4 mr-2" />Денежная формула</TabsTrigger>
           <TabsTrigger value="longTerm" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><RefreshCw className="w-4 h-4 mr-2" />Долгосрочный прогноз</TabsTrigger>
         </TabsList>
 
@@ -2283,11 +2286,11 @@ export default function AdminStudioPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="forecastTemplates" className="space-y-6">
+        <TabsContent value={tab === "money" ? "money" : "forecastTemplates"} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Литературные шаблоны прогноза</CardTitle>
-              <p className="text-sm text-muted-foreground">Здесь хранятся готовые смысловые фрагменты для сборки прогноза. Веса и выбор факторов остаются в онтологии, а эти тексты отвечают за связное изложение.</p>
+              <CardTitle>{forecastTemplateFilter === "money" ? "Карточки денежной формулы" : "Литературные шаблоны прогноза"}</CardTitle>
+              <p className="text-sm text-muted-foreground">{forecastTemplateFilter === "money" ? "Здесь находятся 84 утверждённые карточки из файла «Деньги в натальной карте». Их можно просматривать и редактировать без изменения самой формулы расчёта." : "Здесь хранятся готовые смысловые фрагменты для сборки прогноза. Веса и выбор факторов остаются в онтологии, а эти тексты отвечают за связное изложение."}</p>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
@@ -2307,7 +2310,7 @@ export default function AdminStudioPage() {
               </div>
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm text-muted-foreground">Показано шаблонов: {forecastTemplates.filter((item) => forecastTemplateMatches(item, forecastTemplateFilter)).length}</p>
-                <Button onClick={() => { setEditingForecastTemplate(null); setForecastTemplateForm({ category: "entity", context: "transit", key: "mercury", title: "Новый шаблон", text: "В разработке", sourceNote: "", isActive: true }); setForecastTemplateEditorOpen(true); }}><Plus className="w-4 h-4 mr-2" />Добавить шаблон</Button>
+                <Button onClick={() => { const moneyMode = forecastTemplateFilter === "money"; setEditingForecastTemplate(null); setForecastTemplateForm({ category: moneyMode ? "money" : "entity", context: moneyMode ? "house" : "transit", key: moneyMode ? "house:2" : "mercury", title: moneyMode ? "Новая карточка денежной формулы" : "Новый шаблон", text: "В разработке", sourceNote: moneyMode ? "Источник: ДЕНЬГИВНАТАЛЬНОЙКАРТЕ(2).pdf" : "", isActive: true }); setForecastTemplateEditorOpen(true); }}><Plus className="w-4 h-4 mr-2" />Добавить шаблон</Button>
               </div>
               {forecastTemplatesLoading ? <p className="text-sm text-muted-foreground">Загрузка...</p> : forecastTemplates.filter((item) => forecastTemplateMatches(item, forecastTemplateFilter)).length === 0 ? <p className="text-sm text-muted-foreground">В этой категории шаблонов пока нет.</p> : (
                 <div className="space-y-3">
