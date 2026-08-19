@@ -56,7 +56,7 @@ const WALK_RULES: string[] = [
 const JIFU_INTRO: string[] = [
   "Дух/Божество Джи Фу - приносит Счастье и Удачу во всех сферах жизни, устраняет негатив, помогает в любых, даже в самых сложных, ситуациях.",
   "Божество особенно благоприятно если нужно достичь цели быстро и без проблем.",
-  "Если Вы не знаете, к какому из Божеств Вам обратиться, тогда смело обращайтесь к Главному Духу — ДЖИ ФУ",
+  "Если Вы не знаете, к какому из Божеств Вам обратиться, тогда смело обращайтесь к Главному Духу, ДЖИ ФУ",
   "Обращаемся если нужна срочная помощь в какой-то определенной сфере:",
 ];
 
@@ -430,7 +430,7 @@ export default function QimenPage() {
             </h1>
             <p className="text-sm text-muted-foreground">
               Индивидуальные структуры по благоприятным направлениям и часам
-              {data?.birthYearAnimal ? ` (год — ${data.birthYearAnimal})` : ""}.
+              {data?.birthYearAnimal ? ` (год ${data.birthYearAnimal})` : ""}.
             </p>
           </div>
           <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
@@ -457,7 +457,7 @@ export default function QimenPage() {
         </div>
       </motion.div>
 
-      {/* Исполнение желаний с Джи Фу — универсально, без привязки к дате рождения */}
+      {/* Исполнение желаний с Джи Фу, универсально, без привязки к дате рождения */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-amber-300" />
@@ -564,7 +564,7 @@ export default function QimenPage() {
         )}
       </section>
 
-      {/* Девушка, открывающая дверь — отключено */}
+      {/* Девушка, открывающая дверь, отключено */}
       {false && <section className="space-y-4">
         <div className="flex items-center gap-2">
           <DoorOpen className="w-5 h-5 text-sky-300" />
@@ -621,7 +621,7 @@ export default function QimenPage() {
         )}
       </section>}
 
-      {/* Персональные структуры «Три Генерала» — требуют дату рождения */}
+      {/* Персональные структуры «Три Генерала», требуют дату рождения */}
       <section className="space-y-4">
         <h2 className="text-xl font-serif font-semibold">
           <Dialog open={genInfoOpen} onOpenChange={setGenInfoOpen}>
@@ -685,7 +685,7 @@ export default function QimenPage() {
           <Card className="bg-card/40 backdrop-blur-md">
             <CardContent className="py-10 text-center text-sm text-muted-foreground">
               На ближайшие {windowDays} {pluralDays(windowDays)} благоприятных
-              структур не найдено. Загляните позже — структуры появляются по
+              структур не найдено. Загляните позже, структуры появляются по
               благоприятным дням и часам.
             </CardContent>
           </Card>
