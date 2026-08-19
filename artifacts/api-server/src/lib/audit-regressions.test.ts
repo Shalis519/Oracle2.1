@@ -70,6 +70,12 @@ describe("audit regressions", () => {
     expect(moneyFormula).toContain('textParagraphs.join("\\n")');
   });
 
+  it("keeps the V house base description before ruler interpretation", () => {
+    const vHouse = MONEY_STUDIO_SEEDS.find((seed) => seed.context === "house" && seed.key === "house:5");
+    expect(vHouse?.text).toContain("дом радости планеты Венера");
+    expect(vHouse?.text).toContain("удача, везение, подарки, выигрыши, лотереи");
+  });
+
   it("keeps the complete Money Houses Studio library", () => {
     expect(MONEY_STUDIO_SEEDS).toHaveLength(84);
     expect(
