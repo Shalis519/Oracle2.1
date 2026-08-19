@@ -14,6 +14,7 @@ describe("Нефритовая Дева: запрет по столкновен�
     expect(withoutBirth.jadeMaidens.some((hit) => hit.date === "2026-08-20")).toBe(true);
     expect(monkeyBirth.jadeMaidens.some((hit) => hit.date === "2026-08-20")).toBe(false);
     expect(withoutBirth.jadeMaidens.every((hit) => hit.date === "2026-08-20")).toBe(true);
+    expect(withoutBirth.jadeMaidens.every((hit) => ["开门", "生门", "景门", "杜门"].includes(hit.door))).toBe(true);
     expect(monkeyBirth.jadeMaidens.every((hit) => hit.date === "2026-08-20")).toBe(true);
 
     const hourOrder = new Map([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0].map((branch, index) => [branch, index]));

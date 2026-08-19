@@ -325,6 +325,11 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
                 Главные Врата
               </span>
             ) : null}
+            {m.door === "杜门" ? (
+              <span className="rounded-full bg-rose-400/20 px-2 py-0.5 text-xs text-rose-100">
+                Подходит для скрытых встреч, когда важно остаться незамеченным
+              </span>
+            ) : null}
           </div>
         </CardContent>
       </Card>
