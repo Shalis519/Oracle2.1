@@ -199,4 +199,13 @@ describe("audit regressions", () => {
     expect(forecastRoute).toContain("CURRENT_FORECAST_VERSION = 62");
     expect(forecastRoute).toContain("serving stale prose");
   });
+
+  it("self-heals the daily forecast version column before forecast requests", () => {
+    const runtimeSchema = readFileSync(
+      resolve(process.cwd(), "src/lib/runtimeSchema.ts"),
+      "utf8",
+    );
+    expect(runtimeSchema).toContain("ALTER TABLE daily_forecasts");
+    expect(runtimeSchema).toContain("ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1");
+  });
 });

@@ -8,6 +8,13 @@ import { LONG_TERM_TRANSIT_CARD_SEEDS } from "./longTermTransitCardSeeds";
  * workflow. Every statement is idempotent and safe to run on every API start.
  */
 export async function ensureRuntimeSchema(): Promise<void> {
+  // Forecast versioning was introduced before every deployment environment
+  // consistently applied the Drizzle schema. Keep the API self-healing on
+  // Render, where the free plan does not provide a shell for drizzle-kit push.
+  await db.execute(sql`
+    ALTER TABLE daily_forecasts
+      ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1
+  `);
   await db.execute(sql`
     CREATE TABLE IF NOT EXISTS chat_read_state (
       id SERIAL PRIMARY KEY,
