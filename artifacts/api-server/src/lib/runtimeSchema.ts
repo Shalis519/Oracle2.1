@@ -15,6 +15,19 @@ export async function ensureRuntimeSchema(): Promise<void> {
     ALTER TABLE daily_forecasts
       ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1
   `);
+  // Older deployments can contain duplicate rows for the same user and date.
+  // Keep the newest row so PostgreSQL can safely create the conflict target.
+  await db.execute(sql`
+    DELETE FROM daily_forecasts older
+    USING daily_forecasts newer
+    WHERE older.user_id = newer.user_id
+      AND older.date = newer.date
+      AND older.id < newer.id
+  `);
+  await db.execute(sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS daily_forecasts_user_date_unique
+      ON daily_forecasts (user_id, date)
+  `);
   await db.execute(sql`
     CREATE TABLE IF NOT EXISTS chat_read_state (
       id SERIAL PRIMARY KEY,

@@ -207,5 +207,7 @@ describe("audit regressions", () => {
     );
     expect(runtimeSchema).toContain("ALTER TABLE daily_forecasts");
     expect(runtimeSchema).toContain("ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1");
+    expect(runtimeSchema).toContain("DELETE FROM daily_forecasts older");
+    expect(runtimeSchema).toContain("CREATE UNIQUE INDEX IF NOT EXISTS daily_forecasts_user_date_unique");
   });
 });
