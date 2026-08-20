@@ -357,8 +357,6 @@ export default function QimenPage() {
 
   const hasBirthDate = data?.hasBirthDate ?? false;
   const structures = data?.structures ?? [];
-  // Временная заглушка: расчёт «Три генерала» скрыт до уточнения правил.
-  const visibleStructures = structures.filter((s) => s.structure !== "three_generals");
   const jiFuWishes = data?.jiFuWishes ?? [];
   const jadeMaidens = data?.jadeMaidens ?? [];
   const windowDays = data?.windowDays ?? 14;
@@ -567,9 +565,9 @@ export default function QimenPage() {
               </Link>
             </CardContent>
           </Card>
-        ) : visibleStructures.length > 0 ? (
+        ) : structures.length > 0 ? (
           <div className="space-y-4">
-            {visibleStructures.map((s, i) => (
+            {structures.map((s, i) => (
               <StructureCard key={`${s.date}-${s.hourBranch}-${s.dom}-${i}`} s={s} />
             ))}
           </div>
