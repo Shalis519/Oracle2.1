@@ -45,14 +45,20 @@ describe("Нефритовая Дева: запрет по столкновен�
     expect(nonMonkeyBirth.structures.some((hit) => hit.date === "2026-08-20")).toBe(true);
   });
 
+  test("не публикует Три Генераала с Вратами Тайника или Пейзажа", () => {
+    const date = new Date(2026, 7, 20, 12, 0, 0);
+    const roosterHits = detectThreeGenerals(date, 9, false);
+    expect(roosterHits).toEqual([]);
+  });
+
   test("разделяет ранний и поздний час Крысы", () => {
     const date = new Date(2026, 7, 20, 12, 0, 0);
     expect(buildChart(date, 0, false).hourGz).toBe("戊子");
     expect(buildChart(date, 0, true).hourGz).toBe("庚子");
     expect(detectThreeGenerals(date, 0, false).map((hit) => hit.direction)).toEqual(["восток"]);
-    expect(detectThreeGenerals(date, 0, true).map((hit) => hit.direction)).toEqual(["запад"]);
+    expect(detectThreeGenerals(date, 0, true)).toEqual([]);
 
     const publicResult = computeQimenStructures({ from: date, days: 1, birthDate: "1981-06-01" });
-    expect(publicResult.structures.find((hit) => hit.hourLabel.startsWith("поздний час Крысы"))?.direction).toBe("запад");
+    expect(publicResult.structures.some((hit) => hit.hourLabel.startsWith("поздний час Крысы"))).toBe(false);
   });
 });
