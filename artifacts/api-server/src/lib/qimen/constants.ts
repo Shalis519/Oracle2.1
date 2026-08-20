@@ -29,6 +29,13 @@ export const BRANCH_HOUR_WINDOW = [
 // followed by the late-Zi interval that crosses midnight.
 export const CHRONOLOGICAL_HOUR_BRANCHES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0] as const;
 
+/** 13 chronological slots: early 子 and late 子 are separate charts. */
+export const CHRONOLOGICAL_HOUR_SLOTS = [
+  ...CHRONOLOGICAL_HOUR_BRANCHES.slice(0, 11).map((branch) => ({ branch, lateZi: false })),
+  { branch: 0, lateZi: false },
+  { branch: 0, lateZi: true },
+] as const;
+
 // Six clashes (六冲): branch index -> the branch it clashes with (opposite, +6).
 export function clashesBranch(a: number, b: number): boolean {
   return (a - b + 12) % 12 === 6;

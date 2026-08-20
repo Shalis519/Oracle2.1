@@ -3,7 +3,7 @@ import {
   BRANCH_ANIMAL_RU,
   BRANCH_ANIMAL_RU_GEN,
   BRANCH_HOUR_WINDOW,
-  CHRONOLOGICAL_HOUR_BRANCHES,
+  CHRONOLOGICAL_HOUR_SLOTS,
   BRANCHES,
   clashesBranch,
   PALACES,
@@ -114,8 +114,9 @@ function localCalendarNoon(timezone?: string | null, instant = new Date()): Date
   }
 }
 
-function hourLabel(hourBranch: number): string {
-  return `час ${BRANCH_ANIMAL_RU_GEN[hourBranch]} (${BRANCH_HOUR_WINDOW[hourBranch]})`;
+function hourLabel(hourBranch: number, lateZi = false): string {
+  const prefix = lateZi ? "поздний час" : "час";
+  return `${prefix} ${BRANCH_ANIMAL_RU_GEN[hourBranch]} (${BRANCH_HOUR_WINDOW[hourBranch]})`;
 }
 
 /**
@@ -145,13 +146,14 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     // конфликтует с ветвью года рождения, Нефритовую Деву не публикуем.
     // Например, день Тигра исключает рождённых в год Обезьяны.
     if (hasBirthDate && clashesBranch(yearBranch, day.branch)) continue;
-    for (const h of CHRONOLOGICAL_HOUR_BRANCHES) {
-      for (const hit of detectJadeMaiden(date, h)) {
+    for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+      const h = slot.branch;
+      for (const hit of detectJadeMaiden(date, h, slot.lateZi)) {
         jadeMaidens.push({
           date: day.iso,
           dayGanZhi: dayGz,
           hourBranch: h,
-          hourLabel: hourLabel(h),
+          hourLabel: hourLabel(h, slot.lateZi),
           direction: PALACES[hit.palace].dirFull,
           dir: PALACES[hit.palace].dir,
           dom: PALACES[hit.palace].dom,
@@ -164,12 +166,12 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           isMainGate: hit.isMainGate,
         });
       }
-      for (const hit of detectDoorMaiden(date, h)) {
+      for (const hit of detectDoorMaiden(date, h, slot.lateZi)) {
         doorMaidens.push({
           date: day.iso,
           dayGanZhi: dayGz,
           hourBranch: h,
-          hourLabel: hourLabel(h),
+          hourLabel: hourLabel(h, slot.lateZi),
           hourStem: hit.hourStem,
           hourStemName: STEM_NAME_RU[hit.hourStem] ?? "",
           targetStem: hit.targetStem,
@@ -209,13 +211,14 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     const day = dayInfo(date);
     if (clashesBranch(yearBranch, day.branch)) continue; // personal 六冲 filter
     const dayGz = STEMS[day.stem] + BRANCHES[day.branch];
-    for (const h of CHRONOLOGICAL_HOUR_BRANCHES) {
-      for (const hit of detectThreeGenerals(date, h)) {
+    for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+      const h = slot.branch;
+      for (const hit of detectThreeGenerals(date, h, slot.lateZi)) {
         structures.push({
           date: day.iso,
           dayGanZhi: dayGz,
           hourBranch: h,
-          hourLabel: hourLabel(h),
+          hourLabel: hourLabel(h, slot.lateZi),
           structure: hit.structure,
           structureName: STRUCTURE_NAME,
           goal: STRUCTURE_GOAL,

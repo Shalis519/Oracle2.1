@@ -42,8 +42,8 @@ export interface GeneralsHit {
  * Detect "Три Генерала" activations in the chart for the given hour.
  * Returns one hit per qualifying palace that passes ALL activation rules.
  */
-export function detectThreeGenerals(date: Date, hourBranch: number): GeneralsHit[] {
-  const chart = buildChart(date, hourBranch);
+export function detectThreeGenerals(date: Date, hourBranch: number, lateZi = false): GeneralsHit[] {
+  const chart = buildChart(date, hourBranch, lateZi);
   if (chart.fuYin) return []; // Избегаем Фу Инь
 
   const hits: GeneralsHit[] = [];
@@ -126,8 +126,8 @@ function annualYellowFive(palace: number, date: Date): boolean {
   return getFlyingStar(dir, flyingStarYear(date)).starNumber === 5;
 }
 
-export function detectJadeMaiden(date: Date, hourBranch: number): JadeMaidenHit[] {
-  const chart = buildChart(date, hourBranch);
+export function detectJadeMaiden(date: Date, hourBranch: number, lateZi = false): JadeMaidenHit[] {
+  const chart = buildChart(date, hourBranch, lateZi);
   const main = mainGateStar(chart);
   const hits: JadeMaidenHit[] = [];
   for (let p = 1; p <= 9; p++) {
@@ -167,8 +167,8 @@ export interface DoorMaidenHit {
   noDuplication: boolean;
 }
 
-export function detectDoorMaiden(date: Date, hourBranch: number): DoorMaidenHit[] {
-  const chart = buildChart(date, hourBranch);
+export function detectDoorMaiden(date: Date, hourBranch: number, lateZi = false): DoorMaidenHit[] {
+  const chart = buildChart(date, hourBranch, lateZi);
   const hourStemCh = STEMS[chart.hourStem];
   const target = DOOR_MAIDEN_TABLE[hourStemCh];
   if (!target) return [];

@@ -216,11 +216,14 @@ function buildPeriodChart(
   };
 }
 
-export function buildChart(date: Date, hourBranch: number): Chart {
+export function buildChart(date: Date, hourBranch: number, lateZi = false): Chart {
   const day = dayInfo(date);
   const ju = juForDate(date);
-  const hs = hourStem(day.stem, hourBranch);
-  const hourIdx = hourGanZhiIndex(day.stem, hourBranch);
+  // Поздний 子 использует ствол следующего дня, сохраняя дату текущей карты.
+  // Это отличает ранний 戊子 от позднего 庚子 20.08.2026.
+  const effectiveDayStem = lateZi && hourBranch === 0 ? (day.stem + 1) % 10 : day.stem;
+  const hs = hourStem(effectiveDayStem, hourBranch);
+  const hourIdx = hourGanZhiIndex(effectiveDayStem, hourBranch);
   return buildPeriodChart(
     date,
     "hour",
