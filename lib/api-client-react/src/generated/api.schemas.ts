@@ -558,26 +558,6 @@ export interface QimenJadeMaiden {
   isMainGate: boolean;
 }
 
-export interface QimenDoorMaiden {
-  date: string;
-  dayGanZhi: string;
-  hourBranch: number;
-  hourLabel: string;
-  hourStem: string;
-  hourStemName: string;
-  targetStem: string;
-  targetStemName: string;
-  direction: string;
-  dir: string;
-  dom: string;
-  heavenStem: string;
-  earthStem: string;
-  door: string;
-  doorName: string;
-  goodDoor: boolean;
-  noDuplication: boolean;
-}
-
 export interface QimenSummary {
   hasBirthDate: boolean;
   /** @nullable */
@@ -587,7 +567,6 @@ export interface QimenSummary {
   structures: QimenStructure[];
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
-  doorMaidens: QimenDoorMaiden[];
 }
 
 export interface FengShuiInfo {

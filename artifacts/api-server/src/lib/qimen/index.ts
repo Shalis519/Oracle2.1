@@ -10,7 +10,7 @@ import {
   STEMS,
 } from "./constants";
 import { birthYearBranch, dayInfo } from "./calendar";
-import { detectThreeGenerals, detectJadeMaiden, detectDoorMaiden } from "./structures";
+import { detectThreeGenerals, detectJadeMaiden } from "./structures";
 import { computeJiFuWishes, type JiFuWish } from "./jifu";
 import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
 
@@ -59,26 +59,6 @@ export interface QimenJadeMaiden {
   isMainGate: boolean;
 }
 
-export interface QimenDoorMaiden {
-  date: string;
-  dayGanZhi: string;
-  hourBranch: number;
-  hourLabel: string;
-  hourStem: string;
-  hourStemName: string;
-  targetStem: string;
-  targetStemName: string;
-  direction: string;
-  dir: string;
-  dom: string;
-  heavenStem: string;
-  earthStem: string;
-  door: string;
-  doorName: string;
-  goodDoor: boolean;
-  noDuplication: boolean;
-}
-
 export interface QimenResult {
   hasBirthDate: boolean;
   birthYearAnimal: string | null;
@@ -87,7 +67,6 @@ export interface QimenResult {
   structures: QimenStructure[];
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
-  doorMaidens: QimenDoorMaiden[];
 }
 
 export interface ComputeOptions {
@@ -132,10 +111,8 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   // Джи Фу is universal (no personal/六冲 gate) and shown for the current day only.
   const jiFuWishes = computeJiFuWishes(from, 1);
 
-  // "Нефритовая Дева" & "Девушка, открывающая дверь" are universal (hour-chart
-  // only, no birth date / no 六冲 filter), scanned over the next MAIDEN_DAYS days.
+  // Нефритовая Дева is universal and scanned over the next MAIDEN_DAYS days.
   const jadeMaidens: QimenJadeMaiden[] = [];
-  const doorMaidens: QimenDoorMaiden[] = [];
   const mStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
   for (let d = 0; d < MAIDEN_DAYS; d++) {
     const date = new Date(mStart);
@@ -166,27 +143,6 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           isMainGate: hit.isMainGate,
         });
       }
-      for (const hit of detectDoorMaiden(date, h, slot.lateZi)) {
-        doorMaidens.push({
-          date: day.iso,
-          dayGanZhi: dayGz,
-          hourBranch: h,
-          hourLabel: hourLabel(h, slot.lateZi),
-          hourStem: hit.hourStem,
-          hourStemName: STEM_NAME_RU[hit.hourStem] ?? "",
-          targetStem: hit.targetStem,
-          targetStemName: STEM_NAME_RU[hit.targetStem] ?? "",
-          direction: PALACES[hit.palace].dirFull,
-          dir: PALACES[hit.palace].dir,
-          dom: PALACES[hit.palace].dom,
-          heavenStem: hit.heavenStem,
-          earthStem: hit.earthStem,
-          door: hit.door,
-          doorName: DOOR_NAME_RU[hit.door] ?? "",
-          goodDoor: hit.goodDoor,
-          noDuplication: hit.noDuplication,
-        });
-      }
     }
   }
 
@@ -200,7 +156,6 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       structures,
       jiFuWishes,
       jadeMaidens,
-      doorMaidens,
     };
   }
 
@@ -246,6 +201,5 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     structures,
     jiFuWishes,
     jadeMaidens,
-    doorMaidens,
   };
 }

@@ -143,7 +143,6 @@ export * from './profileGender';
 export * from './profileInput';
 export * from './profileInputGender';
 export * from './promotionActivation';
-export * from './qimenDoorMaiden';
 export * from './qimenJadeMaiden';
 export * from './qimenStructure';
 export * from './qimenSummary';

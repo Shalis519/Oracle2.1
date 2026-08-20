@@ -1,11 +1,9 @@
 // Structure detection over an hourly chart. First structure: "Три Генерала".
-import { controls, PALACES, STEM_ELEMENT, STEMS } from "./constants";
+import { controls, PALACES, STEMS } from "./constants";
 import { buildChart, DOOR_ELEMENT, STAR_ELEMENT, mainGateStar } from "./chart";
 import {
   GENERALS_ACTIVATION, GENERALS_STAR_NAME, THREE_GENERALS_TABLE, WONDER_NAME,
 } from "../../data/qimen/threeGenerals";
-import { DOOR_MAIDEN_TABLE } from "../../data/qimen/maidens";
-import { ENEMY, MYSTICS } from "../../data/qimen/stems";
 import { flyingStarYear, getFlyingStar } from "../data/fengshui";
 
 const WONDERS = ["乙", "丙", "丁"] as const;
@@ -150,58 +148,4 @@ export function detectJadeMaiden(date: Date, hourBranch: number, lateZi = false)
   return hits;
 }
 
-// --- "Девушка, открывающая дверь" ------------------------------------------
-// Keyed off the hour stem -> target heaven-plate stem; the palace carrying that
-// stem on the heaven plate is the sector. Kept meaningful by requiring good
-// врата (休/生/开) и отсутствие дубляжа (разные элементы неба и земли).
-const GOOD_DOORS = new Set(["休门", "生门", "开门"]);
-
-export interface DoorMaidenHit {
-  palace: number;
-  hourStem: string;
-  targetStem: string;
-  heavenStem: string;
-  earthStem: string;
-  door: string;
-  goodDoor: boolean;
-  noDuplication: boolean;
-}
-
-export function detectDoorMaiden(date: Date, hourBranch: number, lateZi = false): DoorMaidenHit[] {
-  const chart = buildChart(date, hourBranch, lateZi);
-  const hourStemCh = STEMS[chart.hourStem];
-  const target = DOOR_MAIDEN_TABLE[hourStemCh];
-  if (!target) return [];
-  let p = -1;
-  for (let q = 1; q <= 9; q++) {
-    if (chart.cells[q].heavenStem === target) {
-      p = q;
-      break;
-    }
-  }
-  if (p < 0) return [];
-  const lodged = p === 5 ? 2 : p; // 寄宫: center lodges with 坤2 — evaluate its operators there
-  const c = chart.cells[lodged];
-  const goodDoor = GOOD_DOORS.has(c.door);
-  const heavenEl = STEM_ELEMENT[STEMS.indexOf(c.heavenStem as (typeof STEMS)[number])];
-  const earthEl = STEM_ELEMENT[STEMS.indexOf(c.earthStem as (typeof STEMS)[number])];
-  const noDuplication = heavenEl !== earthEl;
-  // Враг 庚 портит благоприятную структуру отношений: взаимодействия с ним
-  // почти всегда неблагоприятны (учитываем остальные операторы Дворца).
-  const noEnemy = c.heavenStem !== ENEMY && c.earthStem !== ENEMY;
-  if (!goodDoor || !noDuplication || !noEnemy) return [];
-  return [
-    {
-      palace: lodged,
-      hourStem: hourStemCh,
-      targetStem: target,
-      heavenStem: c.heavenStem,
-      earthStem: c.earthStem,
-      door: c.door,
-      goodDoor,
-      noDuplication,
-    },
-  ];
-}
-
-export { STEMS, STEM_ELEMENT };
+export { STEMS };

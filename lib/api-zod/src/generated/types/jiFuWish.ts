@@ -14,6 +14,14 @@ export interface JiFuWish {
   hourLabel: string;
   direction: string;
   directionLoc: string;
+  yearPalace: number;
+  monthPalace: number;
+  dayPalace: number;
+  hourPalace: number;
+  yearDirection: string;
+  monthDirection: string;
+  dayDirection: string;
+  hourDirection: string;
   strength: number;
   matchYear: boolean;
   matchMonth: boolean;

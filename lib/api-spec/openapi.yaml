@@ -1801,64 +1801,6 @@ components:
         isMainGate:
           type: boolean
 
-    QimenDoorMaiden:
-      type: object
-      required:
-        [
-          date,
-          dayGanZhi,
-          hourBranch,
-          hourLabel,
-          hourStem,
-          hourStemName,
-          targetStem,
-          targetStemName,
-          direction,
-          dir,
-          dom,
-          heavenStem,
-          earthStem,
-          door,
-          doorName,
-          goodDoor,
-          noDuplication,
-        ]
-      properties:
-        date:
-          type: string
-        dayGanZhi:
-          type: string
-        hourBranch:
-          type: integer
-        hourLabel:
-          type: string
-        hourStem:
-          type: string
-        hourStemName:
-          type: string
-        targetStem:
-          type: string
-        targetStemName:
-          type: string
-        direction:
-          type: string
-        dir:
-          type: string
-        dom:
-          type: string
-        heavenStem:
-          type: string
-        earthStem:
-          type: string
-        door:
-          type: string
-        doorName:
-          type: string
-        goodDoor:
-          type: boolean
-        noDuplication:
-          type: boolean
-
     QimenSummary:
       type: object
       required:
@@ -1870,7 +1812,6 @@ components:
           structures,
           jiFuWishes,
           jadeMaidens,
-          doorMaidens,
         ]
       properties:
         hasBirthDate:
@@ -1893,10 +1834,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QimenJadeMaiden"
-        doorMaidens:
-          type: array
-          items:
-            $ref: "#/components/schemas/QimenDoorMaiden"
 
     PromotionActivation:
       type: object

@@ -12,5 +12,8 @@ export type MarriageIndicatorKind = typeof MarriageIndicatorKind[keyof typeof Ma
 export const MarriageIndicatorKind = {
   natal: 'natal',
   secondary_progression: 'secondary_progression',
+  fast_progression: 'fast_progression',
+  solar_arc: 'solar_arc',
+  transit: 'transit',
   retrograde_support: 'retrograde_support',
 } as const;

@@ -675,25 +675,6 @@ export const GetQimenResponse = zod.object({
   "door": zod.string(),
   "doorName": zod.string(),
   "isMainGate": zod.boolean()
-})),
-  "doorMaidens": zod.array(zod.object({
-  "date": zod.string(),
-  "dayGanZhi": zod.string(),
-  "hourBranch": zod.number(),
-  "hourLabel": zod.string(),
-  "hourStem": zod.string(),
-  "hourStemName": zod.string(),
-  "targetStem": zod.string(),
-  "targetStemName": zod.string(),
-  "direction": zod.string(),
-  "dir": zod.string(),
-  "dom": zod.string(),
-  "heavenStem": zod.string(),
-  "earthStem": zod.string(),
-  "door": zod.string(),
-  "doorName": zod.string(),
-  "goodDoor": zod.boolean(),
-  "noDuplication": zod.boolean()
 }))
 })
 

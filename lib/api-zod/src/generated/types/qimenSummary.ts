@@ -6,7 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { JiFuWish } from './jiFuWish';
-import type { QimenDoorMaiden } from './qimenDoorMaiden';
 import type { QimenJadeMaiden } from './qimenJadeMaiden';
 import type { QimenStructure } from './qimenStructure';
 
@@ -19,5 +18,4 @@ export interface QimenSummary {
   structures: QimenStructure[];
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
-  doorMaidens: QimenDoorMaiden[];
 }

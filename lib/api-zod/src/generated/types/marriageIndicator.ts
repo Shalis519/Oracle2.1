@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { MarriageIndicatorKind } from './marriageIndicatorKind';
+import type { MarriageIndicatorPhase } from './marriageIndicatorPhase';
 
 export interface MarriageIndicator {
   id: string;
@@ -19,7 +20,20 @@ export interface MarriageIndicator {
   /** @nullable */
   method?: string | null;
   /** @nullable */
+  progressionMethod?: string | null;
+  /** @nullable */
+  formula?: string | null;
+  /** @nullable */
+  sourceRole?: string | null;
+  /** @nullable */
+  targetRole?: string | null;
+  /** @nullable */
+  sourceBodyKey?: string | null;
+  /** @nullable */
+  targetBodyKey?: string | null;
+  /** @nullable */
   applying?: boolean | null;
+  phase?: MarriageIndicatorPhase;
   /** @nullable */
   orb?: number | null;
 }

@@ -10,7 +10,9 @@ import type { MarriageFormulaResultMethodology } from './marriageFormulaResultMe
 import type { MarriageIndicator } from './marriageIndicator';
 import type { MarriageWindow } from './marriageWindow';
 import type { NatalMarriageCharacter } from './natalMarriageCharacter';
+import type { NatalMarriageCycle } from './natalMarriageCycle';
 import type { NatalMarriageProfile } from './natalMarriageProfile';
+import type { StrictNatalMarriageProfile } from './strictNatalMarriageProfile';
 
 export interface MarriageFormulaResult {
   formula: MarriageFormulaResultFormula;
@@ -22,6 +24,8 @@ export interface MarriageFormulaResult {
   natalBasis: MarriageIndicator[];
   natalProfile: NatalMarriageProfile;
   natalCharacter: NatalMarriageCharacter;
+  natalCycle: NatalMarriageCycle;
+  strictNatalProfile: StrictNatalMarriageProfile;
   windows: MarriageWindow[];
   methodology: MarriageFormulaResultMethodology;
 }
