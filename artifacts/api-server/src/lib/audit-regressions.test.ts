@@ -146,6 +146,7 @@ describe("audit regressions", () => {
   it("declines sign themes after the word `тем`", () => {
     expect(toGenitiveThemes("самовыражение, творчество и сила воли")).toBe("самовыражения, творчества и силы воли");
     expect(toGenitiveThemes("интуиция и эмоциональная безопасность")).toBe("интуиции и эмоциональной безопасности");
+    expect(toGenitiveThemes("радость, успех и энергия")).toBe("радости, успеха и энергии");
   });
 
   it("removes the empty additional-associations section", () => {
@@ -189,6 +190,15 @@ describe("audit regressions", () => {
     expect(dailyGenerator).not.toContain("ensureForecastTemplateSeeds");
     expect(dailyGenerator).toContain("findRelation");
     expect(dailyGenerator).toContain("getEntityThemes");
+  });
+
+  it("uses genitive theme forms in the main daily synthesis sentence", () => {
+    const dailyGenerator = readFileSync(
+      resolve(process.cwd(), "src/lib/futuristicGenerator.ts"),
+      "utf8",
+    );
+    expect(dailyGenerator).toContain("toGenitiveThemes(formatList(profileListText(s.planetProfile), 3))");
+    expect(dailyGenerator).toContain("делает особенно заметными темы ${planetThemes}.");
   });
 
   it("bumps the persisted daily forecast cache after semantic changes", () => {

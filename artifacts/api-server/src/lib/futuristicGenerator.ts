@@ -243,8 +243,8 @@ async function describeMainTransit(s: TransitSemantics, date: Date): Promise<str
   if (s.relation?.description?.trim()) {
     parts.push(normalizeRelationDescription(s.relation.description));
   } else {
-    const planetThemes = formatList(profileListText(s.planetProfile), 3);
-    if (planetThemes) parts.push(`Этот транзит делает особенно заметными темы: ${planetThemes}.`);
+    const planetThemes = toGenitiveThemes(formatList(profileListText(s.planetProfile), 3));
+    if (planetThemes) parts.push(`Этот транзит делает особенно заметными темы ${planetThemes}.`);
   }
 
   const signThemes = formatList(profileListText(s.signProfile), 3);

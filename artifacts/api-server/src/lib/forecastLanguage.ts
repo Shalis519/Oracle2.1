@@ -133,7 +133,10 @@ export function toGenitiveThemes(text: string): string {
     .replace(/личная позиция/gi, "личной позиции")
     .replace(/жизненная сила/gi, "жизненной силы")
     .replace(/интуиция/gi, "интуиции")
-    .replace(/эмоциональная безопасность/gi, "эмоциональной безопасности");
+    .replace(/эмоциональная безопасность/gi, "эмоциональной безопасности")
+    .replace(/радость/gi, "радости")
+    .replace(/успех/gi, "успеха")
+    .replace(/энергия/gi, "энергии");
 }
 
 export function toAccusativeThemes(text: string): string {
