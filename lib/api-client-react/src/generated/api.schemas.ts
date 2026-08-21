@@ -558,6 +558,44 @@ export interface QimenJadeMaiden {
   isMainGate: boolean;
 }
 
+export interface QimenBirthChartCell {
+  palace: number;
+  direction: string;
+  trigram: string;
+  earthStem: string;
+  heavenStem: string;
+  star: string;
+  /** @nullable */
+  pairedStar?: string | null;
+  door: string;
+  deity: string;
+  isVoid: boolean;
+}
+
+export interface QimenBirthChart {
+  hourGz: string;
+  ju: number;
+  yin: boolean;
+  fuYin: boolean;
+  zhiFuStar: string;
+  zhiShiDoor: string;
+  zhiFuPalace: number;
+  zhiShiPalace: number;
+  cells: QimenBirthChartCell[];
+}
+
+export interface QimenMonthChart {
+  monthGz: string;
+  ju: number;
+  yin: boolean;
+  fuYin: boolean;
+  zhiFuStar: string;
+  zhiShiDoor: string;
+  zhiFuPalace: number;
+  zhiShiPalace: number;
+  cells: QimenBirthChartCell[];
+}
+
 export interface QimenSummary {
   hasBirthDate: boolean;
   /** @nullable */
@@ -567,6 +605,8 @@ export interface QimenSummary {
   structures: QimenStructure[];
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
+  birthChart: QimenBirthChart | null;
+  monthChart: QimenMonthChart;
 }
 
 export interface FengShuiInfo {

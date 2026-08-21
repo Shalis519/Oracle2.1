@@ -6,7 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { JiFuWish } from './jiFuWish';
+import type { QimenBirthChart } from './qimenBirthChart';
 import type { QimenJadeMaiden } from './qimenJadeMaiden';
+import type { QimenMonthChart } from './qimenMonthChart';
 import type { QimenStructure } from './qimenStructure';
 
 export interface QimenSummary {
@@ -18,4 +20,6 @@ export interface QimenSummary {
   structures: QimenStructure[];
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
+  birthChart: QimenBirthChart | null;
+  monthChart: QimenMonthChart;
 }

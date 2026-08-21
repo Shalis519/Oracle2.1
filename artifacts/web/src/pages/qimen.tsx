@@ -5,6 +5,8 @@ import type {
   QimenStructure,
   JiFuWish,
   QimenJadeMaiden,
+  QimenBirthChart,
+  QimenMonthChart,
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -126,6 +128,55 @@ function formatDate(iso: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
   if (!m) return iso;
   return `${Number(m[3])} ${MONTHS_RU[Number(m[2]) - 1]}`;
+}
+
+const BIRTH_CHART_LAYOUT = [4, 9, 2, 3, 5, 7, 8, 1, 6];
+
+function BirthChartCard({ chart, title = "Личная карта Ци Мэнь", description = "Часовой расклад на момент рождения" }: { chart: QimenBirthChart | QimenMonthChart; title?: string; description?: string }) {
+  const byPalace = new Map(chart.cells.map((cell) => [cell.palace, cell]));
+  const periodGz = "monthGz" in chart ? chart.monthGz : chart.hourGz;
+  return (
+    <Card className="bg-card/40 backdrop-blur-md border-cyan-400/30">
+      <CardHeader className="pb-3">
+          <CardTitle className="font-serif text-xl flex items-center gap-2">
+            <Compass className="w-5 h-5 text-cyan-300" />
+            {title}
+          </CardTitle>
+          <CardDescription>{description}</CardDescription>
+          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground pt-1">
+            <span>{"monthGz" in chart ? "Столп месяца" : "Столп часа"}: {periodGz}</span>
+          <span>Цзюй: {chart.yin ? "Инь" : "Ян"} {chart.ju}</span>
+          <span>Главные Врата: {chart.zhiShiDoor}</span>
+          <span>Главная звезда: {chart.zhiFuStar}</span>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2 max-w-2xl mx-auto">
+          {BIRTH_CHART_LAYOUT.map((palace) => {
+            const cell = byPalace.get(palace);
+            if (!cell) {
+              return <div key={palace} className="min-h-36 rounded-lg border border-cyan-400/10 bg-cyan-400/5" />;
+            }
+            return (
+              <div key={palace} className="min-h-36 rounded-lg border border-cyan-400/20 bg-background/30 p-2 text-[10px] sm:text-xs leading-relaxed">
+                <div className="flex items-center justify-between text-cyan-200 font-semibold">
+                  <span>{cell.direction || "Центр"}</span><span>{cell.trigram}</span>
+                </div>
+                <div className="mt-2 space-y-0.5">
+                  <p><span className="text-cyan-300/70">Дух:</span> {cell.deity || "—"}</p>
+                  <p><span className="text-cyan-300/70">Врата:</span> {cell.door || "—"}</p>
+                  <p><span className="text-cyan-300/70">Небо:</span> {cell.heavenStem || "—"}</p>
+                  <p><span className="text-cyan-300/70">Звезда:</span> {cell.star || "—"}{cell.pairedStar ? ` / ${cell.pairedStar}` : ""}</p>
+                  <p><span className="text-cyan-300/70">Земля:</span> {cell.earthStem || "—"}</p>
+                </div>
+                {cell.isVoid ? <p className="mt-2 text-amber-200">Пустота</p> : null}
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
 function StructureCard({ s }: { s: QimenStructure }) {
@@ -375,8 +426,7 @@ export default function QimenPage() {
               Ци Мэнь Дунь Цзя
             </h1>
             <p className="text-sm text-muted-foreground">
-              Индивидуальные структуры по благоприятным направлениям и часам
-              {data?.birthYearAnimal ? ` (год ${data.birthYearAnimal})` : ""}.
+              Индивидуальные структуры по благоприятным направлениям и часам.
             </p>
           </div>
           <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
@@ -402,6 +452,22 @@ export default function QimenPage() {
           </Dialog>
         </div>
       </motion.div>
+
+      {data?.monthChart ? (
+        <section className="space-y-4">
+          <BirthChartCard
+            chart={data.monthChart}
+            title="Месячная карта Ци Мэнь"
+            description="Месячный расклад по системе Joey Yap"
+          />
+        </section>
+      ) : null}
+
+      {data?.birthChart ? (
+        <section className="space-y-4">
+          <BirthChartCard chart={data.birthChart} />
+        </section>
+      ) : null}
 
       {/* Исполнение желаний с Джи Фу, универсально, без привязки к дате рождения */}
       <section className="space-y-4">

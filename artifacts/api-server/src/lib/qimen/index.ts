@@ -9,10 +9,13 @@ import {
   PALACES,
   STEMS,
 } from "./constants";
-import { birthYearBranch, dayInfo } from "./calendar";
+import { birthYearBranch, birthYearStem, birthYearRepresentativeStem, dayInfo } from "./calendar";
+import { buildChart, buildPeriodMap, type PalaceCell } from "./chart";
+import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
 import { detectThreeGenerals, detectJadeMaiden } from "./structures";
 import { computeJiFuWishes, type JiFuWish } from "./jifu";
 import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
+import { hourBranchFromClock, isLateZiClock, localSolarTime } from "./birthTime";
 
 export type { JiFuWish } from "./jifu";
 
@@ -59,6 +62,43 @@ export interface QimenJadeMaiden {
   isMainGate: boolean;
 }
 
+export interface QimenBirthChartCell {
+  palace: number;
+  direction: string;
+  trigram: string;
+  earthStem: string;
+  heavenStem: string;
+  star: string;
+  pairedStar?: string;
+  door: string;
+  deity: string;
+  isVoid: boolean;
+}
+
+export interface QimenBirthChart {
+  hourGz: string;
+  ju: number;
+  yin: boolean;
+  fuYin: boolean;
+  zhiFuStar: string;
+  zhiShiDoor: string;
+  zhiFuPalace: number;
+  zhiShiPalace: number;
+  cells: QimenBirthChartCell[];
+}
+
+export interface QimenMonthChart {
+  monthGz: string;
+  ju: number;
+  yin: boolean;
+  fuYin: boolean;
+  zhiFuStar: string;
+  zhiShiDoor: string;
+  zhiFuPalace: number;
+  zhiShiPalace: number;
+  cells: QimenBirthChartCell[];
+}
+
 export interface QimenResult {
   hasBirthDate: boolean;
   birthYearAnimal: string | null;
@@ -67,6 +107,8 @@ export interface QimenResult {
   structures: QimenStructure[];
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
+  birthChart: QimenBirthChart | null;
+  monthChart: QimenMonthChart;
 }
 
 export interface ComputeOptions {
@@ -74,6 +116,8 @@ export interface ComputeOptions {
   birthTime?: string | null; // "HH:MM" (affects 立春 year-pillar boundary)
   from?: Date;
   timezone?: string | null; // user's current location timezone
+  birthTimezone?: string | null;
+  birthLongitude?: number | null;
   days?: number;
 }
 
@@ -93,6 +137,93 @@ function localCalendarNoon(timezone?: string | null, instant = new Date()): Date
   }
 }
 
+function birthHourParts(birthTime?: string | null): { hourBranch: number; lateZi: boolean; hour: number; minute: number } {
+  const match = /^(\d{1,2}):(\d{2})/.exec(birthTime ?? "12:00");
+  const hour = match ? Number(match[1]) : 12;
+  const minute = match ? Number(match[2]) : 0;
+  const safeHour = hour >= 0 && hour <= 23 ? hour : 12;
+  const safeMinute = minute >= 0 && minute <= 59 ? minute : 0;
+  return { hourBranch: Math.floor((safeHour + 1) / 2) % 12, lateZi: safeHour === 23 && safeMinute >= 29, hour: safeHour, minute: safeMinute };
+}
+
+function buildMonthChart(date: Date): QimenMonthChart {
+  const pillar = monthPillarForDate(date);
+  const chart = buildPeriodMap(date, "month", pillar, monthJoeyYapJuForDate(date));
+  const cells = Object.values(chart.cells).map((cell: PalaceCell) => ({
+    palace: cell.palace,
+    direction: PALACES[cell.palace].dir,
+    trigram: PALACES[cell.palace].trigram,
+    earthStem: cell.earthStem,
+    heavenStem: cell.heavenStem,
+    star: cell.star,
+    pairedStar: cell.pairedStar,
+    door: cell.door,
+    deity: cell.deity,
+    isVoid: cell.isVoid,
+  }));
+  return {
+    monthGz: pillar.label,
+    ju: chart.ju.ju,
+    yin: chart.ju.yin,
+    fuYin: chart.fuYin,
+    zhiFuStar: chart.zhiFuStar,
+    zhiShiDoor: chart.zhiShiDoor,
+    zhiFuPalace: chart.zhiFuPalace,
+    zhiShiPalace: chart.zhiShiPalace,
+    cells,
+  };
+}
+
+function buildBirthChart(
+  birthDate?: string | null,
+  birthTime?: string | null,
+  birthTimezone?: string | null,
+  birthLongitude?: number | null,
+): QimenBirthChart | null {
+  if (!birthDate) return null;
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(birthDate);
+  if (!match) return null;
+  const civilTime = birthTime ?? "12:00";
+  const solar = birthLongitude != null
+    ? localSolarTime({ isoDate: birthDate, time: civilTime, timezone: birthTimezone, longitude: birthLongitude })
+    : null;
+  // Солнечная поправка выбирает часовую ветвь, но не переносит календарную дату
+  // рождения: для ранней Крысы дневной ствол остаётся стволом указанной даты.
+  const chartDateText = birthDate;
+  const chartTimeText = solar?.solarTime ?? civilTime;
+  const { hourBranch, lateZi } = solar
+    ? { hourBranch: hourBranchFromClock(chartTimeText), lateZi: solar.solarDate < birthDate || isLateZiClock(solar.solarDate, chartTimeText) }
+    : birthHourParts(civilTime);
+  const [chartYear, chartMonth, chartDay] = chartDateText.split("-").map(Number);
+  const [hour, minute] = chartTimeText.split(":").map(Number);
+  const date = new Date(chartYear, chartMonth - 1, chartDay, hour, minute, 0);
+  if (Number.isNaN(date.getTime()) || hourBranch < 0) return null;
+  const chart = buildChart(date, hourBranch, lateZi);
+  const cells = Object.values(chart.cells).map((cell: PalaceCell) => ({
+    palace: cell.palace,
+    direction: PALACES[cell.palace].dir,
+    trigram: PALACES[cell.palace].trigram,
+    earthStem: cell.earthStem,
+    heavenStem: cell.heavenStem,
+    star: cell.star,
+    pairedStar: cell.pairedStar,
+    door: cell.door,
+    deity: cell.deity,
+    isVoid: cell.isVoid,
+  }));
+  return {
+    hourGz: chart.hourGz,
+    ju: chart.ju.ju,
+    yin: chart.ju.yin,
+    fuYin: chart.fuYin,
+    zhiFuStar: chart.zhiFuStar,
+    zhiShiDoor: chart.zhiShiDoor,
+    zhiFuPalace: chart.zhiFuPalace,
+    zhiShiPalace: chart.zhiShiPalace,
+    cells,
+  };
+}
+
 function hourLabel(hourBranch: number, lateZi = false): string {
   const prefix = lateZi ? "поздний час" : "час";
   return `${prefix} ${BRANCH_ANIMAL_RU_GEN[hourBranch]} (${BRANCH_HOUR_WINDOW[hourBranch]})`;
@@ -107,9 +238,13 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const from = localCalendarNoon(opts.timezone, opts.from ?? new Date());
   const hasBirthDate = !!opts.birthDate;
   const yearBranch = hasBirthDate ? birthYearBranch(opts.birthDate!, opts.birthTime) : -1;
+  const yearStem = hasBirthDate ? birthYearStem(opts.birthDate!, opts.birthTime) : -1;
+  const representativeYearStem = hasBirthDate ? birthYearRepresentativeStem(opts.birthDate!, opts.birthTime) : -1;
 
   // Джи Фу is universal (no personal/六冲 gate) and shown for the current day only.
   const jiFuWishes = computeJiFuWishes(from, 1);
+  const birthChart = buildBirthChart(opts.birthDate, opts.birthTime, opts.birthTimezone ?? opts.timezone, opts.birthLongitude);
+  const monthChart = buildMonthChart(from);
 
   // Нефритовая Дева is universal and scanned over the next MAIDEN_DAYS days.
   const jadeMaidens: QimenJadeMaiden[] = [];
@@ -125,7 +260,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     if (hasBirthDate && clashesBranch(yearBranch, day.branch)) continue;
     for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
       const h = slot.branch;
-      for (const hit of detectJadeMaiden(date, h, slot.lateZi)) {
+      for (const hit of detectJadeMaiden(date, h, slot.lateZi, yearStem >= 0 ? yearStem : undefined, representativeYearStem >= 0 ? representativeYearStem : undefined)) {
         jadeMaidens.push({
           date: day.iso,
           dayGanZhi: dayGz,
@@ -140,7 +275,8 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           earthStemName: STEM_NAME_RU[hit.earthStem] ?? "",
           door: hit.door,
           doorName: DOOR_NAME_RU[hit.door] ?? "",
-          isMainGate: hit.isMainGate,
+                        isMainGate: hit.isMainGate,
+
         });
       }
     }
@@ -156,6 +292,8 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       structures,
       jiFuWishes,
       jadeMaidens,
+      birthChart,
+      monthChart,
     };
   }
 
@@ -201,5 +339,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     structures,
     jiFuWishes,
     jadeMaidens,
+    birthChart,
+    monthChart,
   };
 }

@@ -675,7 +675,51 @@ export const GetQimenResponse = zod.object({
   "door": zod.string(),
   "doorName": zod.string(),
   "isMainGate": zod.boolean()
+})),
+  "birthChart": zod.union([zod.object({
+  "hourGz": zod.string(),
+  "ju": zod.number(),
+  "yin": zod.boolean(),
+  "fuYin": zod.boolean(),
+  "zhiFuStar": zod.string(),
+  "zhiShiDoor": zod.string(),
+  "zhiFuPalace": zod.number(),
+  "zhiShiPalace": zod.number(),
+  "cells": zod.array(zod.object({
+  "palace": zod.number(),
+  "direction": zod.string(),
+  "trigram": zod.string(),
+  "earthStem": zod.string(),
+  "heavenStem": zod.string(),
+  "star": zod.string(),
+  "pairedStar": zod.string().nullish(),
+  "door": zod.string(),
+  "deity": zod.string(),
+  "isVoid": zod.boolean()
 }))
+}),zod.null()]),
+  "monthChart": zod.object({
+  "monthGz": zod.string(),
+  "ju": zod.number(),
+  "yin": zod.boolean(),
+  "fuYin": zod.boolean(),
+  "zhiFuStar": zod.string(),
+  "zhiShiDoor": zod.string(),
+  "zhiFuPalace": zod.number(),
+  "zhiShiPalace": zod.number(),
+  "cells": zod.array(zod.object({
+  "palace": zod.number(),
+  "direction": zod.string(),
+  "trigram": zod.string(),
+  "earthStem": zod.string(),
+  "heavenStem": zod.string(),
+  "star": zod.string(),
+  "pairedStar": zod.string().nullish(),
+  "door": zod.string(),
+  "deity": zod.string(),
+  "isVoid": zod.boolean()
+}))
+})
 })
 
 

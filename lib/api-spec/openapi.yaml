@@ -1801,6 +1801,53 @@ components:
         isMainGate:
           type: boolean
 
+    QimenBirthChartCell:
+      type: object
+      required: [palace, direction, trigram, earthStem, heavenStem, star, door, deity, isVoid]
+      properties:
+        palace: { type: integer }
+        direction: { type: string }
+        trigram: { type: string }
+        earthStem: { type: string }
+        heavenStem: { type: string }
+        star: { type: string }
+        pairedStar: { type: [string, "null"] }
+        door: { type: string }
+        deity: { type: string }
+        isVoid: { type: boolean }
+
+    QimenBirthChart:
+      type: object
+      required: [hourGz, ju, yin, fuYin, zhiFuStar, zhiShiDoor, zhiFuPalace, zhiShiPalace, cells]
+      properties:
+        hourGz: { type: string }
+        ju: { type: integer }
+        yin: { type: boolean }
+        fuYin: { type: boolean }
+        zhiFuStar: { type: string }
+        zhiShiDoor: { type: string }
+        zhiFuPalace: { type: integer }
+        zhiShiPalace: { type: integer }
+        cells:
+          type: array
+          items: { $ref: "#/components/schemas/QimenBirthChartCell" }
+
+    QimenMonthChart:
+      type: object
+      required: [monthGz, ju, yin, fuYin, zhiFuStar, zhiShiDoor, zhiFuPalace, zhiShiPalace, cells]
+      properties:
+        monthGz: { type: string }
+        ju: { type: integer }
+        yin: { type: boolean }
+        fuYin: { type: boolean }
+        zhiFuStar: { type: string }
+        zhiShiDoor: { type: string }
+        zhiFuPalace: { type: integer }
+        zhiShiPalace: { type: integer }
+        cells:
+          type: array
+          items: { $ref: "#/components/schemas/QimenBirthChartCell" }
+
     QimenSummary:
       type: object
       required:
@@ -1812,6 +1859,8 @@ components:
           structures,
           jiFuWishes,
           jadeMaidens,
+          birthChart,
+          monthChart,
         ]
       properties:
         hasBirthDate:
@@ -1834,6 +1883,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QimenJadeMaiden"
+        birthChart:
+          oneOf:
+            - $ref: "#/components/schemas/QimenBirthChart"
+            - type: "null"
+        monthChart:
+          $ref: "#/components/schemas/QimenMonthChart"
 
     PromotionActivation:
       type: object

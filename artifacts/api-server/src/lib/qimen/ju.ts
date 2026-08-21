@@ -13,6 +13,8 @@ import {
   isoToDate,
   nextTerm,
 } from "./calendar";
+import { Solar } from "lunar-typescript";
+import { parseGanZhi } from "./constants";
 
 const YANG_JU: Record<string, [number, number, number]> = {
   冬至: [1, 7, 4],
@@ -174,6 +176,53 @@ export function dayJoeyYapJuForDate(d: Date): JuResult {
 
 export function juForIso(iso: string): JuResult {
   return juForDate(isoToDate(iso));
+}
+
+/**
+ * Месячный столп по солнечному календарю. lunar-typescript использует Jie Qi
+ * границы, поэтому дата до/после солнечного термина получает правильный месяц.
+ */
+export function monthPillarForDate(d: Date) {
+  const solar = Solar.fromYmdHms(d.getFullYear(), d.getMonth() + 1, d.getDate(), 12, 0, 0);
+  const gz = solar.getLunar().getMonthInGanZhiExact();
+  return { ...parseGanZhi(gz), label: gz };
+}
+
+const YIN_ONE_YEARS = [
+  "甲子", "乙丑", "丙寅", "丁卯", "戊辰",
+  "己卯", "庚辰", "辛巳", "壬午", "癸未",
+  "甲午", "乙未", "丙申", "丁酉", "戊戌",
+  "己酉", "庚戌", "辛亥", "壬子", "癸丑",
+];
+const YIN_FOUR_YEARS = [
+  "己巳", "庚午", "辛未", "壬申", "癸酉",
+  "甲申", "乙酉", "丙戌", "丁亥", "戊子",
+  "己亥", "庚子", "辛丑", "壬寅", "癸卯",
+  "甲寅", "乙卯", "丙辰", "丁巳", "戊午",
+];
+const YIN_SEVEN_YEARS = [
+  "甲戌", "乙亥", "丙子", "丁丑", "戊寅",
+  "己丑", "庚寅", "辛卯", "壬辰", "癸巳",
+  "甲辰", "乙巳", "丙午", "丁未", "戊申",
+  "己未", "庚申", "辛酉", "壬戌", "癸亥",
+];
+
+/** Выбор месячной структуры Joey Yap по 60-летнему годовому столпу. */
+export function monthJoeyYapStructure(yearGz: string): 1 | 4 | 7 {
+  if (YIN_ONE_YEARS.includes(yearGz)) return 1;
+  if (YIN_FOUR_YEARS.includes(yearGz)) return 4;
+  if (YIN_SEVEN_YEARS.includes(yearGz)) return 7;
+  throw new Error(`Годовой столп ${yearGz} отсутствует в таблице Month Charts Joey Yap`);
+}
+
+/** Месячный Ju по самостоятельной Month Chart School Joey Yap. */
+export function monthJoeyYapJuForDate(d: Date): JuResult {
+  const solar = Solar.fromYmdHms(d.getFullYear(), d.getMonth() + 1, d.getDate(), 12, 0, 0);
+  const lunar = solar.getLunar();
+  const yearGz = lunar.getYearInGanZhiExact();
+  const structure = monthJoeyYapStructure(yearGz);
+  const term = currentTerm(d);
+  return { yin: true, ju: structure, term: `${term.name} · Joey Yap Month Chart`, yuan: 0 };
 }
 
 export { dateToIso };

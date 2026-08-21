@@ -2,11 +2,49 @@ import { describe, expect, it } from "vitest";
 import { buildChart, buildPeriodMap, mainGateStar } from "./qimen/chart";
 import { Solar } from "lunar-typescript";
 import { parseGanZhi, STEMS, BRANCHES } from "./qimen/constants";
+import { monthJoeyYapJuForDate, monthJoeyYapStructure, monthPillarForDate } from "./qimen/ju";
 import { detectJadeMaiden, jadeMaidenVariant } from "./qimen/structures";
 
 function chart(year: number, month: number, day: number, hourBranch: number) {
   return buildChart(new Date(year, month - 1, day, 12, 0, 0), hourBranch);
 }
+
+describe("Месячная карта Joey Yap", () => {
+  it("определяет солнечный столп 丙申 для 21.08.2026", () => {
+    expect(monthPillarForDate(new Date(2026, 7, 21, 12))).toMatchObject({ label: "丙申" });
+  });
+
+  it("выбирает Yin 7 для годового столпа 丙午 2026", () => {
+    expect(monthJoeyYapStructure("丙午")).toBe(7);
+    expect(monthJoeyYapJuForDate(new Date(2026, 7, 21, 12))).toMatchObject({ yin: true, ju: 7 });
+  });
+
+  it("распределяет контрольные годы по таблице Month Charts", () => {
+    expect(monthJoeyYapStructure("甲子")).toBe(1);
+    expect(monthJoeyYapStructure("丁亥")).toBe(4);
+    expect(monthJoeyYapStructure("壬辰")).toBe(7);
+  });
+
+  it("строит месячную карту 丙申 2026 как Yin 7 с Mingli-эталоном", () => {
+    const date = new Date(2026, 7, 21, 12);
+    const pillar = monthPillarForDate(date);
+    const built = buildPeriodMap(date, "month", pillar, monthJoeyYapJuForDate(date));
+    expect(pillar.label).toBe("丙申");
+    expect(built.ju).toMatchObject({ yin: true, ju: 7 });
+    expect(built.zhiFuStar).toBe("天辅");
+    expect(built.zhiShiDoor).toBe("杜门");
+  });
+
+  it("строит карту Mingli на 22.09.2026 как 丁酉/Yin 7", () => {
+    const date = new Date(2026, 8, 22, 12);
+    const pillar = monthPillarForDate(date);
+    const built = buildPeriodMap(date, "month", pillar, monthJoeyYapJuForDate(date));
+    expect(pillar.label).toBe("丁酉");
+    expect(built.ju).toMatchObject({ yin: true, ju: 7 });
+    expect(built.zhiFuStar).toBe("天辅");
+    expect(built.zhiShiDoor).toBe("杜门");
+  });
+});
 
 describe("Главная звезда и Главные Врата по учебнику Ци Мэнь", () => {
   it("matches the book example 08.06.2017 丙申, 6 Ян", () => {
