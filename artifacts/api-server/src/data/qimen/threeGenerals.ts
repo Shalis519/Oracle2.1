@@ -1,4 +1,5 @@
 // "Три Генерала" — verbatim signs/result tables from the user-provided PDF.
+// Source rules: use only the Heavenly Stem ring for 乙/丙/丁, and only hourly charts.
 // Indexed by wonder (乙/丙/丁) × palace (Дом). Text is copied as-is from the source.
 
 export interface GeneralsRow {
