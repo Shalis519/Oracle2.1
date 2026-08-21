@@ -755,6 +755,7 @@ export const ComputeBaziHoursResponse = zod.object({
   "sunrise": zod.string(),
   "sunset": zod.string(),
   "shiftMinutes": zod.number(),
+  "equationOfTimeMinutes": zod.number(),
   "solar": zod.array(zod.object({
   "animal": zod.string(),
   "start": zod.string().nullable(),

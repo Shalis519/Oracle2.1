@@ -37,6 +37,7 @@ export interface BaziHoursResult {
   sunrise: string;
   sunset: string;
   shiftMinutes: number;
+  equationOfTimeMinutes: number;
   solar: HourInterval[];
   rubber: HourInterval[];
   combined: HourInterval[];

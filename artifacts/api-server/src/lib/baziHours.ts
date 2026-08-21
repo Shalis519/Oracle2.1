@@ -2,7 +2,7 @@
 //
 // Reproduces the three time variants shown on tvoibazi.ru/hours:
 //   - "Солнечное" (solar): fixed solar 2h blocks shifted to clock time by the
-//     mean-solar correction (utcOffset - longitude*4). No equation of time.
+//     longitude correction and the equation of time, as in Marina's video.
 //   - "Резиновое" (rubber): the 12 branches stretched over the real day/night
 //     lengths via the original site's clock geometry (ported from its Vetvi()).
 //   - "Совмещённое" (combined): the per-branch intersection of the solar and
@@ -22,6 +22,7 @@ export interface BaziHoursInput {
   lng: number;
   utcOffset: number;
   date: string; // YYYY-MM-DD
+  /** Разделять ветвь Крысы на раннюю и позднюю. */
   doubledRat: boolean;
 }
 
@@ -29,6 +30,7 @@ export interface BaziHoursResult {
   sunrise: string;
   sunset: string;
   shiftMinutes: number;
+  equationOfTimeMinutes: number;
   solar: HourInterval[];
   rubber: HourInterval[];
   combined: HourInterval[];
@@ -416,6 +418,15 @@ function applyDoubled(list: NumInterval[], doubledRat: boolean): NumInterval[] {
   return [late, early, ...list.slice(1)];
 }
 
+/**
+ * Vetvi() returns the rubber intervals chronologically from just after local
+ * midnight. The interval crossing midnight is the Rat branch; rotate the
+ * chronological result into the public branch order before splitting Rat.
+ */
+function rubberByBranch(raw: NumInterval[]): NumInterval[] {
+  return [raw[11]!, raw[0]!, raw[1]!, raw[2]!, raw[3]!, raw[4]!, raw[5]!, raw[6]!, raw[7]!, raw[8]!, raw[9]!, raw[10]!];
+}
+
 function toOut(iv: NumInterval): HourInterval {
   return {
     animal: iv.animal,
@@ -434,7 +445,13 @@ export function computeBaziHours(input: BaziHoursInput): BaziHoursResult {
     m!,
     y!,
   );
-  const shift = input.utcOffset * 60 - input.lng * 4;
+  // Convert solar-clock boundaries back to the selected civil clock. Marina's
+  // solar mode includes the equation of time for the selected date.
+  const utcNoon = new Date(Date.UTC(y!, m! - 1, d!, 12, 0, 0));
+  const dayOfYear = Math.floor((utcNoon.getTime() - Date.UTC(y!, 0, 1)) / 86400000) + 1;
+  const angle = (2 * Math.PI * (dayOfYear - 81)) / 364;
+  const equationOfTime = 9.87 * Math.sin(2 * angle) - 7.53 * Math.cos(angle) - 1.5 * Math.sin(angle);
+  const shift = input.utcOffset * 60 - input.lng * 4 - equationOfTime;
   const riseMin = Math.round(rise);
   const setMin = Math.round(set);
 
@@ -449,16 +466,21 @@ export function computeBaziHours(input: BaziHoursInput): BaziHoursResult {
 
   // Rubber: stretched branches.
   const rb = rubberBoundaries(riseMin, setMin, shift);
-  const rubber: NumInterval[] = ANIMALS.map((animal, i) => ({
+  const rubberChronological: NumInterval[] = ANIMALS.map((animal, i) => ({
     animal,
     s: rb[i]!,
     e: rb[i + 1]!,
+  }));
+  const rubber = rubberByBranch(rubberChronological).map((iv, i) => ({
+    ...iv,
+    animal: ANIMALS[i]!,
   }));
 
   // Combined: per-branch intersection of solar and rubber.
   const norm = (x: number) => ((Math.round(x) % 1440) + 1440) % 1440;
   const combined: NumInterval[] = ANIMALS.map((animal, i) => {
-    const o = arcIntersect(norm(sb[i]!), norm(sb[i + 1]!), rb[i]!, rb[i + 1]!);
+    const rubberBranch = rubber[i]!;
+    const o = arcIntersect(norm(sb[i]!), norm(sb[i + 1]!), rubberBranch.s!, rubberBranch.e!);
     return { animal, s: o ? o.s : null, e: o ? o.e : null };
   });
 
@@ -466,6 +488,7 @@ export function computeBaziHours(input: BaziHoursInput): BaziHoursResult {
     sunrise: fmt(rise),
     sunset: fmt(set),
     shiftMinutes: Math.round(shift),
+    equationOfTimeMinutes: Number(equationOfTime.toFixed(2)),
     solar: applyDoubled(solar, input.doubledRat).map(toOut),
     rubber: applyDoubled(rubber, input.doubledRat).map(toOut),
     combined: applyDoubled(combined, input.doubledRat).map(toOut),

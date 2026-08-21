@@ -107,7 +107,7 @@ export default function BaziHoursCalculator() {
   const [debounced, setDebounced] = useState("");
   const [city, setCity] = useState<City | null>(null);
   const [date, setDate] = useState(todayISO());
-  const [doubledRat, setDoubledRat] = useState(true);
+  const [doubledRat, setDoubledRat] = useState(false);
   const [resultOpen, setResultOpen] = useState(false);
 
   useEffect(() => {
@@ -269,7 +269,7 @@ export default function BaziHoursCalculator() {
             </DialogTitle>
             {result && (
               <DialogDescription>
-                Восход {result.sunrise} · Закат {result.sunset}
+                Восход {result.sunrise} · Закат {result.sunset} · Уравнение времени {result.equationOfTimeMinutes > 0 ? "+" : ""}{result.equationOfTimeMinutes} мин
               </DialogDescription>
             )}
           </DialogHeader>

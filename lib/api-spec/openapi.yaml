@@ -1073,13 +1073,15 @@ components:
 
     BaziHoursResult:
       type: object
-      required: [sunrise, sunset, shiftMinutes, solar, rubber, combined]
+      required: [sunrise, sunset, shiftMinutes, equationOfTimeMinutes, solar, rubber, combined]
       properties:
         sunrise:
           type: string
         sunset:
           type: string
         shiftMinutes:
+          type: number
+        equationOfTimeMinutes:
           type: number
         solar:
           type: array
