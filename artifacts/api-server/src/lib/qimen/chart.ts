@@ -35,7 +35,7 @@ for (const d of DOORS) DOOR_ELEMENT[d.name] = d.element;
 // Подтверждённые годовые позиции Mingli. Годовые карты используют отдельный
 // слой правил и не должны выводить Главную звезду из часовой формулы.
 const MINGLI_ANNUAL_MAIN: Record<string, { star: string; palace: number }> = {
-  "丙午": { star: "天心", palace: 4 }, // 2026
+  "丙午": { star: "天心", palace: 3 }, // 2026: Восток
   "丁未": { star: "天芮", palace: 3 }, // 2027; 天芮 несёт 天禽 в паре
 };
 
