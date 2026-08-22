@@ -148,6 +148,11 @@ const TOP_RING = [
   { left: "Огонь 火", center: "Юг", right: "午 Лошадь" },
   { left: "", center: "未 Коза", right: "Юз" },
 ];
+const BOTTOM_RING = [
+  { left: "Св", center: "丑 Бык", right: "" },
+  { left: "Вода 水", center: "子 Крыса", right: "" },
+  { left: "", center: "亥 Свинья", right: "Сз" },
+];
 const LEFT_PERIMETER = [
   { element: "Дерево", branch: "辰 Дракон" },
   { element: "Дерево", branch: "卯 Кролик" },
@@ -268,6 +273,15 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                   );
                 })}
               </div>
+              <div className="grid grid-cols-3 overflow-hidden rounded-b-sm bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:text-xs">
+                {BOTTOM_RING.map((item) => (
+                  <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center px-1 sm:h-7 sm:px-2">
+                    <span className="whitespace-nowrap text-left">{item.left}</span>
+                    <span className="whitespace-nowrap text-center">{item.center}</span>
+                    <span className="whitespace-nowrap text-right">{item.right}</span>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="flex w-5 shrink-0 flex-col sm:w-6">
               {RIGHT_PERIMETER.map((item) => (
@@ -276,12 +290,6 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                 </div>
               ))}
             </div>
-          </div>
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-            {PALACE_LAYOUT_ROWS[2].map((palace) => {
-              const info = PALACE_INFO_RU[palace];
-              return <div key={`bottom-${palace}`} className="flex min-w-0 flex-col pt-0 text-center text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span><span className="font-normal normal-case text-cyan-300/60">{info.branch}</span></div>;
-            })}
           </div>
         </div>
       </CardContent>
