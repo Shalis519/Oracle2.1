@@ -144,9 +144,9 @@ const PALACE_INFO_RU: Record<number, { direction: string; element: string; branc
   9: { direction: "Юг", element: "Огонь", branch: "午 Лошадь" },
 };
 const TOP_RING = [
-  { left: "ЮВ", right: "巳 ЗМЕЯ" },
-  { left: "ОГОНЬ 火", right: "午 ЛОШАДЬ" },
-  { left: "未 КОЗА", right: "ЮЗ" },
+  { left: "ЮВ", center: "巳 ЗМЕЯ", right: "" },
+  { left: "ОГОНЬ 火", center: "ЮГ", right: "午 ЛОШАДЬ" },
+  { left: "", center: "未 КОЗА", right: "ЮЗ" },
 ];
 const LEFT_PERIMETER = [
   { element: "Дерево", branch: "辰 Дракон" },
@@ -216,9 +216,10 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
         <div className="mx-auto flex w-full max-w-2xl flex-col">
           <div className="grid grid-cols-3 overflow-hidden rounded-t-sm bg-slate-200 text-[8px] font-semibold uppercase leading-none text-slate-900 sm:text-[10px]">
             {TOP_RING.map((item) => (
-              <div key={`${item.left}-${item.right}`} className="flex h-6 min-w-0 items-center justify-between gap-1 px-2 sm:h-7 sm:px-3">
-                <span className="whitespace-nowrap">{item.left}</span>
-                <span className="whitespace-nowrap">{item.right}</span>
+              <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center px-2 sm:h-7 sm:px-3">
+                <span className="whitespace-nowrap text-left">{item.left}</span>
+                <span className="whitespace-nowrap text-center">{item.center}</span>
+                <span className="whitespace-nowrap text-right">{item.right}</span>
               </div>
             ))}
           </div>
