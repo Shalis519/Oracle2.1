@@ -222,7 +222,7 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
           <div className="grid w-full grid-cols-[1.75rem_minmax(0,1fr)_1.75rem] items-stretch overflow-hidden rounded-sm sm:grid-cols-[1.75rem_minmax(0,1fr)_1.75rem]">
             <div className="flex w-6 shrink-0 flex-col overflow-hidden bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
               {LEFT_PERIMETER.map((item) => (
-                <div key={`left-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden">
+                <div key={`left-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden px-1 sm:px-2">
                   <span className="whitespace-nowrap" style={{ transform: "rotate(-90deg)" }}>{item.parts.join(" ")}</span>
                 </div>
               ))}
@@ -230,10 +230,10 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
             <div className="min-w-0 flex-1">
               <div className="grid grid-cols-3 overflow-hidden bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:text-xs">
                 {TOP_RING.map((item) => (
-                  <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center px-1 sm:h-7 sm:px-2">
-                    <span className="whitespace-nowrap text-left">{item.left}</span>
-                    <span className="whitespace-nowrap text-center">{item.center}</span>
-                    <span className="whitespace-nowrap text-right">{item.right}</span>
+                  <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center gap-1 overflow-hidden px-2 sm:h-7 sm:gap-2 sm:px-3">
+                    <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-left">{item.left}</span>
+                    <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-center">{item.center}</span>
+                    <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-right">{item.right}</span>
                   </div>
                 ))}
               </div>
@@ -275,17 +275,17 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
               </div>
               <div className="grid grid-cols-3 overflow-hidden bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:text-xs">
                 {BOTTOM_RING.map((item) => (
-                  <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center px-1 sm:h-7 sm:px-2">
-                    <span className="whitespace-nowrap text-left">{item.left}</span>
-                    <span className="whitespace-nowrap text-center">{item.center}</span>
-                    <span className="whitespace-nowrap text-right">{item.right}</span>
+                  <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center gap-1 overflow-hidden px-2 sm:h-7 sm:gap-2 sm:px-3">
+                    <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-left">{item.left}</span>
+                    <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-center">{item.center}</span>
+                    <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-right">{item.right}</span>
                   </div>
                 ))}
               </div>
             </div>
             <div className="flex w-6 shrink-0 flex-col overflow-hidden bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
               {RIGHT_PERIMETER.map((item) => (
-                <div key={`right-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden">
+                <div key={`right-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden px-1 sm:px-2">
                   <span className="whitespace-nowrap" style={{ transform: "rotate(90deg)" }}>{item.parts.join(" ")}</span>
                 </div>
               ))}
