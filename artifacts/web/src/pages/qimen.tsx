@@ -143,6 +143,11 @@ const PALACE_INFO_RU: Record<number, { direction: string; element: string; branc
   8: { direction: "Северо-восток", element: "Земля", branch: "丑 Бык" },
   9: { direction: "Юг", element: "Огонь", branch: "午 Лошадь" },
 };
+const TOP_RING = [
+  { left: "ЮВ", right: "巳 ЗМЕЯ" },
+  { left: "ОГОНЬ 火", right: "午 ЛОШАДЬ" },
+  { left: "未 КОЗА", right: "ЮЗ" },
+];
 const LEFT_PERIMETER = [
   { element: "Дерево", branch: "辰 Дракон" },
   { element: "Дерево", branch: "卯 Кролик" },
@@ -209,11 +214,13 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
       </CardHeader>
       <CardContent>
         <div className="mx-auto flex w-full max-w-2xl flex-col">
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-            {PALACE_LAYOUT_ROWS[0].map((palace) => {
-              const info = PALACE_INFO_RU[palace];
-              return <div key={`top-${palace}`} className="flex min-w-0 flex-col justify-end pb-0 text-center text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span><span className="font-normal normal-case text-cyan-300/60">{info.branch}</span></div>;
-            })}
+          <div className="grid grid-cols-3 overflow-hidden rounded-t-sm bg-slate-200 text-[8px] font-semibold uppercase leading-none text-slate-900 sm:text-[10px]">
+            {TOP_RING.map((item) => (
+              <div key={`${item.left}-${item.right}`} className="flex h-6 min-w-0 items-center justify-between gap-1 px-2 sm:h-7 sm:px-3">
+                <span className="whitespace-nowrap">{item.left}</span>
+                <span className="whitespace-nowrap">{item.right}</span>
+              </div>
+            ))}
           </div>
           <div className="flex w-full items-stretch gap-1.5 sm:gap-2">
             <div className="flex w-5 shrink-0 flex-col sm:w-6">
