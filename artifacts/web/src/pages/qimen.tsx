@@ -149,9 +149,9 @@ const TOP_RING = [
   { left: "", center: "未 Коза", right: "Юз" },
 ];
 const BOTTOM_RING = [
-  { left: "Св", center: "丑 Бык", right: "" },
-  { left: "Вода 水", center: "子 Крыса", right: "" },
-  { left: "", center: "亥 Свинья", right: "Сз" },
+  { left: "СВ", center: "丑 Бык", right: "" },
+  { left: "Вода 水", center: "子 Крыса", right: "Север" },
+  { left: "", center: "亥 Свинья", right: "СЗ" },
 ];
 const LEFT_PERIMETER = [
   { element: "Дерево", branch: "辰 Дракон" },
