@@ -170,16 +170,35 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                   <span>{cell.direction || "Центр"}</span><span>{cell.trigram}</span>
                 </div>
                 {cell.isDestinyPalace ? (
-                  <div className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-300/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-emerald-200">
+                  <div className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-300/10 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-emerald-200">
                     Дворец Судьбы
                   </div>
                 ) : null}
-                <div className="mt-2 space-y-0.5">
-                  <p><span className="text-cyan-300/70">Дух:</span> {cell.deity || "—"}</p>
-                  <p><span className="text-cyan-300/70">Врата:</span> {cell.door || "—"}</p>
-                  <p><span className="text-cyan-300/70">Небо:</span> {cell.heavenStem || "—"}</p>
-                  <p><span className="text-cyan-300/70">Звезда:</span> {cell.star || "—"}{cell.pairedStar ? ` / ${cell.pairedStar}` : ""}</p>
-                  <p><span className="text-cyan-300/70">Земля:</span> {cell.earthStem || "—"}</p>
+                <div className="mt-2 space-y-2">
+                  <div className="grid grid-cols-2 gap-1 text-center">
+                    <div>
+                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.deity || "—"}</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">Дух</div>
+                    </div>
+                    <div>
+                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.heavenStem || "—"}</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">Небо</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 text-center">
+                    <div>
+                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.star || "—"}{cell.pairedStar ? ` / ${cell.pairedStar}` : ""}</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">Звезда</div>
+                    </div>
+                    <div>
+                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.door || "—"}</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">Врата</div>
+                    </div>
+                    <div>
+                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.earthStem || "—"}</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">Земля</div>
+                    </div>
+                  </div>
                 </div>
                 {cell.isVoid ? <p className="mt-2 text-amber-200">Пустота</p> : null}
               </div>
