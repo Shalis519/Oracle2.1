@@ -209,7 +209,7 @@ const DOOR_NAME_RU: Record<string, string> = {
 	const ELEMENT_TEXT_CLASS: Record<string, string> = {
 	  wood: "text-emerald-300",
 	  fire: "text-red-300",
-	  earth: "text-amber-700",
+	  earth: "text-[#B07A4A]",
 	  metal: "text-slate-100",
 	  water: "text-sky-300",
 	};
