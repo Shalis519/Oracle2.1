@@ -1802,7 +1802,11 @@ components:
           type: string
         isMainGate:
           type: boolean
-
+        supportRelation:
+          type: string
+          enum: [same, supports]
+        supportMessage:
+          type: string
     QimenBirthChartCell:
       type: object
       required: [palace, direction, trigram, earthStem, heavenStem, hiddenHeavenStem, hiddenEarthStem, star, door, deity, isVoid]

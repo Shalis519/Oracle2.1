@@ -146,6 +146,7 @@ export * from './promotionActivation';
 export * from './qimenBirthChart';
 export * from './qimenBirthChartCell';
 export * from './qimenJadeMaiden';
+export * from './qimenJadeMaidenSupportRelation';
 export * from './qimenMonthChart';
 export * from './qimenStructure';
 export * from './qimenSummary';

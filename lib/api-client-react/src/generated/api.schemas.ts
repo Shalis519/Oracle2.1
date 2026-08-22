@@ -542,6 +542,14 @@ export interface JiFuWish {
   matchDay: boolean;
 }
 
+export type QimenJadeMaidenSupportRelation = typeof QimenJadeMaidenSupportRelation[keyof typeof QimenJadeMaidenSupportRelation];
+
+
+export const QimenJadeMaidenSupportRelation = {
+  same: 'same',
+  supports: 'supports',
+} as const;
+
 export interface QimenJadeMaiden {
   date: string;
   dayGanZhi: string;
@@ -557,6 +565,8 @@ export interface QimenJadeMaiden {
   door: string;
   doorName: string;
   isMainGate: boolean;
+  supportRelation?: QimenJadeMaidenSupportRelation;
+  supportMessage?: string;
 }
 
 export interface QimenBirthChartCell {

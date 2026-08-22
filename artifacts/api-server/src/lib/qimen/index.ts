@@ -61,6 +61,8 @@ export interface QimenJadeMaiden {
   door: string;
   doorName: string;
   isMainGate: boolean;
+  supportRelation?: "same" | "supports";
+  supportMessage?: string;
 }
 
 export interface QimenBirthChartCell {
@@ -239,6 +241,27 @@ function buildBirthChart(
   };
 }
 
+const ELEMENT_NAME_RU_LOWER: Record<string, string> = {
+  wood: "дерево",
+  fire: "огонь",
+  earth: "земля",
+  metal: "металл",
+  water: "вода",
+};
+
+function jadeMaidenSupportMessage(
+  relation: "same" | "supports",
+  structureElement: string,
+  personElement: string,
+): string {
+  const structure = ELEMENT_NAME_RU_LOWER[structureElement] ?? structureElement;
+  const person = ELEMENT_NAME_RU_LOWER[personElement] ?? personElement;
+  const prefix = `Данная структура находится во дворце стихии ${structure}. Ваш НС года - ${person}.`;
+  return relation === "same"
+    ? `${prefix} Для вас эта прогулка благоприятна!`
+    : `${prefix} Структура вас поддерживает (У-Син). Эта прогулка с высокой вероятностью принесёт результат!`;
+}
+
 function hourLabel(hourBranch: number, lateZi = false): string {
   if (hourBranch === 0) {
     return `${lateZi ? "Поздняя" : "Ранняя"} Крыса (${lateZi ? "23:00–00:00" : "00:00–01:00"})`;
@@ -303,6 +326,12 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           door: hit.door,
           doorName: DOOR_NAME_RU[hit.door] ?? "",
                         isMainGate: hit.isMainGate,
+          supportRelation: hit.support?.relation === "same" || hit.support?.relation === "supports"
+            ? hit.support.relation
+            : undefined,
+          supportMessage: hit.support && (hit.support.relation === "same" || hit.support.relation === "supports")
+            ? jadeMaidenSupportMessage(hit.support.relation, hit.support.structureElement, hit.support.personElement)
+            : undefined,
 
         });
       }

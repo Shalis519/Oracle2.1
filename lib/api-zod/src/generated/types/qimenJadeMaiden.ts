@@ -5,6 +5,7 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { QimenJadeMaidenSupportRelation } from './qimenJadeMaidenSupportRelation';
 
 export interface QimenJadeMaiden {
   date: string;
@@ -21,4 +22,6 @@ export interface QimenJadeMaiden {
   door: string;
   doorName: string;
   isMainGate: boolean;
+  supportRelation?: QimenJadeMaidenSupportRelation;
+  supportMessage?: string;
 }

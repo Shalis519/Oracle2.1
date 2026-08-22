@@ -674,7 +674,9 @@ export const GetQimenResponse = zod.object({
   "earthStemName": zod.string(),
   "door": zod.string(),
   "doorName": zod.string(),
-  "isMainGate": zod.boolean()
+  "isMainGate": zod.boolean(),
+  "supportRelation": zod.enum(['same', 'supports']).optional(),
+  "supportMessage": zod.string().optional()
 })),
   "birthChart": zod.union([zod.object({
   "hourGz": zod.string(),

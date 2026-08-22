@@ -482,7 +482,11 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
               {formatDate(m.date)}
             </span>
           </div>
-
+          {m.supportMessage ? (
+            <p className="text-sm leading-relaxed text-rose-100/90">
+              {m.supportMessage}
+            </p>
+          ) : null}
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="rounded-full bg-rose-400/10 px-2 py-0.5 text-xs text-rose-200/90">
               Небо: {m.heavenStemName}
