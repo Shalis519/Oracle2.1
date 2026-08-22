@@ -155,7 +155,7 @@ const BOTTOM_RING = [
 ];
 const LEFT_PERIMETER = [
   { parts: ["辰", "Дракон", "Дерево", "巽"] },
-  { parts: ["Дерево", "震", "卯", "Кролик"] },
+  { parts: ["Дерево", "震", "В", "卯", "Кролик"] },
   { parts: ["艮", "Земля", "寅", "Тигр"] },
 ];
 const RIGHT_PERIMETER = [
