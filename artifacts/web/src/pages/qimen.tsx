@@ -453,15 +453,6 @@ export default function QimenPage() {
         </div>
       </motion.div>
 
-      {data?.monthChart ? (
-        <section className="space-y-4">
-          <BirthChartCard
-            chart={data.monthChart}
-            title="Месячная карта Ци Мэнь"
-            description="Месячный расклад по системе Joey Yap"
-          />
-        </section>
-      ) : null}
 
       {data?.birthChart ? (
         <section className="space-y-4">
