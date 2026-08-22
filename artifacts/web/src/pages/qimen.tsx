@@ -253,12 +253,10 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
               ))}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="grid grid-cols-3 overflow-hidden bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:text-xs">
-                {TOP_RING.map((item) => (
-                  <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center px-1 sm:h-7 sm:px-2">
-                    <span className="whitespace-nowrap text-left">{item.left}</span>
-                    <span className="whitespace-nowrap text-center">{item.center}</span>
-                    <span className="whitespace-nowrap text-right">{item.right}</span>
+              <div className="grid grid-cols-9 overflow-hidden bg-slate-200 text-[9px] font-semibold leading-none text-slate-900 sm:text-xs">
+                {TOP_RING.flatMap((item) => [item.left, item.center, item.right]).map((label, index) => (
+                  <div key={`top-${index}-${label}`} className="flex h-6 min-w-0 items-center justify-center overflow-hidden px-0.5 sm:h-7 sm:px-1">
+                    <span className="max-w-full whitespace-nowrap text-center">{label}</span>
                   </div>
                 ))}
               </div>
@@ -299,12 +297,10 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                   );
                 })}
               </div>
-              <div className="grid grid-cols-3 overflow-hidden bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:text-xs">
-                {BOTTOM_RING.map((item) => (
-                  <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center px-1 sm:h-7 sm:px-2">
-                    <span className="whitespace-nowrap text-left">{item.left}</span>
-                    <span className="whitespace-nowrap text-center">{item.center}</span>
-                    <span className="whitespace-nowrap text-right">{item.right}</span>
+              <div className="grid grid-cols-9 overflow-hidden bg-slate-200 text-[9px] font-semibold leading-none text-slate-900 sm:text-xs">
+                {BOTTOM_RING.flatMap((item) => [item.left, item.center, item.right]).map((label, index) => (
+                  <div key={`bottom-${index}-${label}`} className="flex h-6 min-w-0 items-center justify-center overflow-hidden px-0.5 sm:h-7 sm:px-1">
+                    <span className="max-w-full whitespace-nowrap text-center">{label}</span>
                   </div>
                 ))}
               </div>
