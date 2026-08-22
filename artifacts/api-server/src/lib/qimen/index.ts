@@ -226,8 +226,10 @@ function buildBirthChart(
 }
 
 function hourLabel(hourBranch: number, lateZi = false): string {
-  const prefix = lateZi ? "поздний час" : "час";
-  return `${prefix} ${BRANCH_ANIMAL_RU_GEN[hourBranch]} (${BRANCH_HOUR_WINDOW[hourBranch]})`;
+  if (hourBranch === 0) {
+    return `${lateZi ? "Поздняя" : "Ранняя"} Крыса (${lateZi ? "23:00–00:00" : "00:00–01:00"})`;
+  }
+  return `час ${BRANCH_ANIMAL_RU_GEN[hourBranch]} (${BRANCH_HOUR_WINDOW[hourBranch]})`;
 }
 
 /**
@@ -259,7 +261,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     // Крыса 00:00–01:00 открывает следующие. Поэтому слот и карта
     // должны получать собственную календарную дату.
     for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-      const slotDate = slot.lateZi
+      const slotDate = slot.branch === 0 && !slot.lateZi
         ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
         : date;
       const slotDay = dayInfo(slotDate);
@@ -315,7 +317,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     const day = dayInfo(date);
     if (clashesBranch(yearBranch, day.branch)) continue; // personal 六冲 filter
     for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-      const slotDate = slot.lateZi
+      const slotDate = slot.branch === 0 && !slot.lateZi
         ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
         : date;
       const slotDay = dayInfo(slotDate);
