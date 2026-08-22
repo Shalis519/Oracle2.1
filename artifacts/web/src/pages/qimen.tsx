@@ -157,6 +157,21 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
             if (!cell) {
               return <div key={palace} className="min-h-36 rounded-lg border border-cyan-400/10 bg-cyan-400/5" />;
             }
+            if (palace === 5) {
+              return (
+                <div
+                  key={palace}
+                  className="min-h-36 rounded-lg border border-cyan-300/20 bg-background/20 p-2 text-center text-[10px] sm:text-xs leading-relaxed"
+                >
+                  <div className="mt-5 text-2xl font-semibold leading-none text-cyan-100">
+                    {chart.yin ? "Инь" : "Ян"} {chart.ju}
+                  </div>
+                  <div className="mt-3 text-cyan-200">{"monthGz" in chart ? "Расклад месяца" : "Расклад часа"}</div>
+                  <div className="mt-1 text-[9px] text-cyan-300/70">Система: Чжи Жунь</div>
+                  <div className="mt-1 text-[9px] text-cyan-300/70">{periodGz}</div>
+                </div>
+              );
+            }
             return (
               <div
                 key={palace}
