@@ -150,7 +150,7 @@ const TOP_RING = [
 ];
 const BOTTOM_RING = [
   { left: "СВ", center: "丑 Бык", right: "" },
-  { left: "Вода 水", center: "子 Крыса", right: "Север" },
+  { left: "Вода 水", center: "Север", right: "子 Крыса" },
   { left: "", center: "亥 Свинья", right: "СЗ" },
 ];
 const LEFT_PERIMETER = [
