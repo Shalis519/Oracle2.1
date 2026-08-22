@@ -144,9 +144,9 @@ const PALACE_INFO_RU: Record<number, { direction: string; element: string; branc
   9: { direction: "Юг", element: "Огонь", branch: "午 Лошадь" },
 };
 const TOP_RING = [
-  { left: "Юв", center: "巳 Змея", right: "" },
+  { left: "ЮВ", center: "巳 Змея", right: "" },
   { left: "Огонь 火", center: "Юг", right: "午 Лошадь" },
-  { left: "", center: "未 Коза", right: "Юз" },
+  { left: "", center: "未 Коза", right: "ЮЗ" },
 ];
 const BOTTOM_RING = [
   { left: "СВ", center: "丑 Бык", right: "" },
