@@ -12,6 +12,7 @@ export interface QimenBirthChartCell {
   trigram: string;
   earthStem: string;
   heavenStem: string;
+  hiddenStem: string;
   star: string;
   /** @nullable */
   pairedStar?: string | null;

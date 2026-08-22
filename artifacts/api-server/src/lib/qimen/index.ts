@@ -9,7 +9,7 @@ import {
   PALACES,
   STEMS,
 } from "./constants";
-import { birthYearBranch, birthYearStem, birthYearRepresentativeStem, dayInfo } from "./calendar";
+import { birthYearBranch, birthYearStem, birthYearRepresentativeStem, dayInfo, xunInfo } from "./calendar";
 import { buildChart, buildPeriodMap, type PalaceCell } from "./chart";
 import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
 import { detectThreeGenerals, detectJadeMaiden } from "./structures";
@@ -68,6 +68,7 @@ export interface QimenBirthChartCell {
   trigram: string;
   earthStem: string;
   heavenStem: string;
+  hiddenStem: string;
   star: string;
   pairedStar?: string;
   door: string;
@@ -157,6 +158,7 @@ function buildMonthChart(date: Date): QimenMonthChart {
     trigram: PALACES[cell.palace].trigram,
     earthStem: cell.earthStem,
     heavenStem: cell.heavenStem,
+    hiddenStem: cell.hiddenStem,
     star: cell.star,
     pairedStar: cell.pairedStar,
     door: cell.door,
@@ -213,6 +215,7 @@ function buildBirthChart(
     trigram: PALACES[cell.palace].trigram,
     earthStem: cell.earthStem,
     heavenStem: cell.heavenStem,
+    hiddenStem: cell.hiddenStem,
     star: cell.star,
     pairedStar: cell.pairedStar,
     door: cell.door,

@@ -1805,13 +1805,14 @@ components:
 
     QimenBirthChartCell:
       type: object
-      required: [palace, direction, trigram, earthStem, heavenStem, star, door, deity, isVoid]
+      required: [palace, direction, trigram, earthStem, heavenStem, hiddenStem, star, door, deity, isVoid]
       properties:
         palace: { type: integer }
         direction: { type: string }
         trigram: { type: string }
         earthStem: { type: string }
         heavenStem: { type: string }
+        hiddenStem: { type: string }
         star: { type: string }
         pairedStar: { type: [string, "null"] }
         door: { type: string }

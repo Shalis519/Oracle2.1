@@ -3,7 +3,8 @@ import { buildChart, buildPeriodMap, mainGateStar } from "./qimen/chart";
 import { Solar } from "lunar-typescript";
 import { parseGanZhi, STEMS, BRANCHES } from "./qimen/constants";
 import { monthJoeyYapJuForDate, monthJoeyYapStructure, monthPillarForDate } from "./qimen/ju";
-import { detectJadeMaiden, jadeMaidenVariant } from "./qimen/structures";
+import { CHRONOLOGICAL_HOUR_SLOTS } from "./qimen/constants";
+import { detectFlyingBirdFallsIntoCave, detectJadeMaiden, jadeMaidenVariant } from "./qimen/structures";
 
 function chart(year: number, month: number, day: number, hourBranch: number) {
   return buildChart(new Date(year, month - 1, day, 12, 0, 0), hourBranch);
@@ -46,7 +47,28 @@ describe("Месячная карта Joey Yap", () => {
   });
 });
 
+describe("Заглушка структуры Птица падает в гнездо", () => {
+  it("распознаёт только 丙 на Небесной тарелке над 戊 на Земной тарелке и не публикует результат", () => {
+    const hits = CHRONOLOGICAL_HOUR_SLOTS.flatMap((slot) =>
+      detectFlyingBirdFallsIntoCave(new Date(2026, 7, 20, 12), slot.branch, slot.lateZi),
+    );
+    expect(hits.length).toBeGreaterThan(0);
+    const sixYi = new Set(["戊", "己", "庚", "辛", "壬", "癸"]);
+    expect(hits.every((hit) =>
+      hit.heavenStem === "丙" && sixYi.has(hit.earthStem) &&
+      hit.status === "placeholder" && hit.published === false,
+    )).toBe(true);
+  });
+});
+
 describe("Главная звезда и Главные Врата по учебнику Ци Мэнь", () => {
+  it("расставляет скрытый ствол от ствола часа через дворец Главных Врат", () => {
+    const built = chart(2017, 6, 8, 8);
+    expect(built.cells[built.zhiShiPalace]?.hiddenStem).toBe(STEMS[built.hourStem]);
+    expect(Object.values(built.cells)).toHaveLength(9);
+    expect(Object.values(built.cells).every((cell) => Boolean(cell.hiddenStem))).toBe(true);
+  });
+
   it("matches the book example 08.06.2017 丙申, 6 Ян", () => {
     const built = chart(2017, 6, 8, 8);
     expect(mainGateStar(built)).toEqual({ gate: "景门", star: "天英", palace: 2 });

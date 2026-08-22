@@ -22,6 +22,25 @@ import { juForDate, type JuResult } from "./ju";
 // 戊己庚辛壬癸丁丙乙 placement sequence (stem indices).
 const SEQ = [4, 5, 6, 7, 8, 9, 3, 2, 1];
 
+// 隐干/暗干 sequence from the project book: 戊己庚辛壬癸丁丙乙.
+const HIDDEN_STEM_SEQUENCE = [4, 5, 6, 7, 8, 9, 3, 2, 1];
+const YU_FORWARD: Record<number, number> = { 1: 2, 2: 9, 9: 4, 4: 3, 3: 5, 5: 7, 7: 6, 6: 8, 8: 1 };
+const YU_BACKWARD: Record<number, number> = Object.fromEntries(Object.entries(YU_FORWARD).map(([from, to]) => [to, Number(from)]));
+
+function hiddenStemsByPalace(startPalace: number, hourStem: number, yin: boolean): Record<number, string> {
+  const result: Record<number, string> = {};
+  let palace = startPalace;
+  let sequenceIndex = HIDDEN_STEM_SEQUENCE.indexOf(hourStem);
+  if (sequenceIndex < 0) sequenceIndex = 0;
+  const step = yin ? YU_BACKWARD : YU_FORWARD;
+  for (let i = 0; i < 9; i++) {
+    result[palace] = STEMS[HIDDEN_STEM_SEQUENCE[sequenceIndex]];
+    palace = step[palace];
+    sequenceIndex = (sequenceIndex + 1) % HIDDEN_STEM_SEQUENCE.length;
+  }
+  return result;
+}
+
 // Original star/door per outer palace (center 5 excluded; 天禽 rides 天芮).
 const STAR_AT: Record<number, string> = {};
 for (const s of STARS) if (s.palace !== 5) STAR_AT[s.palace] = s.name;
@@ -55,6 +74,7 @@ export interface PalaceCell {
   palace: number;
   earthStem: string;
   heavenStem: string;
+  hiddenStem: string;
   star: string;
   /** Парная звезда: 天禽 следует за 天芮 в том же дворце. */
   pairedStar?: string;
@@ -161,6 +181,7 @@ function buildPeriodChart(
   const iStar = pathIndex(zhiFuPalace);
   const doorShift = (((pathIndex(zhiShiPalace) - pathIndex(pFu)) % 8) + 8) % 8;
 
+  const hiddenStem = hiddenStemsByPalace(zhiShiPalace, hs, yin);
   const cells: Record<number, PalaceCell> = {};
   for (let i = 0; i < 8; i++) {
     const p = PATH[i];
@@ -183,6 +204,7 @@ function buildPeriodChart(
       palace: p,
       earthStem: STEMS[earthStem[p]],
       heavenStem,
+      hiddenStem: hiddenStem[p],
       star,
       pairedStar: star === "天芮" ? "天禽" : undefined,
       door: DOOR_AT[doorSrc],
@@ -195,6 +217,7 @@ function buildPeriodChart(
     palace: 5,
     earthStem: STEMS[earthStem[5]],
     heavenStem: STEMS[earthStem[5]],
+    hiddenStem: hiddenStem[5],
     star: "天禽",
     door: "",
     deity: "",
