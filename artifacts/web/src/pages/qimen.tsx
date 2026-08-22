@@ -143,6 +143,16 @@ const PALACE_INFO_RU: Record<number, { direction: string; element: string; branc
   8: { direction: "Северо-восток", element: "Земля", branch: "丑 Бык" },
   9: { direction: "Юг", element: "Огонь", branch: "午 Лошадь" },
 };
+const LEFT_PERIMETER = [
+  { element: "Дерево", branch: "辰 Дракон" },
+  { element: "Дерево", branch: "卯 Кролик" },
+  { element: "Дерево", branch: "寅 Тигр" },
+];
+const RIGHT_PERIMETER = [
+  { element: "Металл", branch: "申 Обезьяна" },
+  { element: "Металл", branch: "酉 Петух" },
+  { element: "Металл", branch: "戌 Собака" },
+];
 const DEITY_NAME_RU: Record<string, string> = {
   "值符": "Главный Дух",
   "螣蛇": "Змея",
@@ -203,12 +213,16 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
             const info = PALACE_INFO_RU[palace];
             return <div key={`top-${palace}`} style={{ gridColumn: index + 2, gridRow: 1 }} className="flex min-w-0 flex-col justify-end pb-0 text-center text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span><span className="font-normal normal-case text-cyan-300/60">{info.branch}</span></div>;
           })}
-          <div className="col-start-1 row-start-3 flex min-w-0 items-center justify-end pr-1 text-right text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
-            <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>{PALACE_INFO_RU[3].element} · {PALACE_INFO_RU[3].branch}</span>
-          </div>
-          <div className="col-start-5 row-start-3 flex min-w-0 items-center pl-1 text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
-            <span style={{ writingMode: "vertical-rl" }}>{PALACE_INFO_RU[7].element} · {PALACE_INFO_RU[7].branch}</span>
-          </div>
+          {LEFT_PERIMETER.map((item, index) => (
+            <div key={`left-${item.branch}`} style={{ gridColumn: 1, gridRow: index + 2 }} className="flex min-w-0 items-center justify-end pr-0 text-right text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
+              <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>{item.element} · {item.branch}</span>
+            </div>
+          ))}
+          {RIGHT_PERIMETER.map((item, index) => (
+            <div key={`right-${item.branch}`} style={{ gridColumn: 5, gridRow: index + 2 }} className="flex min-w-0 items-center pl-0 text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
+              <span style={{ writingMode: "vertical-rl" }}>{item.element} · {item.branch}</span>
+            </div>
+          ))}
           <div className="col-start-2 col-span-3 row-start-2 row-span-3 grid grid-cols-3 grid-rows-3 aspect-square min-w-0 gap-1.5 sm:gap-2">
           {BIRTH_CHART_LAYOUT.map((palace) => {
             const cell = byPalace.get(palace);
