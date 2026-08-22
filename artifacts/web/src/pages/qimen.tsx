@@ -131,6 +131,53 @@ function formatDate(iso: string): string {
 }
 
 const BIRTH_CHART_LAYOUT = [4, 9, 2, 3, 5, 7, 8, 1, 6];
+const PALACE_LAYOUT_ROWS = [[4, 9, 2], [3, 5, 7], [8, 1, 6]];
+const PALACE_INFO_RU: Record<number, { direction: string; element: string }> = {
+  1: { direction: "Север", element: "Вода" },
+  2: { direction: "Юго-запад", element: "Земля" },
+  3: { direction: "Восток", element: "Дерево" },
+  4: { direction: "Юго-восток", element: "Дерево" },
+  5: { direction: "Центр", element: "Земля" },
+  6: { direction: "Северо-запад", element: "Металл" },
+  7: { direction: "Запад", element: "Металл" },
+  8: { direction: "Северо-восток", element: "Земля" },
+  9: { direction: "Юг", element: "Огонь" },
+};
+const DEITY_NAME_RU: Record<string, string> = {
+  "值符": "Главный Дух",
+  "螣蛇": "Змея",
+  "太阴": "Великий Инь",
+  "六合": "Шесть Гармоний",
+  "白虎": "Белый Тигр",
+  "玄武": "Чёрная Черепаха",
+  "九地": "Девять Земель",
+  "九天": "Девять Небес",
+};
+const STAR_NAME_RU: Record<string, string> = {
+  "天蓬": "Небесный Навес",
+  "天芮": "Небесный Рис",
+  "天冲": "Небесный Агрессор",
+  "天辅": "Небесный Помощник",
+  "天英": "Небесный Герой",
+  "天禽": "Небесная Птица",
+  "天心": "Небесное Сердце",
+  "天柱": "Небесный Столп",
+  "天任": "Небесный Чиновник",
+};
+const DOOR_NAME_RU: Record<string, string> = {
+  "休门": "Врата Отдыха",
+  "生门": "Врата Жизни",
+  "伤门": "Врата Вреда",
+  "杜门": "Врата Тайника",
+  "景门": "Врата Пейзажа",
+  "死门": "Врата Смерти",
+  "惊门": "Врата Испуга",
+  "开门": "Врата Открытия",
+};
+const STEM_NAME_RU: Record<string, string> = {
+  甲: "Цзя", 乙: "И", 丙: "Бин", 丁: "Дин", 戊: "У",
+  己: "Цзи", 庚: "Гэн", 辛: "Синь", 壬: "Жэнь", 癸: "Гуй",
+};
 
 function BirthChartCard({ chart, title = "Личная карта Ци Мэнь", description = "Часовой расклад на момент рождения" }: { chart: QimenBirthChart | QimenMonthChart; title?: string; description?: string }) {
   const byPalace = new Map(chart.cells.map((cell) => [cell.palace, cell]));
@@ -151,7 +198,18 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-1.5 sm:gap-2 max-w-2xl mx-auto">
+        <div className="grid grid-cols-[minmax(4.5rem,auto)_repeat(3,minmax(0,1fr))_minmax(4.5rem,auto)] grid-rows-[auto_repeat(3,minmax(9rem,1fr))_auto] gap-1.5 sm:gap-2 max-w-3xl mx-auto items-stretch">
+          {PALACE_LAYOUT_ROWS[0].map((palace, index) => {
+            const info = PALACE_INFO_RU[palace];
+            return <div key={`top-${palace}`} style={{ gridColumn: index + 2, gridRow: 1 }} className="flex flex-col justify-end pb-1 text-center text-[9px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span></div>;
+          })}
+          <div className="col-start-1 row-start-3 flex items-center justify-end pr-1 text-right text-[9px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">
+            <span>{PALACE_INFO_RU[3].direction}<br /><span className="font-normal normal-case text-cyan-300/70">{PALACE_INFO_RU[3].element}</span></span>
+          </div>
+          <div className="col-start-5 row-start-3 flex items-center pl-1 text-[9px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">
+            <span>{PALACE_INFO_RU[7].direction}<br /><span className="font-normal normal-case text-cyan-300/70">{PALACE_INFO_RU[7].element}</span></span>
+          </div>
+          <div className="col-start-2 col-span-3 row-start-2 row-span-3 grid grid-cols-3 gap-1.5 sm:gap-2">
           {BIRTH_CHART_LAYOUT.map((palace) => {
             const cell = byPalace.get(palace);
             if (!cell) {
@@ -181,8 +239,8 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                     : "border-cyan-400/20 bg-background/30"
                 }`}
               >
-                <div className="flex items-center justify-between text-cyan-200 font-semibold">
-                  <span>{cell.direction || "Центр"}</span><span>{cell.trigram}</span>
+                <div className="flex items-center justify-end text-cyan-200 font-semibold">
+                  <span>{cell.trigram}</span>
                 </div>
                 {cell.isDestinyPalace ? (
                   <div className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-300/10 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-emerald-200">
@@ -193,31 +251,36 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                   <div className="grid grid-cols-2 gap-1 text-center">
                     <div>
                       <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.deity || "—"}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">Дух</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">{DEITY_NAME_RU[cell.deity] || cell.deity || "Дух"}</div>
                     </div>
                     <div>
                       <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.heavenStem || "—"}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">Небо</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">{STEM_NAME_RU[cell.heavenStem] || cell.heavenStem || "Небо"}</div>
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-1 text-center">
                     <div>
-                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.star || "—"}{cell.pairedStar ? ` / ${cell.pairedStar}` : ""}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">Звезда</div>
+                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.star || "—"}</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">{STAR_NAME_RU[cell.star] || cell.star || "Звезда"}{cell.pairedStar ? ` / ${STAR_NAME_RU[cell.pairedStar] || cell.pairedStar}` : ""}</div>
                     </div>
                     <div>
                       <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.door || "—"}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">Врата</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">{DOOR_NAME_RU[cell.door] || cell.door || "Врата"}</div>
                     </div>
                     <div>
                       <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.earthStem || "—"}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">Земля</div>
+                      <div className="mt-1 text-[9px] text-cyan-300/70">{STEM_NAME_RU[cell.earthStem] || cell.earthStem || "Земля"}</div>
                     </div>
                   </div>
                 </div>
                 {cell.isVoid ? <p className="mt-2 text-amber-200">Пустота</p> : null}
               </div>
             );
+          })}
+          </div>
+          {PALACE_LAYOUT_ROWS[2].map((palace, index) => {
+            const info = PALACE_INFO_RU[palace];
+            return <div key={`bottom-${palace}`} style={{ gridColumn: index + 2, gridRow: 5 }} className="flex flex-col pt-1 text-center text-[9px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span></div>;
           })}
         </div>
       </CardContent>
