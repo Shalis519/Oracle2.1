@@ -114,6 +114,51 @@ export function dayNumber(d: Date): number {
  * Year-pillar branch index (0..11) for a birth date, using the 立春 (Lichun) year boundary.
  * Returns -1 for malformed or invalid dates (caller treats as "no usable birth date").
  */
+export function birthYearStem(iso: string, time?: string | null): number {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? "");
+  if (!m) return -1;
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const d = Number(m[3]);
+  const probe = new Date(y, mo - 1, d);
+  if (probe.getFullYear() !== y || probe.getMonth() !== mo - 1 || probe.getDate() !== d) return -1;
+  let hh = 12;
+  let mi = 0;
+  const t = /^(\d{2}):(\d{2})/.exec(time ?? "");
+  if (t) {
+    const h = Number(t[1]);
+    const min = Number(t[2]);
+    if (h >= 0 && h <= 23 && min >= 0 && min <= 59) { hh = h; mi = min; }
+  }
+  try {
+    const gan = Solar.fromYmdHms(y, mo, d, hh, mi, 0).getLunar().getEightChar().getYearGan();
+    return Array.from("甲乙丙丁戊己庚辛壬癸").indexOf(gan);
+  } catch {
+    return -1;
+  }
+}
+
+export function birthYearRepresentativeStem(iso: string, time?: string | null): number {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? "");
+  if (!m) return -1;
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const d = Number(m[3]);
+  const probe = new Date(y, mo - 1, d);
+  if (probe.getFullYear() !== y || probe.getMonth() !== mo - 1 || probe.getDate() !== d) return -1;
+  let hh = 12;
+  let mi = 0;
+  const t = /^(\d{2}):(\d{2})/.exec(time ?? "");
+  if (t) { hh = Number(t[1]); mi = Number(t[2]); }
+  try {
+    const ec = Solar.fromYmdHms(y, mo, d, hh, mi, 0).getLunar().getEightChar();
+    const gz = parseGanZhi(`${ec.getYearGan()}${ec.getYearZhi()}`);
+    return gz.stem === 0 ? xunInfo(gz.index).yiStem : gz.stem;
+  } catch {
+    return -1;
+  }
+}
+
 export function birthYearBranch(iso: string, time?: string | null): number {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? "");
   if (!m) return -1;
