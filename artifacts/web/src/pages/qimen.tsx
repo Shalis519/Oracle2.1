@@ -154,7 +154,7 @@ const DEITY_NAME_RU: Record<string, string> = {
   "九天": "Девять Небес",
 };
 const STAR_NAME_RU: Record<string, string> = {
-  "天蓬": "Небесный Навес",
+  "天蓬": "Небесный Пэн",
   "天芮": "Небесный Рис",
   "天冲": "Небесный Агрессор",
   "天辅": "Небесный Помощник",
@@ -198,28 +198,28 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-[minmax(4.5rem,auto)_repeat(3,minmax(0,1fr))_minmax(4.5rem,auto)] grid-rows-[auto_repeat(3,minmax(9rem,1fr))_auto] gap-1.5 sm:gap-2 max-w-3xl mx-auto items-stretch">
+        <div className="grid grid-cols-[minmax(4rem,auto)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(4rem,auto)] grid-rows-[auto_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-1.5 sm:gap-2 max-w-3xl mx-auto items-stretch">
           {PALACE_LAYOUT_ROWS[0].map((palace, index) => {
             const info = PALACE_INFO_RU[palace];
             return <div key={`top-${palace}`} style={{ gridColumn: index + 2, gridRow: 1 }} className="flex flex-col justify-end pb-1 text-center text-[9px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span></div>;
           })}
-          <div className="col-start-1 row-start-3 flex items-center justify-end pr-1 text-right text-[9px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">
+          <div className="col-start-1 row-start-3 flex min-w-0 items-center justify-end pr-1 text-right text-[8px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">
             <span>{PALACE_INFO_RU[3].direction}<br /><span className="font-normal normal-case text-cyan-300/70">{PALACE_INFO_RU[3].element}</span></span>
           </div>
-          <div className="col-start-5 row-start-3 flex items-center pl-1 text-[9px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">
+          <div className="col-start-5 row-start-3 flex min-w-0 items-center pl-1 text-[8px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">
             <span>{PALACE_INFO_RU[7].direction}<br /><span className="font-normal normal-case text-cyan-300/70">{PALACE_INFO_RU[7].element}</span></span>
           </div>
-          <div className="col-start-2 col-span-3 row-start-2 row-span-3 grid grid-cols-3 gap-1.5 sm:gap-2">
+          <div className="col-start-2 col-span-3 row-start-2 row-span-3 grid grid-cols-3 grid-rows-3 aspect-square min-w-0 gap-1.5 sm:gap-2">
           {BIRTH_CHART_LAYOUT.map((palace) => {
             const cell = byPalace.get(palace);
             if (!cell) {
-              return <div key={palace} className="min-h-36 rounded-lg border border-cyan-400/10 bg-cyan-400/5" />;
+              return <div key={palace} className="min-h-0 min-w-0 rounded-lg border border-cyan-400/10 bg-cyan-400/5" />;
             }
             if (palace === 5) {
               return (
                 <div
                   key={palace}
-                  className="min-h-36 rounded-lg border border-cyan-300/20 bg-background/20 p-2 text-center text-[10px] sm:text-xs leading-relaxed"
+                  className="min-h-0 min-w-0 overflow-hidden rounded-lg border border-cyan-300/20 bg-background/20 p-2 text-center text-[10px] leading-tight sm:text-xs"
                 >
                   <div className="mt-5 text-2xl font-semibold leading-none text-cyan-100">
                     {chart.yin ? "Инь" : "Ян"} {chart.ju}
@@ -233,43 +233,43 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
             return (
               <div
                 key={palace}
-                className={`min-h-36 rounded-lg border p-2 text-[10px] sm:text-xs leading-relaxed transition-colors ${
+                className={`min-w-0 overflow-hidden rounded-lg border p-2 text-[10px] sm:text-xs leading-tight transition-colors ${
                   cell.isDestinyPalace
                     ? "border-emerald-300/80 bg-emerald-400/10 shadow-[inset_0_0_18px_rgba(110,231,183,0.12)]"
                     : "border-cyan-400/20 bg-background/30"
                 }`}
               >
-                <div className="flex items-center justify-end text-cyan-200 font-semibold">
-                  <span>{cell.trigram}</span>
+                <div className="flex min-w-0 items-start justify-end text-cyan-200 font-semibold">
+                  <span className="text-sm leading-none sm:text-base">{cell.trigram}</span>
                 </div>
                 {cell.isDestinyPalace ? (
                   <div className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-300/10 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-emerald-200">
                     Дворец Судьбы
                   </div>
                 ) : null}
-                <div className="mt-2 space-y-2">
-                  <div className="grid grid-cols-2 gap-1 text-center">
-                    <div>
-                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.deity || "—"}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">{DEITY_NAME_RU[cell.deity] || cell.deity || "Дух"}</div>
+                <div className="mt-2 grid min-w-0 gap-2 text-center">
+                  <div className="grid min-w-0 grid-cols-2 gap-1">
+                    <div className="min-w-0">
+                      <div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.deity || "—"}</div>
+                      <div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DEITY_NAME_RU[cell.deity] || cell.deity || "Дух"}</div>
                     </div>
-                    <div>
-                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.heavenStem || "—"}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">{STEM_NAME_RU[cell.heavenStem] || cell.heavenStem || "Небо"}</div>
+                    <div className="min-w-0">
+                      <div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.heavenStem || "—"}</div>
+                      <div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{STEM_NAME_RU[cell.heavenStem] || cell.heavenStem || "Небо"}</div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-1 text-center">
-                    <div>
-                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.star || "—"}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">{STAR_NAME_RU[cell.star] || cell.star || "Звезда"}{cell.pairedStar ? ` / ${STAR_NAME_RU[cell.pairedStar] || cell.pairedStar}` : ""}</div>
+                  <div className="grid min-w-0 grid-cols-3 gap-1 text-center">
+                    <div className="min-w-0">
+                      <div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.star || "—"}</div>
+                      <div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{STAR_NAME_RU[cell.star] || cell.star || "Звезда"}{cell.pairedStar ? ` / ${STAR_NAME_RU[cell.pairedStar] || cell.pairedStar}` : ""}</div>
                     </div>
-                    <div>
-                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.door || "—"}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">{DOOR_NAME_RU[cell.door] || cell.door || "Врата"}</div>
+                    <div className="min-w-0">
+                      <div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.door || "—"}</div>
+                      <div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DOOR_NAME_RU[cell.door] || cell.door || "Врата"}</div>
                     </div>
-                    <div>
-                      <div className="text-base sm:text-lg leading-none text-cyan-100">{cell.earthStem || "—"}</div>
-                      <div className="mt-1 text-[9px] text-cyan-300/70">{STEM_NAME_RU[cell.earthStem] || cell.earthStem || "Земля"}</div>
+                    <div className="min-w-0">
+                      <div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.earthStem || "—"}</div>
+                      <div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{STEM_NAME_RU[cell.earthStem] || cell.earthStem || "Земля"}</div>
                     </div>
                   </div>
                 </div>
