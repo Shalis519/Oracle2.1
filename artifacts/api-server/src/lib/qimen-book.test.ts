@@ -4,6 +4,7 @@ import { Solar } from "lunar-typescript";
 import { parseGanZhi, STEMS, BRANCHES } from "./qimen/constants";
 import { monthJoeyYapJuForDate, monthJoeyYapStructure, monthPillarForDate } from "./qimen/ju";
 import { CHRONOLOGICAL_HOUR_SLOTS } from "./qimen/constants";
+import { xunInfo } from "./qimen/calendar";
 import { detectFlyingBirdFallsIntoCave, detectJadeMaiden, jadeMaidenVariant } from "./qimen/structures";
 
 function chart(year: number, month: number, day: number, hourBranch: number) {
@@ -62,11 +63,13 @@ describe("Заглушка структуры Птица падает в гне�
 });
 
 describe("Главная звезда и Главные Врата по учебнику Ци Мэнь", () => {
-  it("расставляет скрытый ствол от ствола часа через дворец Главных Врат", () => {
+  it("показывает только 甲 за инструментом декады на небесной тарелке", () => {
     const built = chart(2017, 6, 8, 8);
-    expect(built.cells[built.zhiShiPalace]?.hiddenStem).toBe(STEMS[built.hourStem]);
-    expect(Object.values(built.cells)).toHaveLength(9);
-    expect(Object.values(built.cells).every((cell) => Boolean(cell.hiddenStem))).toBe(true);
+    const xun = xunInfo(parseGanZhi(built.hourGz).index);
+    const hidden = Object.values(built.cells).filter((cell) => cell.hiddenStem === "甲");
+    expect(hidden).toHaveLength(1);
+    expect(hidden[0]?.heavenStem).toBe(STEMS[xun.yiStem]);
+    expect(Object.values(built.cells).filter((cell) => cell.hiddenStem && cell.hiddenStem !== "甲")).toHaveLength(0);
   });
 
   it("matches the book example 08.06.2017 丙申, 6 Ян", () => {
