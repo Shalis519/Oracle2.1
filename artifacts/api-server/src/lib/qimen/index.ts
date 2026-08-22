@@ -9,13 +9,14 @@ import {
   PALACES,
   STEMS,
 } from "./constants";
+import { Solar } from "lunar-typescript";
 import { birthYearBranch, birthYearStem, birthYearRepresentativeStem, dayInfo, xunInfo } from "./calendar";
-import { buildChart, buildChartForDateTime, buildPeriodMap, type PalaceCell } from "./chart";
+import { buildChart, buildPeriodMap, type PalaceCell } from "./chart";
 import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
 import { detectThreeGenerals, detectJadeMaiden } from "./structures";
 import { computeJiFuWishes, type JiFuWish } from "./jifu";
 import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
-import { localSolarTime } from "./birthTime";
+import { isLateZiClock } from "./birthTime";
 
 export type { JiFuWish } from "./jifu";
 
@@ -174,23 +175,36 @@ function buildMonthChart(date: Date): QimenMonthChart {
 function buildBirthChart(
   birthDate?: string | null,
   birthTime?: string | null,
-  birthTimezone?: string | null,
-  birthLongitude?: number | null,
+  _birthTimezone?: string | null,
+  _birthLongitude?: number | null,
 ): QimenBirthChart | null {
   if (!birthDate) return null;
   const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(birthDate);
   if (!match) return null;
   const civilTime = birthTime ?? "12:00";
-  const solar = birthLongitude != null
-    ? localSolarTime({ isoDate: birthDate, time: civilTime, timezone: birthTimezone, longitude: birthLongitude })
-    : null;
-  const chartTimeText = solar?.solarTime ?? civilTime;
-  const chartDateText = solar?.solarDate ?? birthDate;
-  const [chartYear, chartMonth, chartDay] = chartDateText.split("-").map(Number);
-  const [hour, minute] = chartTimeText.split(":").map(Number);
+  const [chartYear, chartMonth, chartDay] = birthDate.split("-").map(Number);
+  const [hour, minute] = civilTime.split(":").map(Number);
+  if (![chartYear, chartMonth, chartDay, hour, minute].every(Number.isFinite)) return null;
+
+  // The personal Qimen hour must be identical to BaZi: lunar-typescript receives
+  // the civil birth date/time and supplies the canonical hour branch. The
+  // longitude/solar-time diagnostic path is intentionally not used here.
+  let hourBranch = -1;
+  try {
+    const eightChar = Solar.fromYmdHms(chartYear, chartMonth, chartDay, hour, minute, 0)
+      .getLunar()
+      .getEightChar();
+    hourBranch = BRANCHES.indexOf(eightChar.getTimeZhi() as typeof BRANCHES[number]);
+  } catch {
+    return null;
+  }
+  if (hourBranch < 0) return null;
+
   const date = new Date(chartYear, chartMonth - 1, chartDay, hour, minute, 0);
   if (Number.isNaN(date.getTime())) return null;
-  const { chart, hourBranch, calendarDate } = buildChartForDateTime(date);
+  const lateZi = isLateZiClock(birthDate, civilTime);
+  const chart = buildChart(date, hourBranch, lateZi);
+  const calendarDate = date;
   // Дворец Судьбы: дворец НС дня рождения в небесной тарелке.
   const day = dayInfo(calendarDate);
   const destinyStem = day.stem === 0 ? STEMS[xunInfo(day.index).yiStem] : STEMS[day.stem];

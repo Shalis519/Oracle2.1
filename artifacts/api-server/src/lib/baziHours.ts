@@ -2,7 +2,7 @@
 //
 // Reproduces the three time variants shown on tvoibazi.ru/hours:
 //   - "Солнечное" (solar): fixed solar 2h blocks shifted to clock time by the
-//     longitude correction and the equation of time, as in Marina's video.
+//     longitude correction used by the reference calculator.
 //   - "Резиновое" (rubber): the 12 branches stretched over the real day/night
 //     lengths via the original site's clock geometry (ported from its Vetvi()).
 //   - "Совмещённое" (combined): the per-branch intersection of the solar and
@@ -419,12 +419,11 @@ function applyDoubled(list: NumInterval[], doubledRat: boolean): NumInterval[] {
 }
 
 /**
- * Vetvi() returns the rubber intervals chronologically from just after local
- * midnight. The interval crossing midnight is the Rat branch; rotate the
- * chronological result into the public branch order before splitting Rat.
+ * Vetvi() returns the rubber intervals in public branch order, starting with
+ * Rat just after local midnight and ending with Pig at the end of the day.
  */
 function rubberByBranch(raw: NumInterval[]): NumInterval[] {
-  return [raw[11]!, raw[0]!, raw[1]!, raw[2]!, raw[3]!, raw[4]!, raw[5]!, raw[6]!, raw[7]!, raw[8]!, raw[9]!, raw[10]!];
+  return raw;
 }
 
 function toOut(iv: NumInterval): HourInterval {
@@ -445,13 +444,14 @@ export function computeBaziHours(input: BaziHoursInput): BaziHoursResult {
     m!,
     y!,
   );
-  // Convert solar-clock boundaries back to the selected civil clock. Marina's
-  // solar mode includes the equation of time for the selected date.
+  // Convert solar-clock boundaries back to the selected civil clock. The
+  // reference calculator displays the equation of time separately but does not
+  // include it in the interval shift.
   const utcNoon = new Date(Date.UTC(y!, m! - 1, d!, 12, 0, 0));
   const dayOfYear = Math.floor((utcNoon.getTime() - Date.UTC(y!, 0, 1)) / 86400000) + 1;
   const angle = (2 * Math.PI * (dayOfYear - 81)) / 364;
   const equationOfTime = 9.87 * Math.sin(2 * angle) - 7.53 * Math.cos(angle) - 1.5 * Math.sin(angle);
-  const shift = input.utcOffset * 60 - input.lng * 4 - equationOfTime;
+  const shift = input.utcOffset * 60 - input.lng * 4;
   const riseMin = Math.round(rise);
   const setMin = Math.round(set);
 
@@ -464,14 +464,14 @@ export function computeBaziHours(input: BaziHoursInput): BaziHoursResult {
     e: sb[i + 1]!,
   }));
 
-  // Rubber: stretched branches.
+  // Rubber: stretched branches in the reference calculator's public order.
   const rb = rubberBoundaries(riseMin, setMin, shift);
-  const rubberChronological: NumInterval[] = ANIMALS.map((animal, i) => ({
+  const rubberIntervals: NumInterval[] = ANIMALS.map((animal, i) => ({
     animal,
     s: rb[i]!,
     e: rb[i + 1]!,
   }));
-  const rubber = rubberByBranch(rubberChronological).map((iv, i) => ({
+  const rubber = rubberByBranch(rubberIntervals).map((iv, i) => ({
     ...iv,
     animal: ANIMALS[i]!,
   }));
