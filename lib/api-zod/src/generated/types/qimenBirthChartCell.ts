@@ -18,4 +18,5 @@ export interface QimenBirthChartCell {
   door: string;
   deity: string;
   isVoid: boolean;
+  isDestinyPalace?: boolean;
 }

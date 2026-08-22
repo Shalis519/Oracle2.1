@@ -158,10 +158,22 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
               return <div key={palace} className="min-h-36 rounded-lg border border-cyan-400/10 bg-cyan-400/5" />;
             }
             return (
-              <div key={palace} className="min-h-36 rounded-lg border border-cyan-400/20 bg-background/30 p-2 text-[10px] sm:text-xs leading-relaxed">
+              <div
+                key={palace}
+                className={`min-h-36 rounded-lg border p-2 text-[10px] sm:text-xs leading-relaxed transition-colors ${
+                  cell.isDestinyPalace
+                    ? "border-emerald-300/80 bg-emerald-400/10 shadow-[inset_0_0_18px_rgba(110,231,183,0.12)]"
+                    : "border-cyan-400/20 bg-background/30"
+                }`}
+              >
                 <div className="flex items-center justify-between text-cyan-200 font-semibold">
                   <span>{cell.direction || "Центр"}</span><span>{cell.trigram}</span>
                 </div>
+                {cell.isDestinyPalace ? (
+                  <div className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-300/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-emerald-200">
+                    Дворец Судьбы
+                  </div>
+                ) : null}
                 <div className="mt-2 space-y-0.5">
                   <p><span className="text-cyan-300/70">Дух:</span> {cell.deity || "—"}</p>
                   <p><span className="text-cyan-300/70">Врата:</span> {cell.door || "—"}</p>

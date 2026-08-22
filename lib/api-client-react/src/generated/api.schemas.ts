@@ -571,6 +571,7 @@ export interface QimenBirthChartCell {
   door: string;
   deity: string;
   isVoid: boolean;
+  isDestinyPalace?: boolean;
 }
 
 export interface QimenBirthChart {
@@ -582,6 +583,8 @@ export interface QimenBirthChart {
   zhiShiDoor: string;
   zhiFuPalace: number;
   zhiShiPalace: number;
+  /** @nullable */
+  destinyPalace: number | null;
   cells: QimenBirthChartCell[];
 }
 

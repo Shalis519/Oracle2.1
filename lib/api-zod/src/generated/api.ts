@@ -685,6 +685,7 @@ export const GetQimenResponse = zod.object({
   "zhiShiDoor": zod.string(),
   "zhiFuPalace": zod.number(),
   "zhiShiPalace": zod.number(),
+  "destinyPalace": zod.number().nullable(),
   "cells": zod.array(zod.object({
   "palace": zod.number(),
   "direction": zod.string(),
@@ -695,7 +696,8 @@ export const GetQimenResponse = zod.object({
   "pairedStar": zod.string().nullish(),
   "door": zod.string(),
   "deity": zod.string(),
-  "isVoid": zod.boolean()
+  "isVoid": zod.boolean(),
+  "isDestinyPalace": zod.boolean().optional()
 }))
 }),zod.null()]),
   "monthChart": zod.object({
@@ -717,7 +719,8 @@ export const GetQimenResponse = zod.object({
   "pairedStar": zod.string().nullish(),
   "door": zod.string(),
   "deity": zod.string(),
-  "isVoid": zod.boolean()
+  "isVoid": zod.boolean(),
+  "isDestinyPalace": zod.boolean().optional()
 }))
 })
 })

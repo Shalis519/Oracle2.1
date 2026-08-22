@@ -73,6 +73,7 @@ export interface QimenBirthChartCell {
   door: string;
   deity: string;
   isVoid: boolean;
+  isDestinyPalace?: boolean;
 }
 
 export interface QimenBirthChart {
@@ -84,6 +85,7 @@ export interface QimenBirthChart {
   zhiShiDoor: string;
   zhiFuPalace: number;
   zhiShiPalace: number;
+  destinyPalace: number | null;
   cells: QimenBirthChartCell[];
 }
 
@@ -199,8 +201,14 @@ function buildBirthChart(
   const date = new Date(chartYear, chartMonth - 1, chartDay, hour, minute, 0);
   if (Number.isNaN(date.getTime()) || hourBranch < 0) return null;
   const chart = buildChart(date, hourBranch, lateZi);
+  // Дворец Судьбы: дворец НС дня рождения в небесной тарелке.
+  const day = dayInfo(date);
+  const destinyStem = day.stem === 0 ? STEMS[xunInfo(day.index).yiStem] : STEMS[day.stem];
+  const destinyCell = Object.values(chart.cells).find((cell: PalaceCell) => cell.heavenStem === destinyStem);
+  const destinyPalace = destinyCell?.palace ?? null;
   const cells = Object.values(chart.cells).map((cell: PalaceCell) => ({
     palace: cell.palace,
+    isDestinyPalace: cell.palace === destinyPalace,
     direction: PALACES[cell.palace].dir,
     trigram: PALACES[cell.palace].trigram,
     earthStem: cell.earthStem,
@@ -220,6 +228,7 @@ function buildBirthChart(
     zhiShiDoor: chart.zhiShiDoor,
     zhiFuPalace: chart.zhiFuPalace,
     zhiShiPalace: chart.zhiShiPalace,
+    destinyPalace,
     cells,
   };
 }

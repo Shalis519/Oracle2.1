@@ -16,5 +16,7 @@ export interface QimenBirthChart {
   zhiShiDoor: string;
   zhiFuPalace: number;
   zhiShiPalace: number;
+  /** @nullable */
+  destinyPalace: number | null;
   cells: QimenBirthChartCell[];
 }

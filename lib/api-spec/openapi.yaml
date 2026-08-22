@@ -1817,10 +1817,11 @@ components:
         door: { type: string }
         deity: { type: string }
         isVoid: { type: boolean }
+        isDestinyPalace: { type: boolean }
 
     QimenBirthChart:
       type: object
-      required: [hourGz, ju, yin, fuYin, zhiFuStar, zhiShiDoor, zhiFuPalace, zhiShiPalace, cells]
+      required: [hourGz, ju, yin, fuYin, zhiFuStar, zhiShiDoor, zhiFuPalace, zhiShiPalace, destinyPalace, cells]
       properties:
         hourGz: { type: string }
         ju: { type: integer }
@@ -1830,6 +1831,7 @@ components:
         zhiShiDoor: { type: string }
         zhiFuPalace: { type: integer }
         zhiShiPalace: { type: integer }
+        destinyPalace: { type: [integer, "null"] }
         cells:
           type: array
           items: { $ref: "#/components/schemas/QimenBirthChartCell" }
