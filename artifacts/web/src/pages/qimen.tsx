@@ -214,15 +214,6 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
       </CardHeader>
       <CardContent>
         <div className="mx-auto flex w-full max-w-2xl flex-col">
-          <div className="grid grid-cols-3 overflow-hidden rounded-t-sm bg-slate-200 text-[8px] font-semibold uppercase leading-none text-slate-900 sm:text-[10px]">
-            {TOP_RING.map((item) => (
-              <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center px-2 sm:h-7 sm:px-3">
-                <span className="whitespace-nowrap text-left">{item.left}</span>
-                <span className="whitespace-nowrap text-center">{item.center}</span>
-                <span className="whitespace-nowrap text-right">{item.right}</span>
-              </div>
-            ))}
-          </div>
           <div className="flex w-full items-stretch gap-1.5 sm:gap-2">
             <div className="flex w-5 shrink-0 flex-col sm:w-6">
               {LEFT_PERIMETER.map((item) => (
@@ -232,6 +223,15 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
               ))}
             </div>
             <div className="min-w-0 flex-1">
+              <div className="grid grid-cols-3 overflow-hidden rounded-t-sm bg-slate-200 text-[10px] font-semibold uppercase leading-none text-slate-900 sm:text-xs">
+                {TOP_RING.map((item) => (
+                  <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center px-1 sm:h-7 sm:px-2">
+                    <span className="whitespace-nowrap text-left">{item.left}</span>
+                    <span className="whitespace-nowrap text-center">{item.center}</span>
+                    <span className="whitespace-nowrap text-right">{item.right}</span>
+                  </div>
+                ))}
+              </div>
               <div className="grid aspect-square min-w-0 grid-cols-3 grid-rows-3 gap-1.5 sm:gap-2">
                 {BIRTH_CHART_LAYOUT.map((palace) => {
                   const cell = byPalace.get(palace);
