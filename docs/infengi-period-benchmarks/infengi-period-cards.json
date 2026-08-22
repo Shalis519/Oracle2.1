@@ -1,0 +1,968 @@
+[
+  {
+    "source": "day-2026-06-21.html",
+    "period": "day",
+    "label": "дня",
+    "fu": "戊",
+    "driver": "丙",
+    "gate": "驚",
+    "star": "柱",
+    "yin": true,
+    "ju": 7,
+    "cells": {
+      "4": {
+        "deity": "蛇",
+        "door": "景",
+        "heavenStem": "癸",
+        "star": "芮",
+        "earthStem": "辛"
+      },
+      "9": {
+        "deity": "符",
+        "door": "死",
+        "heavenStem": "戊",
+        "star": "柱",
+        "earthStem": "丙"
+      },
+      "2": {
+        "deity": "天",
+        "door": "驚",
+        "heavenStem": "己",
+        "star": "心",
+        "earthStem": "癸"
+      },
+      "3": {
+        "deity": "陰",
+        "door": "杜",
+        "heavenStem": "丙",
+        "star": "英",
+        "earthStem": "壬"
+      },
+      "7": {
+        "deity": "地",
+        "door": "開",
+        "heavenStem": "丁",
+        "star": "蓬",
+        "earthStem": "戊"
+      },
+      "8": {
+        "deity": "合",
+        "door": "傷",
+        "heavenStem": "辛",
+        "star": "輔",
+        "earthStem": "乙"
+      },
+      "1": {
+        "deity": "陳",
+        "door": "生",
+        "heavenStem": "壬",
+        "star": "冲",
+        "earthStem": "丁"
+      },
+      "6": {
+        "deity": "雀",
+        "door": "休",
+        "heavenStem": "乙",
+        "star": "任",
+        "earthStem": "己"
+      }
+    }
+  },
+  {
+    "source": "day-2026-07-07.html",
+    "period": "day",
+    "label": "дня",
+    "fu": "己",
+    "driver": "壬",
+    "gate": "生",
+    "star": "任",
+    "yin": true,
+    "ju": 9,
+    "cells": {
+      "4": {
+        "deity": "陰",
+        "door": "休",
+        "heavenStem": "辛",
+        "star": "心",
+        "earthStem": "癸"
+      },
+      "9": {
+        "deity": "蛇",
+        "door": "生",
+        "heavenStem": "乙",
+        "star": "蓬",
+        "earthStem": "戊"
+      },
+      "2": {
+        "deity": "符",
+        "door": "傷",
+        "heavenStem": "己",
+        "star": "任",
+        "earthStem": "丙"
+      },
+      "3": {
+        "deity": "合",
+        "door": "開",
+        "heavenStem": "庚",
+        "star": "柱",
+        "earthStem": "丁"
+      },
+      "7": {
+        "deity": "天",
+        "door": "杜",
+        "heavenStem": "丁",
+        "star": "冲",
+        "earthStem": "庚"
+      },
+      "8": {
+        "deity": "陳",
+        "door": "驚",
+        "heavenStem": "丙",
+        "star": "芮",
+        "earthStem": "己"
+      },
+      "1": {
+        "deity": "雀",
+        "door": "死",
+        "heavenStem": "戊",
+        "star": "英",
+        "earthStem": "乙"
+      },
+      "6": {
+        "deity": "地",
+        "door": "景",
+        "heavenStem": "癸",
+        "star": "輔",
+        "earthStem": "辛"
+      }
+    }
+  },
+  {
+    "source": "day-2026-08-07.html",
+    "period": "day",
+    "label": "дня",
+    "fu": "壬",
+    "driver": "癸",
+    "gate": "休",
+    "star": "蓬",
+    "yin": true,
+    "ju": 5,
+    "cells": {
+      "4": {
+        "deity": "蛇",
+        "door": "杜",
+        "heavenStem": "乙",
+        "star": "心",
+        "earthStem": "己"
+      },
+      "9": {
+        "deity": "符",
+        "door": "景",
+        "heavenStem": "壬",
+        "star": "蓬",
+        "earthStem": "癸"
+      },
+      "2": {
+        "deity": "天",
+        "door": "死",
+        "heavenStem": "丁",
+        "star": "任",
+        "earthStem": "辛"
+      },
+      "3": {
+        "deity": "陰",
+        "door": "傷",
+        "heavenStem": "丙",
+        "star": "柱",
+        "earthStem": "庚"
+      },
+      "7": {
+        "deity": "地",
+        "door": "驚",
+        "heavenStem": "庚",
+        "star": "冲",
+        "earthStem": "丙"
+      },
+      "8": {
+        "deity": "合",
+        "door": "生",
+        "heavenStem": "辛",
+        "star": "芮",
+        "earthStem": "丁"
+      },
+      "1": {
+        "deity": "陳",
+        "door": "休",
+        "heavenStem": "癸",
+        "star": "英",
+        "earthStem": "壬"
+      },
+      "6": {
+        "deity": "雀",
+        "door": "開",
+        "heavenStem": "己",
+        "star": "輔",
+        "earthStem": "乙"
+      }
+    }
+  },
+  {
+    "source": "day-2026-08-21.html",
+    "period": "day",
+    "label": "дня",
+    "fu": "戊",
+    "driver": "丁",
+    "gate": "景",
+    "star": "英",
+    "yin": true,
+    "ju": 9,
+    "cells": {
+      "4": {
+        "deity": "天",
+        "door": "休",
+        "heavenStem": "丙",
+        "star": "芮",
+        "earthStem": "癸"
+      },
+      "9": {
+        "deity": "地",
+        "door": "生",
+        "heavenStem": "庚",
+        "star": "柱",
+        "earthStem": "戊"
+      },
+      "2": {
+        "deity": "雀",
+        "door": "傷",
+        "heavenStem": "辛",
+        "star": "心",
+        "earthStem": "丙"
+      },
+      "3": {
+        "deity": "符",
+        "door": "開",
+        "heavenStem": "戊",
+        "star": "英",
+        "earthStem": "丁"
+      },
+      "7": {
+        "deity": "陳",
+        "door": "杜",
+        "heavenStem": "乙",
+        "star": "蓬",
+        "earthStem": "庚"
+      },
+      "8": {
+        "deity": "蛇",
+        "door": "驚",
+        "heavenStem": "癸",
+        "star": "輔",
+        "earthStem": "己"
+      },
+      "1": {
+        "deity": "陰",
+        "door": "死",
+        "heavenStem": "丁",
+        "star": "冲",
+        "earthStem": "乙"
+      },
+      "6": {
+        "deity": "合",
+        "door": "景",
+        "heavenStem": "己",
+        "star": "任",
+        "earthStem": "辛"
+      }
+    }
+  },
+  {
+    "source": "day-2026-09-23.html",
+    "period": "day",
+    "label": "дня",
+    "fu": "辛",
+    "driver": "庚",
+    "gate": "景",
+    "star": "英",
+    "yin": true,
+    "ju": 3,
+    "cells": {
+      "4": {
+        "deity": "雀",
+        "door": "死",
+        "heavenStem": "丁",
+        "star": "心",
+        "earthStem": "乙"
+      },
+      "9": {
+        "deity": "陳",
+        "door": "驚",
+        "heavenStem": "庚",
+        "star": "蓬",
+        "earthStem": "辛"
+      },
+      "2": {
+        "deity": "合",
+        "door": "開",
+        "heavenStem": "壬",
+        "star": "任",
+        "earthStem": "己"
+      },
+      "3": {
+        "deity": "地",
+        "door": "景",
+        "heavenStem": "癸",
+        "star": "柱",
+        "earthStem": "戊"
+      },
+      "7": {
+        "deity": "陰",
+        "door": "休",
+        "heavenStem": "戊",
+        "star": "冲",
+        "earthStem": "癸"
+      },
+      "8": {
+        "deity": "天",
+        "door": "杜",
+        "heavenStem": "己",
+        "star": "芮",
+        "earthStem": "壬"
+      },
+      "1": {
+        "deity": "符",
+        "door": "傷",
+        "heavenStem": "辛",
+        "star": "英",
+        "earthStem": "庚"
+      },
+      "6": {
+        "deity": "蛇",
+        "door": "生",
+        "heavenStem": "乙",
+        "star": "輔",
+        "earthStem": "丁"
+      }
+    }
+  },
+  {
+    "source": "month-2026-01-15.html",
+    "period": "month",
+    "label": "месяца",
+    "fu": "庚",
+    "driver": "己",
+    "gate": "傷",
+    "star": "冲",
+    "yin": true,
+    "ju": 5,
+    "cells": {
+      "4": {
+        "deity": "符",
+        "door": "開",
+        "heavenStem": "庚",
+        "star": "冲",
+        "earthStem": "己"
+      },
+      "9": {
+        "deity": "天",
+        "door": "休",
+        "heavenStem": "己",
+        "star": "輔",
+        "earthStem": "癸"
+      },
+      "2": {
+        "deity": "地",
+        "door": "生",
+        "heavenStem": "癸",
+        "star": "英",
+        "earthStem": "辛"
+      },
+      "3": {
+        "deity": "蛇",
+        "door": "驚",
+        "heavenStem": "丁",
+        "star": "任",
+        "earthStem": "庚"
+      },
+      "7": {
+        "deity": "雀",
+        "door": "傷",
+        "heavenStem": "辛",
+        "star": "芮",
+        "earthStem": "丙"
+      },
+      "8": {
+        "deity": "陰",
+        "door": "死",
+        "heavenStem": "壬",
+        "star": "蓬",
+        "earthStem": "丁"
+      },
+      "1": {
+        "deity": "合",
+        "door": "景",
+        "heavenStem": "乙",
+        "star": "心",
+        "earthStem": "壬"
+      },
+      "6": {
+        "deity": "陳",
+        "door": "杜",
+        "heavenStem": "丙",
+        "star": "柱",
+        "earthStem": "乙"
+      }
+    }
+  },
+  {
+    "source": "month-2026-04-15.html",
+    "period": "month",
+    "label": "месяца",
+    "fu": "庚",
+    "driver": "壬",
+    "gate": "傷",
+    "star": "冲",
+    "yin": true,
+    "ju": 5,
+    "cells": {
+      "4": {
+        "deity": "雀",
+        "door": "傷",
+        "heavenStem": "辛",
+        "star": "芮",
+        "earthStem": "己"
+      },
+      "9": {
+        "deity": "陳",
+        "door": "杜",
+        "heavenStem": "丙",
+        "star": "柱",
+        "earthStem": "癸"
+      },
+      "2": {
+        "deity": "合",
+        "door": "景",
+        "heavenStem": "乙",
+        "star": "心",
+        "earthStem": "辛"
+      },
+      "3": {
+        "deity": "地",
+        "door": "生",
+        "heavenStem": "癸",
+        "star": "英",
+        "earthStem": "庚"
+      },
+      "7": {
+        "deity": "陰",
+        "door": "死",
+        "heavenStem": "壬",
+        "star": "蓬",
+        "earthStem": "丙"
+      },
+      "8": {
+        "deity": "天",
+        "door": "休",
+        "heavenStem": "己",
+        "star": "輔",
+        "earthStem": "丁"
+      },
+      "1": {
+        "deity": "符",
+        "door": "開",
+        "heavenStem": "庚",
+        "star": "冲",
+        "earthStem": "壬"
+      },
+      "6": {
+        "deity": "蛇",
+        "door": "驚",
+        "heavenStem": "丁",
+        "star": "任",
+        "earthStem": "乙"
+      }
+    }
+  },
+  {
+    "source": "month-2026-07-15.html",
+    "period": "month",
+    "label": "месяца",
+    "fu": "辛",
+    "driver": "乙",
+    "gate": "休",
+    "star": "蓬",
+    "yin": true,
+    "ju": 4,
+    "cells": {
+      "4": {
+        "deity": "陰",
+        "door": "開",
+        "heavenStem": "丁",
+        "star": "柱",
+        "earthStem": "戊"
+      },
+      "9": {
+        "deity": "蛇",
+        "door": "休",
+        "heavenStem": "丙",
+        "star": "心",
+        "earthStem": "壬"
+      },
+      "2": {
+        "deity": "符",
+        "door": "生",
+        "heavenStem": "辛",
+        "star": "蓬",
+        "earthStem": "庚"
+      },
+      "3": {
+        "deity": "合",
+        "door": "驚",
+        "heavenStem": "庚",
+        "star": "芮",
+        "earthStem": "己"
+      },
+      "7": {
+        "deity": "天",
+        "door": "傷",
+        "heavenStem": "癸",
+        "star": "任",
+        "earthStem": "丁"
+      },
+      "8": {
+        "deity": "陳",
+        "door": "死",
+        "heavenStem": "壬",
+        "star": "英",
+        "earthStem": "癸"
+      },
+      "1": {
+        "deity": "雀",
+        "door": "景",
+        "heavenStem": "戊",
+        "star": "輔",
+        "earthStem": "辛"
+      },
+      "6": {
+        "deity": "地",
+        "door": "杜",
+        "heavenStem": "己",
+        "star": "冲",
+        "earthStem": "丙"
+      }
+    }
+  },
+  {
+    "source": "month-2026-10-15.html",
+    "period": "month",
+    "label": "месяца",
+    "fu": "辛",
+    "driver": "戊",
+    "gate": "休",
+    "star": "蓬",
+    "yin": true,
+    "ju": 4,
+    "cells": {
+      "4": {
+        "deity": "符",
+        "door": "景",
+        "heavenStem": "辛",
+        "star": "蓬",
+        "earthStem": "戊"
+      },
+      "9": {
+        "deity": "天",
+        "door": "死",
+        "heavenStem": "癸",
+        "star": "任",
+        "earthStem": "壬"
+      },
+      "2": {
+        "deity": "地",
+        "door": "驚",
+        "heavenStem": "己",
+        "star": "冲",
+        "earthStem": "庚"
+      },
+      "3": {
+        "deity": "蛇",
+        "door": "杜",
+        "heavenStem": "丙",
+        "star": "心",
+        "earthStem": "己"
+      },
+      "7": {
+        "deity": "雀",
+        "door": "開",
+        "heavenStem": "戊",
+        "star": "輔",
+        "earthStem": "丁"
+      },
+      "8": {
+        "deity": "陰",
+        "door": "傷",
+        "heavenStem": "丁",
+        "star": "柱",
+        "earthStem": "癸"
+      },
+      "1": {
+        "deity": "合",
+        "door": "生",
+        "heavenStem": "庚",
+        "star": "芮",
+        "earthStem": "辛"
+      },
+      "6": {
+        "deity": "陳",
+        "door": "休",
+        "heavenStem": "壬",
+        "star": "英",
+        "earthStem": "丙"
+      }
+    }
+  },
+  {
+    "source": "year-2024-12-15.html",
+    "period": "year",
+    "label": "года",
+    "fu": "壬",
+    "driver": "甲",
+    "gate": "生",
+    "star": "任",
+    "yin": true,
+    "ju": 3,
+    "cells": {
+      "4": {
+        "deity": "地",
+        "door": "杜",
+        "heavenStem": "乙",
+        "star": "輔",
+        "earthStem": "乙"
+      },
+      "9": {
+        "deity": "雀",
+        "door": "景",
+        "heavenStem": "辛",
+        "star": "英",
+        "earthStem": "辛"
+      },
+      "2": {
+        "deity": "陳",
+        "door": "死",
+        "heavenStem": "己",
+        "star": "芮",
+        "earthStem": "己"
+      },
+      "3": {
+        "deity": "天",
+        "door": "傷",
+        "heavenStem": "戊",
+        "star": "冲",
+        "earthStem": "戊"
+      },
+      "7": {
+        "deity": "合",
+        "door": "驚",
+        "heavenStem": "癸",
+        "star": "柱",
+        "earthStem": "癸"
+      },
+      "8": {
+        "deity": "符",
+        "door": "生",
+        "heavenStem": "壬",
+        "star": "任",
+        "earthStem": "壬"
+      },
+      "1": {
+        "deity": "蛇",
+        "door": "休",
+        "heavenStem": "庚",
+        "star": "蓬",
+        "earthStem": "庚"
+      },
+      "6": {
+        "deity": "陰",
+        "door": "開",
+        "heavenStem": "丁",
+        "star": "心",
+        "earthStem": "丁"
+      }
+    }
+  },
+  {
+    "source": "year-2025-12-15.html",
+    "period": "year",
+    "label": "года",
+    "fu": "壬",
+    "driver": "乙",
+    "gate": "驚",
+    "star": "柱",
+    "yin": true,
+    "ju": 2,
+    "cells": {
+      "4": {
+        "deity": "天",
+        "door": "傷",
+        "heavenStem": "癸",
+        "star": "心",
+        "earthStem": "丙"
+      },
+      "9": {
+        "deity": "地",
+        "door": "杜",
+        "heavenStem": "己",
+        "star": "蓬",
+        "earthStem": "庚"
+      },
+      "2": {
+        "deity": "雀",
+        "door": "景",
+        "heavenStem": "辛",
+        "star": "任",
+        "earthStem": "戊"
+      },
+      "3": {
+        "deity": "符",
+        "door": "生",
+        "heavenStem": "壬",
+        "star": "柱",
+        "earthStem": "乙"
+      },
+      "7": {
+        "deity": "陳",
+        "door": "死",
+        "heavenStem": "乙",
+        "star": "冲",
+        "earthStem": "壬"
+      },
+      "8": {
+        "deity": "蛇",
+        "door": "休",
+        "heavenStem": "戊",
+        "star": "芮",
+        "earthStem": "辛"
+      },
+      "1": {
+        "deity": "陰",
+        "door": "開",
+        "heavenStem": "庚",
+        "star": "英",
+        "earthStem": "己"
+      },
+      "6": {
+        "deity": "合",
+        "door": "驚",
+        "heavenStem": "丙",
+        "star": "輔",
+        "earthStem": "癸"
+      }
+    }
+  },
+  {
+    "source": "year-2026-12-15.html",
+    "period": "year",
+    "label": "года",
+    "fu": "壬",
+    "driver": "丙",
+    "gate": "開",
+    "star": "心",
+    "yin": true,
+    "ju": 1,
+    "cells": {
+      "4": {
+        "deity": "天",
+        "door": "開",
+        "heavenStem": "戊",
+        "star": "蓬",
+        "earthStem": "丁"
+      },
+      "9": {
+        "deity": "地",
+        "door": "休",
+        "heavenStem": "庚",
+        "star": "任",
+        "earthStem": "己"
+      },
+      "2": {
+        "deity": "雀",
+        "door": "生",
+        "heavenStem": "丙",
+        "star": "冲",
+        "earthStem": "乙"
+      },
+      "3": {
+        "deity": "符",
+        "door": "驚",
+        "heavenStem": "壬",
+        "star": "心",
+        "earthStem": "丙"
+      },
+      "7": {
+        "deity": "陳",
+        "door": "傷",
+        "heavenStem": "丁",
+        "star": "輔",
+        "earthStem": "辛"
+      },
+      "8": {
+        "deity": "蛇",
+        "door": "死",
+        "heavenStem": "辛",
+        "star": "柱",
+        "earthStem": "庚"
+      },
+      "1": {
+        "deity": "陰",
+        "door": "景",
+        "heavenStem": "乙",
+        "star": "芮",
+        "earthStem": "戊"
+      },
+      "6": {
+        "deity": "合",
+        "door": "杜",
+        "heavenStem": "己",
+        "star": "英",
+        "earthStem": "壬"
+      }
+    }
+  },
+  {
+    "source": "year-2027-12-15.html",
+    "period": "year",
+    "label": "года",
+    "fu": "壬",
+    "driver": "丁",
+    "gate": "死",
+    "star": "芮",
+    "yin": true,
+    "ju": 9,
+    "cells": {
+      "4": {
+        "deity": "天",
+        "door": "杜",
+        "heavenStem": "庚",
+        "star": "柱",
+        "earthStem": "癸"
+      },
+      "9": {
+        "deity": "地",
+        "door": "景",
+        "heavenStem": "辛",
+        "star": "心",
+        "earthStem": "戊"
+      },
+      "2": {
+        "deity": "雀",
+        "door": "死",
+        "heavenStem": "乙",
+        "star": "蓬",
+        "earthStem": "丙"
+      },
+      "3": {
+        "deity": "符",
+        "door": "傷",
+        "heavenStem": "丙",
+        "star": "芮",
+        "earthStem": "丁"
+      },
+      "7": {
+        "deity": "陳",
+        "door": "驚",
+        "heavenStem": "己",
+        "star": "任",
+        "earthStem": "庚"
+      },
+      "8": {
+        "deity": "蛇",
+        "door": "生",
+        "heavenStem": "戊",
+        "star": "英",
+        "earthStem": "己"
+      },
+      "1": {
+        "deity": "陰",
+        "door": "休",
+        "heavenStem": "癸",
+        "star": "輔",
+        "earthStem": "乙"
+      },
+      "6": {
+        "deity": "合",
+        "door": "開",
+        "heavenStem": "丁",
+        "star": "冲",
+        "earthStem": "辛"
+      }
+    }
+  },
+  {
+    "source": "year-2028-12-15.html",
+    "period": "year",
+    "label": "года",
+    "fu": "壬",
+    "driver": "戊",
+    "gate": "杜",
+    "star": "輔",
+    "yin": true,
+    "ju": 8,
+    "cells": {
+      "4": {
+        "deity": "地",
+        "door": "傷",
+        "heavenStem": "丁",
+        "star": "芮",
+        "earthStem": "壬"
+      },
+      "9": {
+        "deity": "雀",
+        "door": "杜",
+        "heavenStem": "己",
+        "star": "柱",
+        "earthStem": "乙"
+      },
+      "2": {
+        "deity": "陳",
+        "door": "景",
+        "heavenStem": "庚",
+        "star": "心",
+        "earthStem": "丁"
+      },
+      "3": {
+        "deity": "天",
+        "door": "生",
+        "heavenStem": "乙",
+        "star": "英",
+        "earthStem": "癸"
+      },
+      "7": {
+        "deity": "合",
+        "door": "死",
+        "heavenStem": "丙",
+        "star": "蓬",
+        "earthStem": "己"
+      },
+      "8": {
+        "deity": "符",
+        "door": "休",
+        "heavenStem": "壬",
+        "star": "輔",
+        "earthStem": "戊"
+      },
+      "1": {
+        "deity": "蛇",
+        "door": "開",
+        "heavenStem": "癸",
+        "star": "冲",
+        "earthStem": "丙"
+      },
+      "6": {
+        "deity": "陰",
+        "door": "驚",
+        "heavenStem": "戊",
+        "star": "任",
+        "earthStem": "庚"
+      }
+    }
+  }
+]

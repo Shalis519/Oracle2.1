@@ -1,0 +1,78 @@
+
+H1 庚子 zhiFu=天柱@3 zhiShi=惊门@1
+star inf : 芮 柱 心 蓬 任 冲 輔 英
+star aet : 英 芮 柱 心 蓬 任 冲 輔
+heav inf : 乙 辛 壬 戊 庚 丙 丁 己
+heav aet : 丁 丙 庚 戊 壬 辛 乙 己
+
+H2 辛丑 zhiFu=天柱@4 zhiShi=惊门@9
+star inf : 蓬 任 冲 輔 英 芮 柱 心
+star aet : 輔 英 芮 柱 心 蓬 任 冲
+heav inf : 戊 庚 丙 丁 己 乙 辛 壬
+heav aet : 丁 己 乙 辛 壬 戊 庚 丙
+
+H3 壬寅 zhiFu=天柱@2 zhiShi=惊门@8
+star inf : 心 蓬 任 冲 輔 英 芮 柱
+star aet : 任 冲 輔 英 芮 柱 心 蓬
+heav inf : 壬 戊 庚 丙 丁 己 乙 辛
+heav aet : 己 丁 丙 庚 戊 壬 辛 乙
+
+H4 癸卯 zhiFu=天柱@6 zhiShi=惊门@7
+star inf : 任 冲 輔 英 芮 柱 心 蓬
+star aet : 心 蓬 任 冲 輔 英 芮 柱
+heav inf : 庚 丙 丁 己 乙 辛 壬 戊
+heav aet : 辛 壬 戊 庚 丙 丁 己 乙
+
+H5 甲辰 zhiFu=天心@2 zhiShi=开门@6
+star inf : 蓬 任 冲 輔 英 芮 柱 心
+star aet : 冲 輔 英 芮 柱 心 蓬 任
+heav inf : 戊 庚 丙 丁 己 乙 辛 壬
+heav aet : 己 丁 丙 庚 戊 壬 辛 乙
+
+H6 乙巳 zhiFu=天心@9 zhiShi=开门@2
+star inf : 冲 輔 英 芮 柱 心 蓬 任
+star aet : 輔 英 芮 柱 心 蓬 任 冲
+heav inf : 丙 丁 己 乙 辛 壬 戊 庚
+heav aet : 庚 丙 丁 己 乙 辛 壬 戊
+
+H7 丙午 zhiFu=天心@8 zhiShi=开门@4
+star inf : 芮 柱 心 蓬 任 冲 輔 英
+star aet : 柱 心 蓬 任 冲 輔 英 芮
+heav inf : 乙 辛 壬 戊 庚 丙 丁 己
+heav aet : 丁 丙 庚 戊 壬 辛 乙 己
+
+H8 丁未 zhiFu=天心@7 zhiShi=开门@3
+star inf : 英 芮 柱 心 蓬 任 冲 輔
+star aet : 任 冲 輔 英 芮 柱 心 蓬
+heav inf : 己 乙 辛 壬 戊 庚 丙 丁
+heav aet : 乙 辛 壬 戊 庚 丙 丁 己
+
+H9 戊申 zhiFu=天心@1 zhiShi=开门@2
+star inf : 心 蓬 任 冲 輔 英 芮 柱
+star aet : 心 蓬 任 冲 輔 英 芮 柱
+heav inf : 壬 戊 庚 丙 丁 己 乙 辛
+heav aet : 戊 壬 辛 乙 己 丁 丙 庚
+
+H10 己酉 zhiFu=天心@2 zhiShi=开门@1
+star inf : 輔 英 芮 柱 心 蓬 任 冲
+star aet : 冲 輔 英 芮 柱 心 蓬 任
+heav inf : 丁 己 乙 辛 壬 戊 庚 丙
+heav aet : 壬 戊 庚 丙 丁 己 乙 辛
+
+H11 庚戌 zhiFu=天心@3 zhiShi=开门@9
+star inf : 柱 心 蓬 任 冲 輔 英 芮
+star aet : 芮 柱 心 蓬 任 冲 輔 英
+heav inf : 辛 壬 戊 庚 丙 丁 己 乙
+heav aet : 丁 丙 庚 戊 壬 辛 乙 己
+
+H12 辛亥 zhiFu=天心@4 zhiShi=开门@8
+star inf : 任 冲 輔 英 芮 柱 心 蓬
+star aet : 英 芮 柱 心 蓬 任 冲 輔
+heav inf : 庚 丙 丁 己 乙 辛 壬 戊
+heav aet : 丁 己 乙 辛 壬 戊 庚 丙
+
+H13 壬子 zhiFu=天心@2 zhiShi=开门@7
+star inf : 蓬 任 冲 輔 英 芮 柱 心
+star aet : 冲 輔 英 芮 柱 心 蓬 任
+heav inf : 戊 庚 丙 丁 己 乙 辛 壬
+heav aet : 己 丁 丙 庚 戊 壬 辛 乙

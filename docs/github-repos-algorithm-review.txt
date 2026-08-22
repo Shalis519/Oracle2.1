@@ -1,0 +1,1469 @@
+=== MRJELLY QIMEN ===
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:4:export interface BaMenResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:10:export { BASIC_GATES }
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:12:export function distributeBaMen(
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:18:  const originalGong: Palace = zhiFuGong === '5' ? '2' : zhiFuGong
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:19:  const zhiShiMen = BASIC_GATES[originalGong] ?? ''
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:20:  const steps = Math.max(TIAN_GAN.indexOf(shiGan as (typeof TIAN_GAN)[number]), 0)
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:31:  const zhiShiGong = (currentGong === 5 ? '2' : currentGong.toString()) as Palace
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:32:  const zhiShiMenIndex = LUO_SHU_ORDER.findIndex((gong) => BASIC_GATES[gong] === zhiShiMen)
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:33:  const luoGongIndex = LUO_SHU_ORDER.indexOf(zhiShiGong)
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:43:  const rotateSteps = (luoGongIndex - zhiShiMenIndex + 8) % 8
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:44:  const baMen = { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '' } as PalaceMap
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:47:    const original = LUO_SHU_ORDER[i]!
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts:48:    const target = LUO_SHU_ORDER[(i + rotateSteps) % LUO_SHU_ORDER.length]!
+docs/github-repos/MrJelly_QiMenDunJia/src/bashen.ts:4:const COUNTER_CLOCKWISE_ORDER: readonly Palace[] = ['1', '6', '7', '2', '9', '4', '3', '8']
+docs/github-repos/MrJelly_QiMenDunJia/src/bashen.ts:6:export function distributeBaShen(zhiFuGong: Palace, type: DunType = 'yang'): PalaceMap {
+docs/github-repos/MrJelly_QiMenDunJia/src/bashen.ts:7:  const gongOrder = type === 'yang' ? LUO_SHU_ORDER : COUNTER_CLOCKWISE_ORDER
+docs/github-repos/MrJelly_QiMenDunJia/src/bashen.ts:8:  const baShen = { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '' } as PalaceMap
+docs/github-repos/MrJelly_QiMenDunJia/src/bashen.ts:9:  const startGong: Palace = zhiFuGong === '5' ? '2' : zhiFuGong
+docs/github-repos/MrJelly_QiMenDunJia/src/bashen.ts:10:  const startIndex = gongOrder.indexOf(startGong)
+docs/github-repos/MrJelly_QiMenDunJia/src/bashen.ts:17:    const gong = gongOrder[(startIndex + i) % gongOrder.length]!
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:4:export const SOLAR_TERM_NAMES = [
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:31:const SIXTY_CYCLE = Array.from({ length: 60 }, (_, index) => `${TIAN_GAN[index % 10]}${DI_ZHI[index % 12]}`)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:32:const JIE_MONTH_TERM_INDEXES = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 0] as const
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:33:const SOLAR_TERM_LONGITUDES = [285, 300, 315, 330, 345, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180, 195, 210, 225, 240, 255, 270] as const
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:34:const CHINA_TIME_OFFSET_DAYS = 8 / 24
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:35:const DEFAULT_SOLAR_TERM_MODE: SolarTermMode = 'lite'
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:36:const DEFAULT_LATE_ZI_HOUR_MODE: LateZiHourMode = 'same-day'
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:37:const LUNAR_DAY_NAMES = [
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:71:export interface SolarTermInfo {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:74:  julianDay: number
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:77:export interface CalendarOptions {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:78:  solarTermMode?: SolarTermMode
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:79:  solarTermJulianDayResolver?: (year: number, termIndex: number) => number
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:83:function mod(value: number, divisor: number): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:87:function degToRad(degrees: number): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:91:function normalizeDegrees(degrees: number): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:95:function angleDelta(from: number, to: number): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:99:export function getHourIndex(hour = new Date().getHours(), options: CalendarOptions = {}): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:111:function assertValidDate(date: Date): void {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:117:function assertValidYear(year: number): void {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:123:export function getJulianDay(date: Date): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:128:  const day =
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:137:  const century = Math.floor(year / 100)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:138:  const gregorianCorrection = 2 - century + Math.floor(century / 4)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:148:function getDateFromJulianDay(julianDay: number): Date {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:149:  let z = Math.floor(julianDay + 0.5)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:150:  const f = julianDay + 0.5 - z
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:153:    const alpha = Math.floor((z - 1867216.25) / 36524.25)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:157:  const b = z + 1524
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:158:  const c = Math.floor((b - 122.1) / 365.25)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:159:  const d = Math.floor(365.25 * c)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:160:  const e = Math.floor((b - d) / 30.6001)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:161:  const day = b - d - Math.floor(30.6001 * e) + f
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:162:  const month = e < 14 ? e - 1 : e - 13
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:163:  const year = month > 2 ? c - 4716 : c - 4715
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:164:  const dayInt = Math.floor(day)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:184:function getDeltaTSeconds(year: number): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:185:  const t = year - 2000
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:189:function getApparentSolarLongitude(julianDayUtc: number): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:190:  const year = getDateFromJulianDay(julianDayUtc).getFullYear()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:191:  const julianDayTt = julianDayUtc + getDeltaTSeconds(year) / 86_400
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:192:  const t = (julianDayTt - 2451545.0) / 36525
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:193:  const l0 = normalizeDegrees(280.46646 + 36000.76983 * t + 0.0003032 * t * t)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:194:  const m = normalizeDegrees(357.52911 + 35999.05029 * t - 0.0001537 * t * t + (t * t * t) / 24_490_000)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:195:  const c =
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:199:  const trueLongitude = l0 + c
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:200:  const omega = 125.04 - 1934.136 * t
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:204:function getSolarTermJulianDayByLongitude(year: number, targetLongitude: number): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:205:  const approxMonth = Math.floor(mod(targetLongitude - 285, 360) / 30)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:206:  const startDate = new Date(year, approxMonth, 1)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:220:    const middle = (low + high) / 2
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:231:function getSolarTermJulianDayByMode(year: number, termIndex: number, options: CalendarOptions): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:232:  const mode = options.solarTermMode ?? DEFAULT_SOLAR_TERM_MODE
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:235:    return options.solarTermJulianDayResolver
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:236:      ? options.solarTermJulianDayResolver(year, termIndex)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:237:      : getSolarTermJulianDayByLongitude(year, SOLAR_TERM_LONGITUDES[termIndex]!) + CHINA_TIME_OFFSET_DAYS
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:240:  return getSolarTermJulianDayByLongitude(year, SOLAR_TERM_LONGITUDES[termIndex]!) + CHINA_TIME_OFFSET_DAYS
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:243:function getSolarTermDate(year: number, termIndex: number, options: CalendarOptions = {}): Date {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:245:  return getDateFromJulianDay(getSolarTermJulianDayByMode(year, termIndex, options))
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:248:function getSolarTermJulianDay(year: number, name: string, options: CalendarOptions = {}): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:249:  const termIndex = SOLAR_TERM_NAMES.indexOf(name as (typeof SOLAR_TERM_NAMES)[number])
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:250:  if (termIndex === -1) {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:251:    throw new Error(`unknown solar term: ${name}`)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:253:  return getJulianDay(getSolarTermDate(year, termIndex, options))
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:256:export function getSolarTermName(date: Date, options: CalendarOptions = {}): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:259:  const year = date.getFullYear()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:262:  for (let termIndex = 0; termIndex < SOLAR_TERM_NAMES.length; termIndex += 1) {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:263:    if (date.getTime() >= getSolarTermDate(year, termIndex, options).getTime()) {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:264:      currentTerm = SOLAR_TERM_NAMES[termIndex]!
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:271:export function getSolarTerms(year: number, options: CalendarOptions = {}): SolarTermInfo[] {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:275:    const date = getSolarTermDate(year, index, options)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:279:      julianDay: getJulianDay(date),
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:284:export function isIntlChineseCalendarSupported(): boolean {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:286:    const parts = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:298:function getSixtyCycle(index: number): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:302:function getCycleIndex(ganZhi: string): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:306:function getXun(ganZhi: string): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:307:  const index = getCycleIndex(ganZhi)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:312:function getYearGanZhi(date: Date, options: CalendarOptions): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:313:  const year = date.getFullYear()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:314:  const liChun = getSolarTermDate(year, 2, options)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:315:  const ganzhiYear = date.getTime() >= liChun.getTime() ? year : year - 1
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:319:function getJieMonthIndex(date: Date, options: CalendarOptions): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:320:  const year = date.getFullYear()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:324:    const termIndex = JIE_MONTH_TERM_INDEXES[i]!
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:325:    const termYear = termIndex === 0 ? year + 1 : year
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:326:    if (date.getTime() >= getSolarTermDate(termYear, termIndex, options).getTime()) {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:334:function getMonthGanZhi(date: Date, yearGanZhi: string, options: CalendarOptions): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:335:  const monthIndex = getJieMonthIndex(date, options)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:336:  const yearStemIndex = TIAN_GAN.indexOf(yearGanZhi[0] as (typeof TIAN_GAN)[number])
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:337:  const yinMonthStemIndex = mod(yearStemIndex * 2 + 2, 10)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:338:  const stem = TIAN_GAN[mod(yinMonthStemIndex + monthIndex, 10)]!
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:339:  const branch = DI_ZHI[mod(2 + monthIndex, 12)]!
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:343:function getDateForLateZiDay(date: Date, options: CalendarOptions): Date {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:351:function getDayGanZhi(date: Date): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:352:  const localMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:356:export function getHours(dayGanZhi: string, options: CalendarOptions = {}): CalendarHour[] {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:357:  const dayStemIndex = TIAN_GAN.indexOf(dayGanZhi[0] as (typeof TIAN_GAN)[number])
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:358:  const firstHourStemIndex = mod((dayStemIndex % 5) * 2, 10)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:359:  const hours = DI_ZHI.map((branch, branchIndex) => {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:360:    const ganZhi = `${TIAN_GAN[mod(firstHourStemIndex + branchIndex, 10)]!}${branch}`
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:368:    const nextDayStemIndex = mod(dayStemIndex + 1, 10)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:369:    const lateZiGanZhi = `${TIAN_GAN[mod((nextDayStemIndex % 5) * 2, 10)]!}子`
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:379:function formatSolarDate(date: Date): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:383:function formatLunarDate(date: Date): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:388:  const parts = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:393:  const yearName = parts.find((part) => String(part.type) === 'relatedYear')?.value ?? ''
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:394:  const sexagenaryYear = parts.find((part) => String(part.type) === 'yearName')?.value ?? ''
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:395:  const monthName = parts.find((part) => part.type === 'month')?.value ?? ''
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:396:  const dayNumber = Number(parts.find((part) => part.type === 'day')?.value)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:397:  const dayName = LUNAR_DAY_NAMES[dayNumber] ?? `${dayNumber}`
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:406:export function createCalendarSnapshot(date: Date, options: CalendarOptions = {}): CalendarSnapshot {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:408:  const calendarOptions = {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:409:    solarTermMode: options.solarTermMode ?? DEFAULT_SOLAR_TERM_MODE,
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:411:    ...(options.solarTermJulianDayResolver ? { solarTermJulianDayResolver: options.solarTermJulianDayResolver } : {}),
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:414:  const yearGanZhi = getYearGanZhi(date, calendarOptions)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:415:  const monthGanZhi = getMonthGanZhi(date, yearGanZhi, calendarOptions)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:416:  const dayGanZhi = getDayGanZhi(getDateForLateZiDay(date, calendarOptions))
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:417:  const hours = getHours(dayGanZhi, calendarOptions)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:418:  const julianDay = getJulianDay(date)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:419:  const currentYear = date.getFullYear()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:420:  const currentSummer = getSolarTermJulianDay(currentYear, '夏至', calendarOptions)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:421:  const currentWinter = getSolarTermJulianDay(currentYear, '冬至', calendarOptions)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:422:  const previousWinter = getSolarTermJulianDay(currentYear - 1, '冬至', calendarOptions)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:423:  const nextSummer = getSolarTermJulianDay(currentYear + 1, '夏至', calendarOptions)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:424:  const nextWinter = getSolarTermJulianDay(currentYear + 1, '冬至', calendarOptions)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:425:  const isBeforeCurrentSummer = julianDay < currentSummer
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:426:  const isAfterCurrentWinter = julianDay >= currentWinter
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:429:    solarDate: formatSolarDate(date),
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:431:    solarYear: currentYear,
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:432:    julianDay,
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:436:    solarTermName: getSolarTermName(date, calendarOptions),
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts:447:export function getNativeHourIndex(date: Date, options: CalendarOptions = {}): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:9:const SHOUXING_CALENDAR_OPTIONS = {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:10:  solarTermMode: 'shouxing',
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:11:  solarTermJulianDayResolver: getShouXingSolarTermJulianDay,
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:12:} as const satisfies CalendarOptions
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:14:function withShouXingOptions(options: CalendarOptions = {}): CalendarOptions {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:15:  const solarTermMode = options.solarTermMode ?? 'shouxing'
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:18:    solarTermMode,
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:19:    ...(solarTermMode === 'shouxing' ? { solarTermJulianDayResolver: getShouXingSolarTermJulianDay } : {}),
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:23:export function createShouXingCalendarSnapshot(date: Date, options: CalendarOptions = {}) {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:27:export function getShouXingSolarTermName(date: Date, options: CalendarOptions = {}): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:31:export function getShouXingSolarTerms(year: number, options: CalendarOptions = {}) {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts:35:export { SHOUXING_CALENDAR_OPTIONS }
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:2:// Solar term core ported from tyme4ts 1.5.0, which derives its algorithm from ShouXing astronomical calendar.
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:4:const J2000 = 2451545
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:170:    // 使用skyfeild的DE440s△T预测数据拟合
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:2970:    const o = "0000000000";
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:2971:    const o2 = o + o;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3006:    const t2 = t * t;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3021:    const m0 = ShouXingUtil.XL0[2] - ShouXingUtil.XL0[1];
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3047:    const t2 = t * t;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3051:    const obl = ShouXingUtil.XL1[0].length;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3057:    const t5 = t4 * t;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3058:    const tx = t - 10;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3072:      const f = ShouXingUtil.XL1[i];
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3073:      const l = f.length;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3089:    const t2 = t * t;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3093:    const f = 628.307585 * t;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3100:    const dy = (y - 1820) / 100;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3104:    const size = ShouXingUtil.DT_AT.length;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3105:    const y0 = ShouXingUtil.DT_AT[size - 2];
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3106:    const t0 = ShouXingUtil.DT_AT[size - 1];
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3108:      const jsd = 31;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3120:    const t1 = (y - ShouXingUtil.DT_AT[i]) / (ShouXingUtil.DT_AT[i + 5] - ShouXingUtil.DT_AT[i]) * 10;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3121:    const t2 = t1 * t1;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3122:    const t3 = t2 * t1;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3129:    const v = 8399.71 - 914 * Math.sin(0.7848 + 8328.691425 * t + 1523e-7 * t * t);
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3151:    const v = 628.3319653318;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3162:    const l = ShouXingUtil.mLon(t, 20) - (4.8950632 + 628.3319653318 * t + 5297e-9 * t2 + 0.0334166 * Math.cos(4.669257 + 628.307585 * t) + 2061e-7 * Math.cos(2.67823 + 628.307585 * t) * t + 349e-6 * Math.cos(4.6261 + 1256.61517 * t) - 20.5 / ShouXingUtil.SECOND_PER_RAD);
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3169:    const v = (t + 0.5) % 1 * ShouXingUtil.SECOND_PER_DAY;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3178:    const v = (t + 0.5) % 1 * ShouXingUtil.SECOND_PER_DAY;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3185:    const v = 628.3319653318;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3188:    const n = 4895062166e-2 + 6283319653318e-3 * t + 53 * t * t + 334166 * Math.cos(4.669257 + 628.307585 * t) + 3489 * Math.cos(4.6261 + 1256.61517 * t) + 2060.6 * Math.cos(2.67823 + 628.307585 * t) * t - 994 - 834 * Math.sin(2.1824 - 33.75705 * t);
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3193:    const v = 7771.37714500204;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3199:    const size = ShouXingUtil.SHUO_KB.length;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3201:    const pc = 14;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3203:    const f1 = ShouXingUtil.SHUO_KB[0] - pc;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3204:    const f2 = ShouXingUtil.SHUO_KB[size - 1] - pc;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3205:    const f3 = 2436935;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3222:      const n = ShouXingUtil.SB.charCodeAt(Math.floor((jd - f2) / 29.5306));
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3233:    const size = ShouXingUtil.QI_KB.length;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3235:    const pc = 7;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3238:    const f1 = ShouXingUtil.QI_KB[0] - pc;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3239:    const f2 = ShouXingUtil.QI_KB[size - 1] - pc;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3240:    const f3 = 2436935;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3257:      const n = ShouXingUtil.QB.charCodeAt(Math.floor((jd - f2) / 365.2422 * 24));
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3267:    const t = ShouXingUtil.saLonT(w) * 36525;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3271:    const d = Math.PI / 12;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3272:    const w = Math.floor((jd + 293) / 365.2422 * 24) * d;
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3273:    const a = ShouXingUtil.qiAccurate(w);
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3281:export function getShouXingSolarTermJulianDay(year: number, termIndex: number): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3282:  const shouXingIndex = (termIndex + 1) % 24
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3283:  const shouXingYear = termIndex === 23 ? year + 1 : year
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3284:  const jd = Math.floor((shouXingYear - 2000) * 365.2422 + 180)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts:3291:  const cursoryJulianDay = ShouXingUtil.calcQi(w + 15.2184 * shouXingIndex)
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:5:export interface TymeCalendarOptions {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:45:export function createTymeCalendarSnapshot(date: Date): CalendarSnapshot
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:46:export function createTymeCalendarSnapshot(date: Date, options: TymeCalendarOptions): CalendarSnapshot
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:47:export function createTymeCalendarSnapshot(date: Date, options: TymeCalendarOptions = {}): CalendarSnapshot {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:48:  const lateZiHourMode = options.lateZiHourMode ?? 'same-day'
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:49:  const solarTime = SolarTime.fromYmdHms(
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:57:  const julianDay = solarTime.getJulianDay() as unknown as TymeJulianDay
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:58:  const solarDay = julianDay.getSolarDay()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:59:  const lunarDay = solarDay.getLunarDay()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:60:  const solarYear = solarDay.getYear()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:61:  const lunarHour = solarTime.getLunarHour()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:62:  const eightCharProvider = lateZiHourMode === 'same-day' ? new LunarSect2EightCharProvider() : new DefaultEightCharProvider()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:63:  const eightChar = eightCharProvider.getEightChar(lunarHour) as unknown as TymeEightChar
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:64:  const dayGanZhi = eightChar.getDay().getName()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:65:  const hours = getHours(dayGanZhi, { lateZiHourMode })
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:66:  const hourIndex = getHourIndex(date.getHours(), { lateZiHourMode })
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:67:  const hourGanZhi = eightChar.getHour().getName()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:74:  // 阴阳遁判断需要配对的冬至-夏至区间，与 native.ts 保持一致：
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:76:  // 我们需要对其做平移映射，使其符合公历年的冬至/夏至：
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:77:  const currentJulianDay = julianDay.getDay()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:78:  const previousWinterJD = (SolarTerm.fromName(solarYear, '冬至').getJulianDay() as unknown as TymeJulianDay).getDay()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:79:  const currentSummerJD = (SolarTerm.fromName(solarYear, '夏至').getJulianDay() as unknown as TymeJulianDay).getDay()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:80:  const currentWinterJD = (SolarTerm.fromName(solarYear + 1, '冬至').getJulianDay() as unknown as TymeJulianDay).getDay()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:81:  const nextSummerJD = (SolarTerm.fromName(solarYear + 1, '夏至').getJulianDay() as unknown as TymeJulianDay).getDay()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:82:  const nextWinterJD = (SolarTerm.fromName(solarYear + 2, '冬至').getJulianDay() as unknown as TymeJulianDay).getDay()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:83:  const isBeforeCurrentSummer = currentJulianDay < currentSummerJD
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:84:  const isAfterCurrentWinter = currentJulianDay >= currentWinterJD
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:87:    solarDate: solarDay.toString(),
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:89:    solarYear,
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:90:    julianDay: currentJulianDay,
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:94:    solarTermName: solarTime.getTerm().getName(),
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:105:function getTenName(sixtyCycle: TymeSixtyCycle): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:106:  const ten = sixtyCycle.getTen()
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts:110:export function getTymeHourIndex(date: Date, options: TymeCalendarOptions = {}): number {
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:3:export const TIAN_GAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] as const
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:4:export const DI_ZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'] as const
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:6:export const SAN_QI_LIU_YI = ['戊', '己', '庚', '辛', '壬', '癸', '丁', '丙', '乙'] as const
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:7:export const LUO_SHU_ORDER: readonly Palace[] = ['1', '8', '3', '4', '9', '2', '7', '6']
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:8:export const DISPLAY_ORDER: readonly Palace[] = ['9', '2', '7', '6', '1', '8', '3', '4']
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:10:export const PALACE_ANGLE: Record<Palace, number> = {
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:22:export const BASIC_STARS = {
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:32:} as const satisfies Record<Palace, string>
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:34:export const BASIC_GATES = {
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:44:} as const satisfies Record<Palace, string>
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:46:export const BASIC_GODS = ['值符', '腾蛇', '太阴', '六合', '白虎', '玄武', '九地', '九天'] as const
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:47:export const STANDARD_STARS = ['天英', '天芮', '天柱', '天心', '天蓬', '天任', '天冲', '天辅'] as const
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:48:export const STANDARD_GATES = ['景门', '死门', '惊门', '开门', '休门', '生门', '伤门', '杜门'] as const
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:49:export const STANDARD_GODS = ['值符', '腾蛇', '太阴', '六合', '白虎', '玄武', '九地', '九天'] as const
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:51:export const XUN_SHOU_TO_FULL_MAP: Record<string, string> = {
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:60:export const NUM_TO_CHAR: Record<number, string> = {
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts:72:export const ZHI_TO_GONG: Record<string, Palace> = {
+docs/github-repos/MrJelly_QiMenDunJia/src/dipan.ts:4:export function getDiPan(type: DunType, num: number): PalaceMap {
+docs/github-repos/MrJelly_QiMenDunJia/src/dipan.ts:6:    throw new RangeError(`ju number must be an integer from 1 to 9, received ${num}`)
+docs/github-repos/MrJelly_QiMenDunJia/src/dipan.ts:9:  const result = {} as PalaceMap
+docs/github-repos/MrJelly_QiMenDunJia/src/dipan.ts:12:  for (const stem of SAN_QI_LIU_YI) {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:3:import { createCalendarSnapshot, getSolarTermName, getSolarTerms } from '../calendar/native.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:5:function withNativeOptions(options: QimenOptions = {}): QimenOptions {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:6:  return { ...options, solarTermMode: 'lite', lateZiHourMode: options.lateZiHourMode ?? 'same-day' }
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:9:function normalizeError(error: unknown): QimenErrorResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:16:export function calculate(date: Date, options: QimenOptions = {}) {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:18:    const opts = withNativeOptions(options)
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:25:export function calculateBrief(date: Date, options: QimenOptions = {}) {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:27:    const opts = withNativeOptions(options)
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:30:    return { ...normalizeError(error), info: { ju: '', fu: '', shi: '' } }
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:34:export {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:42:export { getDiPan } from '../dipan.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:43:export { distributeJiuXing } from '../jiuxing.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:44:export { distributeBaMen } from '../bamen.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:45:export { distributeBaShen } from '../bashen.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:46:export { getHourIndex, getJulianDay, getNativeHourIndex, isIntlChineseCalendarSupported, SOLAR_TERM_NAMES } from '../calendar/native.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:47:export type {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts:63:export type { CalendarOptions, SolarTermInfo } from '../calendar/native.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:7:} from '../calendar/shouxing.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:9:function withShouXingOptions(options: QimenOptions = {}): QimenOptions {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:12:    solarTermMode: options.solarTermMode ?? 'shouxing',
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:17:function normalizeError(error: unknown): QimenErrorResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:24:export function calculate(date: Date, options: QimenOptions = {}) {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:26:    const opts = withShouXingOptions(options)
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:33:export function calculateBrief(date: Date, options: QimenOptions = {}) {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:35:    const opts = withShouXingOptions(options)
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:38:    return { ...normalizeError(error), info: { ju: '', fu: '', shi: '' } }
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:42:export {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:50:export { getDiPan } from '../dipan.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:51:export { distributeJiuXing } from '../jiuxing.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:52:export { distributeBaMen } from '../bamen.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:53:export { distributeBaShen } from '../bashen.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:54:export { getHourIndex, getJulianDay, getNativeHourIndex, isIntlChineseCalendarSupported, SOLAR_TERM_NAMES } from '../calendar/native.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:55:export { getShouXingSolarTermJulianDay } from '../calendar/shouxingUtil.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:56:export type {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts:72:export type { CalendarOptions, SolarTermInfo } from '../calendar/native.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:3:import { createTymeCalendarSnapshot, getTymeHourIndex } from '../calendar/tyme.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:11:} from '../calendar/native.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:13:function normalizeError(error: unknown): QimenErrorResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:20:export function calculate(date: Date, options: QimenOptions = {}) {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:22:    const opts = { ...options, lateZiHourMode: options.lateZiHourMode ?? 'same-day' }
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:29:export function calculateBrief(date: Date, options: QimenOptions = {}) {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:31:    const opts = { ...options, lateZiHourMode: options.lateZiHourMode ?? 'same-day' }
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:34:    return { ...normalizeError(error), info: { ju: '', fu: '', shi: '' } }
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:38:export function getSolarTermName(date: Date, options: QimenOptions = {}): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:39:  return createTymeCalendarSnapshot(date, options).solarTermName
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:42:export function getSolarTerms(year: number) {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:44:    const termYear = name === '冬至' ? year + 1 : year
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:45:    const julianDay = SolarTerm.fromName(termYear, name).getJulianDay()
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:46:    const solarTime = julianDay.getSolarTime()
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:50:        solarTime.getYear(),
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:51:        solarTime.getMonth() - 1,
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:52:        solarTime.getDay(),
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:53:        solarTime.getHour(),
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:54:        solarTime.getMinute(),
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:55:        solarTime.getSecond(),
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:57:      julianDay: julianDay.getDay(),
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:62:export {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:74:export { getDiPan } from '../dipan.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:75:export { distributeJiuXing } from '../jiuxing.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:76:export { distributeBaMen } from '../bamen.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:77:export { distributeBaShen } from '../bashen.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:78:export type {
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts:94:export type { CalendarOptions, SolarTermInfo } from '../calendar/native.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/index.ts:1:export * from './entries/shouxing.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/index.ts:2:export { getShouXingSolarTermJulianDay } from './calendar/shouxingUtil.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:4:export interface JiuXingResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:11:function findStemPalace(diPan: PalaceMap, stem: string): Palace | undefined {
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:15:export function distributeJiuXing(
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:21:  const zhiFuGong = findStemPalace(diPan, xunShou) ?? '2'
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:22:  const zhiFuXing = BASIC_STARS[zhiFuGong]
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:33:  const zhiFuLuoGong = findStemPalace(diPan, shiGan) ?? (diPan['5'] === shiGan ? '2' : zhiFuGong)
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:34:  const zhiFuIndex = LUO_SHU_ORDER.indexOf(zhiFuGong)
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:35:  const luoGongIndex = LUO_SHU_ORDER.indexOf(zhiFuLuoGong)
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:46:  const steps = (luoGongIndex - zhiFuIndex + 8) % 8
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:47:  const jiuXing = { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '' } as PalaceMap
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:50:    const originalGong = LUO_SHU_ORDER[i]!
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts:51:    const newGong = LUO_SHU_ORDER[(i + steps) % LUO_SHU_ORDER.length]!
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:14:import { createCalendarSnapshot, getHourIndex } from './calendar/native.js'
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:32:const JIE_QI_JU_SUAN = [
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:59:const JU_NUMBERS_MAP: Record<string, string> = Object.fromEntries(
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:63:const DEFAULT_OPTIONS: Required<QimenOptions> = {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:66:  solarTermMode: 'shouxing',
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:72:function normalizeError(error: unknown): QimenErrorResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:79:function getLastHour(snapshot: CalendarSnapshot) {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:83:function getMethodGanZhi(snapshot: CalendarSnapshot, hourIndex: number, method: QimenMethod): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:90:function getMethodXun(snapshot: CalendarSnapshot, hourIndex: number, method: QimenMethod): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:97:export function calculateJuShu(snapshot: CalendarSnapshot, method: QimenMethod = '时家', hourIndex = 0): JuShu {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:98:  const jieQiName = method === '年家' ? '立春' : snapshot.solarTermName
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:99:  const ganZhi = (method === '时家' || method === '日家') ? snapshot.dayGanZhi : getMethodGanZhi(snapshot, hourIndex, method)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:100:  const tgIndex = TIAN_GAN.indexOf(ganZhi[0] as (typeof TIAN_GAN)[number])
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:101:  const dzIndex = DI_ZHI.indexOf(ganZhi[1] as (typeof DI_ZHI)[number])
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:107:  const fuTouDzIndex = (dzIndex - (tgIndex % 5) + 12) % 12
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:108:  const fuTouDiZhi = DI_ZHI[fuTouDzIndex]!
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:109:  const yuan = ['子', '午', '卯', '酉'].includes(fuTouDiZhi)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:115:  const dunType: DunType =
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:116:    snapshot.julianDay >= snapshot.winterSolsticeJulianDay && snapshot.julianDay < snapshot.summerSolsticeJulianDay
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:119:  const juNumbers = JU_NUMBERS_MAP[jieQiName] ?? '111'
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:120:  const juNumber = Number(juNumbers.charAt(yuan))
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:121:  const yuanName = ['上元', '中元', '下元'][yuan] as JuShu['yuan']
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:126:    number: juNumber,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:128:    fullName: `${dunType === 'yin' ? '阴遁' : '阳遁'}${NUM_TO_CHAR[juNumber]}局 (${yuanName})`,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:129:    formatCode: `${dunType}-${juNumber}`,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:133:function getXunShouLiuYi(ganZhi: string): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:134:  const tgIdx = TIAN_GAN.indexOf(ganZhi[0] as (typeof TIAN_GAN)[number])
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:135:  const dzIdx = DI_ZHI.indexOf(ganZhi[1] as (typeof DI_ZHI)[number])
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:138:  const headDzIdx = (dzIdx - tgIdx + 12) % 12
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:139:  const heads = ['子', '戌', '申', '午', '辰', '寅']
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:140:  const stems = ['戊', '己', '庚', '辛', '壬', '癸']
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:141:  const listIdx = heads.indexOf(DI_ZHI[headDzIdx]!)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:145:function getXunShou(snapshot: CalendarSnapshot, hourIndex: number, method: QimenMethod): string {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:149:function getKongWang(snapshot: CalendarSnapshot, hourIndex: number, method: QimenMethod): string[] {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:150:  const xun = getMethodXun(snapshot, hourIndex, method)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:151:  const xunToKongWang: Record<string, string[]> = {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:162:function getKongWangGong(kongWangZhi: string[]): Palace[] {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:166:function getMaStar(snapshot: CalendarSnapshot, hourIndex: number, method: QimenMethod): { zhi: string; gong: Palace | '' } {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:167:  const ganZhi = getMethodGanZhi(snapshot, hourIndex, method)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:168:  const zhi = ganZhi[1] ?? ''
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:169:  const maMapping: Record<string, string> = {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:183:  const maZhi = maMapping[zhi] ?? ''
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:187:function calculateAnGan(zhiShiGong: Palace, shiGan: string, xunShou: string, type: DunType, diPan: PalaceMap): PalaceMap {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:188:  const anGan = { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '' } as PalaceMap
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:189:  const stemsSeq = ['戊', '己', '庚', '辛', '壬', '癸', '丁', '丙', '乙']
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:190:  const startStem = shiGan === '甲' ? xunShou : shiGan
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:206:function findGong(obj: PalaceMap, val: string): Palace {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:210:export function calculateBrief(date: Date, options: QimenOptions = {}): QimenBriefResult | QimenErrorResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:212:    const opts = { ...DEFAULT_OPTIONS, ...options }
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:215:    return { ...normalizeError(error), info: { ju: '', fu: '', shi: '' } }
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:219:export function calculateBriefFromSnapshot(
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:224:  const opts = { ...DEFAULT_OPTIONS, ...options }
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:225:  const hourIndex = getHourIndex(date.getHours(), opts)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:226:  const juShu = calculateJuShu(snapshot, opts.method, hourIndex)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:227:  const xunShou = getXunShou(snapshot, hourIndex, opts.method)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:228:  const luoGongGan = getMethodGanZhi(snapshot, hourIndex, opts.method)[0] ?? ''
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:229:  const diPan = getDiPan(juShu.type, juShu.number)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:230:  const jiuXingResult = distributeJiuXing(diPan, xunShou, luoGongGan, juShu.type)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:231:  const baMenResult = distributeBaMen(jiuXingResult.zhiFuGong, luoGongGan, diPan, juShu.type)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:235:      jieqi: `节气：${juShu.jieQiName}`,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:236:      ju: juShu.fullName,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:237:      fu: `值符：${jiuXingResult.zhiFuXing}`,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:238:      shi: `值使：${baMenResult.zhiShiMen}`,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:243:export function calculate(date: Date, options: QimenOptions = {}): QimenResult | QimenErrorResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:245:    const opts = { ...DEFAULT_OPTIONS, ...options }
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:252:export function calculateFromSnapshot(snapshot: CalendarSnapshot, date: Date, options: QimenOptions = {}): QimenResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:253:  const opts = { ...DEFAULT_OPTIONS, ...options }
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:254:  const hourIndex = getHourIndex(date.getHours(), opts)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:255:  const siZhu = {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:261:  const juShu = calculateJuShu(snapshot, opts.method, hourIndex)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:262:  const xunShou = getXunShou(snapshot, hourIndex, opts.method)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:263:  const luoGongGan = getMethodGanZhi(snapshot, hourIndex, opts.method)[0] ?? ''
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:264:  const kongWangZhi = getKongWang(snapshot, hourIndex, opts.method)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:265:  const kongWangGong = getKongWangGong(kongWangZhi)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:266:  const maStar = getMaStar(snapshot, hourIndex, opts.method)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:267:  const diPan = getDiPan(juShu.type, juShu.number)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:268:  const jiuXingResult = distributeJiuXing(diPan, xunShou, luoGongGan, juShu.type)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:269:  const baMenResult = distributeBaMen(jiuXingResult.zhiFuGong, luoGongGan, diPan, juShu.type)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:270:  const zhiFuLuoGong = jiuXingResult.zhiFuLuoGong || jiuXingResult.zhiFuGong
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:271:  const baShen = distributeBaShen(zhiFuLuoGong, juShu.type)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:272:  const anGan = calculateAnGan(baMenResult.zhiShiGong, luoGongGan, xunShou, juShu.type, diPan)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:273:  const zhiFuIdx = LUO_SHU_ORDER.indexOf(jiuXingResult.zhiFuGong)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:274:  const shiGanIdx = LUO_SHU_ORDER.indexOf(jiuXingResult.zhiFuLuoGong)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:275:  const rotateSteps = (shiGanIdx - zhiFuIdx + 8) % 8
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:276:  const tianPan = { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '' } as PalaceMap
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:279:    const dpStem = diPan[gong]
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:280:    const targetGong = LUO_SHU_ORDER[(index + rotateSteps) % LUO_SHU_ORDER.length]!
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:285:  const mergedDiPan: PalaceMap = {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:289:  const baseArr = DISPLAY_ORDER.map((gong) => ({ diPan: mergedDiPan[gong] ?? '' }))
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:290:  const starArr = STANDARD_STARS.map((name) => {
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:291:    const gong = findGong(jiuXingResult.jiuXing, name)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:294:  const dayKongWangZhiArr = getKongWang(snapshot, hourIndex, '日家')
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:295:  const dayKwGongs = getKongWangGong(dayKongWangZhiArr)
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:296:  const dayMa = getMaStar(snapshot, hourIndex, '日家')
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:297:  const dayMarkerArr: string[] = []
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:298:  const timeMarkerArr: string[] = []
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:299:  const anGanArr: string[] = []
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:302:    const dayMarkers = []
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:303:    const timeMarkers = []
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:313:  const curStarGong = findGong(jiuXingResult.jiuXing, '天英')
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:314:  const curGateGong = findGong(baMenResult.baMen, '景门')
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:315:  const curGodGong = findGong(baShen, '值符')
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:319:      date: snapshot.solarDate,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:321:      jieqi: `节气：${juShu.jieQiName}`,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:322:      ju: juShu.fullName,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:323:      fu: `值符：${jiuXingResult.zhiFuXing}`,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:324:      shi: `值使：${baMenResult.zhiShiMen}`,
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:337:    isYinDun: juShu.type === 'yin',
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts:343:      juShu,
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:1:export type DunType = 'yang' | 'yin'
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:2:export type QimenMethod = '时家' | '日家' | '月家' | '年家'
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:3:export type QimenBoardType = '三元' | '四柱'
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:4:export type SolarTermMode = 'lite' | 'shouxing'
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:5:export type LateZiHourMode = 'same-day' | 'next-day'
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:6:export type Palace = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:7:export type PalaceMap<T = string> = Record<Palace, T>
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:9:export interface CalendarHour {
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:14:export interface CalendarSnapshot {
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:15:  solarDate: string
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:17:  solarYear: number
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:18:  julianDay: number
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:22:  solarTermName: string
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:32:export interface QimenOptions {
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:35:  solarTermMode?: SolarTermMode
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:41:export interface JuShu {
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:50:export interface QimenBriefResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:53:    ju: string
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:59:export interface QimenErrorResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:65:export interface QimenResult {
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:70:    ju: string
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts:96:    juShu: JuShu
+=== OCEAN QIMEN ===
+docs/github-repos/oceanjustinlin_qimen/lib/BaziConstants.js:2:const core     = require('./constants/core');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziConstants.js:3:const relations = require('./constants/relations');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziConstants.js:4:const tiaohou  = require('./constants/tiaohou');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziConstants.js:5:const shensha  = require('./constants/shensha');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziConstants.js:7:const NAYINS = {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2:const C = require('./BaziConstants');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:6:function getShen(dayGan, target) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:9:  const mainGan = C.ZHI5_LIST[target]?.[0];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:13:function getDiShi(dayGan, zhi) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:14:  const start = C.CHANG_SHENG_START[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:16:  const idx = C.ZHI_INDEX[zhi];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:17:  const isYang = ['甲', '丙', '戊', '庚', '壬'].includes(dayGan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:21:function getStemByShen(dayGan, shenName) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:25:function isKong(dayPillar, zhi) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:29:function parseTiaohou(str) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:31:  const favorable = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:32:  const unfavorable = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:33:  const seenFav = new Set();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:34:  const seenUnfav = new Set();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:38:    const c = str[i];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:59:const STRONG_ROOT_PHASES = new Set(['帝旺', '临官']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:60:const WEAK_ROOT_PHASES = new Set(['长生', '冠带']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:61:const TRACE_ROOT_PHASES = new Set(['沐浴', '墓']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:62:const ROOTED_PHASES = new Set([...STRONG_ROOT_PHASES, ...WEAK_ROOT_PHASES, ...TRACE_ROOT_PHASES]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:64:function getMoonScoreByPhase(phase) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:70:function getGroundScoreByPhase(phase) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:78:function clamp(num, min, max) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:82:function formatScore(num) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:86:function getHiddenStemType(index) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:92:function getHiddenStemWeight(index) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:98:function getPillarRootWeight(index) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:104:function getStrengthBand(score) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:112:function getRootStatsForElement(element, zhis) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:113:  const pillarNames = ['年支', '月支', '日支', '时支'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:114:  const roots = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:117:    const hides = C.ZHI5_LIST[zhi] || [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:120:      const hiddenType = getHiddenStemType(hiddenIndex);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:121:      const base = getHiddenStemWeight(hiddenIndex);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:122:      const pillarWeight = getPillarRootWeight(pillarIndex);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:123:      const raw = base * pillarWeight;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:137:function getSeasonDetail(dayGan, monthZhi, monthPhase) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:138:  const mainGan = C.ZHI5_LIST[monthZhi]?.[0];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:139:  const shen = mainGan ? C.SHISHEN[dayGan][mainGan] : '?';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:152:  const dayElement = C.GAN5[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:153:  const monthRoot = getRootStatsForElement(dayElement, [monthZhi]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:154:  const hiddenSupportScore = clamp(monthRoot.score * 0.5, 0, 0.8);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:155:  const score = clamp(relationScore + phaseScore + hiddenSupportScore, 0, 4);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:156:  const verdict = score >= 3.4 ? '得令' : (score >= 2.2 ? '半得令' : (score >= 1.1 ? '令中有气' : '失令'));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:157:  const mainText = mainGan ? `月令${monthZhi}以${mainGan}为主气，对日主为${SHORT_TO_FULL_SHEN[shen] || shen}。` : `月令${monthZhi}主气未定。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:158:  const phaseText = monthPhase && monthPhase !== '-' ? `十二长生落在${monthPhase}。` : '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:171:function getRootDetail(dayGan, zhis) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:172:  const stats = getRootStatsForElement(C.GAN5[dayGan], zhis);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:180:  const score = clamp(stats.score + phaseBonus, 0, 3);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:181:  const heavyRootCount = stats.roots.filter(root => root.hiddenType === '本气').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:182:  const mediumRootCount = stats.roots.filter(root => root.hiddenType === '中气').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:183:  const lightRootCount = stats.roots.filter(root => root.hiddenType === '余气').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:184:  const rootLevel = heavyRootCount ? '重根' : (mediumRootCount ? '中根' : (lightRootCount ? '轻根' : '无根'));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:185:  const rootCopy = stats.roots.length
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:201:function getSupportDetail(dayGan, gans, zhis) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:202:  const stemHelpShens = new Set(['比', '劫', '印', '枭']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:203:  const pillarNames = ['年干', '月干', '日干', '时干'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:204:  const branchNames = ['年支', '月支', '日支', '时支'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:205:  const supportStems = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:209:    const shen = C.SHISHEN[dayGan][gan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:211:    const rootStats = getRootStatsForElement(C.GAN5[gan], zhis);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:212:    const rooted = rootStats.score >= 0.9;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:213:    const weakRooted = rootStats.score > 0 && rootStats.score < 0.9;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:214:    const itemScore = rooted ? 1.15 : (weakRooted ? 0.75 : 0.35);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:225:  const hiddenSupports = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:227:  const hasVisibleSeal = supportStems.some(item => item.relation === '正印' || item.relation === '偏印');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:232:        const shen = C.SHISHEN[dayGan][stem];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:234:        const raw = getHiddenStemWeight(hiddenIndex) * getPillarRootWeight(pillarIndex) * 0.15;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:247:  const visibleSupportScore = clamp(score, 0, 2);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:248:  const hiddenSupportScore = Math.min(hiddenSupportRawScore, 0.45, 2 - visibleSupportScore);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:250:  const visibleText = supportStems.length
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:253:  const hiddenText = hiddenSupports.length
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:256:  const text = `${visibleText}${hiddenText}，对日主形成${score >= 1.5 ? '实助' : (score > 0 ? '有限帮扶' : '明面帮扶不足')}。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:270:const SHORT_TO_FULL_SHEN = {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:277:const FULL_TO_SHORT_SHEN = Object.fromEntries(Object.entries(SHORT_TO_FULL_SHEN).map(([k, v]) => [v, k]));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:278:const SHEN_PAIRS = [
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:285:const SHENG_CYCLE = { '木': '火', '火': '土', '土': '金', '金': '水', '水': '木' };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:286:const RESTRAINING_CYCLE = { '木': '金', '土': '木', '水': '土', '火': '水', '金': '火' };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:288:// 格局辅神文本 → 十神全名映射（用于 L2 格局维度）
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:289:const SHEN_TEXT_TO_FULL = {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:301:function parseShenText(text) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:303:  const seen = new Set();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:309:function getFullShenByStem(dayGan, stem) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:313:function getWuxingByShenFull(dayGan, fullShen) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:314:  const shortShen = FULL_TO_SHORT_SHEN[fullShen];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:315:  const stem = getStemByShen(dayGan, shortShen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:319:function getTiaohouWeight(priority) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:325:function getTiaohouUnfavorablePenalty(ratio, hasRestrainingGan) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:332:const TIAOHOU_MONTH_CLIMATE = {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:342:  亥: { state: '初冬寒湿', axis: '寒暖', purpose: '暖局通阳', urgency: '偏急' },
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:343:  子: { state: '寒湿偏重', axis: '寒暖', purpose: '解冻暖局', urgency: '偏急' },
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:347:function buildTiaohouStemItem(dayGan, item, role) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:348:  const shen = getFullShenByStem(dayGan, item.gan) || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:358:function buildTiaohouDetail(dayGan, monthZhi, parsedTiaohou, specialPattern = null) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:359:  const key = dayGan + monthZhi;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:360:  const climate = TIAOHOU_MONTH_CLIMATE[monthZhi] || {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:366:  const minPriority = parsedTiaohou.favorable.reduce((min, item) => Math.min(min, item.priority), Infinity);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:367:  const primary = parsedTiaohou.favorable
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:370:  const secondary = parsedTiaohou.favorable
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:373:  const avoid = parsedTiaohou.unfavorable.map(item => buildTiaohouStemItem(dayGan, item, '慎用'));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:374:  const primaryText = primary.map(item => `${item.gan}${item.wuxing ? item.wuxing : ''}${item.shen ? `（${item.shen}）` : ''}`).join('、') || '未列明';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:375:  const secondaryText = secondary.length
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:378:  const avoidText = avoid.length
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:393:      ? '已识别特殊格局，喜忌先顺其成势；调候仍作为气候风险提示，不直接覆盖从格取用。'
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:398:function pruneDivergentPairs(list, scores) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:399:  const pruned = [...list];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:400:  for (const [a, b] of SHEN_PAIRS) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:402:    const diff = Math.abs(scores[a] - scores[b]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:404:    const loser = scores[a] >= scores[b] ? b : a;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:405:    const idx = pruned.indexOf(loser);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:411:function aggregateShens(shenNames, scores, conflictShens = []) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:412:  const sortedShens = [...shenNames].sort((a, b) => scores[b] - scores[a]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:413:  const positiveShens = sortedShens.filter(s => scores[s] > 0);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:414:  const topScore = positiveShens.length ? scores[positiveShens[0]] : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:419:  for (const shen of conflictShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:427:  const negativeShens = [...shenNames].filter(s => scores[s] < 0).sort((a, b) => scores[a] - scores[b]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:428:  const bottomScore = negativeShens.length ? scores[negativeShens[0]] : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:441:function classifyFiveShens(shenNames, scores, conflictShens = []) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:442:  const sorted = [...shenNames].sort((a, b) => scores[b] - scores[a]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:443:  const topScore = scores[sorted[0]];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:444:  const botScore = scores[sorted[sorted.length - 1]];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:445:  const spread = topScore - botScore || 1;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:448:  const yongShen = sorted[0];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:449:  const confidence = topScore > 40 ? 'HIGH' : topScore > 15 ? 'MEDIUM' : 'LOW';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:452:  const tierSpread = Math.max(20, spread * 0.25);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:454:  const xi = [], ji = [], chou = [], xian = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:455:  const assigned = new Set([yongShen]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:458:  for (const s of sorted) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:467:  const negSorted = [...sorted].reverse().filter(s => scores[s] < 0);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:468:  for (const s of negSorted) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:481:  for (const s of sorted) { if (!assigned.has(s)) xian.push(s); }
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:484:  const activeConflicts = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:485:  for (const s of conflictShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:486:    const jiIdx = ji.indexOf(s); if (jiIdx >= 0) ji.splice(jiIdx, 1);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:487:    const chouIdx = chou.indexOf(s); if (chouIdx >= 0) chou.splice(chouIdx, 1);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:489:      const idx = xian.indexOf(s);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:518:const BaziRuleEngine = {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:528:    const scores = { 金: 0, 木: 0, 水: 0, 火: 0, 土: 0 };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:529:    const ganScores = {};
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:533:    for (const g of gans) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:538:    const zhisWithDouble = [...zhis, zhis[1]];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:539:    for (const z of zhisWithDouble) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:540:      for (const [g, w] of Object.entries(C.ZHI5[z] || {})) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:547:    const meStatus = zhis.map(z => getDiShi(dayGan, z));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:548:    const [yearPhase, monthPhase, dayPhase, hourPhase] = meStatus;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:549:    const monthZhi = zhis[1];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:552:    const allShens = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:553:    for (const g of gans) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:556:    for (const z of zhis) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:557:      const mg = C.ZHI5_LIST[z]?.[0];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:562:    const biStem = getStemByShen(dayGan, '比');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:563:    const jieStem = getStemByShen(dayGan, '劫');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:564:    const yinStem = getStemByShen(dayGan, '印');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:565:    const xiaoStem = getStemByShen(dayGan, '枭');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:566:    const strongScore = (ganScores[biStem] || 0) + (ganScores[jieStem] || 0)
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:569:    const seasonDetail = getSeasonDetail(dayGan, monthZhi, monthPhase);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:570:    const rootDetail = getRootDetail(dayGan, zhis);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:571:    const supportDetail = getSupportDetail(dayGan, gans, zhis);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:574:    const moonRule = getMoonScoreByPhase(monthPhase);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:575:    const moonScore = seasonDetail.score;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:576:    const branchScores = rootDetail.roots.map(root => ({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:583:    const groundScore = rootDetail.score;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:584:    const stemHelpScore = supportDetail.score;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:585:    const stemHelpBreakdown = supportDetail.support_stems.map(item => ({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:593:    const stemHelpShens = new Set(['比', '劫', '印', '枭']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:594:    const stemDetails = [
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:595:      { pillar: '年干', gan: gans[0], zhi: zhis[0], phase: yearPhase },
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:599:    const dayMasterHasRoot = rootDetail.heavy_root_count > 0 || rootDetail.score >= 0.8;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:600:    const stemHasHelp = supportDetail.support_stems.length > 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:601:    const totalWuxingScore = Object.values(scores).reduce((sum, value) => sum + value, 0);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:602:    const [dominantElement, dominantScore] = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:603:    const dominantRatio = totalWuxingScore > 0 ? dominantScore / totalWuxingScore : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:604:    const isDominant = dominantRatio > 0.55;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:605:    const dayMasterElement = C.GAN5[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:609:      const stem = getStemByShen(dayGan, shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:617:    const preliminaryStrengthScore = clamp(seasonDetail.score + rootDetail.score + supportDetail.score + structureAdjustment, 0, 10);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:618:    const winterWaterRootNetwork =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:628:    const luZhi = C.LU_SHEN[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:629:    const monthMainGan = C.ZHI5_LIST[monthZhi]?.[0];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:630:    const monthMainShen = monthMainGan ? C.SHISHEN[dayGan][monthMainGan] : null;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:631:    const outputControlKilling = gans.some((gan, index) => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:633:      const shen = C.SHISHEN[dayGan][gan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:637:        const targetShen = C.SHISHEN[dayGan][targetGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:642:    const doubleLuFoodControlsKilling =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:654:    const strongPhaseCount = meStatus.filter(phase => STRONG_ROOT_PHASES.has(phase)).length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:655:    const dayHourStrongRootCount = [dayPhase, hourPhase].filter(phase => STRONG_ROOT_PHASES.has(phase)).length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:656:    const rootedVisibleSupportCount = supportDetail.support_stems.filter(item => item.rooted).length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:657:    const supportOrCompanion =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:662:    const repeatedEffectiveRoots = rootDetail.roots.length >= 2 && rootDetail.score >= 1.4;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:663:    const hardRootNetwork = strongPhaseCount >= 3 && rootDetail.score >= 2.5;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:664:    const dayHourRootNetwork = dayHourStrongRootCount >= 1 && repeatedEffectiveRoots;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:665:    const supportedRootNetwork = repeatedEffectiveRoots && supportOrCompanion;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:666:    const metalWaterRatio = totalWuxingScore > 0 ? ((scores['金'] || 0) + (scores['水'] || 0)) / totalWuxingScore : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:667:    const fireRatio = totalWuxingScore > 0 ? (scores['火'] || 0) / totalWuxingScore : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:668:    const woodRatio = totalWuxingScore > 0 ? (scores['木'] || 0) / totalWuxingScore : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:669:    const wetEarthCount = zhis.filter(zhi => zhi === '辰' || zhi === '丑').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:670:    const springWoodBranchCount = zhis.filter(zhi => zhi === '寅' || zhi === '卯').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:671:    const visibleOutputStemCount = gans.filter((gan, index) => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:673:      const shen = C.SHISHEN[dayGan][gan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:676:    const visibleOfficerKillingStemCount = gans.filter((gan, index) => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:678:      const shen = C.SHISHEN[dayGan][gan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:681:    const springEarthPressure =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:685:    const killingSealWithoutFoodControl =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:688:    const summerWoodNeedsSeal =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:692:    const coldWetEarthOverleak =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:697:    const winterEarthPressure =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:702:    const beforeColdWetScore = clamp(seasonDetail.score + rootDetail.score + supportDetail.score + structureAdjustment, 0, 10);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:713:    const springEarthKillingPressure =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:717:    const beforeSpringEarthScore = clamp(seasonDetail.score + rootDetail.score + supportDetail.score + structureAdjustment, 0, 10);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:724:    const earlySpringFireVoid =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:731:    const beforeEarlySpringFireScore = clamp(seasonDetail.score + rootDetail.score + supportDetail.score + structureAdjustment, 0, 10);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:737:    const rootNetworkBaseScore = clamp(seasonDetail.score + rootDetail.score + supportDetail.score + structureAdjustment, 0, 10);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:763:    let structureLabel = structureAdjustment > 0 ? '扶身气势偏旺' : (structureAdjustment < 0 ? '克泄耗气势偏旺' : '全局气势未明显改判');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:784:    const structureException = {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:799:    const moonText = seasonDetail.text;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:800:    const groundText = rootDetail.text;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:801:    const stemText = supportDetail.text;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:802:    const finalText = `综合强度为${formatScore(totalStrengthScore)}/10，基础落在${band.label}，对外归类为${strongWeak.includes('从格') || strongWeak.includes('专旺') ? strongWeak : band.strongWeak}。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:803:    const basisLines = [moonText, groundText, stemText, finalText, congCheckText];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:805:    const strengthDetail = {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:825:        { key: 'structure', title: '格局校验', text: structureException.text },
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:832:        { key: 'structure', title: '特殊格局校验', score: structureAdjustment, text: structureException.text },
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:884:    const SHISHEN_NAMES = [
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:892:    const GE_JU_PROTECTED_MAP = {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:899:    const geJuProtectedShens = GE_JU_PROTECTED_MAP[geJu] || [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:902:    const wuxingScores = { '金': 0, '木': 0, '水': 0, '火': 0, '土': 0 };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:905:      const hides = C.ZHI5_LIST[z] || [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:913:    const wuxingRatio = {};
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:918:    const scores = {};
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:919:    const breakdown = {};
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:924:    const favorableConflicts = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:926:    const getShenWuxing = shen => getWuxingByShenFull(dayGan, shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:927:    const getShensByWuxing = wx => SHISHEN_NAMES.filter(shen => getShenWuxing(shen) === wx);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:928:    const sortShensByTransparency = shens => [...shens].sort((left, right) => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:929:      const leftStem = getStemByShen(dayGan, FULL_TO_SHORT_SHEN[left]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:930:      const rightStem = getStemByShen(dayGan, FULL_TO_SHORT_SHEN[right]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:931:      const leftVisible = leftStem && gans.includes(leftStem) ? 1 : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:932:      const rightVisible = rightStem && gans.includes(rightStem) ? 1 : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:935:    const makeWuxingResult = (favShens, unfavShens) => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:936:      const favorable = [...new Set(favShens.map(getShenWuxing))];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:937:      const unfavorable = [...new Set(unfavShens.map(getShenWuxing))]
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:941:    const classicalTags = new Set(classicalPattern?.methodTags || []);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:942:    const classicalAliases = new Set(classicalPattern?.aliases || []);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:943:    const hasClassicalSignal = signal =>
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:945:    const classicalEffects = { yongShens: [], unfavorableShens: [], reasons: [] };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:947:    const getClassicalSpecialPattern = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:949:      const yongPriority = sortShensByTransparency(['正印', '偏印', '正财', '偏财', '正官', '七杀']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:960:    const getSpecialPattern = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:962:      const chengGePromotesWealth =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:966:      const candidate = imageAnalysis?.override_candidate
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:968:      const overrideScope = candidate?.override_scope;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:969:      const scopeAllowsOverride = ['full', 'xiji_yongshen', 'yongshen_only'].includes(overrideScope);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:970:      const legacyAllowsOverride = overrideScope == null && candidate?.override_normal_pattern === true;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:972:      const overrideMeta = {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:977:        const targetElement = candidate.target_element || C.GAN5[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:978:        const outputElement = SHENG_CYCLE[targetElement];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:979:        const hiddenStemRootScore = stem => zhis.reduce((sum, zhi, pillarIndex) => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:980:          const hides = C.ZHI5_LIST[zhi] || [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:981:          const hiddenIndex = hides.indexOf(stem);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:985:        const outputShens = sortShensByTransparency(getShensByWuxing(outputElement))
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:987:            const leftStem = getStemByShen(dayGan, FULL_TO_SHORT_SHEN[left]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:988:            const rightStem = getStemByShen(dayGan, FULL_TO_SHORT_SHEN[right]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:989:            const leftRootScore = hiddenStemRootScore(leftStem);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:990:            const rightRootScore = hiddenStemRootScore(rightStem);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:993:        const outputHasEvidence = outputShens.some(shen => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:994:          const stem = getStemByShen(dayGan, FULL_TO_SHORT_SHEN[shen]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:997:        const wealthElement = SHENG_CYCLE[outputElement];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:998:        const wealthShens = getShensByWuxing(wealthElement);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:999:        const wealthExposed = wealthShens.some(shen => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1000:          const stem = getStemByShen(dayGan, FULL_TO_SHORT_SHEN[shen]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1003:        const completeWoodFrame = candidate.reason_codes?.includes('SINGLE_IMAGE_COMPLETE_WOOD_FRAME') === true;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1004:        const sameCampBranchFrame = candidate.reason_codes?.includes('SINGLE_IMAGE_ALL_BRANCHES_SUPPORT_FORCE') === true;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1005:        const flowingWealthShens = outputHasEvidence && wealthExposed && !completeWoodFrame && !sameCampBranchFrame ? wealthShens : [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1006:        const frameSealShens = completeWoodFrame || sameCampBranchFrame ? ['正印', '偏印'] : [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1008:          const yongPriority = sortShensByTransparency([...frameSealShens, '比肩', '劫财']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1019:          const yongPriority = sortShensByTransparency(['比肩', '劫财', ...frameSealShens]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1044:        const targetElement = candidate.target_element;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1056:        const targetElements = candidate.target_elements || [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1057:        const targetShens = [...new Set(targetElements.flatMap(getShensByWuxing))];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1058:        const dayElement = C.GAN5[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1059:        const outputElement = SHENG_CYCLE[dayElement];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1062:          const yongElements = targetElements.includes(outputElement)
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1076:          const yongElements = targetElements.filter(element => element !== dayElement);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1077:          const priorityElements = yongElements.length ? yongElements : targetElements;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1091:          const weakEnemyElements = candidate.weak_enemy_elements || [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1092:          const weakEnemyShens = sortShensByTransparency(weakEnemyElements.flatMap(getShensByWuxing));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1109:        const targetElements = candidate.target_elements || [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1110:        const officerKillElement = RESTRAINING_CYCLE[C.GAN5[dayGan]];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1111:        const officerKillBranchRootCount = zhis.filter(zhi =>
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1114:        const officerKillHasStrongEvidence =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1118:        const effectiveTargetElements = targetElements.filter(element =>
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1121:        const filteredOfficerKillShens =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1125:        const favorable = targetElements.length
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1128:        const unfavorable = [...new Set(['正印', '偏印', '比肩', '劫财', ...filteredOfficerKillShens])];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1139:        const officerKillingPriority = sortShensByTransparency(['正官', '七杀']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1140:        const wealthPriority = sortShensByTransparency(['正财', '偏财']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1169:    const tiaohouStr = C.TIAOHOUS[dayGan + monthZhi] || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1170:    const parsedTiaohou = parseTiaohou(tiaohouStr);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1171:    const tiaohouNeededWuxing = [...new Set(parsedTiaohou.favorable.map(item => C.GAN5[item.gan]))];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1172:    const tiaohouHarmfulWuxing = [...new Set(parsedTiaohou.unfavorable.map(item => C.GAN5[item.gan]))];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1174:    const specialPattern = getClassicalSpecialPattern() || getSpecialPattern();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1176:      const tiaohouDetail = buildTiaohouDetail(dayGan, monthZhi, parsedTiaohou, specialPattern);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1177:      for (const shen of specialPattern.favorable) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1180:          const priorityIndex = (specialPattern.yongPriority || []).indexOf(shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1183:          const priorityIndex = (specialPattern.yongPriority || []).indexOf(shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1189:      for (const shen of specialPattern.unfavorable) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1193:      const wuxing = makeWuxingResult(specialPattern.favorable, specialPattern.unfavorable);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1194:      const spFiveShens = classifyFiveShens(SHISHEN_NAMES, scores);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1195:      const isFullOverride = specialPattern.override_scope === 'full' || specialPattern.override_scope == null;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1196:      const spDecisionChain = [{
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1200:          : `识别为${specialPattern.type}，主导用神喜忌，常规格局与旺衰仍保留为背景。`,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1214:        verdict: `此局识别为${specialPattern.type}，先顺其成势，喜${specialPattern.favorable.join('、')}，忌${specialPattern.unfavorable.join('、')}。 此局从势，顺其气势为佳。`
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1219:    const tiaohouDetail = buildTiaohouDetail(dayGan, monthZhi, parsedTiaohou);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1222:    const scoreTiaohou = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1223:      for (const item of parsedTiaohou.favorable) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1224:        const shen = getFullShenByStem(dayGan, item.gan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1226:        const score = getTiaohouWeight(item.priority);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1230:      for (const item of parsedTiaohou.unfavorable) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1231:        const wx = C.GAN5[item.gan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1232:        const shen = getFullShenByStem(dayGan, item.gan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1234:        const restrainingWx = RESTRAINING_CYCLE[wx];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1235:        const hasRestrainingGan = gans.some(g => C.GAN5[g] === restrainingWx);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1236:        const penalty = getTiaohouUnfavorablePenalty(wuxingRatio[wx] || 0, hasRestrainingGan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1248:    const bingElements = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1249:    const scoreBingyao = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1251:        const ratio = wuxingRatio[wx];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1254:          const heavy = ratio > 45;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1255:          const bingWx = wx;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1256:          const zhengYaoWx = RESTRAINING_CYCLE[bingWx];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1257:          const fuYaoWx = SHENG_CYCLE[bingWx];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1258:          const bingScore = heavy ? -40 : -20;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1259:          const zhengYaoScore = heavy ? 40 : 20;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1260:          const fuYaoScore = heavy ? 20 : 10;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1264:            const sWx = getShenWuxing(shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1275:    const scoreTongguan = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1276:      const tongguanMap = [
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1289:            const bridgeRooted = zhis.some(z => (C.ZHI5_LIST[z] || []).some(h => C.GAN5[h] === rule.bridge));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1292:              const sWx = getWuxingByShenFull(dayGan, shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1311:    const tiaohouUrgentRootedShens = new Set();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1312:    const sealWx = getShenWuxing('正印');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1313:    const isColdMonth = ['亥', '子', '丑'].includes(monthZhi);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1315:      for (const item of parsedTiaohou.favorable) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1316:        const wx = C.GAN5[item.gan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1317:        const rooted = zhis.some(z => (C.ZHI5_LIST[z] || []).some(h => C.GAN5[h] === wx));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1318:        const shen = getFullShenByStem(dayGan, item.gan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1324:    const scoreFuyi = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1325:      const isWeak = strengthResult.strongWeak === "身弱";
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1326:      const isStrong = strengthResult.strongWeak === "身强";
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1327:      const isMiddle = strengthResult.strongWeak === "身中";
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1333:      const middleLeansWeak = Number(strengthResult.totalStrengthScore || 0) < 5.0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1337:        const isShengFu = ['正印', '偏印', '比肩', '劫财'].includes(shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1338:        const isKeXieHao = ['正官', '七杀', '食神', '伤官', '正财', '偏财'].includes(shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1366:    // Dimension 5 (新增): 格局 — 格局辅神/制化神加分
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1367:    const SHUN_YONG_SET = new Set(['顺用']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1368:    const scoreGeJu = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1370:      const shunNi = geJuInfoRecord.shunNi || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1371:      const xianShens = parseShenText(geJuInfoRecord.xianShenTypical || '');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1372:      for (const shen of xianShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1378:      // 顺用格：格局主体善神也直接受益
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1380:        const coreShens = parseShenText(geJuInfoRecord.yongShenTypical || '');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1381:        for (const shen of coreShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1391:    const chengGeEffects = { yongShens: [], xianShens: [], invalidatedShens: [], assistantShens: [] };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1392:    const scoreChengGe = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1394:      const status = chengGeDetail.chengGeResult || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1395:      const yongShens = parseShenText(chengGeDetail.yongShenTenGod || '');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1396:      const xianShens = parseShenText(chengGeDetail.xianShen || '');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1399:        for (const shen of yongShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1401:          const bonus = 70;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1406:        for (const shen of xianShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1408:          const bonus = 25;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1421:        const invalidatedShens = [...new Set([...yongShens, ...xianShens])];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1422:        for (const shen of invalidatedShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1424:          const penalty = -70;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1433:    const applyPatternEffects = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1434:      const effects = chengGeDetail?.patternEffects || {};
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1435:      const promotedShens = parseShenText((effects.promotedShens || []).join('、'));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1436:      const protectedShens = parseShenText((effects.protectedShens || []).join('、'));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1437:      const invalidatedShens = parseShenText((effects.invalidatedShens || []).join('、'));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1438:      const demotedShens = parseShenText((effects.demotedShens || []).join('、'));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1439:      const assistantShens = parseShenText((effects.assistantShens || []).join('、'));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1441:      for (const shen of invalidatedShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1443:        const target = -70;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1444:        const delta = Math.min(0, target - scores[shen]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1450:      for (const shen of demotedShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1452:        const target = -35;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1453:        const delta = Math.min(0, target - scores[shen]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1459:      for (const shen of promotedShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1461:        const topScore = Math.max(...Object.values(scores));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1463:          const delta = topScore - scores[shen] + 1;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1480:      const protectedFullShens = [...new Set([...protectedShens, ...promotedShens])];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1481:      for (const shen of protectedFullShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1484:          const delta = -scores[shen];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1500:    const resolveWeakResourceConflict = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1502:      const resourceShens = ['正印', '偏印'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1503:      const resourceElement = getShenWuxing('正印');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1504:      const resourceBing = bingElements.find(item => item.element === resourceElement);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1507:      const damagedResources = resourceShens.filter(shen => breakdown[shen].bingyao < 0);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1510:      const bestResource = damagedResources.sort((a, b) => scores[b] - scores[a])[0];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1512:        const adjustment = 5 - scores[bestResource];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1516:      for (const shen of resourceShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1518:          const adjustment = -scores[shen];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1527:        message: `${resourceElement}为印星，能生扶身弱日主，但原局${resourceElement}过旺成病；印仍保留弱喜，需火/土等药神平衡。`
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1541:    const applyYinRescue = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1543:      const dmWx = C.GAN5[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1544:      const dmRooted = zhis.some(z => (C.ZHI5_LIST[z] || []).some(h => C.GAN5[h] === dmWx));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1546:      const guanShaWx = RESTRAINING_CYCLE[dmWx]; // 克我者（官杀）
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1547:      const shiShangWx = SHENG_CYCLE[dmWx];      // 我泄者（食伤）
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1548:      const besiegeRatio = (wuxingRatio[guanShaWx] || 0) + (wuxingRatio[shiShangWx] || 0);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1550:      const sealWx = getShenWuxing('正印');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1551:      const sealRooted = zhis.some(z => (C.ZHI5_LIST[z] || []).some(h => C.GAN5[h] === sealWx));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1553:      const rescueSeals = ['正印', '偏印'].filter(shen => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1554:        const stem = getStemByShen(dayGan, FULL_TO_SHORT_SHEN[shen]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1559:      const RESCUE_BONUS = 40;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1560:      for (const shen of rescueSeals) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1565:      for (const shen of ['正官', '七杀', '食神', '伤官']) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1573:    const yinRescue = applyYinRescue();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1578:    // 文和之印化杀来不及，须以羊刃（劫财）敌杀保命为用神；调候之印此刻降为喜神（暖局/生刃化杀），
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1585:    const applyYangRenDriveSha = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1588:      const yangRen = C.YANG_REN[dayGan];        // 仅阳干有羊刃
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1591:      const guanShaWx = RESTRAINING_CYCLE[C.GAN5[dayGan]]; // 克我者（官杀）
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1593:      const REN_BONUS = 40;   // 羊刃敌杀，确立用神
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1594:      const SEAL_BONUS = 20;  // 印生刃化杀，归位为顶级喜神
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1601:      for (const shen of ['正印', '偏印']) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1602:        const carriesTiaohou = breakdown[shen].tiaohou > 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1607:        const stem = getStemByShen(dayGan, FULL_TO_SHORT_SHEN[shen]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1608:        const transparent = stem && gans.includes(stem);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1616:    const yangRenDriveSha = applyYangRenDriveSha();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1618:    const protectPrimaryTiaohouUse = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1620:      const primary = parsedTiaohou.favorable.find(item => item.priority === 1);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1622:      const primaryShen = getFullShenByStem(dayGan, primary.gan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1624:      const topScore = Math.max(...Object.values(scores));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1626:        const bonus = topScore - scores[primaryShen] + 1;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1633:    const applyClassicalPatternEffects = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1634:      const promoteClassicalYong = (shen, margin = 5) => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1635:        const topScore = Math.max(...Object.values(scores));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1636:        const target = topScore + margin;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1637:        const delta = Math.max(0, target - scores[shen]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1644:      const demoteClassicalUnfavorable = (shens, target = -35) => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1645:        for (const shen of shens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1646:          const delta = Math.min(0, target - scores[shen]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1658:          const assistantDelta = 20 - scores['偏印'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1666:        const targets = ['正财', '偏财', '正官', '七杀', '食神'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1696:    // 不做全局调候降权（P1-e 教训：会误伤真调候用神）；白名单刻意排除食神制杀格（章士钊灵枭得用，gold=偏印）
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1698:    const STRUCTURAL_CHENGGE = new Set(['印格用杀格', '金水食神用杀格', '化伤为财生官格', '去杀留官格', '去官留杀格', '合杀留官格', '化官为印格', '七杀用财格', '财格佩印格', '财旺身弱用印格', '制杀生财格']);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1702:      for (const shen of chengGeEffects.yongShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1703:        for (const dim of ['fuyi', 'bingyao']) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1712:      const yongTop = Math.max(...chengGeEffects.yongShens.map(s => scores[s] ?? 0));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1713:      const cap = Math.max(5, yongTop - 10);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1714:      for (const shen of chengGeEffects.assistantShens) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1716:        const target = scores[shen] < 5 ? 5 : Math.min(scores[shen], cap);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1724:    const protectRootNetworkBearingShens = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1725:      const metrics = strengthResult.strengthDetail?.metrics || {};
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1726:      const hasRootNetworkCorrection =
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1731:      for (const shen of ['比肩', '劫财']) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1733:        const delta = -scores[shen];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1741:    const conflictShens = favorableConflicts.flatMap(item => item.shens);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1742:    const fiveShens = classifyFiveShens(SHISHEN_NAMES, scores, conflictShens);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1743:    const favShens = fiveShens.favorable;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1744:    const unfavShens = fiveShens.unfavorable;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1746:    const { favorable: favorableWuxing, unfavorable: unfavorableWuxing } = makeWuxingResult(favShens, unfavShens);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1749:    const decisionChain = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1751:      decisionChain.push({ layer: 'L1 调候（一票否决）', reason: `${monthZhi}月调候极急，${tiaohouNeededWuxing.join('、')}为首用，覆盖常规格局取法。` });
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1756:      decisionChain.push({ layer: 'L2 格局', reason: `${geJu}（${geJuInfoRecord.shunNi}），辅神加分：${geJuInfoRecord.xianShenTypical}。` });
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1759:      const status = chengGeDetail?.chengGeResult || '待定';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1760:      const reasonParts = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1764:      const methodTags = chengGeDetail?.patternEffects?.methodTags || [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1793:      mainVerdict = `此局生于${monthZhi}月，调候为急。原局${tiaohouHarmfulWuxing.join('、')}过旺，首取${tiaohouNeededWuxing.length ? tiaohouNeededWuxing.join('、') : '相应五行'}暖局或除寒为真用神。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1795:      const bingWx = Object.keys(wuxingRatio).sort((a, b) => wuxingRatio[b] - wuxingRatio[a])[0];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1796:      mainVerdict = `原局五行偏枯，${bingWx}势偏旺为病（占比${Math.round(wuxingRatio[bingWx])}%），急需克制或顺泄。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1798:      mainVerdict = `此局格局为${geJu}，首取格局核心用神。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1800:    const fuyiStr = strengthResult.strongWeak === '身弱'
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1805:          ? '日主介于中和之间，宜结合格局、调候与岁运再细分偏强偏弱。'
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1806:          : '此局从势，顺其气势为佳。'));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1824:   * 地支四柱及天干生克合化检测（全局，不限相邻，支持大运流年）
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1826:  calculateInteractions(zhis, gans, keys = ['year', 'month', 'day', 'time', 'dayun', 'liunian']) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1827:    const ganKeCycle = { '木': '土', '土': '水', '水': '火', '火': '金', '金': '木' };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1828:    const zArr = Array.isArray(zhis) ? zhis : Object.values(zhis);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1829:    const gArr = Array.isArray(gans) ? gans : Object.values(gans);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1831:    const ganPairs = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1835:        const a = gArr[i], b = gArr[j];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1837:        const key1 = a + b, key2 = b + a;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1848:    const zhiPairs = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1852:        const a = zArr[i], b = zArr[j];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1856:          const hx = C.ZHI_6HES[a + b] || C.ZHI_6HES[b + a] || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1869:    const findTriplets = (arr, set) => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1870:      const results = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1874:            const triplet = [arr[i], arr[j], arr[k]];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1885:    for (const [combo, wuxing] of Object.entries(C.ZHI_3HES)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1886:      const triplets = findTriplets(zArr, combo.split(''));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1888:        zhiPairs.push({ type: '三合', name: `${combo}三合${wuxing}局`, elements: [zArr[indices[0]], zArr[indices[1]], zArr[indices[2]]], pillars: indices.map(i => keys[i]) });
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1892:    for (const [combo, wuxing] of Object.entries(C.ZHI_HUIS)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1893:      const triplets = findTriplets(zArr, combo.split(''));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1895:        zhiPairs.push({ type: '三会', name: `${combo}三会${wuxing}局`, elements: [zArr[indices[0]], zArr[indices[1]], zArr[indices[2]]], pillars: indices.map(i => keys[i]) });
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1903:   * 高频命理格局断语触发器
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1907:    const patterns = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1908:    const zArr = Array.isArray(zhis) ? zhis : [zhis.year, zhis.month, zhis.day, zhis.time];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1909:    const gArr = Array.isArray(gans) ? gans : [gans.year, gans.month, gans.day, gans.time];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1910:    const dayZhi = zArr[2], monthZhi = zArr[1], timeZhi = zArr[3];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1911:    const dayPillar = gArr[2] + zArr[2];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1912:    const timePillar = gArr[3] + timeZhi;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1913:    const isYang = ['甲', '丙', '戊', '庚', '壬'].includes(dayGan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1914:    const meStatus = zArr.map(z => getDiShi(dayGan, z));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1915:    const luZhi = C.LU_SHEN[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1916:    const kuZhi = C.KU_ZHI[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1917:    const jueZhi = C.JUE_ZHI[dayGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1923:        patterns.push('\t建禄财官双透，格局佳。');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1940:      const timeShen = getShen(dayGan, gArr[3]);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1946:    const jueCount = zArr.filter(z => z === jueZhi || z === C.TAI_ZHI[dayGan]).length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1950:    const sheng = zArr.filter(z => ['寅', '申', '巳', '亥'].includes(z));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1951:    const zheng = zArr.filter(z => ['子', '午', '卯', '酉'].includes(z));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1952:    const ku = zArr.filter(z => ['辰', '戌', '丑', '未'].includes(z));
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1957:    // ── 四生/四败/四库局（需四字全齐方成局）
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1958:    if (sheng.length === 4) patterns.push('【四生局】寅申巳亥四全，命运多变，奔波中成就大业，古云位至三公。');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1959:    if (zheng.length === 4) patterns.push('【四败局】子午卯酉四全，异性缘极盛，命运起伏极端；格局高者极贵，失格者沉沦。');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1960:    if (ku.length === 4) patterns.push('【四库局】辰戌丑未四全，蕴藏深厚，格局最贵，有帝王造化之命。');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1963:    const biCount = allShens.filter(s => s === '比').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1964:    const jiCount = allShens.filter(s => s === '劫').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1965:    const shaCount = allShens.filter(s => s === '杀').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1966:    const shangCount = allShens.filter(s => s === '伤').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1967:    const xiaoCount = allShens.filter(s => s === '枭').length;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1976:    const yinyangArr = [...gArr, ...zArr].map(x => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1977:      const gi = C.GAN.indexOf(x); const zi = C.ZHI.indexOf(x === undefined ? '' : x);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1989:   * 扩展神煞计算（结合 Python year/month/day/g_shens）
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1992:    const { year, month, day, time } = baziObj;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1993:    const yearGan = year[0], yearZhi = year[1];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1994:    const monthGan = month[0], monthZhi = month[1];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1995:    const dayGan = day[0], dayZhi = day[1];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1996:    const timeGan = time[0], timeZhi = time[1];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1997:    const result = { year: [], month: [], day: [], time: [] };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1998:    const pillars = { year: [yearGan, yearZhi], month: [monthGan, monthZhi], day: [dayGan, dayZhi], time: [timeGan, timeZhi] };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1999:    const allGans = [yearGan, monthGan, dayGan, timeGan];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2000:    const isMale = opts.isMale;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2002:    for (const [key, [gan, zhi]] of Object.entries(pillars)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2004:      for (const [shen, map] of Object.entries(C.YEAR_SHENS)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2005:        const target = map[yearZhi] || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2006:        const excludeSelf = !['天喜','血刃'].includes(shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2007:        if (target.includes(zhi) && (!excludeSelf || key !== 'year')) result[key].push(shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2010:      for (const [shen, map] of Object.entries(C.YEAR_GAN_SHENS)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2011:        if (map[yearGan] === zhi) result[key].push(shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2014:      for (const [shen, map] of Object.entries(C.MONTH_SHENS)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2015:        const target = map[monthZhi];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2019:      for (const [shen, map] of Object.entries(C.DAY_SHENS)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2020:        if ((map[yearZhi] === zhi || map[dayZhi] === zhi) && key !== 'day') result[key].push(shen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2023:      for (const [shen, map] of Object.entries(C.G_SHENS)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2027:          const targets = map[dayGan] || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2037:        const yangStem = ['甲','丙','戊','庚','壬'].includes(yearGan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2038:        const useYang = (isMale && yangStem) || (!isMale && !yangStem);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2039:        const ymap = useYang ? C.YUANCHEN.yang : C.YUANCHEN.yin;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2040:        if (ymap[yearZhi] === zhi) result[key].push('元辰');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2045:    const dayPillar = dayGan + dayZhi;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2046:    for (const [shen, days] of Object.entries(C.SPECIAL_DAYS)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2051:    const pillarKeys = ['year', 'month', 'day', 'time'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2052:    for (const set of C.SANQI_SETS) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2065:    if ([yearZhi, monthZhi, dayZhi, timeZhi].includes('戌') && [yearZhi, monthZhi, dayZhi, timeZhi].includes('亥')) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2066:      for (const [key, [, zhi]] of Object.entries(pillars)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2071:    if ([yearZhi, monthZhi, dayZhi, timeZhi].includes('辰') && [yearZhi, monthZhi, dayZhi, timeZhi].includes('巳')) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2072:      for (const [key, [, zhi]] of Object.entries(pillars)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2077:    const fmt = arr => arr.length ? arr.join(' ') : '-';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2078:    return { year: fmt(result.year), month: fmt(result.month), day: fmt(result.day), time: fmt(result.time) };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2084:   * 组装原局核心断语
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2087:    const { strongWeak, strongScore, scores, totalStrengthScore, strengthBasis } = strengthResult;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2088:    const { wuxing, core_shens, verdict } = favorableResult;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2089:    const dayPillar = (Array.isArray(gans) ? gans[2] : gans.day) + (Array.isArray(zhis) ? zhis[2] : zhis.day);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2090:    const nayin = C.NAYINS[dayPillar] || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2092:    const wuxingStr = Object.entries(scores).map(([k, v]) => `${k}${v}`).join(' ');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2093:    const lines = [
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2094:      `【格局】${geJu}`,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2101:      patterns.length ? '【命局特征】\n' + patterns.join('\n') : '',
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2113:    const zArr = Array.isArray(zhis) ? zhis : [zhis.year, zhis.month, zhis.day, zhis.time];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2114:    const dayunShen = C.SHISHEN[dayGan][dayunGan] || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2115:    const dayunZhiShen = getShen(dayGan, dayunZhi);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2116:    const dayunPhase = getDiShi(dayGan, dayunZhi);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2118:    const rels = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2119:    const chong = C.ZHI_CHONGS[dayunZhi];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2120:    if (chong && zArr.includes(chong)) rels.push(`与原局${chong}相冲`);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2121:    const liuhe = C.ZHI_ATTS[dayunZhi]?.['六'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2122:    if (liuhe && zArr.includes(liuhe)) rels.push(`与原局${liuhe}六合`);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2123:    const xing = C.XINGS[dayunZhi];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2124:    if (xing && zArr.includes(xing) && xing !== dayunZhi) rels.push(`与原局${xing}相刑`);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2125:    const hai = C.ZHI_HAIS[dayunZhi];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2126:    if (hai && zArr.includes(hai)) rels.push(`与原局${hai}相害`);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2128:    const favorableSigns = ['印', '枭', '比', '劫'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2129:    const isGood = favorableSigns.includes(dayunShen) || favorableSigns.includes(dayunZhiShen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2130:    const verdict = isGood ? '整体偏吉，宜稳健进取' : '压力较大，宜守成待时';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2132:    const lines = [
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2134:      rels.length ? `大运与原局：${rels.join('；')}` : '大运与原局无明显刑冲合害',
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2146:    const zArr = Array.isArray(zhis) ? zhis : [zhis.year, zhis.month, zhis.day, zhis.time];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2147:    const lnShen = C.SHISHEN[dayGan][lnGan] || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2148:    const lnZhiShen = getShen(dayGan, lnZhi);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2150:    const rels = [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2151:    const chong = C.ZHI_CHONGS[lnZhi];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2152:    if (chong && zArr.includes(chong)) rels.push(`冲原局${chong}`);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2154:    const liuhe = C.ZHI_ATTS[lnZhi]?.['六'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2155:    if (liuhe && zArr.includes(liuhe)) rels.push(`合原局${liuhe}`);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2156:    const xing = C.XINGS[lnZhi];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2157:    if (xing && xing !== lnZhi && zArr.includes(xing)) rels.push(`刑原局${xing}`);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2159:    const goodShens = ['印', '枭', '比', '劫'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2160:    const lnGood = goodShens.includes(lnShen);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2161:    const verdict = lnGood ? '流年助力，宜主动出击' : '流年压身，宜谨慎稳健';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2163:    const lines = [
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2165:      rels.length ? `流年动态：${rels.join('；')}` : '流年与原局无明显刑冲',
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1:const test = require('node:test');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:2:const assert = require('node:assert/strict');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:4:const { BaziRuleEngine } = require('./BaziRuleEngine');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:5:const { assessBaziImage } = require('./baziImageAssessor');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:8:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:21:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:33:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:45:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:56:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:67:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:78:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:92:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:105:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:117:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:130:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:142:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:155:  const strength = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:160:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:174:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:199:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:219:  for (const section of result.strengthDetail.user_sections) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:234:  const result = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:247:  const hiddenSeal = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:261:  const peerRoot = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:272:  const traceSeal = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:283:  const manySeals = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:297:  const parsed = BaziRuleEngine._test.parseTiaohou('1丙2_癸3庚丁');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:310:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:328:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:344:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:355:  const baseStrength = { strongWeak: '身强', totalStrengthScore: 7 };
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:356:  const light = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:361:  const medium = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:366:  const heavy = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:371:  const restrainedHeavy = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:384:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:408:  const light = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:414:  const heavy = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:430:  const weakMiddle = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:436:  const strongMiddle = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:452:  const strength = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:457:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:471:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:496:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:520:  assert.equal(result.tiaohou_detail.special_pattern_warning, '已识别特殊格局，喜忌先顺其成势；调候仍作为气候风险提示，不直接覆盖从格取用。');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:528:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:560:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:590:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:623:  const baseArgs = [
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:632:  const cases = [
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:671:  for (const { candidate, type, favorable, unfavorable } of cases) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:672:    const result = BaziRuleEngine.getFavorableUnfavorable(...baseArgs, {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:687:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:712:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:728:  const shens = ['正官', '七杀', '食神', '伤官'];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:729:  const threshold = BaziRuleEngine._test.aggregateShens(shens, {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:735:  const pair = BaziRuleEngine._test.aggregateShens(shens, {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:749:  const base = ['壬', '亥', '建禄格', { strongWeak: '身中', totalStrengthScore: 5 }];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:751:  const rootless = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:756:  // 同局把辰换成戌(藏辛余气=金根)，金虽<15% 但通根得地 → 通关分恢复 +30
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:757:  const rooted = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:768:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:790:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:812:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:831:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:853:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:868:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:879:// 集成回归（某职业妇女 C09）：用真实四柱与 calculateStrength 驱动，锁定格局变通误判修复。
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:880:// 教材（陆致极·进阶 p.54-55 引谢武藤）判格局变通成食神生财，用火喜土、忌水木。
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:884:  const strength = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:892:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:910:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:920:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:937:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:947:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:962:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:972:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:986:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1009:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1028:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1035:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1055:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1080:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1088:  assert.equal(imageAnalysis.primary_candidate.subtype, '润下格（水局一气）');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1091:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1107:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1118:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1133:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1145:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1163:  const result = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1186:  const chengGeStep = result.decision_chain.find(item => item.layer === 'L2 成格取用');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1190:test('完整曲直木局 keeps seal and rejects wealth despite a hidden output-to-wealth trace（李鸿章型）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1191:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1200:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1215:test('完整曲直木局 prioritizes wood or seal over output as yong（段祺瑞型）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1216:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1226:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1242:  const imageAnalysis = assessBaziImage({
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1251:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1266:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1278:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1292:  const strength = BaziRuleEngine.calculateStrength(
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js:1305:  const r = BaziRuleEngine.getFavorableUnfavorable(
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:2: * 奇門遁甲盤局運算模組 (兼容 Vercel Node.js 环境)
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:8:const {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:26:const {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:36:function getHeTu() {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:40:function getLuoShu() {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:48:function calculateFlyingStars(centerStar) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:49:    const starNumbers = FLYING_STAR_CHARTS[centerStar];
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:60:function getDiPan(isYang, gameNumber) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:61:    const diPanConfig = isYang ? DIPAN_YANG : DIPAN_YIN;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:62:    const result = diPanConfig[gameNumber];
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:64:        throw new Error(`無效的局數：${gameNumber}，必須為 1-9`);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:73:function calculateTianPan(isYang, tianGan, fuShou, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:74:    const targetIndex = diPan.indexOf(tianGan);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:75:    const sourceIndex = diPan.indexOf(fuShou);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:77:    // 陽局與陰局使用相同的順時針軌跡
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:85:function getOriginalDoors() {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:89:function getZhiShiDoor(fuShou, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:95:function calculateEightDoors(isYang, zhiShiDoor, flyStep, fuShou, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:96:    const startIndex = diPan.indexOf(fuShou);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:97:    const flyIndex = isYang ? FLY_PATH.DOOR_YANG : FLY_PATH.DOOR_YIN;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:98:    const normalizedFlyStep = flyStep % flyIndex.length;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:99:    const putSequence = generatePutSequence(flyIndex, startIndex);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:104:    const doorPutSequence = generatePutSequence(FLY_PATH.CLOCKWISE, zhiShiTargetIndex);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:105:    const zhiShiIndexInSequence = EIGHT_DOORS_SEQUENCE.indexOf(zhiShiDoor);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:106:    const doorOrder = [
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:111:    const result = new Array(9).fill('');
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:123:function getOriginalStars() {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:127:function getZhiFuStar(fuShou, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:128:    const starIndex = diPan.indexOf(fuShou);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:132:function getZhiFuPosition(tianGan, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:133:    const positionIndex = diPan.indexOf(tianGan);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:137:function calculateNineStars(zhiFuStar, tianGan, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:138:    const targetIndex = diPan.indexOf(tianGan);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:139:    const sourceIndex = QIMEN_STARS.indexOf(zhiFuStar);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:144:function getTianQinDirection(nineStars) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:145:    const tianRuiIndex = nineStars.indexOf('天芮');
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:153:function calculateEightGods(isYang, tianGan, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:157:    const gods = isYang ? EIGHT_GODS_YANG : EIGHT_GODS_YIN;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:158:    const flyPath = isYang ? FLY_PATH.CLOCKWISE : FLY_PATH.COUNTER_CLOCKWISE;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:159:    const putSequence = generatePutSequence(flyPath, headIndex);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:161:    const result = new Array(9).fill('');
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:173:function getDirectionArrow(palaceIndex) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:177:function getZhiShiPosition(zhiShiDoor, eightDoors) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:178:    const doorIndex = eightDoors.indexOf(zhiShiDoor);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:183:// 拆補法定局
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:186:const SIMPLIFIED_TO_TRADITIONAL = {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:194:function s2t(str) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:197:    for (const [simplified, traditional] of Object.entries(SIMPLIFIED_TO_TRADITIONAL)) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:204:const _CHAIBU_GAN = '甲乙丙丁戊己庚辛壬癸';
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:205:const _CHAIBU_ZHI = '子丑寅卯辰巳午未申酉戌亥';
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:206:function getGanZhiIndex(gz) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:208:    const g = _CHAIBU_GAN.indexOf(gz[0]);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:209:    const z = _CHAIBU_ZHI.indexOf(gz[1]);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:215:function calculateJuByChaiBu(solar, jieQiJuShu, yuanNames) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:216:    const lunar = solar.getLunar();
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:217:    const currentJieQi = lunar.getPrevJieQi();
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:218:    const jieQiNameRaw = currentJieQi.getName();
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:219:    const jieQiName = s2t(jieQiNameRaw);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:220:    const jieQiSolar = currentJieQi.getSolar();
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:222:    const currentJD = solar.getJulianDay();
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:223:    const jieQiJD = jieQiSolar.getJulianDay();
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:224:    const daysDiff = currentJD - jieQiJD;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:228:    // 导致局数与值符/值使错位（四柱/空亡/马星不受影响）。
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:231:    const dayGanZhiIndex = getGanZhiIndex(lunar.getDayInGanZhi());
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:232:    const fuTouIndex = Math.floor(dayGanZhiIndex / 5) * 5;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:233:    const yuan = (fuTouIndex % 15) / 5;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:235:    const config = jieQiJuShu[jieQiName];
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:10:// 二十四節氣局數配置
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:12:const JIEQI_JUSHU = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:39:const YUAN_NAMES = Object.freeze(['上元', '中元', '下元']);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:44:const PALACE = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:50:const ZHONG_SUBSTITUTE = PALACE.KUN;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:55:const FLY_PATH = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:65:const DIRECTION_ARROWS = Object.freeze([
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:71:const HETU_BAGUA = Object.freeze(['兌', '乾', '巽', '離', '中', '坎', '震', '坤', '艮']);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:72:const LUOSHU_BAGUA = Object.freeze(['巽', '離', '坤', '震', '中', '兌', '艮', '坎', '乾']);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:77:const FLYING_STARS = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:82:const FLYING_STAR_CHARTS = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:90:const QIMEN_STARS = Object.freeze([
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:93:const TIANQIN_INDEX = PALACE.ZHONG;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:95:const EIGHT_DOORS_ORIGINAL = Object.freeze([
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:98:const EIGHT_DOORS_SEQUENCE = Object.freeze([
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:102:const EIGHT_GODS_YANG = Object.freeze(['值符', '滕蛇', '太陰', '六合', '勾陳', '朱雀', '九地', '九天']);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:103:const EIGHT_GODS_YIN = Object.freeze(['值符', '滕蛇', '太陰', '六合', '白虎', '玄武', '九地', '九天']);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:108:const XUN_HEADS = Object.freeze(['甲子', '甲戌', '甲申', '甲午', '甲辰', '甲寅']);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:110:const SIX_XUNS = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:119:const XUN_TO_HEAD = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:123:const XUN_TO_KONGWANG_DIRECTION = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:128:const DIPAN_YANG = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:140:const DIPAN_YIN = Object.freeze({
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:8:const {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:24:function rotateArrayFromIndex(array, startIndex) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:29:    const normalizedIndex = startIndex % array.length;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:39:function generatePutSequence(flyPath, startPalaceIndex) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:40:    const pathIndex = flyPath.indexOf(startPalaceIndex);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:43:        const substituteIndex = flyPath.indexOf(ZHONG_SUBSTITUTE);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:52:function rotateMapping(sourceArray, flyPath, sourceStartIndex, targetStartIndex) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:54:    const normalizedSourceStart = sourceStartIndex === PALACE.ZHONG 
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:57:    const normalizedTargetStart = targetStartIndex === PALACE.ZHONG 
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:62:    const getSequence = generatePutSequence(flyPath, normalizedSourceStart);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:63:    const putSequence = generatePutSequence(flyPath, normalizedTargetStart);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:66:    const result = new Array(9).fill('');
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:68:        const sourceIndex = getSequence[i];
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:69:        const targetIndex = putSequence[i];
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:83:function normalizeZhongPalace(index) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:87:function findIndexWithZhongNormalization(array, element) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:88:    const index = array.indexOf(element);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:99:function getXunHead(ganzhi) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:100:    for (const xunHead of XUN_HEADS) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:111:function getFuShou(xunHead) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:118:function calculateFlyStep(xunHead, currentTime) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:119:    const xunArray = SIX_XUNS[xunHead];
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:129:function getKongWangDirection(ganzhi) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:130:    const xunHead = getXunHead(ganzhi);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:138:function resolveJiaHiding(tianGan, fuShou) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:142:function extractTianGan(ganzhi) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:146:function extractDiZhi(ganzhi) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:151:const STEM_ELEMENTS = { 甲: '木', 乙: '木', 丙: '火', 丁: '火', 戊: '土', 己: '土', 庚: '金', 辛: '金', 壬: '水', 癸: '水' };
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:153:const GENERATES = { 木: '火', 火: '土', 土: '金', 金: '水', 水: '木' };
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:155:const CONTROLS = { 木: '土', 土: '水', 水: '火', 火: '金', 金: '木' };
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:161:function getStemRelation(skyStem, earthStem) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:162:    const sky = STEM_ELEMENTS[skyStem];
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js:163:    const earth = STEM_ELEMENTS[earthStem];
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:1:const DAILY_QIMEN_LIMIT = 2;
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:2:const DAILY_PROFILE_ACTION_LIMIT = 1;
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:3:const BEIJING_OFFSET_MS = 8 * 60 * 60 * 1000;
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:4:const DAY_MS = 24 * 60 * 60 * 1000;
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:6:function buildBeijingNaturalDayRange(now = new Date()) {
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:7:  const current = now instanceof Date ? now : new Date(now);
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:8:  const beijingTime = new Date(current.getTime() + BEIJING_OFFSET_MS);
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:9:  const year = beijingTime.getUTCFullYear();
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:10:  const month = beijingTime.getUTCMonth();
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:11:  const day = beijingTime.getUTCDate();
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:12:  const startMs = Date.UTC(year, month, day) - BEIJING_OFFSET_MS;
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:13:  const endMs = startMs + DAY_MS;
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:16:    dayKey: `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:22:function isWhitelistedEmail(email, configuredEmails = '') {
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:23:  const normalizedEmail = String(email || '').trim().toLowerCase();
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:32:async function countDailyRows({ supabase, table, userId, now = new Date(), actionType = '' }) {
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:33:  const range = buildBeijingNaturalDayRange(now);
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:42:  const { count, error } = await query.lt('created_at', range.endIso);
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:47:async function assertDailyQimenQuota({ supabase, userId, now = new Date() }) {
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:48:  const count = await countDailyRows({
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:56:    const err = new Error('今日 2 次占卜额度已用尽，请明日再来');
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:62:async function assertDailyProfileActionQuota({ supabase, userId, now = new Date() }) {
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:63:  const count = await countDailyRows({
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:72:    const err = new Error('今日最多添加或刷新 1 个档案，请明日再来');
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:78:async function recordProfileAction({ supabase, userId, profileId, action = 'profile_generate', metadata = {} }) {
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js:79:  const { error } = await supabase
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:1:const test = require('node:test');
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:2:const assert = require('node:assert/strict');
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:3:const {
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:13:  const range = buildBeijingNaturalDayRange(new Date('2026-05-26T16:30:00.000Z'));
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:26:  const queries = [];
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:27:  const supabase = createQuotaSupabaseMock({ count: DAILY_QIMEN_LIMIT, queries });
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:48:  const qimenQueries = [];
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:49:  const profileQueries = [];
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:70:function createQuotaSupabaseMock({ count, queries }) {
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js:73:      const query = { table };
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:1:const test = require('node:test');
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2:const assert = require('node:assert/strict');
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:7:const baziModule = require('../api/bazi');
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:8:const { buildCompleteBaziDetail, hasLatestEngineCache } = require('./baziCore');
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:9:const { Solar } = require('lunar-javascript');
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:11:const tenGodMapJia = {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:24:const tenGodMapYi = {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:37:const tenGodMapBing = {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:50:const tenGodMapDing = {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:63:const tenGodMapRen = {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:76:const tenGodMapGui = {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:89:const tenGodMapJi = {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:102:const tenGodMapWu = {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:115:const tenGodMapXin = {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:129:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:130:    year: ['丁', '亥'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:143:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:144:    year: ['甲', '子'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:159:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:160:    year: ['甲', '申'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:175:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:176:    year: ['庚', '辰'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:191:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:192:    year: ['丙', '申'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:207:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:208:    year: ['壬', '戌'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:224:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:225:    year: ['甲', '子'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:240:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:241:    year: ['己', '酉'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:256:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:257:    year: ['甲', '午'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:274:  const result = baziModule.getGeJu({
+=== NODEJS QMDJ ===
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/controllers/qmdjMgrController.js:1:const model = require('../models/qmdj');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/controllers/qmdjMgrController.js:3:const controller = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:1:// const ds = require('../../lib/connect-to-arangodb');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:3:const model = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:12:    // determining the NianZhu (year) symbol of
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:17:        const arrayTianGan = ['甲', '乙', '丙', '丁', '戊','己','庚','辛','壬','癸'];
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:18:        const arrayDiZhi = ['子','丑','寅','卯','晨','巳','午','未','申','酉','戌','亥'];
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:20:        const _input = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:24:        const _symbols = generateSymbols(_input);
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:35:const generatePossibleRowsCombiDiZhi = (params) => {
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:38:    const symbolsDiZhi = [...params];
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:39:    const numberOfElements = symbolsDiZhi.count;
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:43:    const rows = [];
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:58:        const endElementFirst = symbolsDiZhi.pop();
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:59:        const endElementSecond = symbolsDiZhi.pop();
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:61:        const rowContent = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:80:const generateSymbols = (params) => {
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:83:    const _rowTianGan = [...params.rowTianGan];
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:84:    const _rowsDiZhi = [...params.rowsDiZhi];
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:86:    const _symbols = _rowsDiZhi.map((item, index) => {
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:88:        const _elements = item.elements;
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js:90:        const _row = _elements.map((entry, index) => {
+docs/github-repos/funan-tech-folks_nodejs-qmdj/app.js:1:const express = require('express');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/app.js:3:const routerRoot = require('./routes');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/app.js:4:const qmdj = require('./routes/qmdj');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/app.js:6:const app = express();
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/datastores.js:6:const datastores = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/env/development.js:6:const config = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/env/production.js:6:const config = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/env/stage.js:6:const config = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:10:const http = require('http');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:11:const https = require('https');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:12:const path = require('path');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:13:const fs = require('fs');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:15:// const config = require('./config/configurations');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:16:const config = require('./lib/selector-env');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:17:const app = require('./app');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:21:** determine the environment (development, stage, production).
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:27:// const currentEnvironment = typeof(process.env.NODE_ENV) == 'string' ? process.env.NODE_ENV.toLowerCase() : '';
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:30:// const config = currentEnvironment.trim().length > 0 ? require(`./config/env/${currentEnvironment}`) : require('./config/env/development');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:42:const httpServer = http.createServer(app);
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:55:// const _basePath = __dirname;
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:60:// const httpsServerOptions = {
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:66:// // const httpsServer = https.createServer(httpsServerOptions, (req, res)=>{
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js:70:// const httpsServer = https.createServer(httpsServerOptions, app);
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:1:const arangojs = require('arangojs');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:2:const config = require('../lib/selector-env');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:4:const db = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:9://     const _input = config.services.datastores.filter( item => {
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:27:    // const db = new arangojs.Database('http://zulu-db-d01.southeastasia.cloudapp.azure.com:8529');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:29:    const _db =  (typeof(params) != 'undefined') && (typeof(params.config) !== 'undefined') && (typeof(params.config.url) != 'undefined') ? new arangojs.Database(params.config.url) : new arangojs.Database('http://localhost:8529');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:30:    const _userid = params.config.userid;
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:31:    const _password = params.config.password;
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:32:    const _dbName = params.config.dbName;
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:40:        const jwt = jwtReturned;
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:44:        const _rtn = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:56:// const _input = {
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:64:const _input = config.services.datastores.filter( item => {
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:72:const _inputSecurity = config.services.datastores.filter( item => {
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:90:const _promisesToBeDone = [];
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:97:const _params = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:102:const _paramsSecurity = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js:126:    const _databases = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/error-handler-orientdb.js:5:const handler = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/error-handler-orientdb.js:13:        const _rtn = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/error-handler-orientdb.js:26:        const _rtn = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/error-handler-orientdb.js:38:        const _rtn = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:8:const config = require('../lib/selector-env');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:9:const datastores = require('../config/datastores');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:13:const setupDatastore = (modelName)=>{
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:15:    // function to setup the datastore object
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:18:    const _dsName = typeof(config.datastores.models[modelName]) === 'string' ? config.datastores.models[modelName] : '';
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:21:    const _dsConfig = typeof(datastores[_dsName] === 'object') ? datastores[_dsName] : {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:23:    const _dsType = ( (typeof(_dsConfig) == 'object') && (typeof(_dsConfig.type) == 'string' ) )? _dsConfig.type : '';
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:25:    // determin which datastore library to import (i.e. require)
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:31:    const _dsLib = (_dsType == 'orientdb') ? require('orientjs') : {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:32:    const _server = ( typeof(_dsLib) == 'function' && (_dsLib.name == 'OrientDB')) ? _dsLib(_dsConfig.server) : {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:35:    const _ds = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:51:const datastoreToUse = {};
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js:54:const configured = JSON.parse(JSON.stringify(config));
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-env.js:2:** Script to determine the specific 
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-env.js:8:const currentEnvironment = typeof(process.env.NODE_ENV) == 'string' ? process.env.NODE_ENV.toLowerCase() : '';
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-env.js:11:const environmentConfigToUse = currentEnvironment.trim().length > 0 ? require(`../config/env/${currentEnvironment}`) : require('../config/env/development');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/routes/qmdj.js:1:const express = require('express');
+docs/github-repos/funan-tech-folks_nodejs-qmdj/routes/qmdj.js:2:const router = express.Router();
+docs/github-repos/funan-tech-folks_nodejs-qmdj/routes/qmdj.js:3:const controller = require('../api/controllers/qmdjMgrController');

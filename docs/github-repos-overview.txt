@@ -1,0 +1,1463 @@
+===== docs/github-repos/ChesterRa_mingpan =====
+--- README.md ---
+# 命盘 MCP Server
+
+[![Version](https://img.shields.io/badge/version-0.1.3-blue.svg)](https://github.com/ChesterRa/mingpan)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
+
+**命盘（Mingpan）** 是一个中华传统术数 MCP 服务，为 Claude 等 AI 应用提供命理排盘与占卜起卦的计算能力。
+
+## 特性
+
+-  **MCP 原生**：无缝集成 Claude Desktop 及 Claude Code
+- 🌏 **中文输出**：以简体为主，术语保持传统
+- 📊 **结构化文本**：便于 AI 理解与分析的格式
+
+## 配置方法
+
+### Claude Desktop
+
+找到配置文件并添加以下内容：
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "mingpan": {
+      "command": "npx",
+      "args": ["-y", "mingpan"]
+    }
+  }
+}
+```
+
+### Claude Code
+
+```bash
+claude mcp add mingpan -- npx -y mingpan
+```
+
+### 验证
+
+配置完成后重启客户端，然后尝试：
+
+> 请帮我排一个八字命盘，1992年4月12日7点30分，男性
+
+> 请帮我起一个奇门遁甲时盘，2024年6月21日10点
+
+## 工具列表
+
+### 命理排盘
+
+命理学基于出生时间推算人生运势，属于「命」的范畴。
+
+#### 八字命理
+
+| 工具           | 说明                                       |
+| -------------- | ------------------------------------------ |
+| `bazi_basic`   | 八字命盘排盘（四柱、藏干、十神、五行力量） |
+| `bazi_dayun`   | 大运列表（十年一运）                       |
+| `bazi_liunian` | 流年列表（指定年份范围）                   |
+| `bazi_liuyue`  | 流月列表（节气月，立春起算）               |
+| `bazi_liuri`   | 流日列表（指定月份内每日）                 |
+
+#### 紫微斗数
+
+| 工具             | 说明                                     |
+| ---------------- | ---------------------------------------- |
+| `ziwei_basic`    | 紫微命盘排盘（十二宫、主星、辅星、四化） |
+| `ziwei_daxian`   | 大限列表（十年一限）                     |
+| `ziwei_xiaoxian` | 小限列表（每年一宫）                     |
+| `ziwei_liunian`  | 流年列表（指定年份范围）                 |
+| `ziwei_liuyue`   | 流月列表（农历月）                       |
+| `ziwei_liuri`    | 流日列表（农历日）                       |
+
+### 占卜起卦
+
+占卜术基于起卦时间或随机数推演卦象，属于「卜」的范畴。
+
+#### 六爻
+
+| 工具           | 说明                                                |
+| -------------- | --------------------------------------------------- |
+| `liuyao_basic` | 六爻排盘（本卦/变卦、纳甲、六亲、六神、世应、旬空） |
+
+六爻输入为六个爻值（自下而上）：
+- 6 = 老阴（动爻，阴变阳）
+- 7 = 少阳（静爻）
+- 8 = 少阴（静爻）
+- 9 = 老阳（动爻，阳变阴）
+
+#### 梅花易数
+
+| 工具           | 说明                                     |
+| -------------- | ---------------------------------------- |
+| `meihua_basic` | 梅花易数排盘（本卦/变卦/互卦、体用分析） |
+
+支持两种起卦方式：
+- 时间起卦：根据农历年月日时计算
+- 数字起卦：根据两个数字计算
+
+#### 大六壬
+
+| 工具             | 说明                                             |
+| ---------------- | ------------------------------------------------ |
+| `daliuren_basic` | 大六壬排盘（天地盘、四课、三传、十二天将、神煞） |
+
+大六壬为三式之首，需输入节气、农历月、日干支、时干支。
+
+#### 奇门遁甲
+
+| 工具            | 说明 |
+| --------------- | ---- |
+| `qimen_basic`   | 奇门遁甲排盘（九宫布局、三奇六仪、八门九星八神、格局判断） |
+| `qimen_yongshen`| 奇门用神分析（按事类选取用神，含主客、旺衰、空亡、入墓等） |
+| `qimen_zeri`    | 奇门择日（指定日期区间内筛选相对更佳的时机） |
+
+奇门遁甲为三式之一，盘式与规则主要参考张志春《神奇之门》，支持：时盘/日盘/月盘/年盘、转盘/飞盘、拆补法/茅山法。
+
+更多说明见：`docs/qimen-yongshen-guide.md`。
+
+## 输入参数
+
+### 命理工具（八字/紫微）
+
+| 参数      | 类型    | 必填 | 说明                         |
+| --------- | ------- | ---- | ---------------------------- |
+| year      | number  | ✓    | 出生年份（1900-2100）        |
+| month     | number  | ✓    | 出生月份（1-12）             |
+| day       | number  | ✓    | 出生日期（1-31）             |
+| hour      | number  | ✓    | 出生时辰（0-23）             |
+| minute    | number  |      | 出生分钟（0-59），默认 0     |
+| gender    | string  | ✓    | `male` / `female`            |
+| longitude | number  |      | 出生地经度，用于真太阳时校正 |
+| isLunar   | boolean |      | 是否为农历输入，默认 false   |
+
+### 占卜工具（六爻/梅花/大六壬）
+
+占卜工具使用起卦时间而非出生时间，具体参数请参考各工具说明。
+
+### 奇门遁甲工具
+
+| 参数         | 类型    | 必填 | 说明 |
+| ------------ | ------- | ---- | ---- |
+| year         | number  | ✓    | 起盘年份（1900-2100） |
+| month        | number  | ✓    | 起盘月份（1-12） |
+| day          | number  | ✓    | 起盘日期（1-31） |
+| hour         | number  | ✓    | 起盘时辰（0-23） |
+| minute       | number  |      | 分钟（0-59），默认 0 |
+| isLunar      | boolean |      | 是否为农历输入，默认 false |
+| panType      | string  |      | `时盘` / `日盘` / `月盘` / `年盘`，默认 `时盘` |
+| panStyle     | string  |      | `转盘` / `飞盘`，默认 `转盘` |
+| zhiRunMethod | string  |      | `chaibu`（拆补法）/ `maoshan`（茅山法），默认 `chaibu` |
+
+## 月份基准说明
+
+| 系统 | 月份基准           | 日期基准 |
+| ---- | ------------------ | -------- |
+| 八字 | 节气月（立春起算） | 公历日   |
+| 紫微 | 农历月（初一起算） | 农历日   |
+
+## 开发
+
+```bash
+git clone https://github.com/ChesterRa/mingpan.git
+cd mingpan
+npm install
+npm run build
+npm run dev  # 监听变化
+```
+
+## 依赖
+
+| 库                          | 用途             |
+| --------------------------- | ---------------- |
+| `@modelcontextprotocol/sdk` | MCP 协议实现     |
+| `lunar-javascript`          | 农历/公历转换    |
+| `iztro`                     | 紫微斗数计算引擎 |
+| `zod`                       | 输入参数校验     |
+
+## 路线图
+
+- [x] 八字基础排盘与时运列表
+- [x] 紫微基础排盘与时运列表
+- [x] 六爻排盘
+- [x] 梅花易数排盘
+- [x] 大六壬排盘
+- [x] 奇门遁甲排盘
+
+## 许可证
+
+Apache License 2.0
+--- package.json ---
+{
+  "name": "mingpan",
+  "version": "0.1.3",
+  "description": "MCP service for accurate Bazi and Ziwei chart calculations",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "mingpan": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChesterRa/mingpan.git"
+  },
+  "homepage": "https://github.com/ChesterRa/mingpan#readme",
+  "bugs": {
+    "url": "https://github.com/ChesterRa/mingpan/issues"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "bazi",
+    "ziwei",
+    "fortune-telling",
+    "chinese-astrology",
+    "model-context-protocol"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "iztro": "^2.5.0",
+    "lunar-javascript": "^1.7.3",
+    "zod": "^3.23.0",
+    "zod-to-json-schema": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+--- LICENSE ---
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+===== docs/github-repos/MrJelly_QiMenDunJia =====
+--- README.md ---
+# 🌌 QiMenDunJia (奇门遁甲)
+
+[![npm version](https://img.shields.io/npm/v/qimendunjia-standalone.svg?style=flat-square)](https://www.npmjs.com/package/qimendunjia-standalone)
+[![license](https://img.shields.io/npm/l/qimendunjia-standalone.svg?style=flat-square)](https://github.com/your-username/QiMenDunJia/blob/main/LICENSE)
+[![TypeScript supported](https://img.shields.io/badge/TypeScript-Supported-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
+[![NPM downloads](https://img.shields.io/npm/dm/qimendunjia-standalone.svg?style=flat-square)](https://www.npmjs.com/package/qimendunjia-standalone)
+
+A modern, highly optimized, and modular **TypeScript Qi Men Dun Jia (奇门遁甲)** chart calculation library.
+
+This project decouples calendar/astronomical implementations from core Qimen logic. All calendar abilities are encapsulated in a unified adapter layer. The core chart engine consumes only a standardized `CalendarSnapshot` object, allowing the library to be distributed in three distinct packages to balance accuracy, bundle size, and dependency strategies.
+
+---
+
+## 📦 Packages & Distribution
+
+We distribute the library in three flavors on NPM. Every package compiles to a zero-dependency (or minimal-dependency) bundle supporting both **ES Module (ESM)** and **CommonJS (CJS)**, complete with rich TypeScript declarations (`.d.ts`).
+
+| NPM Package                   | Solar Term Engine                     | Runtime Dependencies | Bundle Size     | Best For                                                                               |
+| :---------------------------- | :------------------------------------ | :------------------- | :-------------- | :------------------------------------------------------------------------------------- |
+| [`qimendunjia-lite`](#)       | Lightweight analytical solar position | **Zero**             | `~12 KB`        | Bundle-size sensitive environments, web apps, apps needing approximate solar terms.    |
+| [`qimendunjia-standalone`](#) | Ported ShouXing Astronomical Calendar | **Zero**             | `~68 KB`        | Production applications needing accurate solar term boundary times without heavy deps. |
+| [`qimendunjia-tyme4ts`](#)    | Backed by `tyme4ts` library           | `tyme4ts`            | `~6 KB` (+ dep) | Projects already using `tyme4ts` or needing bit-perfect calendar alignment.            |
+
+### Installation
+
+Choose the package that fits your use case and install it via your package manager:
+
+```bash
+# To install the standalone version (Recommended for most apps):
+npm install qimendunjia-standalone
+
+# Or install the lite or tyme4ts variant:
+npm install qimendunjia-lite
+npm install qimendunjia-tyme4ts
+```
+
+---
+
+## 🚀 Quick Start
+
+All three packages expose an identical public API surface. You can seamlessly switch between variants by simply changing the import package name.
+
+```typescript
+import { calculate, calculateBrief } from "qimendunjia-standalone";
+
+// Initialize date (e.g. Summer Solstice, June 22, 2026 at 03:00:15 AM)
+const date = new Date("2026-06-22T03:00:15+08:00");
+
+// 1. Calculate the complete Qimen Dunjia Chart
+const chart = calculate(date);
+if ("error" in chart) {
+  console.error("Failed to calculate chart:", chart.message);
+} else {
+  console.log("--- Si Zhu (四柱) ---");
+  console.log(chart.info.siZhu); // { year: '丙午', month: '甲午', day: '丁卯', time: '壬寅' }
+
+  console.log("\n--- Ju Shu (局数) ---");
+  console.log(chart.info.ju); // "阴遁九局 (上元)"
+
+  console.log("\n--- Zhi Fu & Zhi Shi (值符/值使) ---");
+  console.log(chart.info.fu); // "值符：天心"
+  console.log(chart.info.shi); // "值使：开门"
+}
+
+// 2. Get a quick summary brief (lightweight & fast)
+const brief = calculateBrief(date);
+console.log(brief.info);
+/*
+{
+  jieqi: '节气：夏至',
+  ju: '阴遁九局 (上元)',
+  fu: '值符：天心',
+  shi: '值使：开门'
+}
+*/
+```
+
+---
+
+## 🛠️ Advanced Configuration
+
+### 🌖 Late Zi Hour Mode (晚子时)
+
+Standard Qimen rules differentiate between "Early Zi Hour" (早子时, 00:00 - 01:00) and "Late Zi Hour" (晚子时, 23:00 - 24:00). You can customize whether Late Zi Hour is calculated as the **same day** or the **next day** using `lateZiHourMode`:
+
+```typescript
+// Same Day Mode (Default) - 23:00 is grouped as the same calendar day
+const sameDayChart = calculate(new Date("2026-05-27T23:30:00+08:00"), {
+  lateZiHourMode: "same-day", // day: '辛丑', time: '庚子'
+});
+
+// Next Day Mode - 23:00 advances the day pillar (日柱) to the next day
+const nextDayChart = calculate(new Date("2026-05-27T23:30:00+08:00"), {
+  lateZiHourMode: "next-day", // day: '壬寅', time: '庚子'
+});
+```
+
+### 📅 Custom Calendar Snapshot
+
+If you want to plug in your own custom astronomical calculations, high-precision ephemerides, or local timezone/apparent solar time corrections, you can bypass the built-in calendar adapter entirely:
+
+```typescript
+import { calculateFromSnapshot } from "qimendunjia-standalone";
+import type { CalendarSnapshot } from "qimendunjia-standalone";
+
+// Create a custom snapshot representing the time state
+const mySnapshot: CalendarSnapshot = {
+  solarDate: "2026年6月22日",
+  lunarDate: "农历丙午年五月初八",
+  solarYear: 2026,
+  julianDay: 2461213.29184,
+  winterSolsticeJulianDay: 2461031.543,
+  summerSolsticeJulianDay: 2461213.183,
+  nextWinterSolsticeJulianDay: 2461396.701,
+  solarTermName: "夏至",
+  yearGanZhi: "丙午",
+  monthGanZhi: "甲午",
+  dayGanZhi: "丁卯",
+  dayXun: "甲子",
+  monthXun: "甲辰",
+  yearXun: "甲辰",
+  hours: [
+    { ganZhi: "庚子", xun: "甲午" },
+    { ganZhi: "辛丑", xun: "甲午" },
+    { ganZhi: "壬寅", xun: "甲午" },
+    // ... all 13 double-hours (including late Zi)
+  ],
+};
+
+// Pass the snapshot directly to the Qimen calculator
+const chart = calculateFromSnapshot(
+  mySnapshot,
+  new Date("2026-06-22T03:00:15+08:00"),
+);
+console.log(chart.info.ju); // "阴遁九局 (上元)"
+```
+
+---
+
+## 📖 Public API Signature Reference
+
+Every package exports the following robust API methods:
+
+```typescript
+/** Core Calculation **/
+function calculate(
+  date: Date,
+  options?: QimenOptions,
+): QimenResult | QimenErrorResult;
+function calculateBrief(
+  date: Date,
+  options?: QimenOptions,
+): QimenBriefResult | QimenErrorResult;
+
+/** Snapshot Calculators **/
+function createCalendarSnapshot(
+  date: Date,
+  options?: CalendarOptions,
+): CalendarSnapshot;
+function calculateFromSnapshot(
+  snapshot: CalendarSnapshot,
+  date: Date,
+  options?: QimenOptions,
+): QimenResult;
+function calculateBriefFromSnapshot(
+  snapshot: CalendarSnapshot,
+  date: Date,
+  options?: QimenOptions,
+): QimenBriefResult;
+
+/** Helper Functions **/
+function calculateJuShu(
+  snapshot: CalendarSnapshot,
+  method?: QimenMethod,
+  hourIndex?: number,
+): JuShu;
+function getSolarTerms(
+  year: number,
+  options?: CalendarOptions,
+): SolarTermInfo[];
+function getSolarTermName(date: Date, options?: CalendarOptions): string;
+function getHourIndex(hour?: number, options?: CalendarOptions): number;
+function getJulianDay(date: Date): number;
+function isIntlChineseCalendarSupported(): boolean;
+
+/** Distribution Utilities **/
+function getDiPan(type: DunType, num: number): PalaceMap;
+function distributeJiuXing(
+  diPan: PalaceMap,
+  xunShou: string,
+  shiGan?: string,
+  type?: DunType,
+): unknown;
+function distributeBaMen(
+  zhiFuGong: Palace,
+  shiGan: string,
+  diPan: PalaceMap,
+  type?: DunType,
+): unknown;
+function distributeBaShen(zhiFuGong: Palace, type?: DunType): PalaceMap;
+```
+
+---
+
+## 📡 Runtime Lunar Formatting & ICU support
+
+For `lite` and `standalone` packages, the library relies on the runtime environment's native Intl APIs (`Intl.DateTimeFormat('zh-CN-u-ca-chinese')`) to format traditional Chinese lunar dates (e.g. `农历丙午年五月初八`).
+
+- **Supported Environments**: Modern browsers (Chrome, Safari, Firefox, Edge) and Node.js instances compiled with complete ICU support.
+- **Fallbacks**: If you are deploying to a constrained environment (such as WeChat Mini-Programs, thin Docker containers, or old webviews lacking Chinese ICU data), you can check support using `isIntlChineseCalendarSupported()`. When unsupported, `lunarDate` defaults to an empty string `""` without affecting any Qimen stems, branches, terms, or chart distributions.
+- **Forced Consistency**: If you require strict, multi-platform runtime parity for traditional lunar dates, we highly recommend using [`qimendunjia-tyme4ts`](#) which bundles tyme4ts calendar structures.
+
+---
+
+## 💻 Developer Guide & Scripts
+
+This library is structured as an extremely neat TypeScript monorepo workspace.
+
+### Core Scripts
+
+--- package.json ---
+{
+  "name": "qimendunjia-workspace",
+  "version": "0.1.0",
+  "author": "MrJelly",
+  "private": true,
+  "description": "TypeScript Qi Men Dun Jia chart calculation library.",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:packages": "node scripts/build-packages.mjs",
+    "inspect:calendar": "pnpm run build:packages && node scripts/inspect-calendar.mjs",
+    "publish:packages": "node scripts/publish.mjs",
+    "test": "pnpm run build && node --test tests/*.test.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "qimen",
+    "qimendunjia",
+    "奇门遁甲",
+    "typescript"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "tyme4ts": "^1.5.0",
+    "typescript": "^5.4.0"
+  }
+}
+--- LICENSE ---
+MIT License
+
+Copyright (c) 2026 Qi Men Dun Jia Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+===== docs/github-repos/YHN282615109_Digital-Qi-Men-Dun-Jia-Arrangement-System-python-v1.0 =====
+--- README.md ---
+# 数字奇门遁甲排盘系统（Python版）
+
+[![license](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
+[![platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-brightgreen.svg)]()
+
+《数字奇门遁甲排盘系统》是一款基于 Python + Tkinter 开发的时家奇门遁甲排盘工具。软件采用纯内置算法，不依赖外部天文库，能够精准推算 1900–2100 年间的任意公历时间所对应的奇门格局。
+
+## ✨ 软件特色
+
+- **纯算法驱动**：不依赖任何外部 API 或数据库，所有排盘逻辑均由代码独立完成
+- **百年精准**：支持 1900–2100 年时间范围，内置 2026、2044 年精准节气表
+- **数字奇门**：独创六位数字盘（地盘、天盘、星、门、神），直观简洁
+- **三页布局**：排盘结果、析盘内容、断局分析分页展示，功能清晰
+- **解析库丰富**：内置十干克应、三奇到宫、星门克应等数百条格局注解
+
+## 📱 使用方法
+
+1. **运行软件**：`python qimen_dunjia.py`
+2. **输入时间**：填写公历年份、月份、日期、时分
+3. **开始排盘**：点击“开始排盘”按钮
+4. **查看结果**：
+   - 排盘结果页：四柱、局数、九宫详细信息
+   - 析盘内容页：各种格局克应分析
+   - 断局分析页：综合象意解读与建议
+5. **复制信息**：点击“复制全部信息”一键导出
+
+## ⚙️ 运行环境
+
+- **开发语言**：Python 3.x
+- **界面库**：Tkinter（Python 标准库，无需额外安装）
+- **操作系统**：Windows / macOS / Linux
+
+## 📂 项目结构
+
+
+
+
+## 📄 开源协议
+
+本项目采用 **AGPL-3.0** 协议，详情参见 [LICENSE](LICENSE) 文件。
+
+## ⚠️ 免责声明
+
+本软件为奇门遁甲数术研究的数字化辅助工具，所有排盘结果均基于传统术数逻辑与数理模型生成，仅供国学文化研究、学术探讨及个人娱乐参考，不具备现实指导意义。
+
+
+
+
+
+--- LICENSE ---
+                    GNU AFFERO GENERAL PUBLIC LICENSE
+                       Version 3, 19 November 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+                            Preamble
+
+  The GNU Affero General Public License is a free, copyleft license for
+software and other kinds of works, specifically designed to ensure
+cooperation with the community in the case of network server software.
+
+  The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+our General Public Licenses are intended to guarantee your freedom to
+share and change all versions of a program--to make sure it remains free
+software for all its users.
+
+  When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+them if you wish), that you receive source code or can get it if you
+want it, that you can change the software or use pieces of it in new
+free programs, and that you know you can do these things.
+
+  Developers that use our General Public Licenses protect your rights
+with two steps: (1) assert copyright on the software, and (2) offer
+you this License which gives you legal permission to copy, distribute
+and/or modify the software.
+
+  A secondary benefit of defending all users' freedom is that
+improvements made in alternate versions of the program, if they
+receive widespread use, become available for other developers to
+incorporate.  Many developers of free software are heartened and
+encouraged by the resulting cooperation.  However, in the case of
+software used on network servers, this result may fail to come about.
+The GNU General Public License permits making a modified version and
+letting the public access it on a server without ever releasing its
+source code to the public.
+
+  The GNU Affero General Public License is designed specifically to
+ensure that, in such cases, the modified source code becomes available
+to the community.  It requires the operator of a network server to
+provide the source code of the modified version running there to the
+users of that server.  Therefore, public use of a modified version, on
+a publicly accessible server, gives the public access to the source
+code of the modified version.
+
+  An older license, called the Affero General Public License and
+published by Affero, was designed to accomplish similar goals.  This is
+a different license, not a version of the Affero GPL, but Affero has
+released a new version of the Affero GPL which permits relicensing under
+this license.
+
+  The precise terms and conditions for copying, distribution and
+modification follow.
+
+                       TERMS AND CONDITIONS
+
+  0. Definitions.
+
+  "This License" refers to version 3 of the GNU Affero General Public License.
+
+  "Copyright" also means copyright-like laws that apply to other kinds of
+works, such as semiconductor masks.
+
+  "The Program" refers to any copyrightable work licensed under this
+License.  Each licensee is addressed as "you".  "Licensees" and
+"recipients" may be individuals or organizations.
+
+  To "modify" a work means to copy from or adapt all or part of the work
+in a fashion requiring copyright permission, other than the making of an
+exact copy.  The resulting work is called a "modified version" of the
+earlier work or a work "based on" the earlier work.
+
+  A "covered work" means either the unmodified Program or a work based
+on the Program.
+
+  To "propagate" a work means to do anything with it that, without
+permission, would make you directly or secondarily liable for
+infringement under applicable copyright law, except executing it on a
+computer or modifying a private copy.  Propagation includes copying,
+distribution (with or without modification), making available to the
+public, and in some countries other activities as well.
+
+  To "convey" a work means any kind of propagation that enables other
+parties to make or receive copies.  Mere interaction with a user through
+a computer network, with no transfer of a copy, is not conveying.
+
+  An interactive user interface displays "Appropriate Legal Notices"
+to the extent that it includes a convenient and prominently visible
+feature that (1) displays an appropriate copyright notice, and (2)
+tells the user that there is no warranty for the work (except to the
+extent that warranties are provided), that licensees may convey the
+work under this License, and how to view a copy of this License.  If
+the interface presents a list of user commands or options, such as a
+menu, a prominent item in the list meets this criterion.
+
+  1. Source Code.
+
+  The "source code" for a work means the preferred form of the work
+for making modifications to it.  "Object code" means any non-source
+form of a work.
+
+  A "Standard Interface" means an interface that either is an official
+standard defined by a recognized standards body, or, in the case of
+interfaces specified for a particular programming language, one that
+is widely used among developers working in that language.
+
+  The "System Libraries" of an executable work include anything, other
+than the work as a whole, that (a) is included in the normal form of
+packaging a Major Component, but which is not part of that Major
+Component, and (b) serves only to enable use of the work with that
+Major Component, or to implement a Standard Interface for which an
+implementation is available to the public in source code form.  A
+"Major Component", in this context, means a major essential component
+(kernel, window system, and so on) of the specific operating system
+(if any) on which the executable work runs, or a compiler used to
+produce the work, or an object code interpreter used to run it.
+
+  The "Corresponding Source" for a work in object code form means all
+the source code needed to generate, install, and (for an executable
+work) run the object code and to modify the work, including scripts to
+control those activities.  However, it does not include the work's
+System Libraries, or general-purpose tools or generally available free
+programs which are used unmodified in performing those activities but
+which are not part of the work.  For example, Corresponding Source
+includes interface definition files associated with source files for
+the work, and the source code for shared libraries and dynamically
+linked subprograms that the work is specifically designed to require,
+such as by intimate data communication or control flow between those
+subprograms and other parts of the work.
+
+  The Corresponding Source need not include anything that users
+can regenerate automatically from other parts of the Corresponding
+Source.
+
+  The Corresponding Source for a work in source code form is that
+same work.
+
+  2. Basic Permissions.
+
+  All rights granted under this License are granted for the term of
+copyright on the Program, and are irrevocable provided the stated
+conditions are met.  This License explicitly affirms your unlimited
+permission to run the unmodified Program.  The output from running a
+covered work is covered by this License only if the output, given its
+content, constitutes a covered work.  This License acknowledges your
+rights of fair use or other equivalent, as provided by copyright law.
+
+  You may make, run and propagate covered works that you do not
+convey, without conditions so long as your license otherwise remains
+in force.  You may convey covered works to others for the sole purpose
+of having them make modifications exclusively for you, or provide you
+with facilities for running those works, provided that you comply with
+the terms of this License in conveying all material for which you do
+not control copyright.  Those thus making or running the covered works
+for you must do so exclusively on your behalf, under your direction
+and control, on terms that prohibit them from making any copies of
+your copyrighted material outside their relationship with you.
+
+  Conveying under any other circumstances is permitted solely under
+the conditions stated below.  Sublicensing is not allowed; section 10
+makes it unnecessary.
+
+  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
+
+  No covered work shall be deemed part of an effective technological
+measure under any applicable law fulfilling obligations under article
+11 of the WIPO copyright treaty adopted on 20 December 1996, or
+similar laws prohibiting or restricting circumvention of such
+measures.
+
+  When you convey a covered work, you waive any legal power to forbid
+circumvention of technological measures to the extent such circumvention
+is effected by exercising rights under this License with respect to
+the covered work, and you disclaim any intention to limit operation or
+modification of the work as a means of enforcing, against the work's
+users, your or third parties' legal rights to forbid circumvention of
+technological measures.
+
+  4. Conveying Verbatim Copies.
+
+  You may convey verbatim copies of the Program's source code as you
+receive it, in any medium, provided that you conspicuously and
+appropriately publish on each copy an appropriate copyright notice;
+keep intact all notices stating that this License and any
+non-permissive terms added in accord with section 7 apply to the code;
+keep intact all notices of the absence of any warranty; and give all
+recipients a copy of this License along with the Program.
+
+  You may charge any price or no price for each copy that you convey,
+and you may offer support or warranty protection for a fee.
+
+  5. Conveying Modified Source Versions.
+
+  You may convey a work based on the Program, or the modifications to
+produce it from the Program, in the form of source code under the
+terms of section 4, provided that you also meet all of these conditions:
+
+    a) The work must carry prominent notices stating that you modified
+    it, and giving a relevant date.
+
+    b) The work must carry prominent notices stating that it is
+    released under this License and any conditions added under section
+    7.  This requirement modifies the requirement in section 4 to
+    "keep intact all notices".
+
+    c) You must license the entire work, as a whole, under this
+    License to anyone who comes into possession of a copy.  This
+    License will therefore apply, along with any applicable section 7
+    additional terms, to the whole of the work, and all its parts,
+    regardless of how they are packaged.  This License gives no
+    permission to license the work in any other way, but it does not
+    invalidate such permission if you have separately received it.
+
+    d) If the work has interactive user interfaces, each must display
+    Appropriate Legal Notices; however, if the Program has interactive
+    interfaces that do not display Appropriate Legal Notices, your
+===== docs/github-repos/deminzhang_qimen-go =====
+--- README.md ---
+# 奇门遁甲 转盘/飞盘/鸣法排盘
+
+# 基础奇门起局
+1. 鸣法以满盘转时干为暗干
+2. 鸣法九星只顺不逆
+3. 鸣法锁定拆补法
+4. 时家带大六壬的天地盘
+5. 置闰法按:大雪芒种,年十位数奇数,个位置0, 3, 5, 8;十位数偶数,个位置1, 4, 7置闰,
+ 符头跨小雪/小满接气,上元跨二至超神
+6. NASA数据存缓存到本地sqlite减少重复请求
+7. 附星盘星图
+8. 附八字排盘
+9. 附梅花易数时盘,手动输上1~8,下1~8,变数1~6可起
+10. 附大六壬,手动输报时辰数1~12,暂以卯酉起贵人
+11. 增加命令行工具cmd/，方便AI使用
+
+
+# TODO
+1. 查第三方节气精确时间跟天文授时误差问题
+2. 日家奇门2:太乙九星派+黄黑道
+3. 八字的流通数据模拟
+4. 星盘校正七政四余星宿角度
+5. 星盘计算合拱冲刑
+6. NASA数据缓存优化为只记整点,每分数据用插值近似计算
+7. 阴盘奇门排盘
+8. 常用问事简解,记录对比正确率
+9. 引力波叠加模拟,看刑冲合拱
+10. 大六以经度算实际日出日落起贵人选项
+11. 寻找大六,紫薇,政余星盘,日月互缠的合力关系
+12. 量化地支五行量及60甲子五行量,寻找变化规律
+13. UI增加DropDownMenu
+14. inputBox升级textinput,支持输入法输入
+15. 接入AI模型分析
+16. 接入V I O
+
+# 总结心得
+1. 建星的位置就是太阳的位置,月将为初入点,月建为中点
+2. 木星,岁星就是年柱的力量
+3. "见实相，诸法空，刹那顿悟万法同"
+4. 陶氏,鸣法奇门的格局同大六壬,可能是以大六壬思路推导的
+5. 考阴盘奇门应为洪范奇门传入韩国后以梅花易数起局方式改编
+6. 大六壬的的起三传总结为寻找局中唯一,最初,最重的矛盾源头点定初传,定局中主要力量源
+
+
+# 第三方引用
+	github.com/6tail/lunar-go //万年历 （MIT License）
+	github.com/hajimehoshi/ebiten/v2 //2D游戏引擎 （Apache License 2.0）
+
+# build apk
+```shell
+ebitenmobile bind -target android -javapkg com.deminzhang.qimen -o ./mobile/android/qimen/qimen.aar ./mobile
+cd ./mobile/android
+./gradlew assembleRelease--- go.mod ---
+module github.com/deminzhang/qimen-go
+
+go 1.25.1
+
+require (
+	github.com/6tail/lunar-go v1.3.15
+	github.com/atotto/clipboard v0.1.4
+	github.com/deminzhang/go-common v0.0.0-20250915021055-804f05ab10a1
+	github.com/hajimehoshi/ebiten/v2 v2.8.8
+	golang.org/x/exp v0.0.0-20250911091902-df9299821621
+	golang.org/x/image v0.38.0
+	modernc.org/sqlite v1.51.0
+	xorm.io/core v0.7.3
+	xorm.io/xorm v1.3.9
+)
+
+require (
+	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-sqlite3 v1.14.24 // indirect
+	github.com/ncruces/go-strftime v1.0.0 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	modernc.org/libc v1.72.3 // indirect
+	modernc.org/mathutil v1.7.1 // indirect
+	modernc.org/memory v1.11.0 // indirect
+)
+
+require (
+	github.com/ebitengine/gomobile v0.0.0-20241016134836-cc2e38a7c0ee // indirect
+	github.com/ebitengine/hideconsole v1.0.0 // indirect
+	github.com/ebitengine/purego v0.8.1 // indirect
+	github.com/go-sql-driver/mysql v1.8.1 // indirect
+	github.com/go-text/typesetting v0.2.0 // indirect
+	github.com/goccy/go-json v0.10.4 // indirect
+	github.com/golang/snappy v0.0.4 // indirect
+	github.com/hajimehoshi/bitmapfont/v3 v3.3.0 // indirect
+	github.com/jezek/xgb v1.1.1 // indirect
+	github.com/joho/godotenv v1.5.1
+	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/pierrec/lz4/v4 v4.1.22 // indirect
+	github.com/syndtr/goleveldb v1.0.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/text v0.35.0 // indirect
+	xorm.io/builder v0.3.11-0.20220531020008-1bd24a7dc978 // indirect
+)
+--- LICENSE ---
+MIT License
+
+Copyright (c) 2024 deminzhang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+===== docs/github-repos/funan-tech-folks_nodejs-qmdj =====
+--- README.md ---
+zulu-api-service
+--- package.json ---
+{
+  "name": "zulu-api-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "arangojs": "^6.14.1",
+    "express": "^4.16.3"
+  }
+}
+--- LICENSE ---
+MIT License
+
+Copyright (c) 2020 funan-tech-folks
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+--- LICENSE.md ---
+
+The MIT License (MIT)
+
+Copyright (c) 2018 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+===== docs/github-repos/oceanjustinlin_qimen =====
+--- README.md ---
+# 奇门遁甲 · AI 决策引擎
+
+> **把一套关于结构与变化的古典认知体系，接入现代 AI 推理引擎——也接上现代心理学的自我认知语言。**  
+> 时空局势建模 × 个体禀赋结构分析 × 心理学视角互证 × 古籍命例校验 × 双轴语义路由 × 可审计推演过程 × Gemini 大模型 × Vue 全栈应用
+
+> *"穷则变，变则通，通则久。"* —— 结构终将变化，而变化本身可以被认知、被建模。这是整个项目的方法论起点，也是它与"算命"的分界线。
+
+<p align="center">
+  <img src="https://cdn.jsdelivr.net/gh/oceanjustinlin/qimen@main/docs/assets/screenshots/qimen-result-card.jpg" width="200" alt="奇门卡片详情"/>
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/oceanjustinlin/qimen@main/docs/assets/screenshots/fortune-daily.jpg" width="200" alt="日运分数"/>
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/oceanjustinlin/qimen@main/docs/assets/screenshots/bazi-verdict.jpg" width="200" alt="八字断语"/>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-gold?style=flat-square"/>
+  <img src="https://img.shields.io/badge/powered%20by-Gemini-blue?style=flat-square"/>
+  <img src="https://img.shields.io/badge/cloud-Cloudflare-F38020?style=flat-square"/>
+  <img src="https://img.shields.io/badge/db-Supabase-3ECF8E?style=flat-square"/>
+  <img src="https://img.shields.io/badge/frontend-Vue%203-41B883?style=flat-square"/>
+</p>
+
+<p align="center">
+  简体中文 |
+  <a href="./docs/readme/README.en.md">English</a> |
+  <a href="./docs/readme/README.zh-TW.md">繁體中文</a>
+</p>
+
+---
+
+## 🧭 两大对话式推演技能（Agent Skills）
+
+> **开箱即用**：任意支持命令行的 AI Agent，都能直接调用本项目沉淀的两套「对话式排盘解盘」技能——对话端与网页端共用同一套确定性规则底座。
+
+两个技能**同构**，都走 **访谈 → 确定性计算（脚本）→ AI 解读** 三段式：先问清所求，再用脚本做固定计算（绝不让大模型心算排盘），最后才把结构化结论转译成可读、可行动的语言。计算内核纯本地、零 API Key，Agent 只需能跑脚本。
+
+| 技能 | 看什么 | 计算内核 | 技能定义 |
+| --- | --- | --- | --- |
+| **奇门遁甲** `qimen-dunjia` | 具体事件、时机窗口、方位、趋吉避凶 | `scripts/qimen_cli.py`（时家转盘，Python） | [SKILL.md](./docs/skills/qimen-dunjia/SKILL.md) |
+| **四柱八字** `bazi` | 命局结构、性格禀赋、大运流年、问事应期 | `scripts/bazi_cli.cjs`（复用生产引擎，Node） | [SKILL.md](./.claude/skills/bazi/SKILL.md) |
+
+- **为什么不让大模型自己排盘**：排盘、格局、旺衰、喜忌、问事推演本就是确定性的，一律交给脚本；大模型只负责访谈与解读，规避「心算」日柱大运带来的不可复现错误。
+- **八字技能自带分层校验**：`scripts/bazi_cli.test.cjs`（封装无损 parity 测试，已并入 `npm test`）＋ [`eval/bazi-skill/`](./eval/bazi-skill/)（触发准确度、路由预判、解读忠实度评测）。
+
+详见下方「核心能力」中的 [奇门遁甲 Agent Skill](#奇门遁甲-agent-skill对话式推演技能) 与 [四柱八字 Agent Skill](#四柱八字-agent-skill对话式命理分析技能)。
+
+---
+
+## 项目简介
+
+多数命理工具要么只会排盘，要么只会用玄妙辞藻反复套模板。这个项目想做的是另一件事：**把中国古典决策哲学里"情境—时间—行动"这套结构化认知框架，用确定性规则引擎实现出来，再让 AI 负责表达，而不是让大模型凭空生成玄学话术。**
+
+拆开来看，奇门遁甲的九宫飞布，本质上是一套关于"局势结构如何随时间演化"的时空模型；八字的干支系统，本质上是一套关于"个体禀赋与所处阶段如何相互作用"的结构模型。二者共享同一套底层世界观——阴阳消长、五行生克——这是一套朴素的关系本体论：万物不是孤立的实体，而是彼此制约、此消彼长的关系网络。
+
+这条脉络和现代心理学之间，其实有一段有据可查的交集，不是本项目自我美化出来的联想：荣格（Carl Jung）1949 年为卫礼贤（Richard Wilhelm）的《易经》英译本作序，明确说他从这本书里看到了自己"共时性"（synchronicity）理论的哲学基础——两件事之间没有因果关系，却存在有意义的巧合关联，荣格认为《易经》是历史上最早系统化运用这条原则的方法，而卫礼贤早在 1920 年代就把《易经》引介给他，此后他用了数十年时间在自己的临床实践里持续验证。往下看，八字里的十神（比劫 / 食伤 / 财 / 官杀 / 印）描述的是"自我与外部资源、权威、表达欲之间的关系模式"，这和 McClelland 成就动机理论关心的"人和世界打交道的几种基本方式"是同一个问题的不同符号系统；十二长生把人生刻画成长生、帝旺、衰、死、墓、绝、胎、养的阶段性叙事，和 Erikson 的心理社会发展八阶段、Levinson 的《人生四季》结构同源；岁运"引动"原局潜质的机制，和人格心理学里的特质激活理论（Trait Activation Theory，Tett & Guterman, 2000）几乎是同一个命题的两种表述：稳定倾向平时潜伏，遇到匹配的情境线索才会显现为行为。这些不是同一套理论，是同一批问题在东西方分别独立求解出的结构相似解——需要说清楚边界：这是方法论层面的结构互证，不是说阴阳五行"被心理学证明"了，它没有经过心理测量学意义上的信效度检验，不能和 Big Five 或 MBTI 这类量表画等号。这套系统真正站得住的价值主张是：它提供一套经过千年打磨、结构完整的自我与情境认知语言，这套语言有没有用，不取决于它的因果机制是否成立，就像叙事疗法不需要来访者的"人生故事"在形而上学意义上为真，也能产生真实的心理效用。
+
+用户提问后，系统会先判断这道题该用哪套框架回答：局势模型（奇门）、禀赋结构模型（八字），或两者联合推演。分流模块先识别问题类型，再把对应的结构规则、命盘上下文与现实语境交给推演引擎处理。
+
+局势模型负责具体事件、短期决策、时机窗口；禀赋结构模型负责个体结构、阶段趋势、长期适配；节奏评分模块负责日、周、月、年的状态量化与可执行建议。客观计算由本地规则引擎完成，大模型只负责把结构化结论转译成可读、可行动的语言——它不做判断，只做翻译。
+
+这不是给算命应用换一层皮，是一套**先做结构化认知，再用语言表达，而不是用语言制造神秘感**的推演系统。
+
+---
+
+## 推演背后的认识论
+
+在动手做技术设计之前，先要回答一个更根本的问题：**这套系统到底在断言什么？** 这个立场不是本项目自己发明的包装话术，而是陆致极在《命运的求索》《八字命理动态分析教程》里给出的、体系内部最接近现代科学方法论的自我定位：
+
+> "命是根据，运是环境；命是内因，运是条件。命理学就是探讨'命'和'运'的相互作用，来揭示和展现一个人丰富多彩的人生起伏轨迹。"
+
+> "作为这个黑箱的输入，是一个人的出生时辰。作为黑箱的输出，是关于这个人的生命潜质和人生历程的描写和预测。"——他将命理学的根本局限首先归结为**"概率性描写"**：这是一种基于经验观察的近似预测，而非神学式的绝对因果决定。
+
+他借用控制论的"黑箱"概念自我定位：不宣称打开黑箱、理解命运的终极机制，只观察输入（出生时空结构）与输出（人生潜质与趋势）之间"不是杂乱无章"的对应关系。
+
+```mermaid
+flowchart LR
+    A["输入<br/>出生时空结构（四柱）"] --> BB{{"黑箱<br/>阴阳五行 · 干支符号模型<br/>不打开机制，只建立对应关系"}}
+    BB --> C["输出<br/>概率性描写<br/>人生潜质与趋势的近似预测"]
+    D["命 = 内因 · 根据<br/>原局潜质（静态）"] -.-> BB
+    E["运 = 外因 · 条件<br/>大运流年（动态）"] -.-> BB
+```
+
+再往下一层，是他给出的可操作方法论——"动态分析"四个递进环节，讲清楚"潜质如何在时间中被激活为具体事件"：
+
+```mermaid
+flowchart TD
+    S1["① 原局基底 · 内因与潜质<br/>强弱 · 调候 · 格局 · 形象四视角定位用神与病点<br/>四柱运限：年1-16 / 月17-32 / 日33-48 / 时49-64+"]
+    S2["② 大运建场 · 外因与环境<br/>大运干支对位当前运限柱<br/>十年场域，为潜质提供生长或压制的外部条件"]
+    S3["③ 岁运交互 · 三大触发机制<br/>应局：伏吟激活原局焦点<br/>引动：禄 / 原身隔空调取资源<br/>干支扭曲：天克地冲，结构对抗"]
+    S4["④ 流年应期 · 状态突变<br/>静遇冲则动 → 事件爆发<br/>动遇合则静 → 问题落定"]
+    S1 --> S2 --> S3 --> S4
+```
+
+原局是潜质（种子），大运是环境（场域），流年是触发（导火索）——三者共同决定"某个具体年份会不会爆发某件事"，而不是原局本身就写死了结局。这套四环节框架，正是本项目工程实现里「运限并轨」「应局」「禄 / 原身引动」几个概念的理论来源，也直接决定了下面所有工程决策：为什么算分要用规则引擎而不是提示词，为什么同一句话不同模型要给出一致结论，为什么低置信问题必须显式标注"不能强断"。
+
+---
+
+## 核心能力
+
+*从这里开始是工程实现——把上面的认识论立场，落到具体的分流、规则与评分逻辑上。*
+
+### 更新历史
+
+**2026-07-24 · 八字分析沉淀为 Agent Skill**
+
+把八字原局决策与问事推演沉淀成可复用的 Agent Skill（见「四柱八字 Agent Skill」），与奇门技能同构：访谈 → `scripts/bazi_cli.cjs` 固定计算 → AI 解读，对话端与网页端共用同一套确定性引擎。
+
+- **计算内核薄封装**：`scripts/bazi_cli.cjs` 复用生产同源 `buildCompleteBaziDetail` + `buildBaziQuestionPrompt`，纯本地零 Key；v1 仅公历、只用主线引擎，不依赖仍在分支的专题派生能力。
+- **封装无损保障**：`scripts/bazi_cli.test.cjs` parity 冒烟测试证明 CLI 输出与直接调引擎逐字段一致，已并入 `npm test`。
+- **skill 级评测起步**：新增 `eval/bazi-skill/`，Phase 0 触发 / 路由（量化出脚本路由启发式仅约五成、印证需 LLM 预判），Phase 1 解读忠实度检测器（解读断语 vs 确定性盘的硬矛盾门禁 = `0`，确定性自证通过）。
+
+**2026-07-09 · BaziEngine 1.8.28 · 原局准确度调优整合版**
+
+把近期格局、旺衰、象法与喜忌调优收束为同一版原局决策说明。完整判断条件、执行顺序与 Mermaid 流程图见 [`docs/bazi-engine-architecture.md`](./docs/bazi-engine-architecture.md)。仍在 preview 阶段的专题派生能力不纳入本次版本。
+
+- **原局决策链统一**：四柱进入引擎后并行识别格局、旺衰与象法，再汇入成格和喜忌链；`L0` 仅保留给会提前返回或覆盖普通链的特殊气势，其余节点按真实执行顺序描述。
+- **格局与成格校准**：补入七杀有制、官杀去留、墓库杂气透干等主格候选；成格用神、相神和 protected / promoted / demoted / invalidated Effects 正式参与喜忌评分。
+- **旺衰与象法校准**：旺衰统一为得令、得地、得助和结构修正的 10 分制；象法增加从格、专旺、化气、两气成象评分，并以有效根、反制力量和破象条件控制特殊覆盖。
+- **喜忌执行顺序明确**：普通链按调候 → 病药 → 通关 → 扶抑 → 格局顺逆 → 成格取用 → 结构 Effects → 特殊救应 → 冲突消解执行；成格属于强先验，印星救主、羊刃驾杀属于窄条件最终纠偏。
+- **经典命例回归**：24 个高置信命例严格加权准确率 `91.1%`，核心准确率 `95.7%`，用神 Top 1 `91.8%`，喜忌方向 `100%`，格局 `92.3%`，象法 `100%`，严重错误 `0`。该集合暂无旺衰真值，不将结果外推为旺衰准确率。
+
+**2026-06-25 · 奇门 Skill 沉淀 + 盘面深度字段调优**
+
+把奇门问事完整流程沉淀为可复用的 Agent Skill（见上「奇门遁甲 Agent Skill」），并补齐评分引擎此前缺失的盘面深度字段，让深度解读有数据可引、不靠模型臆造。引擎细节见 [`docs/qimen-scoring-engine-improvement.md`](./docs/qimen-scoring-engine-improvement.md)。
+
+- **天地盘干生克（`stem_relation`）**：新增 `getStemRelation`，每宫天盘干与地盘干的生克方向（天生地 / 天克地 / 地生天 / 地克天 / 比和）写入 `timingPalaces` 与盘面 prompt，解读不再停留在「符号落在哪个宫」的表层。
+- **格局落宫（`palace_index`）**：`detectNamedFormation` 由返回布尔改为返回落宫索引，有名格命中时记录落宫，解读带出「落某宫」并标注受影响角色，告别悬空的「格名 + 通用象义」。
+- **旺衰修复（`prosperity`）**：新增 `qimenProsperity`，按月令补算九星旺相休囚死并接入 `evaluatePalace` 能量底板。此前生产环境从未喂入旺衰，「结构强度决定成败」的一票否决档位长期空转，本次修复后真正生效。
+- **Skill 报告纪律**：起局时间改为「问事当下」口径（事件时间只作背景）；报告强制落盘并在开头渲染洛书九宫格；必须语义新增 `palace_depth_reading`，要求核心用神宫读到干生克、旺衰与门星神合力的第二层；写作加反填充约束（建议须绑定具体盘面信号、不靠重复结论充字数）。
+
+**2026-06-13 · 问事追问（多轮深挖）**
+
+奇门与八字问事都支持在原解读之上「追问深挖」，新增 `/api/qimen-followup` 与 `/api/bazi-followup` 两个流式接口。
+
+- **一局一解，正本不动**：追问结果以增补子块挂在相关段落下，不覆盖原文、不重排盘、不重新打分——一个局的态势与分数在起局那一刻就固定，追问只换面向、做分层深挖。
+- **深挖 / 新事小判断器**：先用轻量模型判断追问是「同一局深挖」还是「另起一事」；判为新事直接提示重新起局，不浪费大模型。
+- **确定性补算**：追问若需要原盘没算的流年、大运、应期，由判断器按白名单点菜、后端确定性补算，大模型永远只读结果，不做 function calling。
+- **反臆造延续**：补丁模型只能引用前端回传的盘面证据，不得引入新盘面元素，也不得泄漏内部量化指标；修正信息时以「原结论 →（因新情况）调整为…」对照呈现，绝不静默覆盖。
+
+**2026-06-10 · 问事流式输出与自愈重试**
+
+把问事从「一次性出整块 JSON」推进到「边算边出、出错能自愈、模型可按环境切换、文案不臆造也不漏指标」。
+
+- 哨兵分段（`<<<SEC:...>>>`）协议把每个面向用户的散文段独立流式推送，规则引擎产物先上屏，AI 解读逐段补丁到对应卡片槽位。
+- 结构校验硬失败（空流 / 核心段缺失 / `data_json` 不可解析）发 `llm_retry` 事件，前端清空半截内容回骨架，后端非流式重试一次；个别可选字段缺失走静默兜底。
+- title 拆成独立流式段，点明问题类型与核心结论，不再混在结构化 JSON 里重复输出。
+- 新增 `QUESTION_MODEL` 环境变量逐环境配置问事模型（代码默认回退 `gemini-3.1-pro-preview`，当前各环境切 `gemini-3-flash-preview` 验证）。
+- 反臆造与化气格约束：只能引用后端实际盘面 / 四柱字段，严禁脑补不存在的门星神、宫位、生克刑冲合害；禁止「强度74.4」「能量值80」「置信度0.8」等内部数值进入用户文案，改用命理语言定性表达。
+
+**2026-06-06 · 规则可评测、页面同源、历史可回放**
+
+把八字问事从「模型会不会说得像」推进到「规则是否能被评测、页面是否同源展示、历史记录是否能安全回放」。
+
+- 用神 / 目标十神评测纠偏：新增 [`docs/eval/yongshen-eval-2026-06.md`](./docs/eval/yongshen-eval-2026-06.md) 与 [`scripts/eval-yongshen.mjs`](./scripts/eval-yongshen.mjs)，用陆致极命例对照本地规则引擎，逐案标注吻合 / 部分 / 偏差，并记录从儿格、调候为急、印星救主、弃官就印等修复原因。
+- 双轴语义路由：八字问事从 `status/timing/pattern/character` 单轴拆成 `framework`（推演框架）× `target_source`（目标来源）。
+- 八字动态 panel 拾取逻辑：从 `state_report`、`dynamic_report`、`timing_candidates` 拾取目标十神、宫位与岁运引动，与规则引擎同源；低置信链路明确降级。
+- 历史记录兼容：旧 `analysis_mode` 迁移到新双轴语义，存量问事记录继续回放。
+
+**更早的功能演进**
+
+- 运势页从单一日运扩展为日、周、月、年四层视图，可同时看今天、本周、本月和今年的节奏。
+- 周运七日曲线、顺势日 / 谨慎日、周度标签与事业、财运、感情提醒。
+- 月运分数曲线、高低分日、低谷期提示和综合 / 事业 / 财运 / 感情四类白话详批。
+- 年运前后十年流年变化、大运背景、流年十神与岁运关系。
+- 八字档案「断事笔记」记录事业、财务、感情、健康 / 生活状态，让月运解读更贴近现实处境。
+- 奇门结果页保留应验反馈入口，方便回头标记推演准不准、实际走向如何。
+
+### 自动术数分流引擎
+
+这是系统的大脑。每次用户提问后，它会先判断问题属于具体事件、长期结构，还是需要奇门与八字联合推演——这一步本身就是认识论立场的落地：先分清"我在问什么类型的问题"，再决定用什么方法回答，而不是拿一套万能话术套所有问题。
+
+- 通过本地规则和大模型意图判断，自动选择合适的推演框架
+- 覆盖事业职场、求财投资、婚恋感情、健康疾病、交易失物、考试学习、官司法务、风水家宅、孕产子嗣等常见问题域
+- 根据问题类型注入对应的取用神规则、命盘上下文和现实背景
+- 信息不足时会先追问关键条件，不急着给出含混判断
+
+### 奇门遁甲推演
+
+- 实现时家奇门拆补转盘法，包含甲子隐遁、符头定位、九星、八门、八神飞布
+- 自动处理天芮、天禽中宫寄坤、日空、时空、驿马星等盘面信息
+- 按问题域动态切换取用神规则，避免同一套话术套所有问题
+- 输出态势评分、风险信号、破局节点、有利方位、有利时间与行动建议
+- 支持同一局追问深挖：不重排盘、不改分，把追问解读分层挂到相关段落下
+- 支持历史记录回放和应验反馈，用于后续校准
+
+### 奇门遁甲 Agent Skill（对话式推演技能）
+
+把上面这套奇门事件链路沉淀成一个可被 AI Agent 直接调用的技能（[`docs/skills/qimen-dunjia/SKILL.md`](./docs/skills/qimen-dunjia/SKILL.md)），让"对话式排盘解盘"和网页端走同一套确定性规则底座，而不是让大模型凭空编玄学。
+
+- **先访谈、后起局**：正式起局前先做结构化访谈，确认所问事项、起局时间、时区与判断目标，信息不全先追问，不急着断
+- **固定流程不跳步**：结构化访谈 → 问题路由 → 固定起局 → `targetSpec` 取用 → 有界评分 → 应期扫描 → 唯一证据包 → 自由结构报告，全程不绕过引擎自由解盘
+- **四条底线**：盘面事实必须来自脚本；低置信目标可由模型推导但须过白名单与盘面校验；模型目标只能有界参与评分（带权、有上限）；报告结构自由但关键语义（直接答案、取用逻辑、证据、风险、应期、建议、限制）不得遗漏
+- **问事起局口径**：时家奇门以「问事当下」起局（北京时间、脚本解析时辰），用户提到的事件时间只作事项背景，不当起局时间
+- **报告规范**：开头渲染洛书九宫格，命中有名格按落宫展开，逐宫读到旺衰与天地盘干生克，结尾附推演边界说明
+
+### 四柱八字 Agent Skill（对话式命理分析技能）
+
+把网页端那套八字原局决策与问事推演，沉淀成一个可被 AI Agent 直接调用的技能（[`.claude/skills/bazi/SKILL.md`](./.claude/skills/bazi/SKILL.md)），与奇门同构——「访谈 → 脚本固定计算 → AI 解读」，不让大模型心算排盘。
+
+- **薄封装、同源计算**：`scripts/bazi_cli.cjs` 复用生产引擎的 `buildCompleteBaziDetail` 与问事 pipeline（`buildBaziQuestionPrompt`），一次调用即输出四柱排盘、原局决策（格局 / 旺衰 / 喜忌五神）与动态问事（用神落点 / 原局状态 / 岁运引动 / 应期候选年）的结构化 JSON
+- **纯本地零 Key**：计算内核只依赖 Node 与 `lunar-javascript`，不联网、不需 API Key——接入的 Agent 自己充当负责解读的大模型
+- **访谈先行、路由预判**：先确认公历生辰、性别、所问事项与时间范围，信息不全先追问；由 Agent 预判分析类型（timing / status / pattern / character）再交脚本，缺省则脚本启发式兜底
+- **口径对齐生产**：v1 仅收公历、夜子时算当日，与网页端引擎同一套判据；只用主线引擎，不含仍在分支的专题派生能力
+- **分层可验证**：`scripts/bazi_cli.test.cjs` 用 parity 测试锁定「封装 == 引擎、无损」并挂进 `npm test`；[`eval/bazi-skill/`](./eval/bazi-skill/) 提供 skill 级评测方案（触发准确度、路由预判、解读忠实度——解读断语与确定性盘的硬矛盾门禁为 `0`）
+
+### 全息八字系统
+
+- 支持阳历、农历、四柱反查三种录入方式
+- 支持出生地搜索、经度、平太阳时、真太阳时修正
+- 展开四柱干支、十神、藏干、十二长生、纳音、旬空亡、神煞与特殊格局
+- 本地规则引擎负责日主强弱、喜忌神、格局解读和生克合化关系
+- 提供 [`BaziEngine 原局决策架构`](./docs/bazi-engine-architecture.md)，明确格局、旺衰、象法、成格和喜忌五神的执行顺序与覆盖关系
+- 提供五行力量条、打分明细、八字问答、解读反馈校准与断事笔记
+- 支持基于同一命盘继续追问深挖，新信息走「原结论 → 调整为…」对照，不静默覆盖
+- 支持大运、流年、流月三级联动，辅助理解命盘与当下时间的关系
+
+### 运势评分系统
+
+运势页从单一日运扩展为日、周、月、年四层结构：
+--- package.json ---
+{
+  "name": "qimen-ai-app",
+  "version": "1.1.13",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/prerender.mjs",
+    "build:nopre": "vite build",
+    "data:birthplaces": "node scripts/generate_birthplaces_from_geonames.mjs",
+    "preview": "vite preview",
+    "test": "node --test lib/*.test.js scripts/*.test.cjs src/**/*.test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "@vueuse/core": "^10.7.0",
+    "lunar-javascript": "^1.6.12",
+    "pinia": "^2.1.7",
+    "vue": "^3.4.0",
+    "vue-i18n": "^11.4.0",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@claude-flow/codex": "^3.0.0-alpha.9",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "playwright": "^1.59.1",
+    "vite": "^5.0.0"
+  }
+}
+--- LICENSE ---
+MIT License
+
+Copyright (c) 2026 oceanjustinlin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

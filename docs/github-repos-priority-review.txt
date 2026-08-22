@@ -1,0 +1,1184 @@
+===== deminzhang_qimen-go =====
+# 奇门遁甲 转盘/飞盘/鸣法排盘
+
+# 基础奇门起局
+1. 鸣法以满盘转时干为暗干
+2. 鸣法九星只顺不逆
+3. 鸣法锁定拆补法
+4. 时家带大六壬的天地盘
+5. 置闰法按:大雪芒种,年十位数奇数,个位置0, 3, 5, 8;十位数偶数,个位置1, 4, 7置闰,
+ 符头跨小雪/小满接气,上元跨二至超神
+6. NASA数据存缓存到本地sqlite减少重复请求
+7. 附星盘星图
+8. 附八字排盘
+9. 附梅花易数时盘,手动输上1~8,下1~8,变数1~6可起
+10. 附大六壬,手动输报时辰数1~12,暂以卯酉起贵人
+11. 增加命令行工具cmd/，方便AI使用
+
+
+# TODO
+1. 查第三方节气精确时间跟天文授时误差问题
+2. 日家奇门2:太乙九星派+黄黑道
+3. 八字的流通数据模拟
+4. 星盘校正七政四余星宿角度
+5. 星盘计算合拱冲刑
+6. NASA数据缓存优化为只记整点,每分数据用插值近似计算
+7. 阴盘奇门排盘
+8. 常用问事简解,记录对比正确率
+9. 引力波叠加模拟,看刑冲合拱
+10. 大六以经度算实际日出日落起贵人选项
+11. 寻找大六,紫薇,政余星盘,日月互缠的合力关系
+12. 量化地支五行量及60甲子五行量,寻找变化规律
+13. UI增加DropDownMenu
+14. inputBox升级textinput,支持输入法输入
+15. 接入AI模型分析
+16. 接入V I O
+
+# 总结心得
+1. 建星的位置就是太阳的位置,月将为初入点,月建为中点
+2. 木星,岁星就是年柱的力量
+3. "见实相，诸法空，刹那顿悟万法同"
+4. 陶氏,鸣法奇门的格局同大六壬,可能是以大六壬思路推导的
+5. 考阴盘奇门应为洪范奇门传入韩国后以梅花易数起局方式改编
+6. 大六壬的的起三传总结为寻找局中唯一,最初,最重的矛盾源头点定初传,定局中主要力量源
+
+
+# 第三方引用
+	github.com/6tail/lunar-go //万年历 （MIT License）
+	github.com/hajimehoshi/ebiten/v2 //2D游戏引擎 （Apache License 2.0）
+
+# build apk
+```shell
+ebitenmobile bind -target android -javapkg com.deminzhang.qimen -o ./mobile/android/qimen/qimen.aar ./mobile
+cd ./mobile/android
+./gradlew assembleRelease--- FILES ---
+docs/github-repos/deminzhang_qimen-go/.gitignore
+docs/github-repos/deminzhang_qimen-go/LICENSE
+docs/github-repos/deminzhang_qimen-go/README.md
+docs/github-repos/deminzhang_qimen-go/assets/asset.go
+docs/github-repos/deminzhang_qimen-go/assets/images/icon_16x16.png
+docs/github-repos/deminzhang_qimen-go/assets/images/icon_32x32.png
+docs/github-repos/deminzhang_qimen-go/cmd/bazi/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/big6/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/liuyao/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/liuyao/main_test.go
+docs/github-repos/deminzhang_qimen-go/cmd/meihua/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/ziwei-reverse/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/ziwei-reverse/prompts.go
+docs/github-repos/deminzhang_qimen-go/cmd/ziwei/main.go
+docs/github-repos/deminzhang_qimen-go/config.env0
+docs/github-repos/deminzhang_qimen-go/go.mod
+docs/github-repos/deminzhang_qimen-go/go.sum
+docs/github-repos/deminzhang_qimen-go/graphic/image.go
+docs/github-repos/deminzhang_qimen-go/main.go
+docs/github-repos/deminzhang_qimen-go/mobile/android/.gitignore
+docs/github-repos/deminzhang_qimen-go/mobile/android/build.gradle
+docs/github-repos/deminzhang_qimen-go/mobile/android/gradle.properties
+docs/github-repos/deminzhang_qimen-go/mobile/android/gradlew
+docs/github-repos/deminzhang_qimen-go/mobile/android/gradlew.bat
+docs/github-repos/deminzhang_qimen-go/mobile/android/install_android_sdk.sh
+docs/github-repos/deminzhang_qimen-go/mobile/android/settings.gradle
+docs/github-repos/deminzhang_qimen-go/mobile/mobile.go
+docs/github-repos/deminzhang_qimen-go/util/cli.go
+docs/github-repos/deminzhang_qimen-go/util/math.go
+docs/github-repos/deminzhang_qimen-go/util/util.go
+docs/github-repos/deminzhang_qimen-go/world/astrolabe.go
+docs/github-repos/deminzhang_qimen-go/world/battle.go
+docs/github-repos/deminzhang_qimen-go/world/big6.go
+docs/github-repos/deminzhang_qimen-go/world/char8.go
+docs/github-repos/deminzhang_qimen-go/world/chat.go
+docs/github-repos/deminzhang_qimen-go/world/database.go
+docs/github-repos/deminzhang_qimen-go/world/defs.go
+docs/github-repos/deminzhang_qimen-go/world/effect_line.go
+docs/github-repos/deminzhang_qimen-go/world/game.go
+docs/github-repos/deminzhang_qimen-go/world/idefs.go
+docs/github-repos/deminzhang_qimen-go/world/meihua.go
+docs/github-repos/deminzhang_qimen-go/world/qimen.go
+docs/github-repos/deminzhang_qimen-go/world/render.go
+docs/github-repos/deminzhang_qimen-go/world/sprite.go
+docs/github-repos/deminzhang_qimen-go/world/star.go
+docs/github-repos/deminzhang_qimen-go/world/stroke.go
+docs/github-repos/deminzhang_qimen-go/world/ui_chat.go
+docs/github-repos/deminzhang_qimen-go/world/ui_msgbox.go
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go
+docs/github-repos/deminzhang_qimen-go/world/ui_selcet.go
+docs/github-repos/deminzhang_qimen-go/world/ui_tips.go
+docs/github-repos/deminzhang_qimen-go/world/wave.go
+docs/github-repos/deminzhang_qimen-go/world/world.go
+docs/github-repos/deminzhang_qimen-go/xuan/astrolabe.go
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go
+docs/github-repos/deminzhang_qimen-go/xuan/ganzhi.go
+docs/github-repos/deminzhang_qimen-go/xuan/gua.go
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_defs.go
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go
+docs/github-repos/deminzhang_qimen-go/xuan/mehua.go
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_ymd.go
+docs/github-repos/deminzhang_qimen-go/xuan/qm_test.go
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go
+docs/github-repos/deminzhang_qimen-go/xuan/shensha.go
+docs/github-repos/deminzhang_qimen-go/xuan/time.go
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei_render.go
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei_reverse.go
+===== oceanjustinlin_qimen =====
+# 奇门遁甲 · AI 决策引擎
+
+> **把一套关于结构与变化的古典认知体系，接入现代 AI 推理引擎——也接上现代心理学的自我认知语言。**  
+> 时空局势建模 × 个体禀赋结构分析 × 心理学视角互证 × 古籍命例校验 × 双轴语义路由 × 可审计推演过程 × Gemini 大模型 × Vue 全栈应用
+
+> *"穷则变，变则通，通则久。"* —— 结构终将变化，而变化本身可以被认知、被建模。这是整个项目的方法论起点，也是它与"算命"的分界线。
+
+<p align="center">
+  <img src="https://cdn.jsdelivr.net/gh/oceanjustinlin/qimen@main/docs/assets/screenshots/qimen-result-card.jpg" width="200" alt="奇门卡片详情"/>
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/oceanjustinlin/qimen@main/docs/assets/screenshots/fortune-daily.jpg" width="200" alt="日运分数"/>
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/oceanjustinlin/qimen@main/docs/assets/screenshots/bazi-verdict.jpg" width="200" alt="八字断语"/>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-gold?style=flat-square"/>
+  <img src="https://img.shields.io/badge/powered%20by-Gemini-blue?style=flat-square"/>
+  <img src="https://img.shields.io/badge/cloud-Cloudflare-F38020?style=flat-square"/>
+  <img src="https://img.shields.io/badge/db-Supabase-3ECF8E?style=flat-square"/>
+  <img src="https://img.shields.io/badge/frontend-Vue%203-41B883?style=flat-square"/>
+</p>
+
+<p align="center">
+  简体中文 |
+  <a href="./docs/readme/README.en.md">English</a> |
+  <a href="./docs/readme/README.zh-TW.md">繁體中文</a>
+</p>
+
+---
+
+## 🧭 两大对话式推演技能（Agent Skills）
+
+> **开箱即用**：任意支持命令行的 AI Agent，都能直接调用本项目沉淀的两套「对话式排盘解盘」技能——对话端与网页端共用同一套确定性规则底座。
+
+两个技能**同构**，都走 **访谈 → 确定性计算（脚本）→ AI 解读** 三段式：先问清所求，再用脚本做固定计算（绝不让大模型心算排盘），最后才把结构化结论转译成可读、可行动的语言。计算内核纯本地、零 API Key，Agent 只需能跑脚本。
+
+| 技能 | 看什么 | 计算内核 | 技能定义 |
+| --- | --- | --- | --- |
+| **奇门遁甲** `qimen-dunjia` | 具体事件、时机窗口、方位、趋吉避凶 | `scripts/qimen_cli.py`（时家转盘，Python） | [SKILL.md](./docs/skills/qimen-dunjia/SKILL.md) |
+| **四柱八字** `bazi` | 命局结构、性格禀赋、大运流年、问事应期 | `scripts/bazi_cli.cjs`（复用生产引擎，Node） | [SKILL.md](./.claude/skills/bazi/SKILL.md) |
+
+- **为什么不让大模型自己排盘**：排盘、格局、旺衰、喜忌、问事推演本就是确定性的，一律交给脚本；大模型只负责访谈与解读，规避「心算」日柱大运带来的不可复现错误。
+- **八字技能自带分层校验**：`scripts/bazi_cli.test.cjs`（封装无损 parity 测试，已并入 `npm test`）＋ [`eval/bazi-skill/`](./eval/bazi-skill/)（触发准确度、路由预判、解读忠实度评测）。
+
+详见下方「核心能力」中的 [奇门遁甲 Agent Skill](#奇门遁甲-agent-skill对话式推演技能) 与 [四柱八字 Agent Skill](#四柱八字-agent-skill对话式命理分析技能)。
+
+---
+
+## 项目简介
+
+多数命理工具要么只会排盘，要么只会用玄妙辞藻反复套模板。这个项目想做的是另一件事：**把中国古典决策哲学里"情境—时间—行动"这套结构化认知框架，用确定性规则引擎实现出来，再让 AI 负责表达，而不是让大模型凭空生成玄学话术。**
+
+拆开来看，奇门遁甲的九宫飞布，本质上是一套关于"局势结构如何随时间演化"的时空模型；八字的干支系统，本质上是一套关于"个体禀赋与所处阶段如何相互作用"的结构模型。二者共享同一套底层世界观——阴阳消长、五行生克——这是一套朴素的关系本体论：万物不是孤立的实体，而是彼此制约、此消彼长的关系网络。
+
+这条脉络和现代心理学之间，其实有一段有据可查的交集，不是本项目自我美化出来的联想：荣格（Carl Jung）1949 年为卫礼贤（Richard Wilhelm）的《易经》英译本作序，明确说他从这本书里看到了自己"共时性"（synchronicity）理论的哲学基础——两件事之间没有因果关系，却存在有意义的巧合关联，荣格认为《易经》是历史上最早系统化运用这条原则的方法，而卫礼贤早在 1920 年代就把《易经》引介给他，此后他用了数十年时间在自己的临床实践里持续验证。往下看，八字里的十神（比劫 / 食伤 / 财 / 官杀 / 印）描述的是"自我与外部资源、权威、表达欲之间的关系模式"，这和 McClelland 成就动机理论关心的"人和世界打交道的几种基本方式"是同一个问题的不同符号系统；十二长生把人生刻画成长生、帝旺、衰、死、墓、绝、胎、养的阶段性叙事，和 Erikson 的心理社会发展八阶段、Levinson 的《人生四季》结构同源；岁运"引动"原局潜质的机制，和人格心理学里的特质激活理论（Trait Activation Theory，Tett & Guterman, 2000）几乎是同一个命题的两种表述：稳定倾向平时潜伏，遇到匹配的情境线索才会显现为行为。这些不是同一套理论，是同一批问题在东西方分别独立求解出的结构相似解——需要说清楚边界：这是方法论层面的结构互证，不是说阴阳五行"被心理学证明"了，它没有经过心理测量学意义上的信效度检验，不能和 Big Five 或 MBTI 这类量表画等号。这套系统真正站得住的价值主张是：它提供一套经过千年打磨、结构完整的自我与情境认知语言，这套语言有没有用，不取决于它的因果机制是否成立，就像叙事疗法不需要来访者的"人生故事"在形而上学意义上为真，也能产生真实的心理效用。
+
+用户提问后，系统会先判断这道题该用哪套框架回答：局势模型（奇门）、禀赋结构模型（八字），或两者联合推演。分流模块先识别问题类型，再把对应的结构规则、命盘上下文与现实语境交给推演引擎处理。
+
+局势模型负责具体事件、短期决策、时机窗口；禀赋结构模型负责个体结构、阶段趋势、长期适配；节奏评分模块负责日、周、月、年的状态量化与可执行建议。客观计算由本地规则引擎完成，大模型只负责把结构化结论转译成可读、可行动的语言——它不做判断，只做翻译。
+
+这不是给算命应用换一层皮，是一套**先做结构化认知，再用语言表达，而不是用语言制造神秘感**的推演系统。
+
+---
+
+## 推演背后的认识论
+
+在动手做技术设计之前，先要回答一个更根本的问题：**这套系统到底在断言什么？** 这个立场不是本项目自己发明的包装话术，而是陆致极在《命运的求索》《八字命理动态分析教程》里给出的、体系内部最接近现代科学方法论的自我定位：
+
+> "命是根据，运是环境；命是内因，运是条件。命理学就是探讨'命'和'运'的相互作用，来揭示和展现一个人丰富多彩的人生起伏轨迹。"
+
+> "作为这个黑箱的输入，是一个人的出生时辰。作为黑箱的输出，是关于这个人的生命潜质和人生历程的描写和预测。"——他将命理学的根本局限首先归结为**"概率性描写"**：这是一种基于经验观察的近似预测，而非神学式的绝对因果决定。
+
+他借用控制论的"黑箱"概念自我定位：不宣称打开黑箱、理解命运的终极机制，只观察输入（出生时空结构）与输出（人生潜质与趋势）之间"不是杂乱无章"的对应关系。
+
+```mermaid
+flowchart LR
+    A["输入<br/>出生时空结构（四柱）"] --> BB{{"黑箱<br/>阴阳五行 · 干支符号模型<br/>不打开机制，只建立对应关系"}}
+    BB --> C["输出<br/>概率性描写<br/>人生潜质与趋势的近似预测"]
+    D["命 = 内因 · 根据<br/>原局潜质（静态）"] -.-> BB
+    E["运 = 外因 · 条件<br/>大运流年（动态）"] -.-> BB
+```
+
+再往下一层，是他给出的可操作方法论——"动态分析"四个递进环节，讲清楚"潜质如何在时间中被激活为具体事件"：
+
+```mermaid
+flowchart TD
+    S1["① 原局基底 · 内因与潜质<br/>强弱 · 调候 · 格局 · 形象四视角定位用神与病点<br/>四柱运限：年1-16 / 月17-32 / 日33-48 / 时49-64+"]
+    S2["② 大运建场 · 外因与环境<br/>大运干支对位当前运限柱<br/>十年场域，为潜质提供生长或压制的外部条件"]
+    S3["③ 岁运交互 · 三大触发机制<br/>应局：伏吟激活原局焦点<br/>引动：禄 / 原身隔空调取资源<br/>干支扭曲：天克地冲，结构对抗"]
+    S4["④ 流年应期 · 状态突变<br/>静遇冲则动 → 事件爆发<br/>动遇合则静 → 问题落定"]
+    S1 --> S2 --> S3 --> S4
+```
+
+原局是潜质（种子），大运是环境（场域），流年是触发（导火索）——三者共同决定"某个具体年份会不会爆发某件事"，而不是原局本身就写死了结局。这套四环节框架，正是本项目工程实现里「运限并轨」「应局」「禄 / 原身引动」几个概念的理论来源，也直接决定了下面所有工程决策：为什么算分要用规则引擎而不是提示词，为什么同一句话不同模型要给出一致结论，为什么低置信问题必须显式标注"不能强断"。
+
+---
+
+## 核心能力
+
+*从这里开始是工程实现——把上面的认识论立场，落到具体的分流、规则与评分逻辑上。*
+
+### 更新历史
+
+**2026-07-24 · 八字分析沉淀为 Agent Skill**
+
+把八字原局决策与问事推演沉淀成可复用的 Agent Skill（见「四柱八字 Agent Skill」），与奇门技能同构：访谈 → `scripts/bazi_cli.cjs` 固定计算 → AI 解读，对话端与网页端共用同一套确定性引擎。
+
+- **计算内核薄封装**：`scripts/bazi_cli.cjs` 复用生产同源 `buildCompleteBaziDetail` + `buildBaziQuestionPrompt`，纯本地零 Key；v1 仅公历、只用主线引擎，不依赖仍在分支的专题派生能力。
+- **封装无损保障**：`scripts/bazi_cli.test.cjs` parity 冒烟测试证明 CLI 输出与直接调引擎逐字段一致，已并入 `npm test`。
+- **skill 级评测起步**：新增 `eval/bazi-skill/`，Phase 0 触发 / 路由（量化出脚本路由启发式仅约五成、印证需 LLM 预判），Phase 1 解读忠实度检测器（解读断语 vs 确定性盘的硬矛盾门禁 = `0`，确定性自证通过）。
+
+**2026-07-09 · BaziEngine 1.8.28 · 原局准确度调优整合版**
+
+把近期格局、旺衰、象法与喜忌调优收束为同一版原局决策说明。完整判断条件、执行顺序与 Mermaid 流程图见 [`docs/bazi-engine-architecture.md`](./docs/bazi-engine-architecture.md)。仍在 preview 阶段的专题派生能力不纳入本次版本。
+
+- **原局决策链统一**：四柱进入引擎后并行识别格局、旺衰与象法，再汇入成格和喜忌链；`L0` 仅保留给会提前返回或覆盖普通链的特殊气势，其余节点按真实执行顺序描述。
+- **格局与成格校准**：补入七杀有制、官杀去留、墓库杂气透干等主格候选；成格用神、相神和 protected / promoted / demoted / invalidated Effects 正式参与喜忌评分。
+- **旺衰与象法校准**：旺衰统一为得令、得地、得助和结构修正的 10 分制；象法增加从格、专旺、化气、两气成象评分，并以有效根、反制力量和破象条件控制特殊覆盖。
+- **喜忌执行顺序明确**：普通链按调候 → 病药 → 通关 → 扶抑 → 格局顺逆 → 成格取用 → 结构 Effects → 特殊救应 → 冲突消解执行；成格属于强先验，印星救主、羊刃驾杀属于窄条件最终纠偏。
+- **经典命例回归**：24 个高置信命例严格加权准确率 `91.1%`，核心准确率 `95.7%`，用神 Top 1 `91.8%`，喜忌方向 `100%`，格局 `92.3%`，象法 `100%`，严重错误 `0`。该集合暂无旺衰真值，不将结果外推为旺衰准确率。
+
+**2026-06-25 · 奇门 Skill 沉淀 + 盘面深度字段调优**
+
+把奇门问事完整流程沉淀为可复用的 Agent Skill（见上「奇门遁甲 Agent Skill」），并补齐评分引擎此前缺失的盘面深度字段，让深度解读有数据可引、不靠模型臆造。引擎细节见 [`docs/qimen-scoring-engine-improvement.md`](./docs/qimen-scoring-engine-improvement.md)。
+
+- **天地盘干生克（`stem_relation`）**：新增 `getStemRelation`，每宫天盘干与地盘干的生克方向（天生地 / 天克地 / 地生天 / 地克天 / 比和）写入 `timingPalaces` 与盘面 prompt，解读不再停留在「符号落在哪个宫」的表层。
+- **格局落宫（`palace_index`）**：`detectNamedFormation` 由返回布尔改为返回落宫索引，有名格命中时记录落宫，解读带出「落某宫」并标注受影响角色，告别悬空的「格名 + 通用象义」。
+- **旺衰修复（`prosperity`）**：新增 `qimenProsperity`，按月令补算九星旺相休囚死并接入 `evaluatePalace` 能量底板。此前生产环境从未喂入旺衰，「结构强度决定成败」的一票否决档位长期空转，本次修复后真正生效。
+- **Skill 报告纪律**：起局时间改为「问事当下」口径（事件时间只作背景）；报告强制落盘并在开头渲染洛书九宫格；必须语义新增 `palace_depth_reading`，要求核心用神宫读到干生克、旺衰与门星神合力的第二层；写作加反填充约束（建议须绑定具体盘面信号、不靠重复结论充字数）。
+
+**2026-06-13 · 问事追问（多轮深挖）**
+
+奇门与八字问事都支持在原解读之上「追问深挖」，新增 `/api/qimen-followup` 与 `/api/bazi-followup` 两个流式接口。
+
+- **一局一解，正本不动**：追问结果以增补子块挂在相关段落下，不覆盖原文、不重排盘、不重新打分——一个局的态势与分数在起局那一刻就固定，追问只换面向、做分层深挖。
+- **深挖 / 新事小判断器**：先用轻量模型判断追问是「同一局深挖」还是「另起一事」；判为新事直接提示重新起局，不浪费大模型。
+- **确定性补算**：追问若需要原盘没算的流年、大运、应期，由判断器按白名单点菜、后端确定性补算，大模型永远只读结果，不做 function calling。
+- **反臆造延续**：补丁模型只能引用前端回传的盘面证据，不得引入新盘面元素，也不得泄漏内部量化指标；修正信息时以「原结论 →（因新情况）调整为…」对照呈现，绝不静默覆盖。
+
+**2026-06-10 · 问事流式输出与自愈重试**
+
+把问事从「一次性出整块 JSON」推进到「边算边出、出错能自愈、模型可按环境切换、文案不臆造也不漏指标」。
+
+- 哨兵分段（`<<<SEC:...>>>`）协议把每个面向用户的散文段独立流式推送，规则引擎产物先上屏，AI 解读逐段补丁到对应卡片槽位。
+- 结构校验硬失败（空流 / 核心段缺失 / `data_json` 不可解析）发 `llm_retry` 事件，前端清空半截内容回骨架，后端非流式重试一次；个别可选字段缺失走静默兜底。
+- title 拆成独立流式段，点明问题类型与核心结论，不再混在结构化 JSON 里重复输出。
+- 新增 `QUESTION_MODEL` 环境变量逐环境配置问事模型（代码默认回退 `gemini-3.1-pro-preview`，当前各环境切 `gemini-3-flash-preview` 验证）。
+- 反臆造与化气格约束：只能引用后端实际盘面 / 四柱字段，严禁脑补不存在的门星神、宫位、生克刑冲合害；禁止「强度74.4」「能量值80」「置信度0.8」等内部数值进入用户文案，改用命理语言定性表达。
+
+**2026-06-06 · 规则可评测、页面同源、历史可回放**
+
+把八字问事从「模型会不会说得像」推进到「规则是否能被评测、页面是否同源展示、历史记录是否能安全回放」。
+
+- 用神 / 目标十神评测纠偏：新增 [`docs/eval/yongshen-eval-2026-06.md`](./docs/eval/yongshen-eval-2026-06.md) 与 [`scripts/eval-yongshen.mjs`](./scripts/eval-yongshen.mjs)，用陆致极命例对照本地规则引擎，逐案标注吻合 / 部分 / 偏差，并记录从儿格、调候为急、印星救主、弃官就印等修复原因。
+- 双轴语义路由：八字问事从 `status/timing/pattern/character` 单轴拆成 `framework`（推演框架）× `target_source`（目标来源）。
+- 八字动态 panel 拾取逻辑：从 `state_report`、`dynamic_report`、`timing_candidates` 拾取目标十神、宫位与岁运引动，与规则引擎同源；低置信链路明确降级。
+- 历史记录兼容：旧 `analysis_mode` 迁移到新双轴语义，存量问事记录继续回放。
+
+**更早的功能演进**
+
+- 运势页从单一日运扩展为日、周、月、年四层视图，可同时看今天、本周、本月和今年的节奏。
+- 周运七日曲线、顺势日 / 谨慎日、周度标签与事业、财运、感情提醒。
+- 月运分数曲线、高低分日、低谷期提示和综合 / 事业 / 财运 / 感情四类白话详批。
+- 年运前后十年流年变化、大运背景、流年十神与岁运关系。
+- 八字档案「断事笔记」记录事业、财务、感情、健康 / 生活状态，让月运解读更贴近现实处境。
+- 奇门结果页保留应验反馈入口，方便回头标记推演准不准、实际走向如何。
+
+### 自动术数分流引擎
+
+这是系统的大脑。每次用户提问后，它会先判断问题属于具体事件、长期结构，还是需要奇门与八字联合推演——这一步本身就是认识论立场的落地：先分清"我在问什么类型的问题"，再决定用什么方法回答，而不是拿一套万能话术套所有问题。
+
+- 通过本地规则和大模型意图判断，自动选择合适的推演框架
+- 覆盖事业职场、求财投资、婚恋感情、健康疾病、交易失物、考试学习、官司法务、风水家宅、孕产子嗣等常见问题域
+- 根据问题类型注入对应的取用神规则、命盘上下文和现实背景
+- 信息不足时会先追问关键条件，不急着给出含混判断
+
+### 奇门遁甲推演
+
+- 实现时家奇门拆补转盘法，包含甲子隐遁、符头定位、九星、八门、八神飞布
+- 自动处理天芮、天禽中宫寄坤、日空、时空、驿马星等盘面信息
+- 按问题域动态切换取用神规则，避免同一套话术套所有问题
+- 输出态势评分、风险信号、破局节点、有利方位、有利时间与行动建议
+- 支持同一局追问深挖：不重排盘、不改分，把追问解读分层挂到相关段落下
+- 支持历史记录回放和应验反馈，用于后续校准
+
+### 奇门遁甲 Agent Skill（对话式推演技能）
+
+把上面这套奇门事件链路沉淀成一个可被 AI Agent 直接调用的技能（[`docs/skills/qimen-dunjia/SKILL.md`](./docs/skills/qimen-dunjia/SKILL.md)），让"对话式排盘解盘"和网页端走同一套确定性规则底座，而不是让大模型凭空编玄学。
+
+- **先访谈、后起局**：正式起局前先做结构化访谈，确认所问事项、起局时间、时区与判断目标，信息不全先追问，不急着断
+- **固定流程不跳步**：结构化访谈 → 问题路由 → 固定起局 → `targetSpec` 取用 → 有界评分 → 应期扫描 → 唯一证据包 → 自由结构报告，全程不绕过引擎自由解盘
+- **四条底线**：盘面事实必须来自脚本；低置信目标可由模型推导但须过白名单与盘面校验；模型目标只能有界参与评分（带权、有上限）；报告结构自由但关键语义（直接答案、取用逻辑、证据、风险、应期、建议、限制）不得遗漏
+- **问事起局口径**：时家奇门以「问事当下」起局（北京时间、脚本解析时辰），用户提到的事件时间只作事项背景，不当起局时间
+- **报告规范**：开头渲染洛书九宫格，命中有名格按落宫展开，逐宫读到旺衰与天地盘干生克，结尾附推演边界说明
+
+### 四柱八字 Agent Skill（对话式命理分析技能）
+
+把网页端那套八字原局决策与问事推演，沉淀成一个可被 AI Agent 直接调用的技能（[`.claude/skills/bazi/SKILL.md`](./.claude/skills/bazi/SKILL.md)），与奇门同构——「访谈 → 脚本固定计算 → AI 解读」，不让大模型心算排盘。
+
+- **薄封装、同源计算**：`scripts/bazi_cli.cjs` 复用生产引擎的 `buildCompleteBaziDetail` 与问事 pipeline（`buildBaziQuestionPrompt`），一次调用即输出四柱排盘、原局决策（格局 / 旺衰 / 喜忌五神）与动态问事（用神落点 / 原局状态 / 岁运引动 / 应期候选年）的结构化 JSON
+- **纯本地零 Key**：计算内核只依赖 Node 与 `lunar-javascript`，不联网、不需 API Key——接入的 Agent 自己充当负责解读的大模型
+- **访谈先行、路由预判**：先确认公历生辰、性别、所问事项与时间范围，信息不全先追问；由 Agent 预判分析类型（timing / status / pattern / character）再交脚本，缺省则脚本启发式兜底
+- **口径对齐生产**：v1 仅收公历、夜子时算当日，与网页端引擎同一套判据；只用主线引擎，不含仍在分支的专题派生能力
+- **分层可验证**：`scripts/bazi_cli.test.cjs` 用 parity 测试锁定「封装 == 引擎、无损」并挂进 `npm test`；[`eval/bazi-skill/`](./eval/bazi-skill/) 提供 skill 级评测方案（触发准确度、路由预判、解读忠实度——解读断语与确定性盘的硬矛盾门禁为 `0`）
+
+### 全息八字系统
+
+- 支持阳历、农历、四柱反查三种录入方式
+- 支持出生地搜索、经度、平太阳时、真太阳时修正
+- 展开四柱干支、十神、藏干、十二长生、纳音、旬空亡、神煞与特殊格局
+- 本地规则引擎负责日主强弱、喜忌神、格局解读和生克合化关系
+- 提供 [`BaziEngine 原局决策架构`](./docs/bazi-engine-architecture.md)，明确格局、旺衰、象法、成格和喜忌五神的执行顺序与覆盖关系
+- 提供五行力量条、打分明细、八字问答、解读反馈校准与断事笔记
+- 支持基于同一命盘继续追问深挖，新信息走「原结论 → 调整为…」对照，不静默覆盖
+- 支持大运、流年、流月三级联动，辅助理解命盘与当下时间的关系
+
+### 运势评分系统
+
+运势页从单一日运扩展为日、周、月、年四层结构：
+
+| 维度 | 功能 |
+| --- | --- |
+| 日运 | 计算每日分数，展示洞察卡片、时间线、吉时与应对建议 |
+| 周运 | 按自然周生成七日曲线、周度标签、关键日期、节气转折和行动提醒 |
+| 月运 | 按节气计算流月，展示月度曲线、高低分日、低谷期和分层命中依据 |
+| 年运 | 生成前后十年区间，叠加大运、流年、原局关系、神煞信号与分层命中依据 |
+
+月运详批支持综合、事业、财运、感情四个维度。用户可以填写长期基调与本月现实背景，系统会把这些上下文注入解读。
+
+### 推演工程化看板
+
+- 将复杂推演工作流拆解为清晰角色和步骤
+- 提供规则、缓存、引擎状态与推演过程的集中观察视图
+- 适合高级用户或管理员排查推演链路、观察系统状态
+
+### 访客、认证与商业化
+
+- 支持邮箱登录、Google 登录和密码重设
+- 访客模式可体验一次奇门提问、添加一个本地八字档案、查看今日日运分数
+- 访客事件会过滤姓名、生日、问题文本等隐私字段
+- 登录与访客状态下展示底部导航，密码重设页自动隐藏主导航
+
+---
+
+## 推演架构
+
+*结构如何在代码里落地——每一步分流，都是"先分清问题类型，再选方法"这条认识论原则的具体实现。*
+
+### 顶层分流
+
+```text
+用户提问
+  │
+  └─► 术数分流引擎（divinationRouter）
+        │
+        ├─► 奇门遁甲：具体事件、短期决策、成败应期
+        ├─► 八字命理：命局结构、长期趋势、行业适配
+        ├─► 联合推演：命局背景 × 当前事件
+        └─► 信息追问：补全关键条件后再进入推演
+--- FILES ---
+docs/github-repos/oceanjustinlin_qimen/.agents/README.md
+docs/github-repos/oceanjustinlin_qimen/.agents/config.toml
+docs/github-repos/oceanjustinlin_qimen/.claude/launch.json
+docs/github-repos/oceanjustinlin_qimen/.gitignore
+docs/github-repos/oceanjustinlin_qimen/.gitmodules
+docs/github-repos/oceanjustinlin_qimen/AGENTS.md
+docs/github-repos/oceanjustinlin_qimen/CLAUDE.md
+docs/github-repos/oceanjustinlin_qimen/LICENSE
+docs/github-repos/oceanjustinlin_qimen/README.md
+docs/github-repos/oceanjustinlin_qimen/SETUP.md
+docs/github-repos/oceanjustinlin_qimen/api/bazi.js
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js
+docs/github-repos/oceanjustinlin_qimen/archive/demo.html
+docs/github-repos/oceanjustinlin_qimen/archive/old_bazi.html
+docs/github-repos/oceanjustinlin_qimen/archive/old_index.html
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-card-structure-design.md
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-dynamic-analysis-theory.md
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-engine-architecture.md
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-original-state-assessment-prd.md
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-prompt-assembly-prd.md
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-question-card-current-state-research.md
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-target-element-resolution-prd.md
+docs/github-repos/oceanjustinlin_qimen/docs/birthplace-data.md
+docs/github-repos/oceanjustinlin_qimen/docs/cloudflare-migration.md
+docs/github-repos/oceanjustinlin_qimen/docs/eval/yongshen-eval-2026-06.md
+docs/github-repos/oceanjustinlin_qimen/docs/ge-tag-demo.html
+docs/github-repos/oceanjustinlin_qimen/docs/langfuse-migration-plan.md
+docs/github-repos/oceanjustinlin_qimen/docs/langfuse-phase0-execution-plan.md
+docs/github-repos/oceanjustinlin_qimen/docs/langfuse-prompt-inventory.md
+docs/github-repos/oceanjustinlin_qimen/docs/model-routing-product-plan.md
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/bazi-ui-prototype.html
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/qimen-dailyart-demo.html
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-scoring-engine-improvement.md
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-yongshen-todos.md
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.zh-TW.md
+docs/github-repos/oceanjustinlin_qimen/docs/sql/admin-rls.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/bazi-birthplace-solar-time-migration.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/bazi-calibration-migration.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/bazi-llm-engine-migration.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/bazi-profile-usage.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/bazi-question-audit.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/bazi-question-reporting.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/compatibility-sessions-migration.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/followup-audit.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/guest-events.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/qimen-feedback.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/qimen-followup-update-policy.sql
+docs/github-repos/oceanjustinlin_qimen/docs/sql/qimen-question-audit.sql
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/PLAN.md
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/RESULTS.md
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/classifiers.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/extract.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/faithfulness.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/llm.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/phase1-fixtures.js
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/reader.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/route-cases.js
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/run-phase1.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/run.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/triggering-cases.js
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/PLAN.md
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/RESULTS.md
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/gold-cases.js
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/holdout-cases.js
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/report.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/run.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/scorer.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/scorer.test.mjs
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/validate-pillars.mjs
+docs/github-repos/oceanjustinlin_qimen/fixtures/bazi-image-cases/README.md
+docs/github-repos/oceanjustinlin_qimen/fixtures/bazi-image-cases/follow-wealth-formed.json
+docs/github-repos/oceanjustinlin_qimen/fixtures/classical-golden-cases/README.md
+docs/github-repos/oceanjustinlin_qimen/fixtures/classical-golden-cases/qiongtong-high-confidence.json
+docs/github-repos/oceanjustinlin_qimen/fixtures/classical-golden-cases/sanming-high-confidence.json
+docs/github-repos/oceanjustinlin_qimen/fixtures/classical-golden-cases/sanming-patterns-high-confidence.json
+docs/github-repos/oceanjustinlin_qimen/fixtures/classical-golden-cases/ziping-high-confidence.json
+docs/github-repos/oceanjustinlin_qimen/functions/_middleware.js
+docs/github-repos/oceanjustinlin_qimen/functions/auth/_shared.js
+docs/github-repos/oceanjustinlin_qimen/functions/auth/me.js
+docs/github-repos/oceanjustinlin_qimen/functions/auth/set.js
+docs/github-repos/oceanjustinlin_qimen/functions/auth/signout.js
+docs/github-repos/oceanjustinlin_qimen/index.html
+docs/github-repos/oceanjustinlin_qimen/lib/BaziConstants.js
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziDynamicAssessor.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziDynamicAssessor.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziPatternStatements.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziQuestionCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziQuestionCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziRelationScanner.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziSourceBackedStatements.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziStateAssessor.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziStateAssessor.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziTargetElement.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateDailyScore.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateTiaohouRatio.js
+docs/github-repos/oceanjustinlin_qimen/lib/classicalGoldCases.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/core.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/relationStrength.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/relations.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/shensha.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/tiaohou.js
+docs/github-repos/oceanjustinlin_qimen/lib/cors.js
+docs/github-repos/oceanjustinlin_qimen/lib/cors.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/divinationCategories.js
+docs/github-repos/oceanjustinlin_qimen/lib/divinationCategories.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/divinationRouter.js
+docs/github-repos/oceanjustinlin_qimen/lib/divinationRouter.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/flowMonth.js
+docs/github-repos/oceanjustinlin_qimen/lib/flowMonth.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneAnnualCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneContextNotes.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneDailyCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneDailyCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyInterpretationCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyInterpretationCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneWeeklyCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneWeeklyCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/normalizeShenProfile.js
+docs/github-repos/oceanjustinlin_qimen/lib/normalizeShenProfile.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/panTime.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenLlmOutput.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenLlmOutput.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPipeline.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPipeline.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPolarityRules.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPolarityRules.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenProsperity.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenProsperity.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenScoringEngine.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenScoringEngine.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenTimingRules.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenTimingRules.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenYongshenRules.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenYongshenRules.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/sanMingPatternResolver.js
+docs/github-repos/oceanjustinlin_qimen/lib/sanMingPatternResolver.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/siziSummary.js
+docs/github-repos/oceanjustinlin_qimen/lib/siziSummary.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/wenshiFollowup.js
+docs/github-repos/oceanjustinlin_qimen/lib/wenshiFollowup.test.js
+docs/github-repos/oceanjustinlin_qimen/mock/bazi-dingchou-xinhai-wusi-gengshen.json
+docs/github-repos/oceanjustinlin_qimen/mock/fortune-daily-interpretation.json
+docs/github-repos/oceanjustinlin_qimen/mock/fortune-daily.json
+docs/github-repos/oceanjustinlin_qimen/output/playwright/bazi-form-desktop.png
+docs/github-repos/oceanjustinlin_qimen/output/playwright/bazi-form-mobile.png
+docs/github-repos/oceanjustinlin_qimen/output/playwright/feedback-page-mobile.png
+docs/github-repos/oceanjustinlin_qimen/output/playwright/feedback-preview-mobile.png
+docs/github-repos/oceanjustinlin_qimen/output/playwright/feedback-preview.png
+docs/github-repos/oceanjustinlin_qimen/package-lock.json
+docs/github-repos/oceanjustinlin_qimen/package.json
+docs/github-repos/oceanjustinlin_qimen/public/_redirects
+docs/github-repos/oceanjustinlin_qimen/public/data/birthplaces.mjs
+docs/github-repos/oceanjustinlin_qimen/public/images/apple-icon-180.png
+docs/github-repos/oceanjustinlin_qimen/public/images/apple-icon.png
+docs/github-repos/oceanjustinlin_qimen/public/images/bazi_1.jpg
+docs/github-repos/oceanjustinlin_qimen/public/images/favicon-32.png
+docs/github-repos/oceanjustinlin_qimen/public/images/home.jpg
+docs/github-repos/oceanjustinlin_qimen/public/images/icon-192.png
+docs/github-repos/oceanjustinlin_qimen/public/images/icon-512.png
+docs/github-repos/oceanjustinlin_qimen/public/images/menu_1.jpg
+docs/github-repos/oceanjustinlin_qimen/public/images/sample_1.jpg
+docs/github-repos/oceanjustinlin_qimen/public/images/sample_2.jpg
+docs/github-repos/oceanjustinlin_qimen/public/m3-mockup.html
+docs/github-repos/oceanjustinlin_qimen/public/manifest.webmanifest
+docs/github-repos/oceanjustinlin_qimen/public/robots.txt
+docs/github-repos/oceanjustinlin_qimen/public/sitemap.xml
+docs/github-repos/oceanjustinlin_qimen/public/utils/birthplaceSearch.mjs
+docs/github-repos/oceanjustinlin_qimen/public/wrapped.html
+docs/github-repos/oceanjustinlin_qimen/scripts/backfill_subject_snapshot_pillars.sql
+docs/github-repos/oceanjustinlin_qimen/scripts/bazi_cli.cjs
+docs/github-repos/oceanjustinlin_qimen/scripts/bazi_cli.test.cjs
+docs/github-repos/oceanjustinlin_qimen/scripts/eval-classical-goldcases.mjs
+docs/github-repos/oceanjustinlin_qimen/scripts/eval-yongshen.mjs
+docs/github-repos/oceanjustinlin_qimen/scripts/generate_birthplaces_from_geonames.mjs
+docs/github-repos/oceanjustinlin_qimen/scripts/prerender.mjs
+docs/github-repos/oceanjustinlin_qimen/scripts/qimen_chart_check.sh
+docs/github-repos/oceanjustinlin_qimen/scripts/qimen_grid_check.sh
+docs/github-repos/oceanjustinlin_qimen/scripts/sync-langfuse-prompts.mjs
+docs/github-repos/oceanjustinlin_qimen/scripts/test_analysis.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_bazi.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_static_career.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_static_marriage.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_static_marriage_male.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_static_wealth.js
+docs/github-repos/oceanjustinlin_qimen/src/App.updateNotice.test.mjs
+docs/github-repos/oceanjustinlin_qimen/src/App.vue
+docs/github-repos/oceanjustinlin_qimen/src/auth/cookieSession.mjs
+docs/github-repos/oceanjustinlin_qimen/src/auth/googleOAuth.mjs
+docs/github-repos/oceanjustinlin_qimen/src/auth/googleOAuth.test.mjs
+===== ChesterRa_mingpan =====
+# 命盘 MCP Server
+
+[![Version](https://img.shields.io/badge/version-0.1.3-blue.svg)](https://github.com/ChesterRa/mingpan)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
+
+**命盘（Mingpan）** 是一个中华传统术数 MCP 服务，为 Claude 等 AI 应用提供命理排盘与占卜起卦的计算能力。
+
+## 特性
+
+-  **MCP 原生**：无缝集成 Claude Desktop 及 Claude Code
+- 🌏 **中文输出**：以简体为主，术语保持传统
+- 📊 **结构化文本**：便于 AI 理解与分析的格式
+
+## 配置方法
+
+### Claude Desktop
+
+找到配置文件并添加以下内容：
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "mingpan": {
+      "command": "npx",
+      "args": ["-y", "mingpan"]
+    }
+  }
+}
+```
+
+### Claude Code
+
+```bash
+claude mcp add mingpan -- npx -y mingpan
+```
+
+### 验证
+
+配置完成后重启客户端，然后尝试：
+
+> 请帮我排一个八字命盘，1992年4月12日7点30分，男性
+
+> 请帮我起一个奇门遁甲时盘，2024年6月21日10点
+
+## 工具列表
+
+### 命理排盘
+
+命理学基于出生时间推算人生运势，属于「命」的范畴。
+
+#### 八字命理
+
+| 工具           | 说明                                       |
+| -------------- | ------------------------------------------ |
+| `bazi_basic`   | 八字命盘排盘（四柱、藏干、十神、五行力量） |
+| `bazi_dayun`   | 大运列表（十年一运）                       |
+| `bazi_liunian` | 流年列表（指定年份范围）                   |
+| `bazi_liuyue`  | 流月列表（节气月，立春起算）               |
+| `bazi_liuri`   | 流日列表（指定月份内每日）                 |
+
+#### 紫微斗数
+
+| 工具             | 说明                                     |
+| ---------------- | ---------------------------------------- |
+| `ziwei_basic`    | 紫微命盘排盘（十二宫、主星、辅星、四化） |
+| `ziwei_daxian`   | 大限列表（十年一限）                     |
+| `ziwei_xiaoxian` | 小限列表（每年一宫）                     |
+| `ziwei_liunian`  | 流年列表（指定年份范围）                 |
+| `ziwei_liuyue`   | 流月列表（农历月）                       |
+| `ziwei_liuri`    | 流日列表（农历日）                       |
+
+### 占卜起卦
+
+占卜术基于起卦时间或随机数推演卦象，属于「卜」的范畴。
+
+#### 六爻
+
+| 工具           | 说明                                                |
+| -------------- | --------------------------------------------------- |
+| `liuyao_basic` | 六爻排盘（本卦/变卦、纳甲、六亲、六神、世应、旬空） |
+
+六爻输入为六个爻值（自下而上）：
+- 6 = 老阴（动爻，阴变阳）
+- 7 = 少阳（静爻）
+- 8 = 少阴（静爻）
+- 9 = 老阳（动爻，阳变阴）
+
+#### 梅花易数
+
+| 工具           | 说明                                     |
+| -------------- | ---------------------------------------- |
+| `meihua_basic` | 梅花易数排盘（本卦/变卦/互卦、体用分析） |
+
+支持两种起卦方式：
+- 时间起卦：根据农历年月日时计算
+- 数字起卦：根据两个数字计算
+
+#### 大六壬
+
+| 工具             | 说明                                             |
+| ---------------- | ------------------------------------------------ |
+| `daliuren_basic` | 大六壬排盘（天地盘、四课、三传、十二天将、神煞） |
+
+大六壬为三式之首，需输入节气、农历月、日干支、时干支。
+
+#### 奇门遁甲
+
+| 工具            | 说明 |
+| --------------- | ---- |
+| `qimen_basic`   | 奇门遁甲排盘（九宫布局、三奇六仪、八门九星八神、格局判断） |
+| `qimen_yongshen`| 奇门用神分析（按事类选取用神，含主客、旺衰、空亡、入墓等） |
+| `qimen_zeri`    | 奇门择日（指定日期区间内筛选相对更佳的时机） |
+
+奇门遁甲为三式之一，盘式与规则主要参考张志春《神奇之门》，支持：时盘/日盘/月盘/年盘、转盘/飞盘、拆补法/茅山法。
+
+更多说明见：`docs/qimen-yongshen-guide.md`。
+
+## 输入参数
+
+### 命理工具（八字/紫微）
+
+| 参数      | 类型    | 必填 | 说明                         |
+| --------- | ------- | ---- | ---------------------------- |
+| year      | number  | ✓    | 出生年份（1900-2100）        |
+| month     | number  | ✓    | 出生月份（1-12）             |
+| day       | number  | ✓    | 出生日期（1-31）             |
+| hour      | number  | ✓    | 出生时辰（0-23）             |
+| minute    | number  |      | 出生分钟（0-59），默认 0     |
+| gender    | string  | ✓    | `male` / `female`            |
+| longitude | number  |      | 出生地经度，用于真太阳时校正 |
+| isLunar   | boolean |      | 是否为农历输入，默认 false   |
+
+### 占卜工具（六爻/梅花/大六壬）
+
+占卜工具使用起卦时间而非出生时间，具体参数请参考各工具说明。
+
+### 奇门遁甲工具
+
+| 参数         | 类型    | 必填 | 说明 |
+| ------------ | ------- | ---- | ---- |
+| year         | number  | ✓    | 起盘年份（1900-2100） |
+| month        | number  | ✓    | 起盘月份（1-12） |
+| day          | number  | ✓    | 起盘日期（1-31） |
+| hour         | number  | ✓    | 起盘时辰（0-23） |
+| minute       | number  |      | 分钟（0-59），默认 0 |
+| isLunar      | boolean |      | 是否为农历输入，默认 false |
+| panType      | string  |      | `时盘` / `日盘` / `月盘` / `年盘`，默认 `时盘` |
+| panStyle     | string  |      | `转盘` / `飞盘`，默认 `转盘` |
+| zhiRunMethod | string  |      | `chaibu`（拆补法）/ `maoshan`（茅山法），默认 `chaibu` |
+
+## 月份基准说明
+
+| 系统 | 月份基准           | 日期基准 |
+| ---- | ------------------ | -------- |
+| 八字 | 节气月（立春起算） | 公历日   |
+| 紫微 | 农历月（初一起算） | 农历日   |
+
+## 开发
+
+```bash
+git clone https://github.com/ChesterRa/mingpan.git
+cd mingpan
+npm install
+npm run build
+npm run dev  # 监听变化
+```
+
+## 依赖
+
+| 库                          | 用途             |
+| --------------------------- | ---------------- |
+| `@modelcontextprotocol/sdk` | MCP 协议实现     |
+| `lunar-javascript`          | 农历/公历转换    |
+| `iztro`                     | 紫微斗数计算引擎 |
+| `zod`                       | 输入参数校验     |
+
+## 路线图
+
+- [x] 八字基础排盘与时运列表
+- [x] 紫微基础排盘与时运列表
+- [x] 六爻排盘
+- [x] 梅花易数排盘
+- [x] 大六壬排盘
+- [x] 奇门遁甲排盘
+
+## 许可证
+
+Apache License 2.0
+--- FILES ---
+docs/github-repos/ChesterRa_mingpan/.github/workflows/ci.yml
+docs/github-repos/ChesterRa_mingpan/.github/workflows/release.yml
+docs/github-repos/ChesterRa_mingpan/.gitignore
+docs/github-repos/ChesterRa_mingpan/.npmignore
+docs/github-repos/ChesterRa_mingpan/LICENSE
+docs/github-repos/ChesterRa_mingpan/README.md
+docs/github-repos/ChesterRa_mingpan/docs/fortune-list-api-design.md
+docs/github-repos/ChesterRa_mingpan/docs/qimen-yongshen-guide.md
+docs/github-repos/ChesterRa_mingpan/docs/roadmap-liuyao-meihua-timezone.md
+docs/github-repos/ChesterRa_mingpan/package-lock.json
+docs/github-repos/ChesterRa_mingpan/package.json
+docs/github-repos/ChesterRa_mingpan/scripts/fix-imports.sh
+docs/github-repos/ChesterRa_mingpan/src/index.ts
+docs/github-repos/ChesterRa_mingpan/src/output/daliurenTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/fortuneTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/listTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/liuyaoTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/meihuaTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/qimenTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/shared/logger.ts
+docs/github-repos/ChesterRa_mingpan/src/shared/types.ts
+docs/github-repos/ChesterRa_mingpan/src/types/lunar-javascript.d.ts
+docs/github-repos/ChesterRa_mingpan/src/utils/ageCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/utils/timeNormalization.ts
+docs/github-repos/ChesterRa_mingpan/test/sample-calculation.ts
+docs/github-repos/ChesterRa_mingpan/tsconfig.json
+docs/github-repos/ChesterRa_mingpan/vitest.config.ts
+===== funan-tech-folks_nodejs-qmdj =====
+zulu-api-service
+--- FILES ---
+docs/github-repos/funan-tech-folks_nodejs-qmdj/.gitignore
+docs/github-repos/funan-tech-folks_nodejs-qmdj/LICENSE
+docs/github-repos/funan-tech-folks_nodejs-qmdj/LICENSE.md
+docs/github-repos/funan-tech-folks_nodejs-qmdj/README.md
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/controllers/qmdjMgrController.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/app.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/datastores.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/env/development.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/env/production.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/env/stage.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/error-handler-orientdb.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-env.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/package-lock.json
+docs/github-repos/funan-tech-folks_nodejs-qmdj/package.json
+docs/github-repos/funan-tech-folks_nodejs-qmdj/routes/index.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/routes/qmdj.js
+===== MrJelly_QiMenDunJia =====
+# 🌌 QiMenDunJia (奇门遁甲)
+
+[![npm version](https://img.shields.io/npm/v/qimendunjia-standalone.svg?style=flat-square)](https://www.npmjs.com/package/qimendunjia-standalone)
+[![license](https://img.shields.io/npm/l/qimendunjia-standalone.svg?style=flat-square)](https://github.com/your-username/QiMenDunJia/blob/main/LICENSE)
+[![TypeScript supported](https://img.shields.io/badge/TypeScript-Supported-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
+[![NPM downloads](https://img.shields.io/npm/dm/qimendunjia-standalone.svg?style=flat-square)](https://www.npmjs.com/package/qimendunjia-standalone)
+
+A modern, highly optimized, and modular **TypeScript Qi Men Dun Jia (奇门遁甲)** chart calculation library.
+
+This project decouples calendar/astronomical implementations from core Qimen logic. All calendar abilities are encapsulated in a unified adapter layer. The core chart engine consumes only a standardized `CalendarSnapshot` object, allowing the library to be distributed in three distinct packages to balance accuracy, bundle size, and dependency strategies.
+
+---
+
+## 📦 Packages & Distribution
+
+We distribute the library in three flavors on NPM. Every package compiles to a zero-dependency (or minimal-dependency) bundle supporting both **ES Module (ESM)** and **CommonJS (CJS)**, complete with rich TypeScript declarations (`.d.ts`).
+
+| NPM Package                   | Solar Term Engine                     | Runtime Dependencies | Bundle Size     | Best For                                                                               |
+| :---------------------------- | :------------------------------------ | :------------------- | :-------------- | :------------------------------------------------------------------------------------- |
+| [`qimendunjia-lite`](#)       | Lightweight analytical solar position | **Zero**             | `~12 KB`        | Bundle-size sensitive environments, web apps, apps needing approximate solar terms.    |
+| [`qimendunjia-standalone`](#) | Ported ShouXing Astronomical Calendar | **Zero**             | `~68 KB`        | Production applications needing accurate solar term boundary times without heavy deps. |
+| [`qimendunjia-tyme4ts`](#)    | Backed by `tyme4ts` library           | `tyme4ts`            | `~6 KB` (+ dep) | Projects already using `tyme4ts` or needing bit-perfect calendar alignment.            |
+
+### Installation
+
+Choose the package that fits your use case and install it via your package manager:
+
+```bash
+# To install the standalone version (Recommended for most apps):
+npm install qimendunjia-standalone
+
+# Or install the lite or tyme4ts variant:
+npm install qimendunjia-lite
+npm install qimendunjia-tyme4ts
+```
+
+---
+
+## 🚀 Quick Start
+
+All three packages expose an identical public API surface. You can seamlessly switch between variants by simply changing the import package name.
+
+```typescript
+import { calculate, calculateBrief } from "qimendunjia-standalone";
+
+// Initialize date (e.g. Summer Solstice, June 22, 2026 at 03:00:15 AM)
+const date = new Date("2026-06-22T03:00:15+08:00");
+
+// 1. Calculate the complete Qimen Dunjia Chart
+const chart = calculate(date);
+if ("error" in chart) {
+  console.error("Failed to calculate chart:", chart.message);
+} else {
+  console.log("--- Si Zhu (四柱) ---");
+  console.log(chart.info.siZhu); // { year: '丙午', month: '甲午', day: '丁卯', time: '壬寅' }
+
+  console.log("\n--- Ju Shu (局数) ---");
+  console.log(chart.info.ju); // "阴遁九局 (上元)"
+
+  console.log("\n--- Zhi Fu & Zhi Shi (值符/值使) ---");
+  console.log(chart.info.fu); // "值符：天心"
+  console.log(chart.info.shi); // "值使：开门"
+}
+
+// 2. Get a quick summary brief (lightweight & fast)
+const brief = calculateBrief(date);
+console.log(brief.info);
+/*
+{
+  jieqi: '节气：夏至',
+  ju: '阴遁九局 (上元)',
+  fu: '值符：天心',
+  shi: '值使：开门'
+}
+*/
+```
+
+---
+
+## 🛠️ Advanced Configuration
+
+### 🌖 Late Zi Hour Mode (晚子时)
+
+Standard Qimen rules differentiate between "Early Zi Hour" (早子时, 00:00 - 01:00) and "Late Zi Hour" (晚子时, 23:00 - 24:00). You can customize whether Late Zi Hour is calculated as the **same day** or the **next day** using `lateZiHourMode`:
+
+```typescript
+// Same Day Mode (Default) - 23:00 is grouped as the same calendar day
+const sameDayChart = calculate(new Date("2026-05-27T23:30:00+08:00"), {
+  lateZiHourMode: "same-day", // day: '辛丑', time: '庚子'
+});
+
+// Next Day Mode - 23:00 advances the day pillar (日柱) to the next day
+const nextDayChart = calculate(new Date("2026-05-27T23:30:00+08:00"), {
+  lateZiHourMode: "next-day", // day: '壬寅', time: '庚子'
+});
+```
+
+### 📅 Custom Calendar Snapshot
+
+If you want to plug in your own custom astronomical calculations, high-precision ephemerides, or local timezone/apparent solar time corrections, you can bypass the built-in calendar adapter entirely:
+
+```typescript
+import { calculateFromSnapshot } from "qimendunjia-standalone";
+import type { CalendarSnapshot } from "qimendunjia-standalone";
+
+// Create a custom snapshot representing the time state
+const mySnapshot: CalendarSnapshot = {
+  solarDate: "2026年6月22日",
+  lunarDate: "农历丙午年五月初八",
+  solarYear: 2026,
+  julianDay: 2461213.29184,
+  winterSolsticeJulianDay: 2461031.543,
+  summerSolsticeJulianDay: 2461213.183,
+  nextWinterSolsticeJulianDay: 2461396.701,
+  solarTermName: "夏至",
+  yearGanZhi: "丙午",
+  monthGanZhi: "甲午",
+  dayGanZhi: "丁卯",
+  dayXun: "甲子",
+  monthXun: "甲辰",
+  yearXun: "甲辰",
+  hours: [
+    { ganZhi: "庚子", xun: "甲午" },
+    { ganZhi: "辛丑", xun: "甲午" },
+    { ganZhi: "壬寅", xun: "甲午" },
+    // ... all 13 double-hours (including late Zi)
+  ],
+};
+
+// Pass the snapshot directly to the Qimen calculator
+const chart = calculateFromSnapshot(
+  mySnapshot,
+  new Date("2026-06-22T03:00:15+08:00"),
+);
+console.log(chart.info.ju); // "阴遁九局 (上元)"
+```
+
+---
+
+## 📖 Public API Signature Reference
+
+Every package exports the following robust API methods:
+
+```typescript
+/** Core Calculation **/
+function calculate(
+  date: Date,
+  options?: QimenOptions,
+): QimenResult | QimenErrorResult;
+function calculateBrief(
+  date: Date,
+  options?: QimenOptions,
+): QimenBriefResult | QimenErrorResult;
+
+/** Snapshot Calculators **/
+function createCalendarSnapshot(
+  date: Date,
+  options?: CalendarOptions,
+): CalendarSnapshot;
+function calculateFromSnapshot(
+  snapshot: CalendarSnapshot,
+  date: Date,
+  options?: QimenOptions,
+): QimenResult;
+function calculateBriefFromSnapshot(
+  snapshot: CalendarSnapshot,
+  date: Date,
+  options?: QimenOptions,
+): QimenBriefResult;
+
+/** Helper Functions **/
+function calculateJuShu(
+  snapshot: CalendarSnapshot,
+  method?: QimenMethod,
+  hourIndex?: number,
+): JuShu;
+function getSolarTerms(
+  year: number,
+  options?: CalendarOptions,
+): SolarTermInfo[];
+function getSolarTermName(date: Date, options?: CalendarOptions): string;
+function getHourIndex(hour?: number, options?: CalendarOptions): number;
+function getJulianDay(date: Date): number;
+function isIntlChineseCalendarSupported(): boolean;
+
+/** Distribution Utilities **/
+function getDiPan(type: DunType, num: number): PalaceMap;
+function distributeJiuXing(
+  diPan: PalaceMap,
+  xunShou: string,
+  shiGan?: string,
+  type?: DunType,
+): unknown;
+function distributeBaMen(
+  zhiFuGong: Palace,
+  shiGan: string,
+  diPan: PalaceMap,
+  type?: DunType,
+): unknown;
+function distributeBaShen(zhiFuGong: Palace, type?: DunType): PalaceMap;
+```
+
+---
+
+## 📡 Runtime Lunar Formatting & ICU support
+
+For `lite` and `standalone` packages, the library relies on the runtime environment's native Intl APIs (`Intl.DateTimeFormat('zh-CN-u-ca-chinese')`) to format traditional Chinese lunar dates (e.g. `农历丙午年五月初八`).
+
+- **Supported Environments**: Modern browsers (Chrome, Safari, Firefox, Edge) and Node.js instances compiled with complete ICU support.
+- **Fallbacks**: If you are deploying to a constrained environment (such as WeChat Mini-Programs, thin Docker containers, or old webviews lacking Chinese ICU data), you can check support using `isIntlChineseCalendarSupported()`. When unsupported, `lunarDate` defaults to an empty string `""` without affecting any Qimen stems, branches, terms, or chart distributions.
+- **Forced Consistency**: If you require strict, multi-platform runtime parity for traditional lunar dates, we highly recommend using [`qimendunjia-tyme4ts`](#) which bundles tyme4ts calendar structures.
+
+---
+
+## 💻 Developer Guide & Scripts
+
+This library is structured as an extremely neat TypeScript monorepo workspace.
+
+### Core Scripts
+
+```bash
+# 1. Install all monorepo dependencies
+pnpm install
+
+# 2. Run TypeScript compile and verify type safety
+pnpm typecheck
+
+# 3. Execute the full Jest/Node automated test suite
+pnpm test
+
+# 4. Compile and bundle lite, standalone, and tyme4ts packages
+pnpm build:packages
+```
+
+---
+
+## 📄 License & Attribution
+
+- This project is open-source and licensed under the **MIT License**.
+- The high-precision astronomical algorithms inside the standalone adapter are ported and adapted from **ShouXing Astronomical Calendar (寿星天文历)**, with structures aligned to `tyme4ts` (Copyright (c) 2024 6tail, MIT License). We extend our deepest gratitude to 6tail and the contributors of tyme4ts for their excellent architectural designs.
+--- FILES ---
+docs/github-repos/MrJelly_QiMenDunJia/.gitignore
+docs/github-repos/MrJelly_QiMenDunJia/LICENSE
+docs/github-repos/MrJelly_QiMenDunJia/README.md
+docs/github-repos/MrJelly_QiMenDunJia/package.json
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-lite/LICENSE
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-lite/README.md
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-lite/package.json
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-standalone/LICENSE
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-standalone/README.md
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-standalone/package.json
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-tyme4ts/LICENSE
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-tyme4ts/README.md
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-tyme4ts/package.json
+docs/github-repos/MrJelly_QiMenDunJia/pnpm-lock.yaml
+docs/github-repos/MrJelly_QiMenDunJia/pnpm-workspace.yaml
+docs/github-repos/MrJelly_QiMenDunJia/scripts/build-packages.mjs
+docs/github-repos/MrJelly_QiMenDunJia/scripts/inspect-calendar.mjs
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/bashen.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/dipan.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/index.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts
+docs/github-repos/MrJelly_QiMenDunJia/tests/calendar.test.mjs
+docs/github-repos/MrJelly_QiMenDunJia/tests/qimen.test.mjs
+docs/github-repos/MrJelly_QiMenDunJia/tsconfig.json
+===== YHN282615109_Digital-Qi-Men-Dun-Jia-Arrangement-System-python-v1.0 =====
+# 数字奇门遁甲排盘系统（Python版）
+
+[![license](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
+[![platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-brightgreen.svg)]()
+
+《数字奇门遁甲排盘系统》是一款基于 Python + Tkinter 开发的时家奇门遁甲排盘工具。软件采用纯内置算法，不依赖外部天文库，能够精准推算 1900–2100 年间的任意公历时间所对应的奇门格局。
+
+## ✨ 软件特色
+
+- **纯算法驱动**：不依赖任何外部 API 或数据库，所有排盘逻辑均由代码独立完成
+- **百年精准**：支持 1900–2100 年时间范围，内置 2026、2044 年精准节气表
+- **数字奇门**：独创六位数字盘（地盘、天盘、星、门、神），直观简洁
+- **三页布局**：排盘结果、析盘内容、断局分析分页展示，功能清晰
+- **解析库丰富**：内置十干克应、三奇到宫、星门克应等数百条格局注解
+
+## 📱 使用方法
+
+1. **运行软件**：`python qimen_dunjia.py`
+2. **输入时间**：填写公历年份、月份、日期、时分
+3. **开始排盘**：点击“开始排盘”按钮
+4. **查看结果**：
+   - 排盘结果页：四柱、局数、九宫详细信息
+   - 析盘内容页：各种格局克应分析
+   - 断局分析页：综合象意解读与建议
+5. **复制信息**：点击“复制全部信息”一键导出
+
+## ⚙️ 运行环境
+
+- **开发语言**：Python 3.x
+- **界面库**：Tkinter（Python 标准库，无需额外安装）
+- **操作系统**：Windows / macOS / Linux
+
+## 📂 项目结构
+
+
+
+
+## 📄 开源协议
+
+本项目采用 **AGPL-3.0** 协议，详情参见 [LICENSE](LICENSE) 文件。
+
+## ⚠️ 免责声明
+
+本软件为奇门遁甲数术研究的数字化辅助工具，所有排盘结果均基于传统术数逻辑与数理模型生成，仅供国学文化研究、学术探讨及个人娱乐参考，不具备现实指导意义。
+
+
+
+
+
+--- FILES ---
+docs/github-repos/YHN282615109_Digital-Qi-Men-Dun-Jia-Arrangement-System-python-v1.0/LICENSE
+docs/github-repos/YHN282615109_Digital-Qi-Men-Dun-Jia-Arrangement-System-python-v1.0/README.md
+docs/github-repos/YHN282615109_Digital-Qi-Men-Dun-Jia-Arrangement-System-python-v1.0/main.py
+docs/github-repos/YHN282615109_Digital-Qi-Men-Dun-Jia-Arrangement-System-python-v1.0/python语言数字奇门遁甲排盘系统 v1.0代码ZXQZQ.txt

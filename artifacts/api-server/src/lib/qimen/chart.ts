@@ -248,6 +248,36 @@ export function buildChart(date: Date, hourBranch: number, _lateZi = false): Cha
   );
 }
 
+export interface DateTimeChartResult {
+  chart: Chart;
+  hourBranch: number;
+  lateZi: boolean;
+  calendarDate: Date;
+}
+
+/**
+ * Строит часовую карту по фактическим местным дате и времени.
+ * Время 23:00–00:00 определяется как поздняя Крыса уходящего дня,
+ * 00:00–01:00 — как ранняя Крыса новых суток. Флаг lateZi вычисляется
+ * автоматически и не подменяет дневной ствол: дату задаёт сам Date.
+ */
+export function buildChartForDateTime(dateTime: Date): DateTimeChartResult {
+  if (!(dateTime instanceof Date) || Number.isNaN(dateTime.getTime())) {
+    throw new Error("Некорректная дата и время для часовой карты");
+  }
+  const hour = dateTime.getHours();
+  const minute = dateTime.getMinutes();
+  const hourBranch = Math.floor((hour + 1) / 2) % 12;
+  const lateZi = hour === 23;
+  const calendarDate = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate(), 12, 0, 0);
+  return {
+    chart: buildChart(calendarDate, hourBranch, lateZi),
+    hourBranch,
+    lateZi,
+    calendarDate,
+  };
+}
+
 export function buildPeriodMap(
   date: Date,
   period: Exclude<QimenPeriod, "hour">,

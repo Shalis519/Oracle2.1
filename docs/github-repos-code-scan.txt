@@ -1,0 +1,1238 @@
+=== KEY FILES ===
+docs/github-repos/ChesterRa_mingpan/package-lock.json
+docs/github-repos/ChesterRa_mingpan/package.json
+docs/github-repos/ChesterRa_mingpan/src/core/bazi/BaziCore.ts
+docs/github-repos/ChesterRa_mingpan/src/core/bazi/SolarTermCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/core/bazi/TrueSolarTime.ts
+docs/github-repos/ChesterRa_mingpan/src/core/bazi/ephemerisData.ts
+docs/github-repos/ChesterRa_mingpan/src/core/bazi/index.ts
+docs/github-repos/ChesterRa_mingpan/src/core/bazi/types.ts
+docs/github-repos/ChesterRa_mingpan/src/core/calendar/SolarTermsCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/core/calendar/astronomicalCalendar.ts
+docs/github-repos/ChesterRa_mingpan/src/core/calendar/calendar.ts
+docs/github-repos/ChesterRa_mingpan/src/core/calendar/constants.ts
+docs/github-repos/ChesterRa_mingpan/src/core/calendar/julian.ts
+docs/github-repos/ChesterRa_mingpan/src/core/calendar/lunarCalendar.ts
+docs/github-repos/ChesterRa_mingpan/src/core/calendar/solarTerms.ts
+docs/github-repos/ChesterRa_mingpan/src/core/constants/bazi.ts
+docs/github-repos/ChesterRa_mingpan/src/core/constants/index.ts
+docs/github-repos/ChesterRa_mingpan/src/core/constants/positions.ts
+docs/github-repos/ChesterRa_mingpan/src/core/qimen/FlyingRule.ts
+docs/github-repos/ChesterRa_mingpan/src/core/qimen/GongMapping.ts
+docs/github-repos/ChesterRa_mingpan/src/core/qimen/RotatingRule.ts
+docs/github-repos/ChesterRa_mingpan/src/core/qimen/YinYangDunCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/core/qimen/index.ts
+docs/github-repos/ChesterRa_mingpan/src/core/qimen/types.ts
+docs/github-repos/ChesterRa_mingpan/src/core/ziwei/BrightnessSystem.ts
+docs/github-repos/ChesterRa_mingpan/src/core/ziwei/IztroAdapter.ts
+docs/github-repos/ChesterRa_mingpan/src/core/ziwei/MutagenCore.ts
+docs/github-repos/ChesterRa_mingpan/src/index.ts
+docs/github-repos/ChesterRa_mingpan/src/output/daliurenTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/fortuneTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/listTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/liuyaoTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/meihuaTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/output/qimenTextRenderer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/BaziService.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/ClimateAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/HiddenStemsAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/NaYinAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/PatternAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/RelationsAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/ShenShaAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/StrengthAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/TenGodsAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/TraditionalAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/analyzers/YongShenAnalyzer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/calculators/DaYunCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/calculators/LiuNianCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/calculators/LiuRiCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/calculators/LiuYueCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/calculators/LuckCycleCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/index.ts
+docs/github-repos/ChesterRa_mingpan/src/services/bazi/types.ts
+docs/github-repos/ChesterRa_mingpan/src/services/daliuren/DaliurenService.ts
+docs/github-repos/ChesterRa_mingpan/src/services/daliuren/calculators/SanChuanCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/daliuren/calculators/ShenShaCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/daliuren/calculators/SiKeCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/daliuren/calculators/TianDiPanCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/daliuren/data/constants.ts
+docs/github-repos/ChesterRa_mingpan/src/services/daliuren/index.ts
+docs/github-repos/ChesterRa_mingpan/src/services/daliuren/types.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/LiuyaoService.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/calculators/FushenCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/calculators/JintuishenCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/calculators/LiuqinCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/calculators/LiushenCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/calculators/NajiaCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/calculators/WangshuaiCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/calculators/XunkongCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/data/guagong.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/index.ts
+docs/github-repos/ChesterRa_mingpan/src/services/liuyao/types.ts
+docs/github-repos/ChesterRa_mingpan/src/services/meihua/MeihuaService.ts
+docs/github-repos/ChesterRa_mingpan/src/services/meihua/calculators/BianguaCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/meihua/calculators/HuguaCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/meihua/calculators/QiguaCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/meihua/calculators/TiyongCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/meihua/data/bagua.ts
+docs/github-repos/ChesterRa_mingpan/src/services/meihua/index.ts
+docs/github-repos/ChesterRa_mingpan/src/services/meihua/types.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/QimenService.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/BaMenCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/BaShenCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/GeJuCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/JiuGongCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/JiuXingCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/JuShuCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/PanTypeCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/SanQiLiuYiCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/ShenShaCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/YongShenCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/ZeRiCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/calculators/ZhuanPanCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/data/constants.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/data/shensha-rules.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/data/yongshen-rules.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/index.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/types.ts
+docs/github-repos/ChesterRa_mingpan/src/services/qimen/utils/gongUtils.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/ZiweiService.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/BrightnessCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/DailyCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/DecadeCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/HoroscopeStarsCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/HourlyCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/MinorLimitCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/MonthlyCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/MutagenCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/PalaceDynamicCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/calculators/YearlyCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/index.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/transformers/PalaceTransformer.ts
+docs/github-repos/ChesterRa_mingpan/src/services/ziwei/types.ts
+docs/github-repos/ChesterRa_mingpan/src/shared/logger.ts
+docs/github-repos/ChesterRa_mingpan/src/shared/types.ts
+docs/github-repos/ChesterRa_mingpan/src/types/lunar-javascript.d.ts
+docs/github-repos/ChesterRa_mingpan/src/utils/ageCalculator.ts
+docs/github-repos/ChesterRa_mingpan/src/utils/timeNormalization.ts
+docs/github-repos/ChesterRa_mingpan/test/sample-calculation.ts
+docs/github-repos/ChesterRa_mingpan/tsconfig.json
+docs/github-repos/ChesterRa_mingpan/vitest.config.ts
+docs/github-repos/MrJelly_QiMenDunJia/package.json
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-lite/package.json
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-standalone/package.json
+docs/github-repos/MrJelly_QiMenDunJia/packages/qimendunjia-tyme4ts/package.json
+docs/github-repos/MrJelly_QiMenDunJia/src/bamen.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/bashen.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/native.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxing.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/shouxingUtil.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/calendar/tyme.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/constants.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/dipan.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/native.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/shouxing.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/entries/tyme4ts.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/index.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/jiuxing.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/qimen.ts
+docs/github-repos/MrJelly_QiMenDunJia/src/types.ts
+docs/github-repos/MrJelly_QiMenDunJia/tsconfig.json
+docs/github-repos/YHN282615109_Digital-Qi-Men-Dun-Jia-Arrangement-System-python-v1.0/main.py
+docs/github-repos/deminzhang_qimen-go/assets/asset.go
+docs/github-repos/deminzhang_qimen-go/cmd/bazi/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/big6/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/liuyao/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/liuyao/main_test.go
+docs/github-repos/deminzhang_qimen-go/cmd/meihua/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/ziwei-reverse/main.go
+docs/github-repos/deminzhang_qimen-go/cmd/ziwei-reverse/prompts.go
+docs/github-repos/deminzhang_qimen-go/cmd/ziwei/main.go
+docs/github-repos/deminzhang_qimen-go/graphic/image.go
+docs/github-repos/deminzhang_qimen-go/main.go
+docs/github-repos/deminzhang_qimen-go/mobile/mobile.go
+docs/github-repos/deminzhang_qimen-go/util/cli.go
+docs/github-repos/deminzhang_qimen-go/util/math.go
+docs/github-repos/deminzhang_qimen-go/util/util.go
+docs/github-repos/deminzhang_qimen-go/world/astrolabe.go
+docs/github-repos/deminzhang_qimen-go/world/battle.go
+docs/github-repos/deminzhang_qimen-go/world/big6.go
+docs/github-repos/deminzhang_qimen-go/world/char8.go
+docs/github-repos/deminzhang_qimen-go/world/chat.go
+docs/github-repos/deminzhang_qimen-go/world/database.go
+docs/github-repos/deminzhang_qimen-go/world/defs.go
+docs/github-repos/deminzhang_qimen-go/world/effect_line.go
+docs/github-repos/deminzhang_qimen-go/world/game.go
+docs/github-repos/deminzhang_qimen-go/world/idefs.go
+docs/github-repos/deminzhang_qimen-go/world/meihua.go
+docs/github-repos/deminzhang_qimen-go/world/qimen.go
+docs/github-repos/deminzhang_qimen-go/world/render.go
+docs/github-repos/deminzhang_qimen-go/world/sprite.go
+docs/github-repos/deminzhang_qimen-go/world/star.go
+docs/github-repos/deminzhang_qimen-go/world/stroke.go
+docs/github-repos/deminzhang_qimen-go/world/ui_chat.go
+docs/github-repos/deminzhang_qimen-go/world/ui_msgbox.go
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go
+docs/github-repos/deminzhang_qimen-go/world/ui_selcet.go
+docs/github-repos/deminzhang_qimen-go/world/ui_tips.go
+docs/github-repos/deminzhang_qimen-go/world/wave.go
+docs/github-repos/deminzhang_qimen-go/world/world.go
+docs/github-repos/deminzhang_qimen-go/xuan/astrolabe.go
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go
+docs/github-repos/deminzhang_qimen-go/xuan/ganzhi.go
+docs/github-repos/deminzhang_qimen-go/xuan/gua.go
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_defs.go
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go
+docs/github-repos/deminzhang_qimen-go/xuan/mehua.go
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_ymd.go
+docs/github-repos/deminzhang_qimen-go/xuan/qm_test.go
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go
+docs/github-repos/deminzhang_qimen-go/xuan/shensha.go
+docs/github-repos/deminzhang_qimen-go/xuan/time.go
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei_render.go
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei_reverse.go
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/controllers/qmdjMgrController.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/api/models/qmdj.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/app.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/datastores.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/env/development.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/env/production.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/config/env/stage.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/index.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/connect-to-arangodb.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/error-handler-orientdb.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-datastore.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/lib/selector-env.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/package-lock.json
+docs/github-repos/funan-tech-folks_nodejs-qmdj/package.json
+docs/github-repos/funan-tech-folks_nodejs-qmdj/routes/index.js
+docs/github-repos/funan-tech-folks_nodejs-qmdj/routes/qmdj.js
+docs/github-repos/oceanjustinlin_qimen/.claude/launch.json
+docs/github-repos/oceanjustinlin_qimen/api/bazi.js
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/phase1-fixtures.js
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/route-cases.js
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/triggering-cases.js
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/gold-cases.js
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/holdout-cases.js
+docs/github-repos/oceanjustinlin_qimen/fixtures/bazi-image-cases/follow-wealth-formed.json
+docs/github-repos/oceanjustinlin_qimen/fixtures/classical-golden-cases/qiongtong-high-confidence.json
+docs/github-repos/oceanjustinlin_qimen/fixtures/classical-golden-cases/sanming-high-confidence.json
+docs/github-repos/oceanjustinlin_qimen/fixtures/classical-golden-cases/sanming-patterns-high-confidence.json
+docs/github-repos/oceanjustinlin_qimen/fixtures/classical-golden-cases/ziping-high-confidence.json
+docs/github-repos/oceanjustinlin_qimen/functions/_middleware.js
+docs/github-repos/oceanjustinlin_qimen/functions/auth/_shared.js
+docs/github-repos/oceanjustinlin_qimen/functions/auth/me.js
+docs/github-repos/oceanjustinlin_qimen/functions/auth/set.js
+docs/github-repos/oceanjustinlin_qimen/functions/auth/signout.js
+docs/github-repos/oceanjustinlin_qimen/lib/BaziConstants.js
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js
+docs/github-repos/oceanjustinlin_qimen/lib/QimenUtils.js
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.js
+docs/github-repos/oceanjustinlin_qimen/lib/accountQuota.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziDynamicAssessor.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziDynamicAssessor.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziPatternStatements.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziQuestionCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziQuestionCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziRelationScanner.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziSourceBackedStatements.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziStateAssessor.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziStateAssessor.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/baziTargetElement.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateDailyScore.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateTiaohouRatio.js
+docs/github-repos/oceanjustinlin_qimen/lib/classicalGoldCases.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/core.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/relationStrength.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/relations.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/shensha.js
+docs/github-repos/oceanjustinlin_qimen/lib/constants/tiaohou.js
+docs/github-repos/oceanjustinlin_qimen/lib/cors.js
+docs/github-repos/oceanjustinlin_qimen/lib/cors.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/divinationCategories.js
+docs/github-repos/oceanjustinlin_qimen/lib/divinationCategories.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/divinationRouter.js
+docs/github-repos/oceanjustinlin_qimen/lib/divinationRouter.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/flowMonth.js
+docs/github-repos/oceanjustinlin_qimen/lib/flowMonth.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneAnnualCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneContextNotes.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneDailyCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneDailyCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyInterpretationCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyInterpretationCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneWeeklyCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneWeeklyCore.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/normalizeShenProfile.js
+docs/github-repos/oceanjustinlin_qimen/lib/normalizeShenProfile.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/panTime.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenCore.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenLlmOutput.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenLlmOutput.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPipeline.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPipeline.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPolarityRules.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPolarityRules.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenProsperity.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenProsperity.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenScoringEngine.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenScoringEngine.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenTimingRules.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenTimingRules.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenYongshenRules.js
+docs/github-repos/oceanjustinlin_qimen/lib/qimenYongshenRules.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/sanMingPatternResolver.js
+docs/github-repos/oceanjustinlin_qimen/lib/sanMingPatternResolver.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/siziSummary.js
+docs/github-repos/oceanjustinlin_qimen/lib/siziSummary.test.js
+docs/github-repos/oceanjustinlin_qimen/lib/wenshiFollowup.js
+docs/github-repos/oceanjustinlin_qimen/lib/wenshiFollowup.test.js
+docs/github-repos/oceanjustinlin_qimen/mock/bazi-dingchou-xinhai-wusi-gengshen.json
+docs/github-repos/oceanjustinlin_qimen/mock/fortune-daily-interpretation.json
+docs/github-repos/oceanjustinlin_qimen/mock/fortune-daily.json
+docs/github-repos/oceanjustinlin_qimen/package-lock.json
+docs/github-repos/oceanjustinlin_qimen/package.json
+docs/github-repos/oceanjustinlin_qimen/scripts/test_analysis.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_bazi.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_static_career.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_static_marriage.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_static_marriage_male.js
+docs/github-repos/oceanjustinlin_qimen/scripts/test_static_wealth.js
+docs/github-repos/oceanjustinlin_qimen/src/composables/useBaziColumns.js
+docs/github-repos/oceanjustinlin_qimen/src/composables/useTheme.js
+docs/github-repos/oceanjustinlin_qimen/src/main.js
+docs/github-repos/oceanjustinlin_qimen/src/router/index.js
+docs/github-repos/oceanjustinlin_qimen/src/store.js
+docs/github-repos/oceanjustinlin_qimen/src/utils/flowMonth.js
+docs/github-repos/oceanjustinlin_qimen/vite.config.js
+docs/github-repos/oceanjustinlin_qimen/worker/src/index.js
+=== TERMS ===
+docs/github-repos/deminzhang_qimen-go/README.md:19:1. 查第三方节气精确时间跟天文授时误差问题
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:20:		fmt.Println("  暗干起法: 值使起(默认), 门地起")
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:21:		fmt.Println("示例: qimen \"2024-01-15 12:00\" 时家 转盘 寄坤 拆补 值使起")
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:90:	juType := xuan.QMJuTypeSplit
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:94:			juType = xuan.QMJuTypeSplit
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:96:			juType = xuan.QMJuTypeMaoShan
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:98:			juType = xuan.QMJuTypeZhiRun
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:100:			juType = xuan.QMJuTypeSelf
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:102:			juType = xuan.QMJuTypeLunar
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:117:		case "值使起", "暗干值使起":
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:125:				fmt.Fprintf(os.Stderr, "未知暗干起法: %s (值使起/门地起)\n", os.Args[6])
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:135:		JuType:      juType,
+docs/github-repos/deminzhang_qimen-go/cmd/qimen/main.go:159:	juStr := xuan.QMJuType[juType]
+docs/github-repos/deminzhang_qimen-go/go.sum:125:modernc.org/gc/v3 v3.1.2 h1:ZtDCnhonXSZexk/AYsegNRV1lJGgaNZJuKjJSWKyEqo=
+docs/github-repos/deminzhang_qimen-go/graphic/image.go:178:func NewJupiterImage(size int) *ebiten.Image {
+docs/github-repos/deminzhang_qimen-go/world/astrolabe.go:139:	599: {Id: 599, name: "Jupiter", nameCN: "木", radius: (4.95 + 5.46) / 2, drawR: 90, mass: 1.8982 * 1e27, //18981.8722 +- .8817
+docs/github-repos/deminzhang_qimen-go/world/astrolabe.go:295:			//	date0, _ := time.Parse(time.DateTime, qimen.Jupiter0)
+docs/github-repos/deminzhang_qimen-go/world/astrolabe.go:297:			//	period := qimen.JupiterPeriod
+docs/github-repos/deminzhang_qimen-go/world/char8.go:54:var HideGanRate = map[string][]int{
+docs/github-repos/deminzhang_qimen-go/world/char8.go:702:	rate := HideGanRate[b.Zhi]
+docs/github-repos/deminzhang_qimen-go/world/char8.go:918:	"正印": InteractiveYin,
+docs/github-repos/deminzhang_qimen-go/world/char8.go:995:// InteractiveYin 正印:b生a
+docs/github-repos/deminzhang_qimen-go/world/char8.go:996:func InteractiveYin(va, vb *int, ma, mb int, force int) {
+docs/github-repos/deminzhang_qimen-go/world/defs.go:10:	TPSRate          = 30
+docs/github-repos/deminzhang_qimen-go/world/defs.go:103:func ColorNaYin(gz string) color.RGBA {
+docs/github-repos/deminzhang_qimen-go/world/qimen.go:21:	_TaiJiSize      = 540                   //太极图大小
+docs/github-repos/deminzhang_qimen-go/world/qimen.go:181:	//节气进度
+docs/github-repos/deminzhang_qimen-go/world/qimen.go:298:	TextDrawV2(dst, pp.JuText, ft14, px, py+16*3, colorWhite)
+docs/github-repos/deminzhang_qimen-go/world/qimen.go:380:	if g.God == "值符" {
+docs/github-repos/deminzhang_qimen-go/world/qimen.go:397:	jiXing := g.God == "值符" && xuan.ZhiGong9[xuan.QM6YiJiXing[pp.Xun]] == g.Idx
+docs/github-repos/deminzhang_qimen-go/world/qimen.go:435:		TextDrawV2(dst, "值符", ft, int(x+24), int(y), colorGray)
+docs/github-repos/deminzhang_qimen-go/world/render.go:71:	TextDrawV2(dst, LunarUtil.NAYIN[cb.Gan+cb.Zhi], ft14, sx, sy+96, ColorNaYin(cb.Gan+cb.Zhi))
+docs/github-repos/deminzhang_qimen-go/world/stroke.go:11:	IsJustReleased() bool
+docs/github-repos/deminzhang_qimen-go/world/stroke.go:21:func (m *MouseStrokeSource) IsJustReleased() bool {
+docs/github-repos/deminzhang_qimen-go/world/stroke.go:22:	return inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft)
+docs/github-repos/deminzhang_qimen-go/world/stroke.go:34:func (t *TouchStrokeSource) IsJustReleased() bool {
+docs/github-repos/deminzhang_qimen-go/world/stroke.go:35:	return inpututil.IsTouchJustReleased(t.ID)
+docs/github-repos/deminzhang_qimen-go/world/stroke.go:65:	if s.source.IsJustReleased() {
+docs/github-repos/deminzhang_qimen-go/world/stroke.go:124:	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+docs/github-repos/deminzhang_qimen-go/world/stroke.go:131:	g.touchIDs = inpututil.AppendJustPressedTouchIDs(g.touchIDs[:0])
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:26:	inputSelfJu                                 *gui.InputBox
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:32:	//btnPreJu, btnNextJu *gui.Button
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:65:			JuType:      xuan.QMJuTypeSplit,
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:87:	btnPreJu := gui.NewTextButton(px0+72*5, py0, "上一局", colorWhite, colorGray)
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:90:	btnNextJu := gui.NewTextButton(px0+72*5, py0, "下一局", colorWhite, colorGray)
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:92:	p.opStartSplit = gui.NewOptionBox(px0, py0, xuan.QMJuType[xuan.QMJuTypeSplit])
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:93:	p.opStartMaoShan = gui.NewOptionBox(px0+72, py0, xuan.QMJuType[xuan.QMJuTypeMaoShan])
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:94:	p.opStartZhiRun = gui.NewOptionBox(px0+72*2, py0, xuan.QMJuType[xuan.QMJuTypeZhiRun])
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:95:	p.opStartSelf = gui.NewOptionBox(px0+72*3, py0, xuan.QMJuType[xuan.QMJuTypeSelf])
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:96:	p.inputSelfJu = gui.NewInputBox(px0+72*3, py0, 32, h)
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:127:	p.inputSelfJu.DefaultText = "手选局数"
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:130:		btnPreJu, btnNextJu, p.cbHostingType, p.cbFlyType,
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:132:		p.opStartSplit, p.opStartMaoShan, p.opStartZhiRun, p.opStartSelf, p.inputSelfJu,
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:154:		p.qmParams.JuType = xuan.QMJuTypeSplit
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:158:		p.qmParams.JuType = xuan.QMJuTypeMaoShan
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:162:		p.qmParams.JuType = xuan.QMJuTypeZhiRun
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:167:		p.inputSelfJu.Visible = true
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:168:		p.inputSelfJu.SetFocused(true)
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:169:		p.qmParams.JuType = xuan.QMJuTypeSelf
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:278:		if p.qmParams.JuType == xuan.QMJuTypeSelf {
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:279:			ju, err := strconv.Atoi(p.inputSelfJu.Text())
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:281:				panic("局数不对,限(阴[-9,-1],阳[1,9])")
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:283:			p.qmParams.SelfJu = ju
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:285:			p.qmParams.SelfJu = 0
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:299:		if p.qmParams.JuType == xuan.QMJuTypeSelf {
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:300:			ju, err := strconv.Atoi(p.inputSelfJu.Text())
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:302:				panic("局数不对,限(阴[-9,-1],阳[1,9])")
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:304:			p.qmParams.SelfJu = ju
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:306:			p.qmParams.SelfJu = 0
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:310:	btnPreJu.SetOnClick(func() {
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:324:	btnNextJu.SetOnClick(func() {
+docs/github-repos/deminzhang_qimen-go/world/ui_qimen.go:374:	p.inputSelfJu.Visible = p.opStartSelf.Selected()
+docs/github-repos/deminzhang_qimen-go/world/world.go:56:	ebiten.SetTPS(TPSRate)
+docs/github-repos/deminzhang_qimen-go/xuan/astrolabe.go:71:// Jupiter0 := calendar.NewSolar(1983, 5, 27, 0, 0, 0)
+docs/github-repos/deminzhang_qimen-go/xuan/astrolabe.go:72:// JupiterPeriod := 11.86 * 365.25 * 24 * 60
+docs/github-repos/deminzhang_qimen-go/xuan/astrolabe.go:73:// degreesJ := degreesS + float32(360*float64(pan.Solar.SubtractMinute(Jupiter0))/JupiterPeriod)
+docs/github-repos/deminzhang_qimen-go/xuan/astrolabe.go:80:	JupiterPeriod = 11.86 * EarthPeriod
+docs/github-repos/deminzhang_qimen-go/xuan/astrolabe.go:90:	Jupiter0 = "1981-03-27 07:41:00"
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go:391:	yangDay := YinYang[dayGan] == "阳" //阳日
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go:449:	yangDay := YinYang[dayGan] == "阳" //阳日
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go:477:	yangDay := YinYang[dayGan] == "阳"             //阳日
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go:537:				if YinYang[ke.Up] == YinYang[dayGan] {
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go:549:					if YinYang[ke.Up] == YinYang[dayGan] {
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go:593:				if YinYang[up] != YinYang[dayGan] { //排除不比的
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go:620:					if YinYang[up] != YinYang[dayGan] { //排除不比的
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go:736:					if YinYang[ke.Up] == YinYang[dayGan] {
+docs/github-repos/deminzhang_qimen-go/xuan/big6.go:743:				if YinYang[ke.Up] == YinYang[dayGan] {
+docs/github-repos/deminzhang_qimen-go/xuan/ganzhi.go:24:	YinYang = map[string]string{
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:68:	setShiYing(baseGua, shiIdx, yingIdx)
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:106:		var bYing2 int
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:108:			bYing2 = bShi2 % 3
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:110:			bYing2 = bShi2%3 + 3
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:112:		setShiYing(bianGua, bShi2, bYing2)
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:165:	// 获取节气信息
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:300:// setShiYing 设置世应
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:301:func setShiYing(yaoList []YaoGanZhi, shiIdx, yingIdx int) {
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:303:		yaoList[i].ShiYing = 0
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:305:	yaoList[shiIdx].ShiYing = 1
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:306:	yaoList[yingIdx].ShiYing = 2
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao.go:577:		if y.ShiYing == 1 {
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_defs.go:109:	ShiYing int    // 0=无, 1=世, 2=应
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:22:	sb.WriteString(fmt.Sprintf("节气: %s(%s) → %s(%s)\n\n", r.JieQiFrom, r.JieQiFromDate, r.JieQiTo, r.JieQiToDate))
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:56:		shiYing := "  "
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:57:		if y.ShiYing == 1 {
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:58:			shiYing = "世"
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:59:		} else if y.ShiYing == 2 {
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:60:			shiYing = "应"
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:77:			shen, y.Qin, y.Gan, y.Zhi, shiYing, changeTag, yaoDisplay, fuShen))
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:94:			shiYing := "  "
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:95:			if y.ShiYing == 1 {
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:96:				shiYing = "世"
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:97:			} else if y.ShiYing == 2 {
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:98:				shiYing = "应"
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:104:			sb.WriteString(fmt.Sprintf("  %s      %s%s    %s    %s\n", y.Qin, y.Gan, y.Zhi, shiYing, yaoDisplay))
+docs/github-repos/deminzhang_qimen-go/xuan/liuyao_render.go:126:		if y.ShiYing == 1 {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:27:	StartType           int //QMJuType 起局.起局法
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:31:	Ju            int //格局-1~-9,1~9, 年家为-1,-4,-7
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:37:	JuText        string
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:47:	DutyStar    string //值符
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:48:	DutyStarPos int    //值符落宫
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:49:	DutyDoor    string //值使
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:50:	DutyDoorPos int    //值使落宫
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:60:	JuType      int //QMJuType 起局方式
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:62:	SelfJu      int //自选局数
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:76:	JieQi     string //节气文本
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:91:		params.YMDH, params.Type, params.HostingType, params.FlyType, params.JuType, params.HideGanType
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:116:		case QMJuTypeSplit:
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:117:			//ju = getQiMenJuIndex(jieQiName, yuan)
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:119:			ju = _QiMenJu[jqi][yuan-1]
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:120:		case QMJuTypeMaoShan:
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:129:			yuan = min(yuan, 3)       //三元完新节气不到用下元
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:131:			ju = _QiMenJu[jqi][yuan-1]
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:132:		case QMJuTypeZhiRun: //置闰 https://www.sohu.com/a/286929542_488508
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:134:			ju = _QiMenJu[jqi][yuan-1]
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:151:					if headInJieQi { //符头在本节气
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:152:						jqNext := l.GetNextJieQi() //下个节气 冬至/夏至
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:154:						if yuan == 1 && days <= 5 { //下一节气 符头提前在本节气 超神
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:159:							ju = _QiMenJu[jqi][yuan-1] //上元用下一节气局
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:161:					} else { //符头在上一节气 接气 小雪/小满
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:166:						ju = _QiMenJu[jqi][yuan-1] //用上一节气局
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:170:		case QMJuTypeSelf:
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:171:			ju = params.SelfJu
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:172:		case QMJuTypeLunar:
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:174:			//年支数+月数+日数+时支数)÷9取余数，余数即为局数
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:185:			Ju:       ju,
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:201:		yuan, ju := GetDayYuanJu(jieQiName)
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:204:			Ju:       ju,
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:219:		yuan, ju := GetDayYuanJu(jieQiName)
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:222:			Ju:       ju,
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:237:		yuan, ju := GetMonthYuanJu(p.Lunar.GetYearInGanZhiExact())
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:240:			Ju:       ju,
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:255:		yuan, ju := GetYearYuanJu(p.Lunar.GetYear())
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:258:			Ju:       ju,
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:282:// GetTermTime 返回solar年的第n(1小寒)个节气进入时间 以1970-01-01 00:00:00 UTC为0,正后前负
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:294:	ju := pp.Ju
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:296:	if ju > 0 { //阳遁顺仪奇逆布
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:300:	} else { //阴遁逆仪奇顺行
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:306:	//定值符值使 时旬首所遁地仪宫
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:318:	//值符落宫
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:319:	//值符加于时干上，值使加之在时支。
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:345:	if pp.Ju > 0 { //阳遁
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:379:	//天盘 三奇六仪 值符带旬首仪飞
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:394:		//天盘 值符起落九星
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:397:		if duty == 5 { //值符天禽寄
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:402:				if pp.Ju > 0 {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:415:				if pp.Ju > 0 {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:430:			if pp.Ju > 0 {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:446:				if pp.Ju > 0 {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:463:		//天盘 值符起落九星
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:464:		if pp.Type == QMTypeAmaze || pp.Ju > 0 || pp.FlyType == QMFlyTypeAllOrder {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:468:		} else { //QMTypeFly && QMFlyTypeLunarReverse && p.Ju < 0
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:473:		//神盘 值符起九神
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:474:		if pp.Ju > 0 { //阳遁
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:494:		if pp.Ju > 0 {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:518:		case QMHideGanDutyDoorHour: //值使门起暗干
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:523:			if pp.Ju > 0 { //阳遁
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:555:	if pp.Ju < 0 {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:556:		juName = fmt.Sprintf("阴%d局", -pp.Ju)
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:558:		juName = fmt.Sprintf("阳%d局", pp.Ju)
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:573:	pp.JuText = fmt.Sprintf("%s %s %s遁%s", Yuan3Name[pp.Yuan3], juName, pp.Xun, HideJia[pp.Xun])
+docs/github-repos/deminzhang_qimen-go/xuan/qimen.go:574:	pp.DutyText = fmt.Sprintf("值符%s落%d宫 值使%s落%d宫",
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:20:// 节气索引
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:30:// 奇门局数 大雪0 冬至1 小寒2 ..大雪24
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:31:var _QiMenJu = [][]int{{-4, -7, -1}, //大雪0 24
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:68:// QMJuType 起局方式
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:69:var QMJuType = []string{"拆补", "茅山", "置闰", "自选", "阴盘"}
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:72:	QMJuTypeSplit   = 0 //节气和日干符头定三元
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:73:	QMJuTypeMaoShan = 1 //无视符头，节气开始上元60时辰,中元60时辰,再下元60时辰,下元满60时辰不到下个节气继用下元
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:74:	QMJuTypeZhiRun  = 2 //符头和节气的关系
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:75:	QMJuTypeSelf    = 3 //自选
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:76:	QMJuTypeLunar   = 4 //阴盘当转盘局用
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:80:var QMHideGanType = []string{"暗干值使起", "门地暗干"}
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:83:	QMHideGanDutyDoorHour = 0 //值使门起 值使落宫起时干 地盘干与时干相同时,时干入中宫
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:129:	God9S      = "__值符腾蛇太阴六合勾陈太常朱雀九地九天" //九神飞盘阳遁用
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:130:	God9L      = "__值符腾蛇太阴六合白虎太常玄武九地九天" //九神飞盘阴遁用
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:131:	God8       = "__值符腾蛇太阴六合白虎玄武九地九天"   //八神转盘用
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:312:// JIEQI_MONTH 节气 月建索引 交节换建
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:320:// QiYuejiang 节气 月将索引 交(中)气换将
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:423://	0x96d0, 0x4dd5, 0x4ad0, 0xa4d0, 0xd4d4, 0xd250, 0xd558, 0xb540, 0xb6a0, 0x95a6,
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:439:// 廿四节气信息 (0小寒)
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:440:// 从第0个节气的分钟数
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:449:var _QiMenJuYear = []int{0, -1, -4, -7}
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:464:func GetYearYuanJu(year int) (int, int) {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:467:	return yuan, _QiMenJuYear[yuan]
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:481:	_Ju1 = "子午卯酉" //四仲上元阴7
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:482:	_Ju2 = "寅申巳亥" //四孟中元阴1
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:483:	_Ju3 = "辰戌丑未" //四季下元阴4
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:486:var _QiMenJuMonth = []int{0, -7, -1, -4} //秋分局
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:507:func GetMonthYuanJu(yearTB string) (int, int) {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:509:	if strings.Contains(_Ju1, zhi) {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:510:		return 1, _QiMenJuMonth[1]
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:512:	if strings.Contains(_Ju2, zhi) {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:513:		return 2, _QiMenJuMonth[2]
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:515:	return 3, _QiMenJuMonth[3]
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:518:var _QiMenJuDay = []int{0, 1, 7, 4, -1, -7, -4}
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:520:func GetDayYuanJu(jieQiName string) (int, int) {
+docs/github-repos/deminzhang_qimen-go/xuan/qimen_defs.go:523:	ju := _QiMenJuDay[yuan]
+docs/github-repos/deminzhang_qimen-go/xuan/qm_test.go:20:			JuType:      xuan.QMJuTypeSplit,
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:53:	jiXing := g.God == "值符" && ZhiGong9[QM6YiJiXing[pan.Xun]] == g.Idx
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:96:		line4 += "值符"
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:102:		line4 += "值使"
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:229:	sb.WriteString(fmt.Sprintf("节气: %s(%s) -> %s(%s)\n",
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:231:	sb.WriteString(fmt.Sprintf("局: %s\n", pan.JuText))
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:232:	sb.WriteString(fmt.Sprintf("值符: %s落%d宫  值使: %s落%d宫\n",
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:375:	NaYinYear          string
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:376:	NaYinMonth         string
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:377:	NaYinDay           string
+docs/github-repos/deminzhang_qimen-go/xuan/render_text.go:378:	NaYinTime          string
+docs/github-repos/deminzhang_qimen-go/xuan/shensha.go:11:	xingY := string([]rune(bz.GetYearNaYin())[2:])
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:6:type WuXingJu int
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:9:	WuXingJuNone WuXingJu = iota
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:10:	ShuiErJu               // 水二局
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:11:	MuSanJu                // 木三局
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:12:	JinSiJu                // 金四局
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:13:	TuWuJu                 // 土五局
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:14:	HuoLiuJu               // 火六局
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:17:var WuXingJuNames = map[WuXingJu]string{
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:18:	ShuiErJu: "水二局", MuSanJu: "木三局", JinSiJu: "金四局", TuWuJu: "土五局", HuoLiuJu: "火六局",
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:21:var WuXingJuNums = map[WuXingJu]int{
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:22:	ShuiErJu: 2, MuSanJu: 3, JinSiJu: 4, TuWuJu: 5, HuoLiuJu: 6,
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:100:	StarTaiYang
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:105:	StarTaiYin
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:107:	StarJuMen
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:111:	StarPoJun
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:153:var WuXingJuTable = [10][12]WuXingJu{
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:154:	/*甲*/ {HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu, MuSanJu, MuSanJu, TuWuJu, TuWuJu, ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:155:	/*乙*/ {HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu, MuSanJu, MuSanJu, TuWuJu, TuWuJu, ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:156:	/*丙*/ {ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu, MuSanJu, MuSanJu, TuWuJu, TuWuJu, ShuiErJu, ShuiErJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:157:	/*丁*/ {ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu, MuSanJu, MuSanJu, TuWuJu, TuWuJu, ShuiErJu, ShuiErJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:158:	/*戊*/ {MuSanJu, MuSanJu, TuWuJu, TuWuJu, ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu, MuSanJu, MuSanJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:159:	/*己*/ {MuSanJu, MuSanJu, TuWuJu, TuWuJu, ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu, MuSanJu, MuSanJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:160:	/*庚*/ {TuWuJu, TuWuJu, ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu, MuSanJu, MuSanJu, TuWuJu, TuWuJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:161:	/*辛*/ {TuWuJu, TuWuJu, ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu, MuSanJu, MuSanJu, TuWuJu, TuWuJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:162:	/*壬*/ {JinSiJu, JinSiJu, MuSanJu, MuSanJu, TuWuJu, TuWuJu, ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:163:	/*癸*/ {JinSiJu, JinSiJu, MuSanJu, MuSanJu, TuWuJu, TuWuJu, ShuiErJu, ShuiErJu, HuoLiuJu, HuoLiuJu, JinSiJu, JinSiJu},
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:198:var DaXianQiLing = map[WuXingJu]int{
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:199:	ShuiErJu: 2, MuSanJu: 3, JinSiJu: 4, TuWuJu: 5, HuoLiuJu: 6,
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:220:	WuXingJu       WuXingJu // 五行局
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:224:	IsYangYear     bool // 年干是否阳年
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:250:	c.WuXingJu = WuXingJuTable[ganIdx][c.MingGongIdx]
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:253:	c.ZiWeiIdx = calcZiWeiStar(c.WuXingJu, day)
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:260:	c.IsYangYear = false
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:263:			c.IsYangYear = true
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:269:	c.DaXianStartAge = DaXianQiLing[c.WuXingJu]
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:283:func calcZiWeiStar(wx WuXingJu, day int) int {
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:284:	// iztro 算法：局数除日数，商数宫前走
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:285:	val := WuXingJuNums[wx]
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:384:	if (c.IsYangYear && c.Gender == 1) || (!c.IsYangYear && c.Gender == 0) {
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei.go:393:		endAge := startAge + WuXingJuNums[c.WuXingJu] - 1
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei_render.go:20:	sb.WriteString(fmt.Sprintf("五行局: %s\n", WuXingJuNames[c.WuXingJu]))
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei_reverse.go:14:	WuXingJu WuXingJu
+docs/github-repos/deminzhang_qimen-go/xuan/ziwei_reverse.go:39:			ZiWeiGongMap[gong] = append(ZiWeiGongMap[gong], ZiWeiGongEntry{WuXingJu: WuXingJu(wx), Day: day})
+docs/github-repos/oceanjustinlin_qimen/.claude/skills/bazi/SKILL.md:37:- **子时**：采用 `lunar-javascript` 默认流派（夜子时 23:00–00:00 算当日），与本仓紫微口径一致。
+docs/github-repos/oceanjustinlin_qimen/README.md:56:这条脉络和现代心理学之间，其实有一段有据可查的交集，不是本项目自我美化出来的联想：荣格（Carl Jung）1949 年为卫礼贤（Richard Wilhelm）的《易经》英译本作序，明确说他从这本书里看到了自己"共时性"（synchronicity）理论的哲学基础——两件事之间没有因果关系，却存在有意义的巧合关联，荣格认为《易经》是历史上最早系统化运用这条原则的方法，而卫礼贤早在 1920 年代就把《易经》引介给他，此后他用了数十年时间在自己的临床实践里持续验证。往下看，八字里的十神（比劫 / 食伤 / 财 / 官杀 / 印）描述的是"自我与外部资源、权威、表达欲之间的关系模式"，这和 McClelland 成就动机理论关心的"人和世界打交道的几种基本方式"是同一个问题的不同符号系统；十二长生把人生刻画成长生、帝旺、衰、死、墓、绝、胎、养的阶段性叙事，和 Erikson 的心理社会发展八阶段、Levinson 的《人生四季》结构同源；岁运"引动"原局潜质的机制，和人格心理学里的特质激活理论（Trait Activation Theory，Tett & Guterman, 2000）几乎是同一个命题的两种表述：稳定倾向平时潜伏，遇到匹配的情境线索才会显现为行为。这些不是同一套理论，是同一批问题在东西方分别独立求解出的结构相似解——需要说清楚边界：这是方法论层面的结构互证，不是说阴阳五行"被心理学证明"了，它没有经过心理测量学意义上的信效度检验，不能和 Big Five 或 MBTI 这类量表画等号。这套系统真正站得住的价值主张是：它提供一套经过千年打磨、结构完整的自我与情境认知语言，这套语言有没有用，不取决于它的因果机制是否成立，就像叙事疗法不需要来访者的"人生故事"在形而上学意义上为真，也能产生真实的心理效用。
+docs/github-repos/oceanjustinlin_qimen/README.md:204:- **口径对齐生产**：v1 仅收公历、夜子时算当日，与网页端引擎同一套判据；只用主线引擎，不含仍在分支的专题派生能力
+docs/github-repos/oceanjustinlin_qimen/README.md:225:| 周运 | 按自然周生成七日曲线、周度标签、关键日期、节气转折和行动提醒 |
+docs/github-repos/oceanjustinlin_qimen/README.md:226:| 月运 | 按节气计算流月，展示月度曲线、高低分日、低谷期和分层命中依据 |
+docs/github-repos/oceanjustinlin_qimen/README.md:341:    ├─► 计算九宫盘面、空亡、马星、值符值使
+docs/github-repos/oceanjustinlin_qimen/README.md:431:  月运：按节气流月观察本月节奏、低谷期和关键日期
+docs/github-repos/oceanjustinlin_qimen/README.md:585:│   ├── calculateTiaohouRatio.js     # 调候拦截器
+docs/github-repos/oceanjustinlin_qimen/README.md:638:- 九宫排盘可视化，值符、值使、空亡、马星同步标注
+docs/github-repos/oceanjustinlin_qimen/README.md:668:- 月运：节气流月、月度曲线、高低分日、低谷期、多维度月度详批
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js:61:    const juResult = Calc.calculateJuByChaiBu(solar, C.JIEQI_JUSHU, C.YUAN_NAMES);
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js:68:    const diPan = Calc.getDiPan(juResult.isYang, juResult.gameNumber);
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js:69:    const zhiFuStar = Calc.getZhiFuStar(fuShou, diPan);
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js:71:    const zhiShiDoor = Calc.getZhiShiDoor(fuShou, diPan);
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js:72:    const eightDoors = Calc.calculateEightDoors(juResult.isYang, zhiShiDoor, flyStep, fuShou, diPan);
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js:73:    const eightGods = Calc.calculateEightGods(juResult.isYang, tianGan, diPan);
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js:74:    const tianPanGan = Calc.calculateTianPan(juResult.isYang, tianGan, fuShou, diPan);
+docs/github-repos/oceanjustinlin_qimen/archive/QimenShortcutsAPI.js:203:            "name": `${juResult.yinYang}遁${juResult.gameNumber}局`,
+docs/github-repos/oceanjustinlin_qimen/archive/old_index.html:641:const LOADER_MESSAGES = ['正在接通云端超算矩阵...','推演时空坐标与节气数据...','计算奇门九宫落盘...','分析值符、值使与神助...','生成决策指引与应期推演...'];
+docs/github-repos/oceanjustinlin_qimen/archive/old_index.html:1024:        const isZhiFu =s=>s&&ju.zhi_fu&&s.includes(ju.zhi_fu);
+docs/github-repos/oceanjustinlin_qimen/archive/old_index.html:1025:        const isZhiShi=d=>d&&ju.zhi_shi&&d.includes(ju.zhi_shi);
+docs/github-repos/oceanjustinlin_qimen/archive/old_index.html:1028:            const starCls=isZhiFu(p.star)?'highlight-text':'';const doorCls=isZhiShi(p.door)?'highlight-text':'';
+docs/github-repos/oceanjustinlin_qimen/archive/old_index.html:1032:        chartHTML=`<div class="section-title reveal"><span class="icon">🧭</span>奇门排盘</div><div class="pan-wrapper reveal"><div class="pan-header"><div class="pan-pillars">${[pillars.year,pillars.month,pillars.day,pillars.hour].filter(Boolean).join('　')}</div><div class="pan-info">${ts.solar||''} | ${ju.name||''} · ${ju.jieqi||''}<br>值符：<b>${ju.zhi_fu||'-'}</b>&emsp;值使：<b>${ju.zhi_shi||'-'}</b></div></div><div class="pan-grid">${cells}</div></div>`;
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-card-structure-design.md:36:| Q9 | 生育-孩子时机 | 何时有孩子+孩子特征？ | `timing` | `character` | 动+静双输出 |
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-card-structure-design.md:77:适用：Q4 考研、Q6 财富自由、Q7 结婚、Q9 孩子时机
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-card-structure-design.md:99:| Q9 孩子时机 | 需双模式输出：timing（何时）+ secondary character（孩子画像）|
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-card-structure-design.md:177:| **孩子时机**（timing） | 孩子特征（secondary character） | 用户同时问了时机和特征，两者不可分离 |
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-engine-architecture.md:31:| `geJuInfo` | 基础格局、取格依据、月支合化信息、主格候选 |
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-engine-architecture.md:245:| 基础格局 | `lib/baziCore.js#BaziEngine.getGeJu` |
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-prompt-assembly-prd.md:2726:你的输出必须参照此格式，但内容完全基于本次命局数据，不得照搬文字：
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:16:  calculateTiaohouRatio.js     调候拦截器
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:62:- 新增 `lib/calculateTiaohouRatio.js`。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:67:- debug 输出包含 `rawBeforeTiaohou / tiaohouRatio / rawAfterTiaohou`。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:119:- 年运缓存版本更新为 `annual-score-v5-tiaohou-impact`。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:152:- 引入 `qiRatio * tierRatio * voidRatio`。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:162:  - `qiRatio`：旺 `1.00`，相 `0.85`，休 `0.65`，囚 `0.55`，死 `0.45`。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:163:  - `tierRatio`：吉神落用神 `1.00`，喜神 `0.85`，闲神 `0.45`，仇神 `0.20`，忌神 `0.00`。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:164:  - `voidRatio`：吉神空亡 `0.20`，中性神煞空亡 `0.50`，凶煞空亡 `0.60`。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:165:- `score_hits` 输出 `tianyi_adjusted / wenchang_adjusted` 等命中，debug 展示 `base / qiRatio / tierRatio / voidRatio / final`。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:168:  - 年运 `annual-score-v6-p2a-shensha-qi`。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:184:- 优化连续低分日、节气交接、空亡/三刑叠加的低谷识别，并通过 `score_hits` 输出 `daily_rotation_baseline`、`structural_low_days_negative`、`layer2_*_gate_unlocked` 等可解释命中。
+docs/github-repos/oceanjustinlin_qimen/docs/bazi-score-engine-prd.md:223:- 年运缓存版本：`annual-score-v6-p2a-shensha-qi`。
+docs/github-repos/oceanjustinlin_qimen/docs/cloudflare-migration.md:188:2. /api/fortune-annual
+docs/github-repos/oceanjustinlin_qimen/docs/eval/yongshen-eval-2026-06.md:119:**来源**：进阶 第六章 p.161-162 ｜ 纯用神 ｜ 反查阳历 1896-12-07 子时
+docs/github-repos/oceanjustinlin_qimen/docs/eval/yongshen-eval-2026-06.md:442:// scoreFuyi 内：fuyiScore<0 && (geJuProtectedShens.includes(shen) || tiaohouUrgentRootedShens.has(shen)) → 0
+docs/github-repos/oceanjustinlin_qimen/docs/eval/yongshen-eval-2026-06.md:455:**文件**：[`lib/BaziRuleEngine.js`](../../lib/BaziRuleEngine.js) `getFavorableUnfavorable()` 通关维度（Dimension 3）+ 聚合前新增 `applyYinRescue()`
+docs/github-repos/oceanjustinlin_qimen/docs/ge-tag-demo.html:200:              <span class="sb-tag positive">值使生门</span>
+docs/github-repos/oceanjustinlin_qimen/docs/ge-tag-demo.html:201:              <span class="sb-tag positive">值符不空</span>
+docs/github-repos/oceanjustinlin_qimen/docs/ge-tag-demo.html:243:        <div class="insight-strip-body">当前局势主动有力，用神居旺宫，值使吉门同宫，时势顺畅，宜把握窗口期积极推进。</div>
+docs/github-repos/oceanjustinlin_qimen/docs/ge-tag-demo.html:249:        <div class="insight-strip-body">丙奇飞临用神宫，贵人暗助；值符星落旺位，主导资源充沛；动爻带马，时机流动性强。</div>
+docs/github-repos/oceanjustinlin_qimen/docs/langfuse-prompt-inventory.md:103:除 9 段 section 外，头部还有起局时间/干支四柱/值符值使/空亡驿马（逻辑重插值）、`palacesText`（九宫盘面文本，逻辑重）、`effectiveBaziInfo`（**用户自由文本**，见第 7 节）、固定的"核心推演逻辑"1-4 步说明文案、末尾 `问题：${userQuestion}`（**用户自由文本**）。
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/qimen-dailyart-demo.html:1050:      <svg class="qimen-art" viewBox="0 0 420 680" role="img" aria-label="古籍纸面与奇门九宫图视觉封面" preserveAspectRatio="xMidYMid slice">
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/qimen-dailyart-demo.html:1068:          <text x="46" y="38" writing-mode="tb">阳遁三局值符临坎</text>
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/qimen-dailyart-demo.html:1099:            <b>开门与值符同宫，机会可见；但逢空亡，短期不可硬推。</b>
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/qimen-dailyart-demo.html:1132:        <div class="cover-subtitle">乙巳年 四月初八 · 阳遁三局</div>
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/qimen-dailyart-demo.html:1150:          这条样例取自生产逻辑同形的盘面字段：目标符号为“开门”和“值符”，开门所在宫同时见值符，说明主事人、机会与关键人可以同场出现；但该宫标记为空，短期更像“有门但尚未落地”。
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/qimen-dailyart-demo.html:1164:            <div class="pan-info">2026-05-12 10:30 | 阳遁三局 · 小满前<br>值符：<b>值符</b>&emsp;值使：<b>开门</b></div>
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/qimen-dailyart-demo.html:1175:              <div class="pan-god">值符</div>
+docs/github-repos/oceanjustinlin_qimen/docs/prototypes/qimen-dailyart-demo.html:1233:            <p>开门、天英、值符同宫，是此局最该看的主线。门主机会，值符主关键人或决策权。</p>
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:151:| `ju_info` | 后端 | `qimen_data.ju_info`，包含阴阳遁局、节气、旬首、值符、值使。 |
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:238:| `environment_state` | 值使门/值符 + LLM解释 | 固定分析流程管道与外部条件。只输出 `symbol/palace/tone/reading`。 |
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:262:| `factors[]` | 后端调整项 + LLM解释 | 每项必须对应空亡、凶门、凶星、凶格、值使流程、风险校准中的具体依据。 |
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:619:        "evidence": "时干癸所在宫位得休门和值符，说明目标有质量或机会，但若逢空则仍待落实。"
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:658:      "reading": "时干癸落坎宫，临休门和值符，目标本身有稳定与长期可用的信号。"
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:661:      "symbol": "值使 休门",
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:664:      "reading": "值使门落坎宫，流程偏向保守与等待，适合先确认条件再推进。"
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:672:          "impact": "值符与休门同宫，代表换来的是长期安稳和少折腾。"
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:701:3. **environment_state**：再看值使门和值符，说明流程管道与外部条件。
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-report-schema-prd.md:738:1. **环境风水**：从有利宫位、目标用神宫、值使门宫、避险宫位中提炼空间建议。
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-scoring-engine-improvement.md:91:| 天地盘干（sky+earth）| **宏观层**（值符/值使）| ❌ **无** | 宏观层用 god/isZhiShi，非天干 |
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-scoring-engine-improvement.md:99:**场景：** 乙/丙/丁 出现在值使宫，且该宫恰好是该奇的墓宫（例如：乙 在 乾6宫 index=8，而 乾6宫 正是乙的墓宫）。
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-scoring-engine-improvement.md:103:**结论：此为预期行为，无需修改代码。** 教材明确指出：*奇虽得使但已入墓，锦上添花被封闭，格局效果被严重削减。* 两层信号角度不同——得使反映奇临值使宫的加持，入墓反映奇的能量状态被封闭——叠加后的 −4 准确还原了这一矛盾格局的现实净效。
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-scoring-engine-improvement.md:154:| **三奇得使** | 乙/丙/丁 加临值使门宫 | **+6** | 锦上添花，**大凶时只能稍向好转化，不能翻转** |
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-scoring-engine-improvement.md:156:| **玉女守门** | 值使门加临丁奇所在宫 | **+5** | 利嫁娶、宴会、经商；男命终身局需防妻外遇 |
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-scoring-engine-improvement.md:203:| **六仪击刑** | 戊落震三、己落坤二、庚落艮八、辛落离九、壬落巽四、癸落巽四 | **-15** | ★★★★★ 极凶 | 祸不单行，在最脆弱时遭攻击。**纵得直符也不可用** |
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-scoring-engine-improvement.md:208:| **伏吟（凶性）** | 门/星/值符落本宫不动（丁丁除外）| **-4** | ★★★ 凶 | 慢、迟、停滞、举步维艰，宜静守 |
+docs/github-repos/oceanjustinlin_qimen/docs/qimen-scoring-engine-improvement.md:304:function evaluateMasterClient({ intent, hourStemYin, isFuYin, isFanYin }) {
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:48:That thread connects to modern psychology in a way that's actually documented, not a flourish invented for this project: Carl Jung wrote the foreword to Richard Wilhelm's 1949 English translation of the I Ching, stating plainly that the book gave him the philosophical grounding for his theory of synchronicity — the idea that two events can be meaningfully connected without being causally connected. Jung considered the I Ching the oldest systematic method built on that principle; Wilhelm had introduced him to the text in the 1920s, and Jung kept using it in his own clinical practice for decades afterward. Following the thread further: Bazi's ten gods (peer / output / wealth / authority / resource) describe "the self's relationship to external resources, authority, and expression" — the same territory McClelland's need theory (achievement / power / affiliation) maps from a different symbolic system. The twelve life stages (birth → peak → decline → death → storage → dissolution → gestation → nurture) tell the same kind of staged growth-peak-decline-renewal story as Erikson's eight stages of psychosocial development or Levinson's *The Seasons of a Man's Life*. And the way a luck cycle "activates" dormant natal potential is close to the same claim as trait activation theory (Tett & Guterman, 2000): a stable disposition stays latent until a matching situational cue brings it out as behavior. None of this means the two are the same theory — they're independent structural solutions to the same underlying problem, arrived at from different traditions. The boundary matters here: this is a methodological parallel, not a claim that yin-yang and the five elements have been "proven" by psychology. They haven't passed psychometric validity and reliability testing, and they aren't equivalent to a scale like the Big Five or the MBTI. What this system can actually claim is narrower and more honest: it offers a structurally complete, millennia-refined language for describing the self and its situation — and that language's usefulness doesn't depend on whether its causal mechanism is real, the same way narrative therapy doesn't need a client's life story to be metaphysically true in order to produce real psychological benefit.
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:70:    A["Input<br/>Birth-time structure (Four Pillars)"] --> BB{{"Black box<br/>Yin-yang / five-element symbolic model<br/>No claim on mechanism — only correspondence"}}
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:155:- Yearly fortune: a multi-year range with luck-cycle background, annual ten-god signals, and year-cycle relationships.
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:194:- **Convention aligned with production**: v1 accepts solar dates only, treats the late-Zi hour as the same day, shares the web engine's criteria, and relies on the mainline engine only
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:201:- Expands stems, branches, ten gods, hidden stems, twelve growth phases, Na Yin, emptiness, spirits, and special patterns
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:206:- Supports linked luck pillars, annual cycles, and monthly cycles to show how the natal chart interacts with current time
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:214:| Monthly | Uses solar terms for month boundaries and shows monthly curves, high-score days, low-score days, difficult periods, and readable scoring reasons |
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:215:| Yearly | Generates a multi-year range with luck-cycle context, annual ten-god signals, natal interactions, spirit indicators, and readable scoring reasons |
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:380:  Yearly: luck-cycle background and annual climate
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:396:| *San Ming Tong Hui*: the annual ruler carries major influence | Yearly readings give special attention to how the current year activates the stage |
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:505:- Ten gods, hidden stems, growth phases, emptiness, Na Yin, spirits, and detailed chart view
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:506:- Linked luck pillar, annual, and monthly timelines
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.en.md:520:- Yearly: multi-year range, luck-cycle context, annual ten-god signals, natal interactions, and yearly indicators
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.zh-TW.md:48:這條脈絡和現代心理學之間，其實有一段有據可查的交集，不是本專案自我美化出來的聯想：榮格（Carl Jung）1949 年為衛禮賢（Richard Wilhelm）的《易經》英譯本作序，明確說他從這本書裡看到了自己「共時性」（synchronicity）理論的哲學基礎——兩件事之間沒有因果關係，卻存在有意義的巧合關聯，榮格認為《易經》是歷史上最早系統化運用這條原則的方法，而衛禮賢早在 1920 年代就把《易經》引介給他，此後他用了數十年時間在自己的臨床實踐裡持續驗證。往下看，八字裡的十神（比劫 / 食傷 / 財 / 官殺 / 印）描述的是「自我與外部資源、權威、表達欲之間的關係模式」，這和 McClelland 成就動機理論關心的「人和世界打交道的幾種基本方式」是同一個問題的不同符號系統；十二長生把人生刻畫成長生、帝旺、衰、死、墓、絕、胎、養的階段性敘事，和 Erikson 的心理社會發展八階段、Levinson 的《人生四季》結構同源；歲運「引動」原局潛質的機制，和人格心理學裡的特質激活理論（Trait Activation Theory，Tett & Guterman, 2000）幾乎是同一個命題的兩種表述：穩定傾向平時潛伏，遇到匹配的情境線索才會顯現為行為。這些不是同一套理論，是同一批問題在東西方分別獨立求解出的結構相似解——需要說清楚邊界：這是方法論層面的結構互證，不是說陰陽五行「被心理學證明」了，它沒有經過心理測量學意義上的信效度檢驗，不能和 Big Five 或 MBTI 這類量表畫等號。這套系統真正站得住的價值主張是：它提供一套經過千年打磨、結構完整的自我與情境認知語言，這套語言有沒有用，不取決於它的因果機制是否成立，就像敘事療法不需要來訪者的「人生故事」在形而上學意義上為真，也能產生真實的心理效用。
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.zh-TW.md:285:    ├─► 計算九宮盤面、空亡、馬星、值符值使
+docs/github-repos/oceanjustinlin_qimen/docs/readme/README.zh-TW.md:477:- 九宮排盤視覺化，值符、值使、空亡、馬星同步標註
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:180:中宫相关判断统一寄坤。节气边界、时区回退和寄宫情况必须保留在证据包中。
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:196:  "secondary_symbols": ["值符", "值使门", "时干"],
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:197:  "relation_focus": ["日干与开门", "日干与值符"],
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:234:  "primary_symbols": ["开门", "值符"],
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:235:  "secondary_symbols": ["值使门", "时干"],
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:236:  "relation_focus": ["日干与开门", "日干与值符"],
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:324:2. 值符、值使等大局提纲
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:443:报告开头必须渲染一个九宫格盘面，紧跟基本信息（局名、节气元、值符/值使、空亡、马星）。
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:457:每宫单元格自上而下堆叠：八神 → 九星 → 八门 → 天盘干 → 地盘干 → 标记。标记含 `空`(空亡) `马`(马星)，并标注 `值符宫`/`值使宫`/`用神宫`。中宫只显示寄坤的地盘干并标「中宫·寄坤」。
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:464:| **巽4·东南** 〔值符宫〕<br>玄武<br>天蓬<br>开门<br>丙(天)<br>戊(地)<br>空·马 | **离9·正南**<br>… | **坤2·西南**<br>… |
+docs/github-repos/oceanjustinlin_qimen/docs/skills/qimen-dunjia/SKILL.md:472:- 命中的 `值符宫`/`值使宫`/`用神宫` 必须标注；空亡、马星按 `chart.palaces` 实际布尔值显示。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-05-31-bazi-image-transformation.md:610:getFavorableUnfavorable(dayGan, monthZhi, geJu, strengthResult, zhis, gans, geJuInfoRecord = null, imageAnalysis = null) {
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-05-31-bazi-image-transformation.md:683:  basePattern: geJu,
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-05-31-bazi-image-transformation.md:692:  geJuInfo = {},
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-05-31-bazi-image-transformation.md:693:  geJu = '',
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-05-31-bazi-image-transformation.md:694:  geJuInfoRecord = null,
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-05-31-bazi-image-transformation.md:705:  const basePatternName = geJu || geJuInfo.geju || chengGeDetail.chengGe || '未定格';
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-05-31-bazi-image-transformation.md:708:  const extractionBasis = patternOverride?.overridden ? 'SPECIAL_IMAGE_OVERRIDE' : _buildExtractionBasis(geJuInfo);
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-06-bazi-sse-output.md:37:- `buildBaziSummaryFromSections({ geJu, sections })`
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-10-bazi-profile-accuracy-fixes.md:296:function resolveNamedTwoQiImage({ dayGan, gans, zhis, monthZhi, topElements, combinedRatio, ratioDifference }) {
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-10-bazi-profile-accuracy-fixes.md:302:  if (elementSet.has('金') && elementSet.has('水') && ['申', '酉'].includes(monthZhi) && combinedRatio >= 0.68) {
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-10-bazi-profile-accuracy-fixes.md:312:  if (elementSet.has('火') && elementSet.has('土') && combinedRatio >= 0.62) {
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-10-bazi-profile-accuracy-fixes.md:322:  if (dayGan && elementSet.has(GAN_WUXING[dayGan]) && combinedRatio >= 0.62) {
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-10-bazi-profile-accuracy-fixes.md:359:  combinedRatio,
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-10-bazi-profile-accuracy-fixes.md:369:    two_qi_combined_ratio: round(combinedRatio),
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-11-wenshi-followup-multiturn.md:94:<<<SEC:conclusion>>>针对「具体几月」的增补：以值符落宫推，应在……<<<END:conclusion>>>
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-11-wenshi-followup-multiturn.md:124:| `tiaohou` | "适不适合往南方/夏天" | `lib/calculateTiaohouRatio.calculateTiaohouRatio` | `{ flowGan? }` |
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-11-wenshi-followup-multiturn.md:143:│    解读：以值符落宫推，应在……        │
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-11-wenshi-followup-multiturn.md:192:2. **能力注册表 = 双轴的二次封装**：`FOLLOWUP_CAPABILITIES.bazi`（`liunian_scan`/`dayun_window`/`retarget`/`tiaohou`…）背后调的就是首轮双轴 pipeline 的同一批函数（`assessDynamicTriggers` / `calculateAnnualScore` / `resolveTarget` / `calculateTiaohouRatio`，由 `runStatusPipeline`/`runStaticPipeline`/`runTimingPipeline` 调度）。把它另起一套 capability/tier/params 分类法登记，等于**双份维护**：首轮改了轴定义/函数签名，注册表要单独同步。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-11-wenshi-followup-multiturn.md:256:| 用神取用（TARGET_SOURCE 轴） | 喜用神需算旺衰/调候/格局（多步），由 `resolveTarget` 定 | **按领域查规则表**，由 `lib/qimenYongshenRules.js` 的 `domainView.axes` 定（事业取值符/开门、婚取六合、疾取天芮/死门…），相对确定但**仍是后端规则** |
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-bazi-two-qi-image-override-product-plan.md:86:- `combinedRatio` 只能证明两气集中，不能证明两气成象。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-bazi-two-qi-image-override-product-plan.md:106:产品含义：`TWO_QI_IMAGE` 的 `combinedRatio` 只能做候选，不足以直接决定覆盖。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:28:往下 `solar → lunar → ganzhi → calculateJuByChaiBu(拆补定局) → 空亡/马星/九星/八门/八神` 全部是纯函数式推导，没有第二处读墙上时钟。因此「以任意时间起局」本质是把这 5 个数字的来源参数化。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:146:| 临界时辰（23:00 子时换日/换柱）| 依赖 `lunar` 库既有换柱逻辑，分钟入参透传即可，不特殊处理 |
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:158:2. 填过去时间（如 2020-01-01 14:30）：起出的「阴/阳遁 N 局 + 时辰干支」与权威排盘工具一致。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:161:5. 时区：选 23:30 子时类临界点，时辰柱正确（不因 offset 偏移串柱）。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:184:- ✅ **CP-FE 完成**：`src/components/TimePickerSheet.vue`（公历滚轮+数字双输入，lunar 精确干支）；HomeView 接入（时间行可点、`panTime` 入请求体、重置二次确认）；盘头经 `buildQimenPanInfo()` 补齐 节气三元/旬首/值符值使落宫/空亡·马星地支。明暗双模式实测干净。**顺带修复**既有「现在」时辰干支粗略近似 bug（今天 丁巳日误显 庚日 → 改走 lunar 精确）。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:185:- 🐞 **CP1 揪出生产级排盘 bug（已修）**：`lib/QimenCalculations.js` 的 `calculateJuByChaiBu` **定元方式错误**——旧逻辑按「距节气天数 ÷ 5」定上/中/下元（平气近似），正确应按**符头（最近的甲/己日）**定元（拆补法）。节气不落甲己日（超神/接气，绝大多数情况）时旧法偏一元，导致**局数 + 值符 + 值使**错位；四柱/空亡/马星/旬首不受影响（所以长期未被发现）。与 panTime 无关，"现在"盘同样受影响。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:187:  - 对照权威盘（时家拆补转盘）验证：`2027-07-01 → 阴遁9局/天柱/惊门`、`2020-01-01 → 阳遁7局/天冲/伤门`，局·值符·值使·落宫全部一致。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:188:  - ⚠️ 残留待验：节气×符头跨界处的**超神/接气/置闰**细节，需用权威盘把 CP1 矩阵的「节气换局边界 / 子时 / 跨年闰月」逐个核过再签字。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:190:- ✅ **CP1 通过（用户签字 2026-06-12）**：A/B（权威盘截图）+ C/D/E/F（超神·子时·伏吟·闰月边界）全盘逐宫核对一致。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:193:  - `lib/qimenChart.test.js`：9 条 golden-master，锁死 6 个 CP1 时间戳的 局/定元/四柱/值符值使及落宫/空亡马星 + 2027-07-01 九宫天地盘干抽样 + `parsePanTime` 解析/回退。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:217:  `ju_info(阴阳遁N局)`、`pillars(年/月/日/时四柱)`、`zhifu/zhishi(值符值使)`、九宫的 `九星/八门/八神/天盘干/地盘干`、`auxiliary.kong_wang(空亡)`、`auxiliary.ma_xing(马星)`（字段见 `worker/src/index.js:2076-2096`）。
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:225:  4. **子时临界**：23:30 换日换柱；
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:226:  5. **节气换局边界**：节气交接日附近，验 `calculateJuByChaiBu` 定局；
+docs/github-repos/oceanjustinlin_qimen/docs/superpowers/plans/2026-06-12-qimen-fixed-time-input.md:231:- 将 CP1 用户签字通过的每个时间戳 → 期望输出（局/四柱/值符值使/空亡/马星/关键宫位）钉成 `worker` 单测（参考 `src/workerQimenAudit.test.mjs`）。
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/classifiers.mjs:36:const OTHER_EXCLUSIVE = ['紫微', '斗数', '命宫', '主星', '化忌', '大限', '奇门', '遁甲', '起局', '值符', '星座', '上升', '星盘', '塔罗', '黄道吉日'];
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/run-phase1.mjs:96:  const hardCaseRate = n ? rows.filter((r) => r.hard > 0).length / n : 0;
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/run-phase1.mjs:97:  console.log(`\n【D3a 忠实度】 n=${n}(跳过${skipped})  硬矛盾例数=${rows.filter((r) => r.hard > 0).length}  硬矛盾例率=${(hardCaseRate * 100).toFixed(1)}%  软提示=${softTotal}`);
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/run-phase1.mjs:103:  writeFileSync(outPath, JSON.stringify({ at: new Date().toISOString(), model: EVAL_MODEL, n, skipped, hardTotal, softTotal, hardCaseRate, gate_pass: pass, rows }, null, 2));
+docs/github-repos/oceanjustinlin_qimen/eval/bazi-skill/triggering-cases.js:51:  { id: 'neg_qm_04', kind: 'qimen', should_trigger: false, prompt: '值符落在几宫？' },
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/PLAN.md:20:  -> getGeJu() / getChengGe()
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/RESULTS.md:257:- 四柱：庚子 乙酉 辛酉 壬辰；反查阳历：1540-09-02 08:30
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/RESULTS.md:593:- 诊断补充：此案不是“正官 vs 正印”的用神 top1 错误：当前 top1 已取庚金正官，和教材“官星秉令、真神得用”一致。<br>格局 gap 来自 getGeJu 的月支合化覆盖：乙日生申月本应以申中庚金立正官格，但月支申与日支巳合水后，当前引擎把月令主气改为壬水正印，故展示为正印格。<br>喜忌 critical 来自财印并用规则缺失：教材称“壬印戊财，以乙隔之，水与土不相碍”，戊土正财应为可并用之喜；当前身弱扶抑把财星土直接扣为忌/仇，未识别“财印位置妥贴、两不相碍”的成格救应。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/RESULTS.md:639:- 诊断补充：教材核心不是普通“身弱用印”，而是“亥卯未三合，官化为印”：原月令亥中壬水官星被三合木局转为印势，乙木透出，形成身旺印重。<br>当前引擎只把亥卯未三合用于 getGeJu，把月令主气改成甲木正印，所以格局显示正印格；但旺衰计算仍按原月令亥水失令处理，没有把三合木局/乙木透出形成的印旺生身回灌到旺衰，因此误判为身弱。<br>喜忌颠倒来自身弱链路：调候丁亥首取甲木正印 +50，身弱扶抑再给印比加分，正印最终 86 分成为用神；教材则因“身旺印重”取庚金财星损印，喜食伤财，忌再增木水印官。缺口是“化官为印后身旺印重，用财损印”的成败救应未接入。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:65:当前 `getGeJu()` 返回单一格局，且月支合化可以直接覆盖月令本气。新增样本说明应保留多个候选：
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:391:1. `getGeJu()` 只产出基础月令格局，不被三合六合直接改写。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:669:- `getGeJu` 当前 `monthMergeInfo` 直接改写 `monthMainGan`（[baziCore.js:934](../../lib/baziCore.js)），导致 B 类里金状元、无名杂气正官、汪侍郎落错格。改为默认产候选、不覆盖基础正格。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:773:- `getGeJu()` 中月支合化不再直接改写 `monthMainGan`。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:775:- 同步修正 `buildCompleteBaziDetail()` 传给 `getChengGe()` 的 `basis`：只有 `getGeJu()` 明确返回 `月支合化` 时才按合化 basis；普通 `monthMergeInfo` 不再隐式改成“月支合化”。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:1000:接 P1-c。修一个影响面较大的**主格 bug**：`getGeJu` 对所有月份都做「本气不透则取透干余气」，导致四正/四生月被余气/比劫透干带偏。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:1004:**修复**（`lib/baziCore.js` `getGeJu`）：透干余气优选**仅限墓库月（辰戌丑未，杂气格）**；四正/四生月一律以本气当令立格。库月内再排除比劫透干另立建禄/羊刃（禄刃已按禄位/刃位特判）。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:1251:- `getChengGe` 调用传入 `monthMergeInfo`（getGeJu 早已检出三合候选，P0-b 起保留不覆盖主格）。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:1414:- `getGeJu()` 新增 `patternCandidates` 队列，保留月令本气、墓库透干、官杀取清、七杀食制等候选。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:1423:- `getGeJu promotes exposed rooted killing with food-control over graveyard wealth（知县型）`
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:1424:- `getGeJu promotes mixed official cleanup over month wealth（府判型）`
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:1425:- `getGeJu keeps revealed graveyard official as a candidate until loss-of-use gates are available（杂气正官型）`
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:1758:| 主格取格、候选 | `lib/baziCore.js` `getGeJu`（`patternCandidates`）|
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:2269:**仍剩**：蔡贵妃（伤官格 default 经印星救主取印，非佩印 chengge）——其官杀扶印为喜需在 `BaziRuleEngine.applyYinRescue` 路径补，较 chengGe 层重，留后。真用神错 11 例逐案。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:2289:**Architecture:** 所有改动收敛在 `getChengGe` 的伤官格/财格分支，通过四柱结构证据生成 `patternEffects`，继续复用现有成格先验和主辅封顶机制。每刀均有同格配对护栏；不放宽 `hasLi`、不修改 `applyYinRescue`、不调整全局旺衰权重。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:2807:1. **没有三命变格 resolver**：当前 `getGeJu()` 先按月令、禄刃和正格候选定格；`getChengGe()` 只覆盖子平正格成败、穷通专用干和少量形象/从格。冲禄、天元暗禄、六壬移换、子午双包、日德、魁罡、金神、照象等根本没有入口。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:2816:- 位置建议：`lib/baziCore.js` 中 `getGeJu()` 后、`getChengGe()` 前，或单独模块 `lib/sanMingPatternResolver.js`。
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/ZIPING-ZHENGE-GAP-PLAN.md:3190:P10 后剩余 6 个 critical 全部来自窄边界格法或成格喜忌错位。本轮不改全局旺衰阈值，优先在 `getGeJu()` / `getChengGe()` 增加高置信局部入口：
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/report.mjs:88:    '格局 gap 来自 getGeJu 的月支合化覆盖：乙日生申月本应以申中庚金立正官格，但月支申与日支巳合水后，当前引擎把月令主气改为壬水正印，故展示为正印格。',
+docs/github-repos/oceanjustinlin_qimen/eval/baziprofile-accuracy/report.mjs:98:    '当前引擎只把亥卯未三合用于 getGeJu，把月令主气改成甲木正印，所以格局显示正印格；但旺衰计算仍按原月令亥水失令处理，没有把三合木局/乙木透出形成的印旺生身回灌到旺衰，因此误判为身弱。',
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:17:  const isYang = ['甲', '丙', '戊', '庚', '壬'].includes(dayGan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:18:  return C.SHI_ER[isYang ? (idx - start + 12) % 12 : (start - idx + 12) % 12];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:603:    const dominantRatio = totalWuxingScore > 0 ? dominantScore / totalWuxingScore : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:604:    const isDominant = dominantRatio > 0.55;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:612:      if (dominantRatio > 0.48) structureAdjustment = 1;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:613:      else if (dominantRatio > 0.4) structureAdjustment = 0.5;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:614:    } else if (dominantRatio > 0.5) structureAdjustment = -1;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:615:    else if (dominantRatio > 0.42) structureAdjustment = -0.5;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:666:    const metalWaterRatio = totalWuxingScore > 0 ? ((scores['金'] || 0) + (scores['水'] || 0)) / totalWuxingScore : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:667:    const fireRatio = totalWuxingScore > 0 ? (scores['火'] || 0) / totalWuxingScore : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:668:    const woodRatio = totalWuxingScore > 0 ? (scores['木'] || 0) / totalWuxingScore : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:684:      && (woodRatio >= 0.25 || monthMainShen === '官' || monthMainShen === '杀');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:695:      && (metalWaterRatio >= 0.38 || (visibleOutputStemCount >= 2 && metalWaterRatio >= 0.3))
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:696:      && fireRatio < 0.18;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:700:      && metalWaterRatio >= 0.35;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:715:      && (springWoodBranchCount >= 2 || visibleOfficerKillingStemCount >= 1 || woodRatio >= 0.32)
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:716:      && !(fireRatio >= 0.38 && supportDetail.score >= 2.2 && rootDetail.score >= 2.8);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:727:      && metalWaterRatio >= 0.36
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:728:      && fireRatio < 0.22
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:774:      congCheckText = `四支无根，天干亦无实助，而${dominantElement}占比约${Math.round(dominantRatio * 100)}%，触发${strongWeak}提示。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:776:      congCheckText = `${dayMasterHasRoot ? '日主有根' : '日主无根'}，${stemHasHelp ? '天干有印比帮身' : '天干无印比帮身'}，${dominantElement}占比约${Math.round(dominantRatio * 100)}%，不作真从或专旺覆盖。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:788:      dominant_ratio: dominantRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:793:      possible_cong: !dayMasterHasRoot && dominantElement !== dayMasterElement && dominantRatio > 0.45,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:794:      possible_zhuan_wang: dominantElement === dayMasterElement && dominantRatio > 0.5,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:840:        dominant_ratio: dominantRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:870:      dominantRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:883:  getFavorableUnfavorable(dayGan, monthZhi, geJu, strengthResult, zhis, gans, geJuInfoRecord = null, imageAnalysis = null, chengGeDetail = null, classicalPattern = null) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:899:    const geJuProtectedShens = GE_JU_PROTECTED_MAP[geJu] || [];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:913:    const wuxingRatio = {};
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:915:      wuxingRatio[wx] = totalScore > 0 ? (wuxingScores[wx] / totalScore) * 100 : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1209:        wuxing_ratio: wuxingRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1236:        const penalty = getTiaohouUnfavorablePenalty(wuxingRatio[wx] || 0, hasRestrainingGan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1250:      for (let wx of Object.keys(wuxingRatio)) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1251:        const ratio = wuxingRatio[wx];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1284:        if (wuxingRatio[rule.c1] > 25 && wuxingRatio[rule.c2] > 25) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1285:          if (wuxingRatio[rule.bridge] < 15) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1356:        if (fuyiScore < 0 && (geJuProtectedShens.includes(shen) || tiaohouUrgentRootedShens.has(shen))) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1368:    const scoreGeJu = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1369:      if (!geJuInfoRecord) return;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1370:      const shunNi = geJuInfoRecord.shunNi || '';
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1371:      const xianShens = parseShenText(geJuInfoRecord.xianShenTypical || '');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1380:        const coreShens = parseShenText(geJuInfoRecord.yongShenTypical || '');
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1389:    scoreGeJu();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1417:            message: `${chengGeDetail.chengGe || geJu}已成格，相神${chengGeEffects.xianShens.join('、')}保留为喜，不按普通分层落闲忌。`
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1476:          message: `${chengGeDetail?.chengGe || geJu}以${assistantShens.join('、')}为相神/喜，保留为喜但不得越用神上位。`
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1494:          message: `${chengGeDetail?.chengGe || geJu}结构保留${protectedFullShens.join('、')}，不按普通扶抑或同五行折叠落忌。`
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1541:    const applyYinRescue = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1548:      const besiegeRatio = (wuxingRatio[guanShaWx] || 0) + (wuxingRatio[shiShangWx] || 0);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1549:      if (besiegeRatio <= 28) return null;       // 官杀/食伤未成压身之势
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1573:    const yinRescue = applyYinRescue();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1585:    const applyYangRenDriveSha = () => {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1587:      if (geJu !== '七杀格') return null;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1592:      if ((wuxingRatio[guanShaWx] || 0) <= 25) return null; // 官杀未成攻身之势
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1616:    const yangRenDriveSha = applyYangRenDriveSha();
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1687:    if (geJu === '正官格' && scores['正印'] > 0 && scores['正官'] > 0) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1755:    if (geJuInfoRecord) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1756:      decisionChain.push({ layer: 'L2 格局', reason: `${geJu}（${geJuInfoRecord.shunNi}），辅神加分：${geJuInfoRecord.xianShenTypical}。` });
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1768:        reason: `${chengGeDetail?.chengGe || geJu}（${status}）：${reasonParts.join('；')}。`,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1795:      const bingWx = Object.keys(wuxingRatio).sort((a, b) => wuxingRatio[b] - wuxingRatio[a])[0];
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1796:      mainVerdict = `原局五行偏枯，${bingWx}势偏旺为病（占比${Math.round(wuxingRatio[bingWx])}%），急需克制或顺泄。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1798:      mainVerdict = `此局格局为${geJu}，首取格局核心用神。`;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1814:      wuxing_ratio: wuxingRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1906:  extractAdvancedPatterns(dayGan, gans, zhis, allShens, geJu, strengthResult) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1913:    const isYang = ['甲', '丙', '戊', '庚', '壬'].includes(dayGan);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:1929:    if (isYang && zArr[1] === C.YANG_REN[dayGan]) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2038:        const useYang = (isMale && yangStem) || (!isMale && !yangStem);
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2039:        const ymap = useYang ? C.YUANCHEN.yang : C.YUANCHEN.yin;
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2086:  buildYuanjuCore(dayGan, monthZhi, gans, zhis, geJu, strengthResult, favorableResult, patterns) {
+docs/github-repos/oceanjustinlin_qimen/lib/BaziRuleEngine.js:2094:      `【格局】${geJu}`,
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:60:function getDiPan(isYang, gameNumber) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:61:    const diPanConfig = isYang ? DIPAN_YANG : DIPAN_YIN;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:73:function calculateTianPan(isYang, tianGan, fuShou, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:89:function getZhiShiDoor(fuShou, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:95:function calculateEightDoors(isYang, zhiShiDoor, flyStep, fuShou, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:97:    const flyIndex = isYang ? FLY_PATH.DOOR_YANG : FLY_PATH.DOOR_YIN;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:127:function getZhiFuStar(fuShou, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:132:function getZhiFuPosition(tianGan, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:153:function calculateEightGods(isYang, tianGan, diPan) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:157:    const gods = isYang ? EIGHT_GODS_YANG : EIGHT_GODS_YIN;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:158:    const flyPath = isYang ? FLY_PATH.CLOCKWISE : FLY_PATH.COUNTER_CLOCKWISE;
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:177:function getZhiShiPosition(zhiShiDoor, eightDoors) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:215:function calculateJuByChaiBu(solar, jieQiJuShu, yuanNames) {
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:222:    const currentJD = solar.getJulianDay();
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:223:    const jieQiJD = jieQiSolar.getJulianDay();
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:227:    // 取代旧的「距节气天数 ÷ 5」近似——节气不落在甲/己日（超神/接气）时旧法会偏一元，
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:228:    // 导致局数与值符/值使错位（四柱/空亡/马星不受影响）。
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:235:    const config = jieQiJuShu[jieQiName];
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:244:        isYang: config.yang,
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:245:        yinYang: config.yang ? '陽' : '陰',
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:261:    getZhiShiDoor,
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:264:    getZhiFuStar,
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:265:    getZhiFuPosition,
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:270:    getZhiShiPosition,
+docs/github-repos/oceanjustinlin_qimen/lib/QimenCalculations.js:271:    calculateJuByChaiBu
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:102:const EIGHT_GODS_YANG = Object.freeze(['值符', '滕蛇', '太陰', '六合', '勾陳', '朱雀', '九地', '九天']);
+docs/github-repos/oceanjustinlin_qimen/lib/QimenConstants.js:103:const EIGHT_GODS_YIN = Object.freeze(['值符', '滕蛇', '太陰', '六合', '白虎', '玄武', '九地', '九天']);
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:128:test('getGeJu keeps yangren special case ahead of month merge', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:129:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:142:test('getGeJu keeps month main qi as primary when month merge is only a candidate', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:143:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:158:test('getGeJu does not let 巳申合水 override 申月庚官 primary pattern（薛相公型）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:159:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:174:test('getGeJu promotes exposed rooted killing with food-control over graveyard wealth（知县型）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:175:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:190:test('getGeJu promotes mixed official cleanup over month wealth（府判型）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:191:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:206:test('getGeJu promotes revealed graveyard official once loss-of-use gates are available（杂气正官型）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:207:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:223:test('getGeJu promotes tomb-month exposed finance over base seal（汪学士型）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:224:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:239:test('getGeJu promotes exposed hurt-output over graveyard peer main qi（假伤官型）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:240:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:255:test('getGeJu promotes exposed killing when a graveyard month has only peer main qi（康熙型）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:256:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:273:test('getGeJu keeps a true non-graveyard lu month ahead of exposed killing', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:274:  const result = baziModule.getGeJu({
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2029:    geJuInfo: { geju: '正财格', basis: '月支本气', tenGod: '财', monthMainGan: '己', note: '丑以己为月令主气取格。' },
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2030:    geJu: '正财格',
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2031:    geJuInfoRecord: baziModule.GE_JU_INFO['正财格'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2082:    geJuInfo: { geju: '正财格', basis: '月支本气', tenGod: '财' },
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2083:    geJu: '正财格',
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2100:    geJuInfo: { geju: '七杀格', basis: '月支本气', tenGod: '杀', monthMainGan: '庚', note: '申以庚为月令主气取格。' },
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2101:    geJu: '七杀格',
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2102:    geJuInfoRecord: baziModule.GE_JU_INFO['七杀格'],
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2107:    geJuInfo: { geju: '正官格', basis: '月支本气', tenGod: '官', monthMainGan: '辛', note: '酉以辛为月令主气取格。' },
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2108:    geJu: '正官格',
+docs/github-repos/oceanjustinlin_qimen/lib/bazi-api.test.js:2109:    geJuInfoRecord: baziModule.GE_JU_INFO['正官格'],
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:401:function _formatGeJuByTenGod(tenGod) {
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:454:        name: _formatGeJuByTenGod(tenGod),
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:941:        const daySeatedYangRen = _YANG_REN_MAP[dayGan] === allBranches[2];
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:942:        if (states.sha.hasRoot && !hasEffectiveOutputControl && hiddenSealUse && !daySeatedYangRen) {
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1359:function _buildExtractionBasis(geJuInfo = {}) {
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1360:    if (geJuInfo.basis === '羊刃特判') return 'YANGREN_SPECIAL';
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1361:    if (geJuInfo.basis === '建禄特判') return 'JIANLU_SPECIAL';
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1362:    if (geJuInfo.basis === '月支合化') return 'MONTH_COMBINATION_TRANSFORMED';
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1363:    if (geJuInfo.basis === '月令透干') return 'MONTH_HIDDEN_STEM_REVEALED';
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1393:    geJuInfo = {},
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1394:    geJu = '',
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1395:    geJuInfoRecord = null,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1407:    const basePatternName = geJu || geJuInfo.geju || chengGeDetail.chengGe || '未定格';
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1417:        : (specialPattern ? 'SPECIAL_FORCE' : _buildExtractionBasis(geJuInfo));
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1421:    const tenGod = geJuInfo.tenGod || geJuInfoRecord?.element || chengGeDetail.yongShenTenGod || '';
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1433:    const strategy = geJuInfoRecord?.shunNi === '逆用'
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1435:        : (geJuInfoRecord?.shunNi === '顺用' ? 'SHUN_YONG' : '');
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1437:    const monthMergeInfo = geJuInfo.monthMergeInfo || null;
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1442:            value: monthZhi && geJuInfo.monthMainGan
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1443:                ? `${monthZhi}藏干以${geJuInfo.monthMainGan}定主轴`
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1444:                : (geJuInfo.note || '以月令提纲定格局主轴')
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1450:                ? `月令藏干：${monthHiddenGans.filter(Boolean).join('、')}；当前依据为${geJuInfo.basis || '月支本气'}。`
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1451:                : `当前依据为${geJuInfo.basis || '月支本气'}。`
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1495:                    : (geJuInfoRecord?.judgeBase || geJuInfo.note || '以月令提纲为重，结合透干与合会定格。')
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1505:                    ? `${geJuInfoRecord?.name || basePatternName}按${geJuInfoRecord?.shunNi}处理。`
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1525:            personality: patternStatement?.personality || (geJuInfoRecord?.personality || []),
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1526:            career_wealth: patternStatement?.career_wealth || (geJuInfoRecord?.goodFor || []),
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1529:            failure_warning: patternStatement?.warning || (geJuInfoRecord?.watchOut || []),
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1629:        guoYin:  {甲:'戌',乙:'未',丙:'丑',丁:'戌',戊:'丑',己:'戌',庚:'辰',辛:'丑',壬:'未',癸:'辰'},
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1665:        if (this.Rules.guoYin[dayGan] === targetZhi) res.push("国印贵人");
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1684:            const useYang = (isMale && yangStem) || (!isMale && !yangStem);
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1685:            const ymap = useYang ? this.Rules.yuanChen.yang : this.Rules.yuanChen.yin;
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1701:        let start = this.CHANG_SHENG_START[gan], zIndex = this.ZHI_INDEX[zhi], isYang = ["甲", "丙", "戊", "庚", "壬"].includes(gan);
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1702:        return this.SHI_ER[isYang ? (zIndex - start + 12) % 12 : (start - zIndex + 12) % 12];
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1751:    getGeJu: function (bazi) {
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1811:            geju: _formatGeJuByTenGod(selectedTenGod),
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1835:function _buildUserBlocks(favorableResult, strengthResult, geJu, geJuInfoRecord) {
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1855:    const summary = `${strongWeak} · ${geJu} · 用${yongWxLabel}${confLabel}`;
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1861:    const gejuText = geJuInfoRecord ? `${geJu}（${geJuInfoRecord.shunNi}）以${geJuInfoRecord.xianShenTypical}为用，` : '';
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1884:    const yongGejuInfo = geJuInfoRecord;
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1920:    const geJuInfo = BaziEngine.getGeJu(baziObj);
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1921:    const geJu = geJuInfo.geju;
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:1995:        // 节气/儒略日重算，占排盘 ~94% CPU，曾导致 Worker CPU 超限(503)。
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2069:        basePattern: geJu,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2074:        geju: geJuInfo.geju,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2075:        basis: geJuInfo.basis === '月支合化'
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2077:            : (geJuInfo.basis.includes('特判')
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2079:                : (geJuInfo.basis === '主格候选'
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2081:                    : (geJuInfo.basis === '月支本气'
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2089:        monthMergeInfo: geJuInfo.monthMergeInfo || null,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2090:        patternCandidates: geJuInfo.patternCandidates || [],
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2097:        geJu,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2101:        GE_JU_INFO[geJuInfo.geju] || null,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2107:        geJuInfo,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2108:        geJu,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2109:        geJuInfoRecord: GE_JU_INFO[geJuInfo.geju] || null,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2125:        geJu,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2138:        geJu,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2159:    const userBlocks = _buildUserBlocks(favorableResult, strengthResult, geJu, GE_JU_INFO[geJuInfo.geju] || null);
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2174:            ge_ju: geJu,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2175:            ge_ju_detail: geJuInfo,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2194:        geju: geJu,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2198:        geju_detail: geJuInfo,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2199:        geju_info: GE_JU_INFO[geJuInfo.geju] || null,
+docs/github-repos/oceanjustinlin_qimen/lib/baziCore.js:2242:    getGeJu: BaziEngine.getGeJu.bind(BaziEngine),
+docs/github-repos/oceanjustinlin_qimen/lib/baziDynamicAssessor.js:747:    const fanYinAuspice = isXi === false
+docs/github-repos/oceanjustinlin_qimen/lib/baziDynamicAssessor.js:757:      auspice_direction: fanYinAuspice,
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:198:function getElementRatio(wuxingScores, element) {
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:358:    const targetRatio = totalScore ? targetScore / totalScore : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:362:    const dominancePoints = Math.min(45, targetRatio * 90);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:380:    const meetsDominantRatio = targetRatio >= DOMINANT_MIN_RATIO;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:385:      && meetsDominantRatio;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:394:    const followChainRatio = [...new Set(flowElements)]
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:395:      .reduce((sum, element) => sum + getElementRatio(wuxingScores, element), 0);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:396:    const followChainPoints = Math.min(20, followChainRatio * 20);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:417:    const relaxedRatioMin = subtype === '从官杀格' ? 0.35 : 0.3;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:434:      && targetRatio >= relaxedRatioMin
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:435:      && followChainRatio >= relaxedChainMin;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:444:    if (meetsDominantRatio && isGlobalDominant) {
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:472:        target_qi_ratio: round(targetRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:480:        meets_dominant_ratio: meetsDominantRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:481:        follow_chain_ratio: round(followChainRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:502:  const targetRatio = getElementRatio(wuxingScores, dmElement);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:505:  const counterRatio = getElementRatio(wuxingScores, counterElement);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:506:  const wealthRatio = getElementRatio(wuxingScores, wealthElement);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:511:  const sameCampDominancePoints = Math.min(45, targetRatio * 70);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:512:  const purityPoints = Math.min(35, targetRatio * 35);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:520:    targetRatio >= 0.45
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:527:    counterRatio >= 0.18 && (counterExposed > 0 || counterBranches > 0) ? 30 : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:528:  const wealthDrainPenalty = wealthRatio >= 0.18 && sameCampBranchFramePoints === 0 && completeWoodFramePoints === 0 ? 10 : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:529:  const mixedQiRatio = counterRatio + wealthRatio;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:530:  const mixedQiPenalty = mixedQiRatio >= DOMINANT_MIN_RATIO ? 15 : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:534:  if (targetRatio >= 0.55) reasonCodes.push('TARGET_QI_DOMINANT');
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:565:      target_qi_ratio: round(targetRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:571:      counter_qi_ratio: round(counterRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:575:      wealth_qi_ratio: round(wealthRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:577:      mixed_qi_ratio: round(mixedQiRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:610:    const targetRatio = getElementRatio(wuxingScores, targetElement);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:611:    const counterRatio = getElementRatio(wuxingScores, counterElement);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:612:    const transformQiDamaged = counterRatio >= DOMINANT_MIN_RATIO;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:627:    const intactPoints = transformQiDamaged ? 0 : targetRatio >= 0.3 ? 10 : targetRatio > 0 ? 5 : 0;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:675:        transform_qi_ratio: round(targetRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:676:        transform_qi_counter_ratio: round(counterRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:701:  const combinedRatio = topElements.reduce((sum, item) => sum + item.ratio, 0);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:703:  const combinedPoints = Math.min(45, combinedRatio * 60);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:705:  const lowMixedQiPoints = Math.max(0, 20 - (1 - combinedRatio) * 25);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:713:    combinedRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:725:  let lianYinDowngrade = false;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:730:    lianYinDowngrade = true;
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:738:    allow_override: lianYinDowngrade ? false : named.allow_override,
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:740:      two_qi_combined_ratio: round(combinedRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:773:  combinedRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:787:    && combinedRatio >= 0.6
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:809:    && combinedRatio >= 0.62
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:847:  if (elementSet.has('火') && elementSet.has('土') && combinedRatio >= 0.62) {
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:990:    ratio: getElementRatio(wuxingScores, element),
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:1003:  const combinedRatio = targetCamps.reduce((sum, item) => sum + item.ratio, 0);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:1004:  const combinedPoints = Math.min(35, combinedRatio * 40);
+docs/github-repos/oceanjustinlin_qimen/lib/baziImageAssessor.js:1013:      mixed_force_combined_ratio: round(combinedRatio),
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.js:233:后端格局：${ctx.geJu || ''}
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.js:262:function buildBaziSummaryFromSections({ geJu = '', sections = {} } = {}) {
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.js:263:  return `【命造格局】：${geJu}\n\n原局核心：\n${sections.yuanju_core || ''}\n\n当前大运：\n${sections.current_dayun || ''}\n\n当前流年：\n${sections.current_liunian || ''}`;
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.test.js:81:    geJu: '正财格',
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.test.js:102:    geJu: '伤官格',
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.test.js:141:    birthStr: '1982年12月1日 子时',
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.test.js:143:    geJu: '建禄格',
+docs/github-repos/oceanjustinlin_qimen/lib/baziLlmSections.test.js:179:    geJu: '正财格',
+docs/github-repos/oceanjustinlin_qimen/lib/baziQuestionCore.js:794:  return `你是一位精通子平八字推演的命理大师，擅长将客观命局数据转化为有温度、有落地价值的人生指引。
+docs/github-repos/oceanjustinlin_qimen/lib/baziStateAssessor.js:365:    const hasYin = pillars.some(p => {
+docs/github-repos/oceanjustinlin_qimen/lib/baziStateAssessor.js:369:    return shangCount >= 2 && !hasYin;
+docs/github-repos/oceanjustinlin_qimen/lib/baziStateAssessor.test.js:31: *   dayStem = 己 (Yin Earth)
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:6: * annual_score = clamp(70 + layer1 + layer2 + layer3, 45, 98)
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:30:const { calculateTiaohouRatio, tiaohouToHit } = require('./calculateTiaohouRatio');
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:35:const ANNUAL_SCORE_HITS_VERSION = 'annual-score-hits-v3';
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:106:  tiaohouRatio = 1,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:176:      debug: `base=70, rawBeforeTiaohou=${rawBeforeTiaohou}, tiaohouRatio=${tiaohouRatio}, tiaohouImpact=${tiaohouImpact}, rawAfterTiaohou=${rawAfterTiaohou}, rawBeforeCaps=${rawBeforeCaps}, layer1=${layer1.layer1_score}, layer2=${layer2.layer2_score}, layer3=${layer3.layer3_score}, caps=${capLabels.join('|') || 'none'}, final=${finalScore}`,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:509:  // 流年支喜忌系数（xiJiRatio）
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:511:  const xiJiRatio = lnZhiType === '喜用' ? 1.0 : lnZhiType === '闲' ? 0.7 : 0.4;
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:512:  shensha_signals.shensha_ratio = xiJiRatio;
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:585:    parts.push(`天乙贵人+${pts}（base=${impact.baseDelta}，qi=${impact.qiState}/${impact.qiRatio}，tier=${impact.tierLabel}/${impact.tierRatio}，void=${impact.voidRatio}）`);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:604:    parts.push(`文昌贵人+${pts}（base=${impact.baseDelta}，qi=${impact.qiState}/${impact.qiRatio}，tier=${impact.tierLabel}/${impact.tierRatio}，void=${impact.voidRatio}）`);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:622:    shenshaRaw += pts; parts.push(`禄神（日干禄）+${pts}（×${xiJiRatio}）`);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:667:    shenshaRaw += impact.finalDelta; parts.push(`岁德（流年干=年干）+${impact.finalDelta}（base=${impact.baseDelta}，qi=${impact.qiState}/${impact.qiRatio}，tier=${impact.tierLabel}/${impact.tierRatio}）`);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:682:      shenshaRaw += impact.finalDelta; parts.push(`岁德合（流年干合年干化${suideHeHua}）+${impact.finalDelta}（base=${impact.baseDelta}，qi=${impact.qiState}/${impact.qiRatio}，tier=${impact.tierLabel}/${impact.tierRatio}）`);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:757:  const tiaohouRatio = calculateTiaohouRatio(profile, liunianGan);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:758:  if (tiaohouRatio.ratio !== 1.0) raw = Math.round(raw * tiaohouRatio.ratio);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:785:  const annual_score = Math.min(98, Math.max(45, Math.round(raw)));
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:791:    finalScore: annual_score,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:795:    tiaohouRatio: tiaohouRatio.ratio,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:802:  const tiaohouHit = tiaohouToHit(tiaohouRatio);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.js:813:    annual_score,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:23:test('annual score exposes score_hits with the same shape as monthly score hits', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:26:  assert.equal(result.score_hits.version, 'annual-score-hits-v3');
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:27:  assert.equal(result.score_hits.summary.final_score, result.annual_score);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:54:test('annual fallback score also exposes score_hits for frontend reuse', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:62:  assert.equal(result.annual_score, 70);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:63:  assert.equal(result.score_hits.version, 'annual-score-hits-v3');
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:70:test('annual cache version is bumped for P2-A shensha qi weighting', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:71:  assert.equal(ANNUAL_SCORE_CACHE_VERSION, 'annual-score-v6-p2a-shensha-qi');
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:74:test('annual score caps still apply when score_hits are generated', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:87:  assert.ok(result.annual_score <= 80);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:88:  assert.equal(result.score_hits.summary.final_score, result.annual_score);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:92:test('annual tiaohou bonus does not lift score above favorable Kong Wang cap', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:112:  assert.ok(result.annual_score <= 85, 'tiaohou should be applied before favorable Kong Wang cap');
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:113:  assert.match(result.score_hits.summary.debug, /tiaohouRatio=1\.08/);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:117:test('zixing only triggers when annual zhi repeats a natal self-punishment branch', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:141:  assert.ok(withRepeat.annual_score <= 88);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:305:test('annual dayun background is lighter than liunian trigger in heavenly-stem scoring', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:322:test('annual layer ranges cap dayun at 15 and liunian at 28', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateAnnualScore.test.js:338:test('annual yima uses year branch first and day branch fallback without profile scope errors', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateDailyScore.js:173:function ganYinYang(gan) {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateDailyScore.js:188:  const liuYY     = ganYinYang(liuGan);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateDailyScore.js:189:  const riYY      = ganYinYang(riGan);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:25:const { calculateTiaohouRatio, tiaohouToHit } = require('./calculateTiaohouRatio');
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:196:  tiaohouRatio = 1,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:238:      debug: `base=70, rawBeforeTiaohou=${rawBeforeTiaohou}, tiaohouRatio=${tiaohouRatio}, tiaohouImpact=${tiaohouImpact}, rawAfterTiaohou=${rawAfterTiaohou}, rawTotal=${rawTotal}, layer1=${layer1.layer1_score}, layer2=${layer2.layer2_score}, layer3=${layer3.layer3_score}, kongwang_cap=${isKongWang}, final=${finalScore}`,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:244:function ganYinYang(gan) {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:840:  const highRatio = highItems.length / dailyPoints.length;
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:873:      debug: `high_score_days=${highItems.length}, total_days=${dailyPoints.length}, highRatio=${highRatio}, raw +${highRaw}`,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:919:      display: `节气交接前后气机转换，日分已作折减；这类窗口适合观察调整，不宜强行抢进。`,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:1166:      display: `本轮流月节气扰动少，气机相对专一，月令之力更容易稳定发挥。`,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:1175:      display: `本轮流月节气交错较多，气机转换频繁，行事宜多观察节奏变化。`,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:1282:  const tiaohouRatio = calculateTiaohouRatio(profile, monthGan, '流月');
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:1283:  if (tiaohouRatio.ratio !== 1.0) rawTotal = Math.round(rawTotal * tiaohouRatio.ratio);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:1295:    tiaohouRatio: tiaohouRatio.ratio,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.js:1299:  const tiaohouHit = tiaohouToHit(tiaohouRatio);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateMonthlyScore.test.js:85:  assert.match(result.score_hits.summary.debug, /tiaohouRatio=1\.08/);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:72:function getVoidRatio({ nature, isVoid }) {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:87:  supportRatio = 1.0,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:94:  const tierRatio = (nature === 'inauspicious' ? INAUSPICIOUS_TIER_RATIOS : AUSPICIOUS_TIER_RATIOS)[tier] ?? 0.45;
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:96:  const qiRatio = QI_RATIOS[qiState] ?? QI_RATIOS.neutral;
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:97:  const voidRatio = getVoidRatio({ nature, isVoid });
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:98:  const finalDelta = Math.round(baseDelta * qiRatio * tierRatio * voidRatio * supportRatio);
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:112:    qiRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:113:    tierRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:114:    voidRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:115:    supportRatio,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateShenshaImpact.js:118:    debug: `base=${baseDelta}, zhi=${zhi}, shenshaWuxing=${shenshaWuxing}, referenceMonthZhi=${referenceMonthZhi}, referenceWuxing=${referenceWuxing}, qiState=${qiState}, qiRatio=${qiRatio}, tier=${tier}, tierLabel=${TIER_LABELS[tier]}, tierRatio=${tierRatio}, voidRatio=${voidRatio}, supportRatio=${supportRatio}, final=${finalDelta}`,
+docs/github-repos/oceanjustinlin_qimen/lib/calculateTiaohouRatio.js:4: * calculateTiaohouRatio.js
+docs/github-repos/oceanjustinlin_qimen/lib/calculateTiaohouRatio.js:61:function calculateTiaohouRatio(profile, flowGan, flowLabel = '流年') {
+docs/github-repos/oceanjustinlin_qimen/lib/calculateTiaohouRatio.js:126:module.exports = { calculateTiaohouRatio, tiaohouToHit, parseTiaohouSpec };
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:8:    六甲日生甲子时，败中印绶官生至；月通木气不寻常，反此而言虚名利。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:9:    甲日甲子时，虽甲败在子(沐浴)，暗有癸水生气印绶，兼有官生其印，若己土破印，通月气，贵。否则，秀而不实。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:13:    甲子日甲子时，子遥巳格，年月无庚辛申酉，丑绊午冲，离祖自立，贵。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:17:    甲寅日甲子时，拱丑中辛，贵。年月无庚辛申酉丑未，大贵。再甲寅月，孤克，惟憎道可。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:21:    甲辰日甲子时，若水位年月，水泛木浮，主移根换叶；申月，煞星会印，俱贵。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:24:    甲午日甲子时，时日并冲，忧伤妻子，月通木气者显贵。纯子午年月，或亥未酉月，俱贵。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:26:    甲申日甲子时，甲胎逢印印化煞，贵。鸳鸯重叠，子嗣难为。若行东南方运，文武职居间。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:29:    甲戌日甲子时，拱亥天门，会同帝阙，甲长生地也，不可以隔角论。年月通申巳酉丑金气，大贵。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:33:    甲子时逢甲子，就中印绶符同。庚申辛酉若相逢，丑未再兼年月。拱贵暗藏极显，巳午冲破平中。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:296:    乙日丙子时，六乙鼠贵。乙用庚为官，死于子；见丙为伤，丙暗邀辛化煞为权，柱中不见庚辛，
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:300:    六乙贵格丙子时，如无冲破始为奇；不遇庚申巳酉丑，定乘轩冕拜丹墀。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:303:    乙丑日丙子时,身弱平常,无午穿冲,贤德温厚。申酉年月,风宪。寅子,贵显。忌丙寅、己未、甲戌、己丑等月,主凶刑恶死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:305:    乙卯日丙子时,高。辰戌丑未亥年月,不见官星,贵。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:307:    乙巳日丙子时,吉。若巳午年月,寿促,不然,身孤劳碌, 纯土,财旺生官,行西运;子辰,行水火运,俱二三品贵。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:310:    乙未日丙子时,平。若子亥年月,大贵,岁运同。忌巳未月,刑伤,丙申月,身不完死;己丑月,破祖恶死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:312:    乙酉日丙子时,贵,身孤,反复起倒,月通水气,不见辛午亦贵。忌戊寅月,大凶;丁巳月,破祖贫;己酉月,金刃死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:314:    乙亥日丙子时,化青赤,主福。生庚辰年月,富贵。纯亥,成败。丑月,行南运郎官。巳午西运,极贫。忌壬辰月,刑;乙酉月,破祖高贵,中恶死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:568:    丙日戊子时，官旺财生，丙用辛为财，癸为官，丙合辛，戊合癸，子中癸旺辛生，丙火无气。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:573:    丙子时逢戊子，官星食福同排。午丁未遇且沉埋，交通中年大快。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:576:    丙子日戊子时,寅巳卯未月,木能生火,大贵。冬月,丙火无气,贫夭。戌月,行火土运,五六品贵。忌丁巳月,夭; 己酉月,破家失土,身贱。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:578:    丙寅日戊子时,生卯丑月,清贵。寅戌,平常。夏月身旺, 柱有水金方吉。子月正官,大贵。忌癸巳月,刑;癸亥月,恶死;己酉月,大败。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:580:    丙辰日戊子时,丙辰为日德格,喜见官星。若生戌月,身旺最宜,武贵。寅月,行金水运,中贵。申月三合,合煞有印, 贵。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:583:    丙午日戊子时,丙午为日刃格,要官煞制合。生辰戌丑未月,大富。亥卯未寅年月,大贵,申巳,文贵三品,武贵不永。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:586:    丙申日戊子时,巳午年月,行东北运,风宪,子月,行木火运,三品。丑七品,酉亥,虽遇贵反贱。忌癸巳月,中年刑。乙酉月,破败。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:588:    丙戌日戊子时,春生,印绶最吉。夏,身太旺,平常。秋,财旺身衰,有寄托则贵。纯酉年月,文进之贵。忌己亥月,死不全尸;癸丑月,贫夭
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:836:    庚子时逢日是丁，火落江湖暗复明；四柱若兼冲克破，读书到老只虚名。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:840:    丁丑日庚子时平,通木火气,或行身旺运,贵。亦有亥子年月贵者,以丁火阴柔,不怕水乡故也。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:842:    丁卯庚子时贫,辰戌丑未,偏官有制,午月干强,春身旺, 俱吉。秋冬平常。忌癸巳月,破祖凶;己未月,刑伤;甲申月,刺面血光死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:844:    丁巳日庚子时,春旺,夏强,俱贵。秋冬平常。四季月,制伏得中吉。子辰,行西运,四五品贵。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:846:    丁未日庚子时,辰戌丑未月,偏官有制。午月干强,贵。 余月有制伏,吉;戊子,文章显秀。忌戊申月,夭;丙戌月,刑;辛丑月,刑凶。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:848:    丁酉日庚子时,辰戌丑未月,刚明特达,贵。辰巳年月, 贵尊相府。忌甲寅月,破败恶死;癸巳月,离乡恶死;乙酉月刑死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:850:    丁亥日庚子时,五十后大旺。辰戌丑未月,吉。寅午年月,贵。忌庚寅月,恶死;庚申月,身不全死;辛酉月,破败。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1089:    戊日壬子时,妻财俱旺,戊以壬为妻财,子上壬水旺,戊土无气,生辰戌丑未月,不化者获财。若合癸化落水旺乡,火不显其光,作事无成,虚而不实,当患目灾。通月气旺者贵。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1092:    戊日喜逢壬子时,身强官旺正相宜; 运行背却休囚地,荣禄奔波任作为。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1095:    戊子日壬子时,财星格。寅卯月,禄马朝元,显贵。酉亥丑年月,西北运,金紫风宪。忌乙卯年刑;癸巳月,旺中刑; 丙午月,旺中受刑。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1097:    戊寅日壬子时,卯月,正官格,贵。夏乖,秋少顺。丑酉年月,吉。忌己巳月刑,己亥月凶刑。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1099:    戊辰日壬子时,春,财官旺、贵。夏乖。秋少顺。冬财旺, 行西南运,五六品贵。忌庚辰月,自刑凶;辛巳月,截路凶刑;乙丑月,破败凶。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1101:    戊午日壬子时,时日并冲,忧伤妻子。巳午年月,风宪。 寅卯亥,六卿。申月,行木火运,侯伯。忌丙午月,身不全; 癸亥,自刑夭。年月子午不杂,丑戌又刑,俱主大贵。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1103:    戊申日壬子时高,先滞后旺。子酉年月,时上偏官,贵。巳午未戌,身有制化,用财亦专,皆以吉论。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1106:    戊戌日壬子时,寅巳午年月,去财留印,三四品贵。经云 :能见义忘利,取印舍财是也。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1353:    己日甲子时,明官暗财。己用甲为官,癸为财,辛为食, 子为天乙贵,子上有明甲暗癸,辛长生。身若有倚托通月气者, 富贵;若不身旺,行土气运,亦好。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1356:    己日喜逢甲子时,财官双美贵希奇; 一朝得遇风云会,独步蟾宫折桂枝。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1359:    己丑日甲子时,化贵,午寅年月,夭折;通土气月,贵。 忌甲寅月,贵中恶死。丁未月受刑,丁丑月破祖,失乡恶死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1361:    己卯日甲子时,先破祖后旺,或旺中有伤。辰戌丑未月,贵。午,身旺。子,聚贵,亥,官长生,俱大贵。忌己巳月, 破败凶死。庚申月,血光恶死。壬子月,刑害死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1363:    己巳日庚子时,辰戌丑未月,风宪三品,要行水木运,西运无成,南运财官无气,虚名薄利,贵而不显。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1366:    己未日甲子时,高身坐官库,辰戌丑未月,吉。寅亥月,官旺,文章振发,贵显易成。巳丑,文贵晚成。寅卯,贫下。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1369:    己酉日甲子时,寅申午未丑年月,文贵风宪。午月,东北运,极品。忌庚寅年,破败恶死。己巳月,凶恶。戊戌月,孤单血死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1371:    己亥日甲子时,春夏,财官生旺吉;秋冬四季,背禄逐马,凶。寅月,金火运,郎官。午月,东北运,金紫。忌壬寅月,恶死。壬申月,过贫遭刑。癸酉月,破败。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1618:    庚日丙子时，身鬼俱衰弱。庚以癸为伤，丙为鬼。子上庚死、丙火无气、癸水健旺。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1622:    庚日相逢丙子时，伤官合局不为奇；双亲祖业难成就，燕寝鸾栖别立基。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1626:    庚子日丙子时，贵。年月再子，并冲，午中丁为官，己为印，人飞天禄马格；柱无财官填实，主贵；
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1629:    庚寅日丙子时，春生，带财带煞，行金水运，金紫。夏，煞旺，大贵。秋，身旺，须行南运，贵。冬，身鬼俱弱，平常。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1632:    庚辰日丙子时，月通木火气，行西运，妙。乙巳月，破败，刑。丁酉月，旺中刑，凶。己丑月，破败，凶。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1634:    庚午日丙子时，贵。时日相冲，忧伤妻子，运喜西南，通火木月气，风宪三四品。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1637:    庚申日丙子时，申月，生土厚地方，贵。辰未年月，行西运金，方吉。辛巳月，凶刑。辛亥月，孤夭。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1639:    庚戌日丙子时，春夏生。西南运；秋月、木火运，俱贵。忌乙巳月，凶、破。乙亥月，官灾多，凶刑。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1898:    辛日戊子时，六阴朝阳。辛金子上长生学堂。辛以戊为印。癸为食，时上明戊暗癸，
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1902:    天元六辛子时生，春天花开灿烂明。丙已午丁如破坏，功名难望晚方成。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1905:    六辛日见戊子时,谓之天庭清显气。辛酉辛亥得之,最高。忌丙寅月,死不全尸。丙申月,失乡恶死。丁酉月,失亡恶死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1906:    辛亥日戊子时,不贵则富。亥月,无官,伤官伤尽,发福子少。春夏,亥子丑,木火运局,金紫风宪。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1908:    辛丑日戊子时,丑月,杂气财官,贵。纯丑,儒职。纯辰、行西运,都宪。酉月,东北运,贵。忌庚寅月,刺面,凶。癸 未月,受刑。癸丑月。破败孤凶。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1910:    辛卯日戊子时,春生,寅贫、卯贵。夏清贵。秋羊刃,无益。冬富,丑月尤吉。辰戌未月,财官印绶、俱吉。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1913:    辛已日戊子时,寅已午月,正官,贵显。亥子,伤官,子 少妻多。卯戌,五品贵。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1916:    辛未日戊子时,贵。寅已午酉年月,火木运,贵。亥子, 翰苑。辰戌丑未,杂气财官印,俱吉。忌庚申月,尸不全死。壬子月,孤凶。癸丑月,凶刑死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:1918:    辛酉日戊子时,子酉月生,无丙丁火,不行南运,三、四 品贵。伤妻子;武职权重。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2172:    壬日庚子时，刃旺身强。壬以庚为倒食，癸为羊刃，时上明庚癸旺，若通火土月气，制伏庚癸，大贵；
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2179:    壬日庚子时,刃旺身强。壬以庚为倒食,癸为羊刃,时上明庚癸旺,若通火土月气,制伏庚癸,大贵;不通,凶狠平常。通运亦贵。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2181:    壬子日庚子时,辰戌丑未月,杂气财官;巳申酉丑,印绶, 居土厚分野,俱贵。寅月,金水运,近侍金紫。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2184:    壬寅日庚子时,贵而刑。辰戌丑未月,杂气财官;巳申酉月,印绶,俱贵。忌乙巳月受刑,丁酉月大破,祖恶死,乙亥月刑。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2186:    壬辰日庚子时,若寅午月生,财星旺;辰戌丑未,官旺, 俱吉。纯辰,透庚壬,作壬骑龙背格,大贵。忌丙辰月,夭死,尸不全;丁未月破祖,孤;辛丑月大破,刑。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2188:    壬午日庚子时,时日并冲,女多男少。丑未月,行南运,富贵。余年月,观诸贵命可见。忌甲午月自刑,多是非;癸酉 月大破,失乡恶死;辛亥月恶死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2190:    壬申日庚子时,贫、刑。未月,杂气财官,行财旺运贵显,先难后易。辰,会水太旺,须行火土运,吉。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2193:    壬戌日庚子时,夭。丑月金火运,辰未财官格,俱贵。寅酉,行西北运,贵。申子辰,行东南运,极品。忌巳酉月,孤单凶;丁亥月,凶刑恶死;辛丑月,刑。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2447:    癸日壬子时，日禄归时，癸水子上建禄，若年月干支无戊己午未字刑冲破害，三元有倚托，通月气者，文章秀丽，官职显达；
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2454:    癸丑日壬子时,午寅、乙丑,己丑年月,文职四五品,通身旺木气月,无戊己午巳字,显贵。未,风宪。巳午,进士。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2457:    癸卯日壬子时,时日相刑,伤妻克子,近贵;无己土,威 权。若亥巳俱全,进士乌府。
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2460:    癸巳日壬子时,春夏发财福,辰戌丑未,不贵终富。忌戊寅月遭刑,戊申月受刑,己酉月乞丐。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2462:    癸未日壬子时,申酉月,贵。戌亥,大富贵。寅卯,孤。辰巳,凶。忌壬申月,身不全,凶;庚辰月,凶刑;乙丑月,失土凶死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2464:    癸酉日壬子时,行藏进退,少子难为妻家。忌丙寅月,不全尸死;乙巳月,大破凶死;丁酉月,自缢死。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/sizi.py:2466:    癸亥日壬子时,贵。亥月生,飞天禄马,登科甲第,大贵。又癸禄居子,壬禄居亥,日时互换,三四品贵。忌戊寅月,死不全尸;戊申月孤贫;己酉月孤苦。 
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:2:  "甲日甲子": "六甲日生甲子时，败中印绶官生至；月通木气不寻常，反此而言虚名利。\n甲日甲子时，虽甲败在子(沐浴)，暗有癸水生气印绶，兼有官生其印，若己土破印，通月气，贵。否则，秀而不实。\n# 2-86有天月德贵人、通根于月、有权。\n# 1-155正印旺，女不靠子女\n甲子日甲子时，子遥巳格，年月无庚辛申酉，丑绊午冲，离祖自立，贵。\n若年月俱寅，逢申酉运，大富后退财。子亥卯未年月，行西运，贵。甲辰月亦贵。\n酉月，只以正官格论，大贵。巳午戌月，平常。午月，甲死子冲，尤不吉。乙卯、乙巳月，主法死。\n甲寅日甲子时，拱丑中辛，贵。年月无庚辛申酉丑未，大贵。再甲寅月，孤克，惟憎道可。\n亥子年月，四品贵。午月，行东北方运，亦贵。如酉丑巳等月，明有官煞，柱但有印，俱贵。\n卯未，身太旺，未免刑伤。乙巳月，受刑。丁亥月，旺中恶死。\n甲辰日甲子时，若水位年月，水泛木浮，主移根换叶；申月，煞星会印，俱贵。\n子月，行水木运，亦贵。酉月正官，大贵。寅午戌月，俱吉。乙卯月，刑折。癸巳月，水火中死。癸亥月，凶死。\n甲午日甲子时，时日并冲，忧伤妻子，月通木气者显贵。纯子午年月，或亥未酉月，俱贵。\n甲申日甲子时，甲胎逢印印化煞，贵。鸳鸯重叠，子嗣难为。若行东南方运，文武职居间。\n亥卯未辰丑申等月，俱贵。乙卯月夭。丁巳月，死不全尸。\n甲戌日甲子时，拱亥天门，会同帝阙，甲长生地也，不可以隔角论。年月通申巳酉丑金气，大贵。\n戊寅年月，主聋哑，或狼虎伤害，见壬则吉。乙卯月，刑死，乙亥月，遭盗死。\n甲子相逢甲子连，拟作蟾宫折桂仙；丑绊并冲官鬼破，功名蹭蹬不周全。\n甲子时逢甲子，就中印绶符同。庚申辛酉若相逢，丑未再兼年月。拱贵暗藏极显，巳午冲破平中。\n果无刑克与空冲，定主超群出众",
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:14:  "乙日丙子": "六乙日生时丙子，伤官坐贵福不全；柱中不见官刑破，方是平生贵禄缘。\n乙日丙子时，六乙鼠贵。乙用庚为官，死于子；见丙为伤，丙暗邀辛化煞为权，柱中不见庚辛，\n无丑绊午冲，方成格，贵。若有上忌及不通月气，无救助者，暴恶贫下，有疾寿促。\n# 1-155 双妻，事业辛勤晚年有成。\n六乙贵格丙子时，如无冲破始为奇；不遇庚申巳酉丑，定乘轩冕拜丹墀。\n乙日时临丙子，伤官伤尽荣昌。亥卯未月不寻常，运至身健旺相。辛庚不见发福，午冲丑绊平常。如逢刑克空一场。此命或衰或旺。\n乙丑日丙子时,身弱平常,无午穿冲,贤德温厚。申酉年月,风宪。寅子,贵显。忌丙寅、己未、甲戌、己丑等月,主凶刑恶死。\n乙卯日丙子时,高。辰戌丑未亥年月,不见官星,贵。\n乙巳日丙子时,吉。若巳午年月,寿促,不然,身孤劳碌, 纯土,财旺生官,行西运;子辰,行水火运,俱二三品贵。\n申月正官,酉月偏官,卯月建禄,俱吉。忌甲寅月,刑夭。乙酉月下贱。\n乙未日丙子时,平。若子亥年月,大贵,岁运同。忌巳未月,刑伤,丙申月,身不完死;己丑月,破祖恶死。\n乙酉日丙子时,贵,身孤,反复起倒,月通水气,不见辛午亦贵。忌戊寅月,大凶;丁巳月,破祖贫;己酉月,金刃死。\n乙亥日丙子时,化青赤,主福。生庚辰年月,富贵。纯亥,成败。丑月,行南运郎官。巳午西运,极贫。忌壬辰月,刑;乙酉月,破祖高贵,中恶死。",
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:26:  "丙日戊子": "六丙日生时戊子，财官生旺遇食神；月气相扶为最贵，身衰夫倚是常人。\n丙日戊子时，官旺财生，丙用辛为财，癸为官，丙合辛，戊合癸，子中癸旺辛生，丙火无气。\n若通火气，月有倚托者贵；不通贫下。通木气亦吉。\n1-157 一生吉祥，少病有寿。\n活计生涯四季隆，丙逢戊子食官同；无伤晚岁皆成就，吉处遭凶险处通。\n丙子时逢戊子，官星食福同排。午丁未遇且沉埋，交通中年大快。\n父母妻子喜合。胸中隐匿文才。若逢好运一时来，富贵清闲自在。\n丙子日戊子时,寅巳卯未月,木能生火,大贵。冬月,丙火无气,贫夭。戌月,行火土运,五六品贵。忌丁巳月,夭; 己酉月,破家失土,身贱。\n丙寅日戊子时,生卯丑月,清贵。寅戌,平常。夏月身旺, 柱有水金方吉。子月正官,大贵。忌癸巳月,刑;癸亥月,恶死;己酉月,大败。\n丙辰日戊子时,丙辰为日德格,喜见官星。若生戌月,身旺最宜,武贵。寅月,行金水运,中贵。申月三合,合煞有印, 贵。\n忌己巳月,凶死;己亥月,自刑死;癸丑月,破祖恶死。\n丙午日戊子时,丙午为日刃格,要官煞制合。生辰戌丑未月,大富。亥卯未寅年月,大贵,申巳,文贵三品,武贵不永。\n纯子,为子午双包贵格。忌丁巳月,恶死;丁亥月,自刑恶死;辛丑月,孤独。\n丙申日戊子时,巳午年月,行东北运,风宪,子月,行木火运,三品。丑七品,酉亥,虽遇贵反贱。忌癸巳月,中年刑。乙酉月,破败。\n丙戌日戊子时,春生,印绶最吉。夏,身太旺,平常。秋,财旺身衰,有寄托则贵。纯酉年月,文进之贵。忌己亥月,死不全尸;癸丑月,贫夭",
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:38:  "丁日庚子": "六丁日生时庚子，身衰鬼旺暗中藏；月无救助多贫夭，得坐身强又吉昌。\n若通身旺月，有倚托者贵，更行身旺运，大贵；反是，贫夭下贱。\n1-155 时支七杀，难有亲属眷顾。\n庚子时逢日是丁，火落江湖暗复明；四柱若兼冲克破，读书到老只虚名。\n丁日时逢庚子，日干丁火光辉。火胎金绝有盈亏，妻妾不能全美。\n有克有刑冲破，就中文福难齐。相生相救贵人提，此命先难后易。\n丁丑日庚子时平,通木火气,或行身旺运,贵。亦有亥子年月贵者,以丁火阴柔,不怕水乡故也。\n丁卯庚子时贫,辰戌丑未,偏官有制,午月干强,春身旺, 俱吉。秋冬平常。忌癸巳月,破祖凶;己未月,刑伤;甲申月,刺面血光死。\n丁巳日庚子时,春旺,夏强,俱贵。秋冬平常。四季月,制伏得中吉。子辰,行西运,四五品贵。\n丁未日庚子时,辰戌丑未月,偏官有制。午月干强,贵。 余月有制伏,吉;戊子,文章显秀。忌戊申月,夭;丙戌月,刑;辛丑月,刑凶。\n丁酉日庚子时,辰戌丑未月,刚明特达,贵。辰巳年月, 贵尊相府。忌甲寅月,破败恶死;癸巳月,离乡恶死;乙酉月刑死。\n丁亥日庚子时,五十后大旺。辰戌丑未月,吉。寅午年月,贵。忌庚寅月,恶死;庚申月,身不全死;辛酉月,破败。",
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:50:  "戊日壬子": "六戊日生时壬子,月通四季墓中财; 若交身化为真火,水旺运乡忌目灾。\n戊日壬子时,妻财俱旺,戊以壬为妻财,子上壬水旺,戊土无气,生辰戌丑未月,不化者获财。若合癸化落水旺乡,火不显其光,作事无成,虚而不实,当患目灾。通月气旺者贵。\n1-157 时坐财旺，先败后成。\n戊日喜逢壬子时,身强官旺正相宜; 运行背却休囚地,荣禄奔波任作为。\n戊日时逢壬子,此为财旺生官。化为丁丁是漫漫,任子东西走窜。 木旺运中显达,文章秀丽多端。为人博览任追欢,富贵资财万贯。\n戊子日壬子时,财星格。寅卯月,禄马朝元,显贵。酉亥丑年月,西北运,金紫风宪。忌乙卯年刑;癸巳月,旺中刑; 丙午月,旺中受刑。\n戊寅日壬子时,卯月,正官格,贵。夏乖,秋少顺。丑酉年月,吉。忌己巳月刑,己亥月凶刑。\n戊辰日壬子时,春,财官旺、贵。夏乖。秋少顺。冬财旺, 行西南运,五六品贵。忌庚辰月,自刑凶;辛巳月,截路凶刑;乙丑月,破败凶。\n戊午日壬子时,时日并冲,忧伤妻子。巳午年月,风宪。 寅卯亥,六卿。申月,行木火运,侯伯。忌丙午月,身不全; 癸亥,自刑夭。年月子午不杂,丑戌又刑,俱主大贵。\n戊申日壬子时高,先滞后旺。子酉年月,时上偏官,贵。巳午未戌,身有制化,用财亦专,皆以吉论。\n申酉,食伤生财, 天干透甲乙者,富贵双全。忌己巳月刑害,壬午月夭伤,癸亥 月孤贫。\n戊戌日壬子时,寅巳午年月,去财留印,三四品贵。经云 :能见义忘利,取印舍财是也。\n子酉,五品翰林。纯酉,水木运,玉堂极贵。忌戊午月,刺面短夭;辛卯月,破败凶刑;癸丑月,受刑;庚午月,贫瞽。",
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:62:  "己日甲子": "六己日生时甲子,明见官星暗有财; 倚托若通于月气,平生衣禄自天来。\n己日甲子时,明官暗财。己用甲为官,癸为财,辛为食, 子为天乙贵,子上有明甲暗癸,辛长生。身若有倚托通月气者, 富贵;若不身旺,行土气运,亦好。\n1-157 偏财干合，多有女缘，晚年大富。\n己日喜逢甲子时,财官双美贵希奇; 一朝得遇风云会,独步蟾宫折桂枝。\n己日时临甲子,化生土厚滋基。财官既助显光辉,有似青龙戏水。不遇庚金卯午,为人禄至福齐。常人发福有施为,君子登科及第。\n己丑日甲子时,化贵,午寅年月,夭折;通土气月,贵。 忌甲寅月,贵中恶死。丁未月受刑,丁丑月破祖,失乡恶死。\n己卯日甲子时,先破祖后旺,或旺中有伤。辰戌丑未月,贵。午,身旺。子,聚贵,亥,官长生,俱大贵。忌己巳月, 破败凶死。庚申月,血光恶死。壬子月,刑害死。\n己巳日庚子时,辰戌丑未月,风宪三品,要行水木运,西运无成,南运财官无气,虚名薄利,贵而不显。\n子寅年月,东南运,贵显;《神白经》说:“化土生福,但不显。”忌壬寅月,受刑。乙未月,刑伤。癸酉月,夭。\n己未日甲子时,高身坐官库,辰戌丑未月,吉。寅亥月,官旺,文章振发,贵显易成。巳丑,文贵晚成。寅卯,贫下。\n忌甲申月,身不完死。丙子月,孤贫。丁丑月,刑害。\n己酉日甲子时,寅申午未丑年月,文贵风宪。午月,东北运,极品。忌庚寅年,破败恶死。己巳月,凶恶。戊戌月,孤单血死。\n己亥日甲子时,春夏,财官生旺吉;秋冬四季,背禄逐马,凶。寅月,金火运,郎官。午月,东北运,金紫。忌壬寅月,恶死。壬申月,过贫遭刑。癸酉月,破败。",
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:74:  "庚日丙子": "六庚日生时丙子，身鬼俱衰退神强；有托荣华无托贱，鬼逢生旺寿难长。\n庚日丙子时，身鬼俱衰弱。庚以癸为伤，丙为鬼。子上庚死、丙火无气、癸水健旺。\n若身有倚托，吉；无倚托，又行身衰鬼旺运，飘风夭贱。通火气月，要行西运，贵。身弱不然。\n1-158 时支伤，辛劳一世。\n庚日相逢丙子时，伤官合局不为奇；双亲祖业难成就，燕寝鸾栖别立基。\n庚日时逢丙子，刑官背禄安身。双亲克陷早难辛，雁侣不能和顺。废学经商发福，田庄后懒先勤。\n家居财帛晚才成，先暗后明之命。\n庚子日丙子时，贵。年月再子，并冲，午中丁为官，己为印，人飞天禄马格；柱无财官填实，主贵；\n为僧道，一尘不染，万法皆成；为常人，有名有利，刑伤妻子。一说先贫后富。忌己巳月，破刑，贫。癸未月，孤单。巳亥月、刑。\n庚寅日丙子时，春生，带财带煞，行金水运，金紫。夏，煞旺，大贵。秋，身旺，须行南运，贵。冬，身鬼俱弱，平常。\n纯午年月，位至公卿。壬子，食前煞后随；一阳生后，丙火有气，贵极人臣。忌癸酉月，破败，凶。辛亥月，血光。甲子月，夭。\n庚辰日丙子时，月通木火气，行西运，妙。乙巳月，破败，刑。丁酉月，旺中刑，凶。己丑月，破败，凶。\n庚午日丙子时，贵。时日相冲，忧伤妻子，运喜西南，通火木月气，风宪三四品。\n秋生，丙火无气，难为子息。忌己巳月，破祖，凶。己亥月，被劫盗，凶。癸丑月，孤。\n庚申日丙子时，申月，生土厚地方，贵。辰未年月，行西运金，方吉。辛巳月，凶刑。辛亥月，孤夭。\n庚戌日丙子时，春夏生。西南运；秋月、木火运，俱贵。忌乙巳月，凶、破。乙亥月，官灾多，凶刑。\n己丑月，破败，凶。戊戌月，恶死。",
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:86:  "辛日戊子": "六辛日生时戊子，印绶学堂坐食神；不见丙丁同午破，必是荣华贵显人。\n辛日戊子时，六阴朝阳。辛金子上长生学堂。辛以戊为印。癸为食，时上明戊暗癸，\n柱中不见丙丁午字，冲开；通身旺月，大贵；犯者不贵。不通月气，通运，亦贵。\n1-158 时支食印相克，虚化命。\n天元六辛子时生，春天花开灿烂明。丙已午丁如破坏，功名难望晚方成。\n辛日时逢戊子，六阴会合朝阳。金神印绶显威光，相助一身荣旺。已午逢之减福，丙离雁侣尊堂。妻子勤助旺家庄、无破寒门将相。\n六辛日见戊子时,谓之天庭清显气。辛酉辛亥得之,最高。忌丙寅月,死不全尸。丙申月,失乡恶死。丁酉月,失亡恶死。\n辛亥日戊子时,不贵则富。亥月,无官,伤官伤尽,发福子少。春夏,亥子丑,木火运局,金紫风宪。\n辛丑日戊子时,丑月,杂气财官,贵。纯丑,儒职。纯辰、行西运,都宪。酉月,东北运,贵。忌庚寅月,刺面,凶。癸 未月,受刑。癸丑月。破败孤凶。\n辛卯日戊子时,春生,寅贫、卯贵。夏清贵。秋羊刃,无益。冬富,丑月尤吉。辰戌未月,财官印绶、俱吉。\n《神白经 》云:金火化,主贵。忌辛卯月,父母凶死。辛已月,大凶。壬申月,尸不全死。\n辛已日戊子时,寅已午月,正官,贵显。亥子,伤官,子 少妻多。卯戌,五品贵。\n《神白经》云:金化象,主贵。忌丙寅月,刑、平。乙已月,先贫。丁酉月,夭。\n辛未日戊子时,贵。寅已午酉年月,火木运,贵。亥子, 翰苑。辰戌丑未,杂气财官印,俱吉。忌庚申月,尸不全死。壬子月,孤凶。癸丑月,凶刑死。\n辛酉日戊子时,子酉月生,无丙丁火,不行南运,三、四 品贵。伤妻子;武职权重。\n《神白经》云:金火化,主贵,破祖方发。忌壬寅月,凶死。辛已月,大败,祖凶。庚戌月,凶死。",
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:98:  "壬日庚子": "六壬日生时庚子，子上明庚暗损伤；火土月中仍主吉，不通凶狠只平常。\n壬日庚子时，刃旺身强。壬以庚为倒食，癸为羊刃，时上明庚癸旺，若通火土月气，制伏庚癸，大贵；\n不通，凶狠平常。通运亦贵。\n1-158 印坐刃，宗教艺术。\n天干壬日时庚子，枭日由来遇劫财；运弱妻儿防克害，运强财禄自天来。\n壬日时逢庚子，劫财倒食流连，运行比劫事忧煎，财禄不能通显。雁侣双亲失意，妻儿迟则团圆，财官运步福滔然，祖业从新改变。\n壬日庚子时,刃旺身强。壬以庚为倒食,癸为羊刃,时上明庚癸旺,若通火土月气,制伏庚癸,大贵;不通,凶狠平常。通运亦贵。\n壬子日庚子时,辰戌丑未月,杂气财官;巳申酉丑,印绶, 居土厚分野,俱贵。寅月,金水运,近侍金紫。\n午月,行西运,六品,子运败凶。若纯壬子羊刃,贫凶。一云,少年富,三十五后艰辛,末大富。忌辛巳月凶恶死,辛亥月大凶,甲子月刑。\n壬寅日庚子时,贵而刑。辰戌丑未月,杂气财官;巳申酉月,印绶,俱贵。忌乙巳月受刑,丁酉月大破,祖恶死,乙亥月刑。\n壬辰日庚子时,若寅午月生,财星旺;辰戌丑未,官旺, 俱吉。纯辰,透庚壬,作壬骑龙背格,大贵。忌丙辰月,夭死,尸不全;丁未月破祖,孤;辛丑月大破,刑。\n壬午日庚子时,时日并冲,女多男少。丑未月,行南运,富贵。余年月,观诸贵命可见。忌甲午月自刑,多是非;癸酉 月大破,失乡恶死;辛亥月恶死。\n壬申日庚子时,贫、刑。未月,杂气财官,行财旺运贵显,先难后易。辰,会水太旺,须行火土运,吉。\n丑、戌,财官印 绶,俱吉。春冬平常,秋夏吉庆。忌乙巳月受刑,夭;丁酉,夭;乙亥月孤,自刑。\n壬戌日庚子时,夭。丑月金火运,辰未财官格,俱贵。寅酉,行西北运,贵。申子辰,行东南运,极品。忌巳酉月,孤单凶;丁亥月,凶刑恶死;辛丑月,刑。",
+docs/github-repos/oceanjustinlin_qimen/lib/classics/siziData.js:110:  "癸日壬子": "六癸日生时壬子，青云得路最为奇；若无己土冲克破，自有功名显达时。\n癸日壬子时，日禄归时，癸水子上建禄，若年月干支无戊己午未字刑冲破害，三元有倚托，通月气者，文章秀丽，官职显达；\n若通木气月，亦贵。如柱透己，有甲合，亦贵。否则，反覆。\n1-158 劫比连根，双妻不和。\n日禄归时局中得，食神喜遇怕刑冲；伤官莫道伤财运，官不加兮财不丰。\n癸日时临壬子，名为归禄格同，家门白屋也峥嵘，玄武当权禄重。水清宝瓶益盛，文章博览多通，荣迁来历紫薇封，甲午寅亥破动。\n癸丑日壬子时,午寅、乙丑,己丑年月,文职四五品,通身旺木气月,无戊己午巳字,显贵。未,风宪。巳午,进士。\n忌壬寅、乙未、庚戌月,俱刑。乙丑月,下贱。\n癸卯日壬子时,时日相刑,伤妻克子,近贵;无己土,威 权。若亥巳俱全,进士乌府。\n年月纯寅,伤官生财,非大贵即大富。忌甲辰月凶刑孤,丙申月凶恶死,己丑月刑。\n癸巳日壬子时,春夏发财福,辰戌丑未,不贵终富。忌戊寅月遭刑,戊申月受刑,己酉月乞丐。\n癸未日壬子时,申酉月,贵。戌亥,大富贵。寅卯,孤。辰巳,凶。忌壬申月,身不全,凶;庚辰月,凶刑;乙丑月,失土凶死。\n癸酉日壬子时,行藏进退,少子难为妻家。忌丙寅月,不全尸死;乙巳月,大破凶死;丁酉月,自缢死。\n癸亥日壬子时,贵。亥月生,飞天禄马,登科甲第,大贵。又癸禄居子,壬禄居亥,日时互换,三四品贵。忌戊寅月,死不全尸;戊申月孤贫;己酉月孤苦。",
+docs/github-repos/oceanjustinlin_qimen/lib/flowMonth.js:62:    throw new Error('无法定位当前流月的节气边界');
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneAnnualCore.js:5:const ANNUAL_SCORE_CACHE_VERSION = 'annual-score-v6-p2a-shensha-qi';
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneAnnualCore.js:28:    annual_score: 70,
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneAnnualCore.js:56:      version: 'annual-score-hits-v3',
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneAnnualCore.js:60:        debug: 'fallback annual score because required profile score fields are missing',
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneDailyCore.js:166:  const day_nayin = lunar.getDayNaYin();
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyInterpretationCore.js:357:- 起始节气：${monthlyData.flow_month_start_jie || ''}
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyInterpretationCore.js:363:- 日运聚合层得分：${monthlyData.layer2_score || 0}（常规±5，结构性触发可至±10；反映关键事件日、连续低谷/高峰、节气交接与空亡三刑等波动，不把六十甲子自然轮动均分当作本月大势）
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyInterpretationCore.js:364:- 神煞月令层得分：${monthlyData.layer3_score || 0}（-15~+15，占30%，反映月令、神煞、节气与岁运承接）
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyInterpretationCore.js:401:- 本月节气：${JSON.stringify(monthlyData.jieqi_list || [])}
+docs/github-repos/oceanjustinlin_qimen/lib/fortuneMonthlyInterpretationCore.js:460:- jieqi_list 非空：可作为运势转折点提示，格式为“X节气前后……”。
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js:4:// 定元采用「符头（最近甲/己日）」拆补法（见 QimenCalculations.calculateJuByChaiBu）。
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js:20:  const juResult = Calc.calculateJuByChaiBu(solar, C.JIEQI_JUSHU, C.YUAN_NAMES);
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js:27:  const diPan = Calc.getDiPan(juResult.isYang, juResult.gameNumber);
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js:28:  const zhiFuStar = Calc.getZhiFuStar(fuShou, diPan);
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js:30:  const zhiShiDoor = Calc.getZhiShiDoor(fuShou, diPan);
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js:31:  const eightDoors = Calc.calculateEightDoors(juResult.isYang, zhiShiDoor, flyStep, fuShou, diPan);
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js:32:  const eightGods = Calc.calculateEightGods(juResult.isYang, tianGan, diPan);
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js:33:  const tianPanGan = Calc.calculateTianPan(juResult.isYang, tianGan, fuShou, diPan);
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.js:48:  const qimen_structure = `${juResult.yinYang}遁${juResult.gameNumber}局`;
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:24:// 锁死：定元(符头拆补法) + 局 + 四柱 + 值符/值使及落宫 + 空亡/马星。
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:43:    name: '2027-06-21 22:15 夏至中元(节气交接后)',
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:51:    name: '2025-12-21 23:10 冬至上元(晚子时三重边界)',
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:59:    name: '2026-01-01 00:30 冬至下元(跨年早子时·伏吟)',
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:79:    assert.equal(q.ju_info.name, c.ju, '局数(定元)');
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:80:    assert.equal(q.ju_info.jieqi, c.jieqi, '节气');
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:83:    assert.equal(q.ju_info.zhi_fu, c.zhi_fu, '值符星');
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:84:    assert.equal(q.ju_info.zhi_fu_palace, c.zhi_fu_palace, '值符落宫');
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:85:    assert.equal(q.ju_info.zhi_shi, c.zhi_shi, '值使门');
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:86:    assert.equal(q.ju_info.zhi_shi_palace, c.zhi_shi_palace, '值使落宫');
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:98:  // 巽4：值符·天柱·杜門，天盘庚→地盘癸
+docs/github-repos/oceanjustinlin_qimen/lib/qimenChart.test.js:101:    { god: '值符', star: '天柱', door: '杜門', sky: '庚', earth: '癸' }
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPipeline.js:108:    isZhiShi: eightDoors[i] === zhiShiDoor,
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPipeline.test.js:14:test('排盘量与 buildQimenChart 同源一致（局式/值符不漂）', () => {
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPolarityRules.test.js:13:      { name: '乾6宫', door: '开门', god: '值符', star: '天心', sky: '壬', earth: '戊' }
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.js:46:  if (raw === '值使门') return Boolean(palace.isZhiShi);
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.js:47:  if (raw === '值符') return normalizeGod(palace.god) === '值符';
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.js:143:    `- 大局提纲：${signed(deltas.macro ?? 0)}。${findLayerHits(scoreAudit, 'macro').map((hit) => hit.reason).join('；') || '值符、值使门未形成明显额外净影响。'}`,
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.js:247:   - 值符看大局资源、主导权和关键权力端。
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.js:248:   - 值使门看具体执行流程和事情顺滞。
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.js:249:   - 值符空亡、值使门凶，不能被单一吉象完全洗掉。
+docs/github-repos/oceanjustinlin_qimen/lib/qimenPromptSections.js:343:   - 若当前领域没有 axes，才输出通用三卡：subject（问测人 = 日干）、target（目标事态/物品/对方 = 时干或领域主用神）、environment（关键环境因素 = 值使门/值符/关键门星神）。

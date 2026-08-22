@@ -1,0 +1,7 @@
+<script src="wp-content/themes/invert/js/jquery.min.js"
+<script src="wp-content/themes/invert/js/jquery.cookie.js"
+<script src="wp-content/themes/invert/js/jsc.js"
+<script src="wp-content/themes/invert/js/ba.js"
+<script src="wp-content/themes/invert/js/jquery.arcticmodal.js"
+<script src="wp-content/themes/invert/js/jquery.zclip.min.js"
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"

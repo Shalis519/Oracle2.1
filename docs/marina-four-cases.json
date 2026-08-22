@@ -1,0 +1,101 @@
+[
+  {
+    "name": "Тараз",
+    "date": "1980-02-05",
+    "civilTime": "16:01",
+    "solarMidnight": "01:14",
+    "rise": "08:26",
+    "set": "18:31",
+    "solar": {
+      "branch": "Коза",
+      "chinese": "未",
+      "start": "15:14",
+      "end": "17:14"
+    },
+    "rubber": {
+      "branch": "Коза",
+      "chinese": "未",
+      "start": "15:10",
+      "end": "16:50"
+    },
+    "combined": {
+      "branch": "Коза",
+      "chinese": "未",
+      "start": "15:14",
+      "end": "17:14"
+    }
+  },
+  {
+    "name": "Татьяна / Северобайкальск",
+    "date": "1986-06-26",
+    "civilTime": "16:40",
+    "solarMidnight": "01:43",
+    "rise": "05:00",
+    "set": "22:31",
+    "solar": {
+      "branch": "Коза",
+      "chinese": "未",
+      "start": "15:43",
+      "end": "17:43"
+    },
+    "rubber": {
+      "branch": "Лошадь",
+      "chinese": "午",
+      "start": "13:45",
+      "end": "16:41"
+    },
+    "combined": null
+  },
+  {
+    "name": "Ангелина / Хазар",
+    "date": "1981-05-17",
+    "civilTime": "06:30",
+    "solarMidnight": "02:28",
+    "rise": "07:12",
+    "set": "21:36",
+    "solar": {
+      "branch": "Тигр",
+      "chinese": "寅",
+      "start": "06:28",
+      "end": "08:28"
+    },
+    "rubber": {
+      "branch": "Тигр",
+      "chinese": "寅",
+      "start": "05:36",
+      "end": "07:12"
+    },
+    "combined": {
+      "branch": "Тигр",
+      "chinese": "寅",
+      "start": "06:28",
+      "end": "08:28"
+    }
+  },
+  {
+    "name": "Анна / Омск",
+    "date": "1978-07-11",
+    "civilTime": "00:30",
+    "solarMidnight": "01:07",
+    "rise": "04:41",
+    "set": "21:42",
+    "solar": {
+      "branch": "Свинья",
+      "chinese": "亥",
+      "start": "23:07",
+      "end": "01:07"
+    },
+    "rubber": {
+      "branch": "Свинья",
+      "chinese": "亥",
+      "start": "00:02",
+      "end": "01:12"
+    },
+    "combined": {
+      "branch": "Свинья",
+      "chinese": "亥",
+      "start": "23:07",
+      "end": "01:07"
+    }
+  }
+]

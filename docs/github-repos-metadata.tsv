@@ -1,0 +1,6 @@
+deminzhang/qimen-go	https://github.com/deminzhang/qimen-go	golang版奇门遁甲排盘	MIT	Go	25	14	2026-08-15T20:47:23Z
+oceanjustinlin/qimen	https://github.com/oceanjustinlin/qimen	基于AI的奇门遁甲在线起局，局势分析，定论分析和可视化	MIT	JavaScript	22	10	2026-08-15T07:37:57Z
+ChesterRa/mingpan	https://github.com/ChesterRa/mingpan	命盘（Mingpan） 是一个中华传统术数 MCP 服务，为 Claude 等 AI 应用提供命理排盘与占卜起卦的计算能力。	Apache-2.0	TypeScript	105	38	2026-08-14T09:57:10Z
+funan-tech-folks/nodejs-qmdj	https://github.com/funan-tech-folks/nodejs-qmdj	Qi Men Dun Jia (奇门遁甲) algorithm exploration	MIT	JavaScript	5	2	2026-05-25T10:59:22Z
+MrJelly/QiMenDunJia	https://github.com/MrJelly/QiMenDunJia	一个现代化的、高度优化的、模块化的TypeScript 奇门遁甲计算库。	MIT	TypeScript	2	0	2026-06-02T09:24:30Z
+YHN282615109/Digital-Qi-Men-Dun-Jia-Arrangement-System-python-v1.0	https://github.com/YHN282615109/Digital-Qi-Men-Dun-Jia-Arrangement-System-python-v1.0	本软件是一套完整的奇门遁甲数字化排盘工具，融合了传统术数与现代编程技术。用户可通过图形界面输入公历时间，系统自动计算四柱或五柱干支、节气、局数、值符值使、九星、八门、八神、天盘地盘等信息，并生成可视化九宫图与六位数字码盘。软件内置丰富的解析库（十干克应、三奇到宫、星门克应、八门克应等），支持21类常见预测类型（如疾病、婚姻、财运、考试等），并提供自动化的析盘与断局建议。	AGPL-3.0	Python	0	0	2026-06-08T02:49:32Z

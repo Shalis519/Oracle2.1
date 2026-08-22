@@ -120,9 +120,21 @@ export const DOORS: DoorInfo[] = [
 ];
 
 // 八神 ring order (starts at 值符), filled along the path in dun direction.
-export const DEITIES = [
+// Захаровская сезонная схема использует 10 имён, но в каждой карте присутствуют
+// только 8: в Ян-половине года — 勾陈/朱雀, в Инь-половине — 白虎/玄武.
+export const DEITIES_YANG = [
+  "值符", "螣蛇", "太阴", "六合", "勾陈", "朱雀", "九地", "九天",
+] as const;
+export const DEITIES_YIN = [
   "值符", "螣蛇", "太阴", "六合", "白虎", "玄武", "九地", "九天",
 ] as const;
+
+export function deitiesForDun(yin: boolean): readonly string[] {
+  return yin ? DEITIES_YIN : DEITIES_YANG;
+}
+
+// Backward-compatible default for callers that only need the canonical Yin set.
+export const DEITIES = DEITIES_YIN;
 
 // Rotating-plate movement path around the 8 outer palaces (转盘 forward path).
 export const PATH = [1, 8, 3, 4, 9, 2, 7, 6] as const;

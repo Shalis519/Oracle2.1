@@ -134,7 +134,7 @@ export default function AstrologyPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">
+    <div className="p-4 pb-32 md:p-6 md:pb-6 max-w-5xl mx-auto space-y-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -401,12 +401,12 @@ export default function AstrologyPage() {
             <section className="space-y-4 border-t border-border/60 pt-4">
               <h2 className="font-serif text-xl font-semibold">{moneyFormula.data.title}</h2>
               <p className="text-xs text-muted-foreground">Источник: {moneyFormula.data.methodology.source}. Дома: {moneyFormula.data.methodology.includedHouses.join(", ")}. Система домов: {moneyFormula.data.methodology.houseSystem}.</p>
-              <div className="space-y-0">
+              <div className="space-y-1">
                 {moneyFormula.data.sections.map((section) => (
-                  <section key={section.key} className="space-y-1.5 border-t border-border/60 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0 pb-2">
+                  <section key={section.key} className="space-y-1.5 border-t border-border/60 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0 pb-3">
                     <h3 className="font-medium">{section.title}</h3>
                     {section.paragraphs.map((paragraph, index) => (
-                      <p key={`${section.key}-${index}`} className="whitespace-pre-line leading-relaxed text-sm text-muted-foreground">{renderMoneyParagraph(paragraph)}</p>
+                      <p key={`${section.key}-${index}`} className="whitespace-pre-line leading-relaxed text-sm text-muted-foreground break-words">{renderMoneyParagraph(paragraph)}</p>
                     ))}
                   </section>
                 ))}

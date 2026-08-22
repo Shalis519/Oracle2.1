@@ -1,0 +1,1286 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/ubuntu/Oracle2.1-repo/artifacts/api-server[39m
+
+[90mstdout[2m | src/lib/qimen-diagnose-xun.test.ts[2m > [22m[2mdiagnose xun
+[22m[39m[33m1[39m 庚子 {
+  hs: [33m6[39m,
+  idx: [33m36[39m,
+  xun: [33m3[39m,
+  yi: [33m7[39m,
+  currentFu: [33m3[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m2[39m 辛丑 {
+  hs: [33m7[39m,
+  idx: [33m37[39m,
+  xun: [33m3[39m,
+  yi: [33m7[39m,
+  currentFu: [33m4[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m3[39m 壬寅 {
+  hs: [33m8[39m,
+  idx: [33m38[39m,
+  xun: [33m3[39m,
+  yi: [33m7[39m,
+  currentFu: [33m2[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m4[39m 癸卯 {
+  hs: [33m9[39m,
+  idx: [33m39[39m,
+  xun: [33m3[39m,
+  yi: [33m7[39m,
+  currentFu: [33m6[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m5[39m 甲辰 {
+  hs: [33m0[39m,
+  idx: [33m40[39m,
+  xun: [33m4[39m,
+  yi: [33m8[39m,
+  currentFu: [33m2[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m6[39m 乙巳 {
+  hs: [33m1[39m,
+  idx: [33m41[39m,
+  xun: [33m4[39m,
+  yi: [33m8[39m,
+  currentFu: [33m9[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m7[39m 丙午 {
+  hs: [33m2[39m,
+  idx: [33m42[39m,
+  xun: [33m4[39m,
+  yi: [33m8[39m,
+  currentFu: [33m8[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m8[39m 丁未 {
+  hs: [33m3[39m,
+  idx: [33m43[39m,
+  xun: [33m4[39m,
+  yi: [33m8[39m,
+  currentFu: [33m7[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m9[39m 戊申 {
+  hs: [33m4[39m,
+  idx: [33m44[39m,
+  xun: [33m4[39m,
+  yi: [33m8[39m,
+  currentFu: [33m1[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m10[39m 己酉 {
+  hs: [33m5[39m,
+  idx: [33m45[39m,
+  xun: [33m4[39m,
+  yi: [33m8[39m,
+  currentFu: [33m2[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m11[39m 庚戌 {
+  hs: [33m6[39m,
+  idx: [33m46[39m,
+  xun: [33m4[39m,
+  yi: [33m8[39m,
+  currentFu: [33m3[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m12[39m 辛亥 {
+  hs: [33m7[39m,
+  idx: [33m47[39m,
+  xun: [33m4[39m,
+  yi: [33m8[39m,
+  currentFu: [33m4[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+[33m13[39m 壬子 {
+  hs: [33m8[39m,
+  idx: [33m48[39m,
+  xun: [33m4[39m,
+  yi: [33m8[39m,
+  currentFu: [33m2[39m,
+  hourEarth: {
+    [32m'1'[39m: {
+      palace: [33m1[39m,
+      earthStem: [32m'戊'[39m,
+      heavenStem: [32m'己'[39m,
+      star: [32m'天冲'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'生门'[39m,
+      deity: [32m'九天'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'2'[39m: {
+      palace: [33m2[39m,
+      earthStem: [32m'乙'[39m,
+      heavenStem: [32m'壬'[39m,
+      star: [32m'天心'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'惊门'[39m,
+      deity: [32m'太阴'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'3'[39m: {
+      palace: [33m3[39m,
+      earthStem: [32m'丙'[39m,
+      heavenStem: [32m'丙'[39m,
+      star: [32m'天英'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'杜门'[39m,
+      deity: [32m'玄武'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'4'[39m: {
+      palace: [33m4[39m,
+      earthStem: [32m'丁'[39m,
+      heavenStem: [32m'庚'[39m,
+      star: [32m'天芮'[39m,
+      pairedStar: [32m'天禽'[39m,
+      door: [32m'景门'[39m,
+      deity: [32m'白虎'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'5'[39m: {
+      palace: [33m5[39m,
+      earthStem: [32m'癸'[39m,
+      heavenStem: [32m'癸'[39m,
+      star: [32m'天禽'[39m,
+      door: [32m''[39m,
+      deity: [32m''[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'6'[39m: {
+      palace: [33m6[39m,
+      earthStem: [32m'壬'[39m,
+      heavenStem: [32m'乙'[39m,
+      star: [32m'天任'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'休门'[39m,
+      deity: [32m'值符'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'7'[39m: {
+      palace: [33m7[39m,
+      earthStem: [32m'辛'[39m,
+      heavenStem: [32m'辛'[39m,
+      star: [32m'天蓬'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'开门'[39m,
+      deity: [32m'螣蛇'[39m,
+      isVoid: [33mfalse[39m
+    },
+    [32m'8'[39m: {
+      palace: [33m8[39m,
+      earthStem: [32m'庚'[39m,
+      heavenStem: [32m'丁'[39m,
+      star: [32m'天辅'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'伤门'[39m,
+      deity: [32m'九地'[39m,
+      isVoid: [33mtrue[39m
+    },
+    [32m'9'[39m: {
+      palace: [33m9[39m,
+      earthStem: [32m'己'[39m,
+      heavenStem: [32m'戊'[39m,
+      star: [32m'天柱'[39m,
+      pairedStar: [90mundefined[39m,
+      door: [32m'死门'[39m,
+      deity: [32m'六合'[39m,
+      isVoid: [33mfalse[39m
+    }
+  }
+}
+
+ [32m✓[39m src/lib/qimen-diagnose-xun.test.ts[2m > [22mdiagnose xun[32m 66[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 18:48:18
+[2m   Duration [22m 407ms[2m (transform 124ms, setup 0ms, import 171ms, tests 68ms, environment 0ms)[22m
+

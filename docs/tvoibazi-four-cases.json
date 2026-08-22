@@ -1,0 +1,1054 @@
+[
+  {
+    "name": "Тараз",
+    "date": "1980-02-05",
+    "time": "16:01",
+    "sun": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "00:14",
+        "end": "02:14"
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "01:14",
+        "end": "02:14"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "02:14",
+        "end": "04:14"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "04:14",
+        "end": "06:14"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "06:14",
+        "end": "08:14"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "08:14",
+        "end": "10:14"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "10:14",
+        "end": "12:14"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "12:14",
+        "end": "14:14"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "14:14",
+        "end": "16:14"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "16:14",
+        "end": "18:14"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "18:14",
+        "end": "20:14"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "20:14",
+        "end": "22:14"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "22:14",
+        "end": "00:14"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "00:14",
+        "end": "01:14"
+      }
+    ],
+    "rubber": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "",
+        "end": ""
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "01:14",
+        "end": "02:14"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "02:14",
+        "end": "04:14"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "04:14",
+        "end": "06:14"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "06:14",
+        "end": "08:14"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "08:14",
+        "end": "10:14"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "10:14",
+        "end": "12:14"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "12:14",
+        "end": "14:14"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "14:14",
+        "end": "16:14"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "16:14",
+        "end": "18:14"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "18:14",
+        "end": "20:14"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "20:14",
+        "end": "22:14"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "22:14",
+        "end": "00:14"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "00:14",
+        "end": "01:14"
+      }
+    ],
+    "combined": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "",
+        "end": ""
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "01:14",
+        "end": "02:14"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "02:14",
+        "end": "04:14"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "04:14",
+        "end": "06:14"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "06:14",
+        "end": "08:14"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "08:14",
+        "end": "10:14"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "10:14",
+        "end": "12:14"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "12:14",
+        "end": "14:14"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "14:14",
+        "end": "16:14"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "16:14",
+        "end": "18:14"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "18:14",
+        "end": "20:14"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "20:14",
+        "end": "22:14"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "22:14",
+        "end": "00:14"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "00:14",
+        "end": "01:14"
+      }
+    ]
+  },
+  {
+    "name": "Татьяна / Северобайкальск",
+    "date": "1986-06-26",
+    "time": "16:40",
+    "sun": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "00:43",
+        "end": "02:43"
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "01:43",
+        "end": "02:43"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "02:43",
+        "end": "04:43"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "04:43",
+        "end": "06:43"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "06:43",
+        "end": "08:43"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "08:43",
+        "end": "10:43"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "10:43",
+        "end": "12:43"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "12:43",
+        "end": "14:43"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "14:43",
+        "end": "16:43"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "16:43",
+        "end": "18:43"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "18:43",
+        "end": "20:43"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "20:43",
+        "end": "22:43"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "22:43",
+        "end": "00:43"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "00:43",
+        "end": "01:43"
+      }
+    ],
+    "rubber": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "",
+        "end": ""
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "01:43",
+        "end": "02:43"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "02:43",
+        "end": "04:43"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "04:43",
+        "end": "06:43"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "06:43",
+        "end": "08:43"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "08:43",
+        "end": "10:43"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "10:43",
+        "end": "12:43"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "12:43",
+        "end": "14:43"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "14:43",
+        "end": "16:43"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "16:43",
+        "end": "18:43"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "18:43",
+        "end": "20:43"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "20:43",
+        "end": "22:43"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "22:43",
+        "end": "00:43"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "00:43",
+        "end": "01:43"
+      }
+    ],
+    "combined": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "",
+        "end": ""
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "01:43",
+        "end": "02:43"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "02:43",
+        "end": "04:43"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "04:43",
+        "end": "06:43"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "06:43",
+        "end": "08:43"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "08:43",
+        "end": "10:43"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "10:43",
+        "end": "12:43"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "12:43",
+        "end": "14:43"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "14:43",
+        "end": "16:43"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "16:43",
+        "end": "18:43"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "18:43",
+        "end": "20:43"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "20:43",
+        "end": "22:43"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "22:43",
+        "end": "00:43"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "00:43",
+        "end": "01:43"
+      }
+    ]
+  },
+  {
+    "name": "Ангелина / Хазар",
+    "date": "1981-05-17",
+    "time": "06:30",
+    "sun": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "01:28",
+        "end": "03:28"
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "02:28",
+        "end": "03:28"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "03:28",
+        "end": "05:28"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "05:28",
+        "end": "07:28"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "07:28",
+        "end": "09:28"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "09:28",
+        "end": "11:28"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "11:28",
+        "end": "13:28"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "13:28",
+        "end": "15:28"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "15:28",
+        "end": "17:28"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "17:28",
+        "end": "19:28"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "19:28",
+        "end": "21:28"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "21:28",
+        "end": "23:28"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "23:28",
+        "end": "01:28"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "01:28",
+        "end": "02:28"
+      }
+    ],
+    "rubber": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "",
+        "end": ""
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "02:28",
+        "end": "03:28"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "03:28",
+        "end": "05:28"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "05:28",
+        "end": "07:28"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "07:28",
+        "end": "09:28"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "09:28",
+        "end": "11:28"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "11:28",
+        "end": "13:28"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "13:28",
+        "end": "15:28"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "15:28",
+        "end": "17:28"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "17:28",
+        "end": "19:28"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "19:28",
+        "end": "21:28"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "21:28",
+        "end": "23:28"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "23:28",
+        "end": "01:28"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "01:28",
+        "end": "02:28"
+      }
+    ],
+    "combined": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "",
+        "end": ""
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "02:28",
+        "end": "03:28"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "03:28",
+        "end": "05:28"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "05:28",
+        "end": "07:28"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "07:28",
+        "end": "09:28"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "09:28",
+        "end": "11:28"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "11:28",
+        "end": "13:28"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "13:28",
+        "end": "15:28"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "15:28",
+        "end": "17:28"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "17:28",
+        "end": "19:28"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "19:28",
+        "end": "21:28"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "21:28",
+        "end": "23:28"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "23:28",
+        "end": "01:28"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "01:28",
+        "end": "02:28"
+      }
+    ]
+  },
+  {
+    "name": "Анна / Омск",
+    "date": "1978-07-11",
+    "time": "00:30",
+    "sun": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "00:07",
+        "end": "02:07"
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "01:07",
+        "end": "02:07"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "02:07",
+        "end": "04:07"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "04:07",
+        "end": "06:07"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "06:07",
+        "end": "08:07"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "08:07",
+        "end": "10:07"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "10:07",
+        "end": "12:07"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "12:07",
+        "end": "14:07"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "14:07",
+        "end": "16:07"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "16:07",
+        "end": "18:07"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "18:07",
+        "end": "20:07"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "20:07",
+        "end": "22:07"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "22:07",
+        "end": "00:07"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "00:07",
+        "end": "01:07"
+      }
+    ],
+    "rubber": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "",
+        "end": ""
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "01:07",
+        "end": "02:07"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "02:07",
+        "end": "04:07"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "04:07",
+        "end": "06:07"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "06:07",
+        "end": "08:07"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "08:07",
+        "end": "10:07"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "10:07",
+        "end": "12:07"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "12:07",
+        "end": "14:07"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "14:07",
+        "end": "16:07"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "16:07",
+        "end": "18:07"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "18:07",
+        "end": "20:07"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "20:07",
+        "end": "22:07"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "22:07",
+        "end": "00:07"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "00:07",
+        "end": "01:07"
+      }
+    ],
+    "combined": [
+      {
+        "branch": "Крыса",
+        "chinese": "子",
+        "start": "",
+        "end": ""
+      },
+      {
+        "branch": "Крыса (ран.)",
+        "chinese": "子",
+        "start": "01:07",
+        "end": "02:07"
+      },
+      {
+        "branch": "Бык",
+        "chinese": "丑",
+        "start": "02:07",
+        "end": "04:07"
+      },
+      {
+        "branch": "Тигр",
+        "chinese": "寅",
+        "start": "04:07",
+        "end": "06:07"
+      },
+      {
+        "branch": "Кролик",
+        "chinese": "卯",
+        "start": "06:07",
+        "end": "08:07"
+      },
+      {
+        "branch": "Дракон",
+        "chinese": "辰",
+        "start": "08:07",
+        "end": "10:07"
+      },
+      {
+        "branch": "Змея",
+        "chinese": "巳",
+        "start": "10:07",
+        "end": "12:07"
+      },
+      {
+        "branch": "Лошадь",
+        "chinese": "午",
+        "start": "12:07",
+        "end": "14:07"
+      },
+      {
+        "branch": "Коза",
+        "chinese": "未",
+        "start": "14:07",
+        "end": "16:07"
+      },
+      {
+        "branch": "Обезьяна",
+        "chinese": "申",
+        "start": "16:07",
+        "end": "18:07"
+      },
+      {
+        "branch": "Петух",
+        "chinese": "酉",
+        "start": "18:07",
+        "end": "20:07"
+      },
+      {
+        "branch": "Собака",
+        "chinese": "戌",
+        "start": "20:07",
+        "end": "22:07"
+      },
+      {
+        "branch": "Свинья",
+        "chinese": "亥",
+        "start": "22:07",
+        "end": "00:07"
+      },
+      {
+        "branch": "Крыса (позд.)",
+        "chinese": "子",
+        "start": "00:07",
+        "end": "01:07"
+      }
+    ]
+  }
+]

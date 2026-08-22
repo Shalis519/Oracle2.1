@@ -1,0 +1,15 @@
+Starting video analysis...
+Submitting video analysis task...
+Task submitted (ID: video-analysis-ce1cfa76-9f16-4071-bac6-e62b0f5646e6)
+[8s] Status: Analyzing video content with AI...
+[16s] Status: Analysis completed
+[16s] Analysis completed!
+Full analysis result saved to: /home/ubuntu/Oracle2.1-repo/video_XtOzUr_JP6s_analysis_20260821_092911.md
+Note: This tool performs AI-based visual and audio analysis, not verbatim transcription. For detailed speech transcription, use `manus-speech-to-text` instead.
+Analysis result:
+
+В предоставленном видеоматериале **отсутствует информация о технических правилах Ци Мэнь Дунь Цзя**, таких как Фань Инь, взаимодействия небесных стволов, работа с тарелками, Вратами, Звёздами или Богами.
+
+Содержание видео полностью посвящено **выбору благоприятных дат для стрижки волос** на основе **тибетского лунного календаря**. Автор объясняет, как сопоставлять лунные сутки с датами солнечного календаря для достижения определённых целей (деньги, долголетие, привлекательность, ум, счастье).
+
+Если вам необходим анализ видео именно по теме Ци Мэнь Дунь Цзя, пожалуйста, предоставьте соответствующий ролик.

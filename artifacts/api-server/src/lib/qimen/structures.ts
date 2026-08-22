@@ -1,10 +1,11 @@
 // Structure detection over an hourly chart. First structure: "Три Генерала".
-import { controls, PALACES, STEMS } from "./constants";
+import { controls, PALACES, STEMS, STEM_ELEMENT, parseGanZhi, type Element } from "./constants";
 import { buildChart, DOOR_ELEMENT, STAR_ELEMENT, mainGateStar } from "./chart";
 import {
   GENERALS_ACTIVATION, GENERALS_STAR_NAME, THREE_GENERALS_TABLE, WONDER_NAME,
 } from "../../data/qimen/threeGenerals";
 import { flyingStarYear, getFlyingStar } from "../data/fengshui";
+import { xunInfo } from "./calendar";
 
 const WONDERS = ["乙", "丙", "丁"] as const;
 const QUALIFY_STARS = new Set(["天辅", "天心", "天任"]);
@@ -18,6 +19,17 @@ const TOMB: Record<string, number> = { 乙: 6, 丙: 6, 丁: 8 };
 const WONDER_AVOID: Record<string, number[]> = { 乙: [2], 丙: [1], 丁: [6, 2] };
 // Door must not be activated in these palaces (休 юг, 生 север, 开 восток).
 const DOOR_AVOID: Record<string, number> = { 休门: 9, 生门: 1, 开门: 3 };
+
+export interface FlyingBirdFallsIntoCaveHit {
+  structure: "flying_bird_falls_into_cave";
+  palace: number;
+  direction: string;
+  heavenStem: "丙";
+  earthStem: "戊" | "己" | "庚" | "辛" | "壬" | "癸";
+  hiddenJia: string;
+  status: "placeholder";
+  published: false;
+}
 
 export interface GeneralsHit {
   structure: "three_generals";
@@ -39,6 +51,41 @@ export interface GeneralsHit {
  * Detect "Три Генерала" activations in the chart for the given hour.
  * Returns one hit per qualifying palace that passes ALL activation rules.
  */
+/**
+ * Внутренняя заглушка структуры 飛鳥跌穴 / Flying Bird Falls Into Cave.
+ *
+ * Joey Yap's 540 Yang Structure table defines the stem formation as
+ * Heaven Plate 丙 over Earth Plate 甲. In the plotted chart 甲 is hidden
+ * behind one of the six 六儀 markers 戊/己/庚/辛/壬/癸, according to the
+ * current 旬. The visible marker is therefore resolved from the chart's
+ * period pillar rather than hard-coded to 戊.
+ *
+ * This detector intentionally does not enter QimenResult and cannot be
+ * published until the remaining school-specific conditions are verified.
+ */
+export function detectFlyingBirdFallsIntoCave(date: Date, hourBranch: number, lateZi = false): FlyingBirdFallsIntoCaveHit[] {
+  const chart = buildChart(date, hourBranch, lateZi);
+  const periodIndex = parseGanZhi(chart.hourGz).index;
+  const hiddenJia = STEMS[xunInfo(periodIndex).yiStem] as FlyingBirdFallsIntoCaveHit["earthStem"];
+  const hits: FlyingBirdFallsIntoCaveHit[] = [];
+  for (let p = 1; p <= 9; p++) {
+    if (p === 5) continue;
+    const cell = chart.cells[p];
+    if (cell.heavenStem !== "丙" || cell.earthStem !== hiddenJia) continue;
+    hits.push({
+      structure: "flying_bird_falls_into_cave",
+      palace: p,
+      direction: PALACES[p].dirFull,
+      heavenStem: "丙",
+      earthStem: hiddenJia,
+      hiddenJia: `甲${chart.hourGz.charAt(1)}`,
+      status: "placeholder",
+      published: false,
+    });
+  }
+  return hits;
+}
+
 export function detectThreeGenerals(date: Date, hourBranch: number, lateZi = false): GeneralsHit[] {
   const chart = buildChart(date, hourBranch, lateZi);
   if (chart.fuYin) return []; // Избегаем Фу Инь
@@ -94,6 +141,41 @@ export function detectThreeGenerals(date: Date, hourBranch: number, lateZi = fal
 //   4: H=янский ствол или 三奇 & E=丁 & door = Главные Врата
 // 三奇 (Три Мистика) are 乙/丙/丁. 戊 is 六仪, but is included in the
 // positive/yang stem set for rows 3–4, as shown by the one-page scheme.
+export type SupportRelation = "supports" | "same" | "receives" | "controls" | "neutral";
+
+export interface SupportCheck {
+  supported: boolean;
+  relation: SupportRelation;
+  structurePalace: number;
+  supportPalace: number;
+  structureElement: Element;
+  personElement: Element;
+}
+
+function generates(source: Element, target: Element): boolean {
+  return ({ wood: "fire", fire: "earth", earth: "metal", metal: "water", water: "wood" } as Record<Element, Element>)[source] === target;
+}
+
+/** Проверяет, поддерживает ли дворец структуры человека через НС года рождения. НС ищется только в Небесном кольце. */
+export function evaluateSupportPalace(chart: ReturnType<typeof buildChart>, structurePalace: number, birthYearStem: number, representativeStem = birthYearStem): SupportCheck | null {
+  if (birthYearStem < 0 || birthYearStem > 9 || structurePalace === 5) return null;
+  const stem = STEMS[representativeStem];
+  const supportPalace = Object.values(chart.cells).find((cell) => cell.heavenStem === stem)?.palace;
+  if (!supportPalace || supportPalace === 5) return null;
+  const structureElement = PALACES[structurePalace].element;
+  const personElement = STEM_ELEMENT[birthYearStem];
+  const relation: SupportRelation = structureElement === personElement
+    ? "same"
+    : generates(structureElement, personElement)
+      ? "supports"
+      : generates(personElement, structureElement)
+        ? "receives"
+        : controls(structureElement, personElement) || controls(personElement, structureElement)
+          ? "controls"
+          : "neutral";
+  return { supported: relation === "supports" || relation === "same", relation, structurePalace, supportPalace, structureElement, personElement };
+}
+
 export interface JadeMaidenHit {
   palace: number;
   variant: number;
@@ -101,6 +183,7 @@ export interface JadeMaidenHit {
   earthStem: string;
   door: string;
   isMainGate: boolean;
+  support?: SupportCheck;
 }
 
 /** Classifies the four rows from the one-page Jade Maiden scheme. */
@@ -123,7 +206,7 @@ function annualYellowFive(palace: number, date: Date): boolean {
   return getFlyingStar(dir, flyingStarYear(date)).starNumber === 5;
 }
 
-export function detectJadeMaiden(date: Date, hourBranch: number, lateZi = false): JadeMaidenHit[] {
+export function detectJadeMaiden(date: Date, hourBranch: number, lateZi = false, birthYearStem?: number, representativeStem?: number): JadeMaidenHit[] {
   const chart = buildChart(date, hourBranch, lateZi);
   const main = mainGateStar(chart);
   const hits: JadeMaidenHit[] = [];
@@ -142,7 +225,9 @@ export function detectJadeMaiden(date: Date, hourBranch: number, lateZi = false)
     // Врата Тайника допустимы с отдельной оговоркой для скрытых встреч.
     const jadeMaidenDoors = new Set(["休门", "开门", "生门", "景门", "杜门"]);
     if (!jadeMaidenDoors.has(c.door)) continue;
-    hits.push({ palace: p, variant, heavenStem: h, earthStem: e, door: c.door, isMainGate: isMain });
+    const support = birthYearStem === undefined ? undefined : evaluateSupportPalace(chart, p, birthYearStem, representativeStem);
+    if (birthYearStem !== undefined && (!support || !support.supported)) continue;
+    hits.push({ palace: p, variant, heavenStem: h, earthStem: e, door: c.door, isMainGate: isMain, support: support ?? undefined });
   }
   return hits;
 }

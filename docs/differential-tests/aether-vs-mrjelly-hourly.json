@@ -1,0 +1,1507 @@
+[
+  {
+    "case": {
+      "id": "readme-summer-solstice",
+      "date": "2026-06-22",
+      "time": "03:00",
+      "offset": "+08:00"
+    },
+    "aether": {
+      "day": "丁卯",
+      "time": "壬寅",
+      "ju": 9,
+      "dun": "阴遁",
+      "zhiFu": "天心",
+      "zhiShi": "开门",
+      "zhiFuPalace": 2,
+      "zhiShiPalace": 7,
+      "earthPlate": [
+        {
+          "palace": 1,
+          "stem": "乙"
+        },
+        {
+          "palace": 2,
+          "stem": "丙"
+        },
+        {
+          "palace": 3,
+          "stem": "丁"
+        },
+        {
+          "palace": 4,
+          "stem": "癸"
+        },
+        {
+          "palace": 5,
+          "stem": "壬"
+        },
+        {
+          "palace": 6,
+          "stem": "辛"
+        },
+        {
+          "palace": 7,
+          "stem": "庚"
+        },
+        {
+          "palace": 8,
+          "stem": "己"
+        },
+        {
+          "palace": 9,
+          "stem": "戊"
+        }
+      ],
+      "heavenPlate": [
+        {
+          "palace": 1,
+          "stem": "丁"
+        },
+        {
+          "palace": 2,
+          "stem": "辛"
+        },
+        {
+          "palace": 3,
+          "stem": "戊"
+        },
+        {
+          "palace": 4,
+          "stem": "丙"
+        },
+        {
+          "palace": 5,
+          "stem": "壬"
+        },
+        {
+          "palace": 6,
+          "stem": "己"
+        },
+        {
+          "palace": 7,
+          "stem": "乙"
+        },
+        {
+          "palace": 8,
+          "stem": "癸"
+        },
+        {
+          "palace": 9,
+          "stem": "庚"
+        }
+      ],
+      "stars": [
+        {
+          "palace": 1,
+          "star": "天冲"
+        },
+        {
+          "palace": 2,
+          "star": "天心"
+        },
+        {
+          "palace": 3,
+          "star": "天英"
+        },
+        {
+          "palace": 4,
+          "star": "天芮"
+        },
+        {
+          "palace": 5,
+          "star": "天禽"
+        },
+        {
+          "palace": 6,
+          "star": "天任"
+        },
+        {
+          "palace": 7,
+          "star": "天蓬"
+        },
+        {
+          "palace": 8,
+          "star": "天辅"
+        },
+        {
+          "palace": 9,
+          "star": "天柱"
+        }
+      ],
+      "doors": [
+        {
+          "palace": 1,
+          "door": "生门"
+        },
+        {
+          "palace": 2,
+          "door": "惊门"
+        },
+        {
+          "palace": 3,
+          "door": "杜门"
+        },
+        {
+          "palace": 4,
+          "door": "景门"
+        },
+        {
+          "palace": 5,
+          "door": ""
+        },
+        {
+          "palace": 6,
+          "door": "休门"
+        },
+        {
+          "palace": 7,
+          "door": "开门"
+        },
+        {
+          "palace": 8,
+          "door": "伤门"
+        },
+        {
+          "palace": 9,
+          "door": "死门"
+        }
+      ]
+    },
+    "mrjelly": {
+      "siZhu": {
+        "year": "丙午",
+        "month": "甲午",
+        "day": "丁卯",
+        "time": "壬寅"
+      },
+      "ju": "阴遁九局 (上元)",
+      "fu": "值符：天心",
+      "shi": "值使：开门"
+    },
+    "comparison": {
+      "dayEqual": true,
+      "timeEqual": true,
+      "juEqual": true,
+      "zhiFuVisible": "值符：天心",
+      "zhiShiVisible": "值使：开门"
+    }
+  },
+  {
+    "case": {
+      "id": "moscow-midday",
+      "date": "2026-08-20",
+      "time": "12:00",
+      "offset": "+03:00"
+    },
+    "aether": {
+      "day": "丙寅",
+      "time": "甲午",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天柱",
+      "zhiShi": "惊门",
+      "zhiFuPalace": 7,
+      "zhiShiPalace": 7,
+      "earthPlate": [
+        {
+          "palace": 1,
+          "stem": "戊"
+        },
+        {
+          "palace": 2,
+          "stem": "乙"
+        },
+        {
+          "palace": 3,
+          "stem": "丙"
+        },
+        {
+          "palace": 4,
+          "stem": "丁"
+        },
+        {
+          "palace": 5,
+          "stem": "癸"
+        },
+        {
+          "palace": 6,
+          "stem": "壬"
+        },
+        {
+          "palace": 7,
+          "stem": "辛"
+        },
+        {
+          "palace": 8,
+          "stem": "庚"
+        },
+        {
+          "palace": 9,
+          "stem": "己"
+        }
+      ],
+      "heavenPlate": [
+        {
+          "palace": 1,
+          "stem": "戊"
+        },
+        {
+          "palace": 2,
+          "stem": "乙"
+        },
+        {
+          "palace": 3,
+          "stem": "丙"
+        },
+        {
+          "palace": 4,
+          "stem": "丁"
+        },
+        {
+          "palace": 5,
+          "stem": "癸"
+        },
+        {
+          "palace": 6,
+          "stem": "壬"
+        },
+        {
+          "palace": 7,
+          "stem": "辛"
+        },
+        {
+          "palace": 8,
+          "stem": "庚"
+        },
+        {
+          "palace": 9,
+          "stem": "己"
+        }
+      ],
+      "stars": [
+        {
+          "palace": 1,
+          "star": "天蓬"
+        },
+        {
+          "palace": 2,
+          "star": "天芮"
+        },
+        {
+          "palace": 3,
+          "star": "天冲"
+        },
+        {
+          "palace": 4,
+          "star": "天辅"
+        },
+        {
+          "palace": 5,
+          "star": "天禽"
+        },
+        {
+          "palace": 6,
+          "star": "天心"
+        },
+        {
+          "palace": 7,
+          "star": "天柱"
+        },
+        {
+          "palace": 8,
+          "star": "天任"
+        },
+        {
+          "palace": 9,
+          "star": "天英"
+        }
+      ],
+      "doors": [
+        {
+          "palace": 1,
+          "door": "休门"
+        },
+        {
+          "palace": 2,
+          "door": "死门"
+        },
+        {
+          "palace": 3,
+          "door": "伤门"
+        },
+        {
+          "palace": 4,
+          "door": "杜门"
+        },
+        {
+          "palace": 5,
+          "door": ""
+        },
+        {
+          "palace": 6,
+          "door": "开门"
+        },
+        {
+          "palace": 7,
+          "door": "惊门"
+        },
+        {
+          "palace": 8,
+          "door": "生门"
+        },
+        {
+          "palace": 9,
+          "door": "景门"
+        }
+      ]
+    },
+    "mrjelly": {
+      "siZhu": {
+        "year": "丙午",
+        "month": "丙申",
+        "day": "丙寅",
+        "time": "甲午"
+      },
+      "ju": "阴遁二局 (上元)",
+      "fu": "值符：天任",
+      "shi": "值使：生门"
+    },
+    "comparison": {
+      "dayEqual": true,
+      "timeEqual": true,
+      "juEqual": false,
+      "zhiFuVisible": "值符：天任",
+      "zhiShiVisible": "值使：生门"
+    }
+  },
+  {
+    "case": {
+      "id": "moscow-early-zi",
+      "date": "2026-08-20",
+      "time": "00:30",
+      "offset": "+03:00"
+    },
+    "aether": {
+      "day": "丙寅",
+      "time": "戊子",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 1,
+      "zhiShiPalace": 4,
+      "earthPlate": [
+        {
+          "palace": 1,
+          "stem": "戊"
+        },
+        {
+          "palace": 2,
+          "stem": "乙"
+        },
+        {
+          "palace": 3,
+          "stem": "丙"
+        },
+        {
+          "palace": 4,
+          "stem": "丁"
+        },
+        {
+          "palace": 5,
+          "stem": "癸"
+        },
+        {
+          "palace": 6,
+          "stem": "壬"
+        },
+        {
+          "palace": 7,
+          "stem": "辛"
+        },
+        {
+          "palace": 8,
+          "stem": "庚"
+        },
+        {
+          "palace": 9,
+          "stem": "己"
+        }
+      ],
+      "heavenPlate": [
+        {
+          "palace": 1,
+          "stem": "庚"
+        },
+        {
+          "palace": 2,
+          "stem": "辛"
+        },
+        {
+          "palace": 3,
+          "stem": "丁"
+        },
+        {
+          "palace": 4,
+          "stem": "己"
+        },
+        {
+          "palace": 5,
+          "stem": "癸"
+        },
+        {
+          "palace": 6,
+          "stem": "戊"
+        },
+        {
+          "palace": 7,
+          "stem": "壬"
+        },
+        {
+          "palace": 8,
+          "stem": "丙"
+        },
+        {
+          "palace": 9,
+          "stem": "乙"
+        }
+      ],
+      "stars": [
+        {
+          "palace": 1,
+          "star": "天任"
+        },
+        {
+          "palace": 2,
+          "star": "天柱"
+        },
+        {
+          "palace": 3,
+          "star": "天辅"
+        },
+        {
+          "palace": 4,
+          "star": "天英"
+        },
+        {
+          "palace": 5,
+          "star": "天禽"
+        },
+        {
+          "palace": 6,
+          "star": "天蓬"
+        },
+        {
+          "palace": 7,
+          "star": "天心"
+        },
+        {
+          "palace": 8,
+          "star": "天冲"
+        },
+        {
+          "palace": 9,
+          "star": "天芮"
+        }
+      ],
+      "doors": [
+        {
+          "palace": 1,
+          "door": "惊门"
+        },
+        {
+          "palace": 2,
+          "door": "杜门"
+        },
+        {
+          "palace": 3,
+          "door": "休门"
+        },
+        {
+          "palace": 4,
+          "door": "生门"
+        },
+        {
+          "palace": 5,
+          "door": ""
+        },
+        {
+          "palace": 6,
+          "door": "死门"
+        },
+        {
+          "palace": 7,
+          "door": "景门"
+        },
+        {
+          "palace": 8,
+          "door": "开门"
+        },
+        {
+          "palace": 9,
+          "door": "伤门"
+        }
+      ]
+    },
+    "mrjelly": {
+      "siZhu": {
+        "year": "丙午",
+        "month": "丙申",
+        "day": "丙寅",
+        "time": "戊子"
+      },
+      "ju": "阴遁二局 (上元)",
+      "fu": "值符：天英",
+      "shi": "值使：景门"
+    },
+    "comparison": {
+      "dayEqual": true,
+      "timeEqual": true,
+      "juEqual": false,
+      "zhiFuVisible": "值符：天英",
+      "zhiShiVisible": "值使：景门"
+    }
+  },
+  {
+    "case": {
+      "id": "moscow-late-zi",
+      "date": "2026-08-20",
+      "time": "23:40",
+      "offset": "+03:00",
+      "lateZi": true
+    },
+    "aether": {
+      "day": "丙寅",
+      "time": "戊子",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 1,
+      "zhiShiPalace": 4,
+      "earthPlate": [
+        {
+          "palace": 1,
+          "stem": "戊"
+        },
+        {
+          "palace": 2,
+          "stem": "乙"
+        },
+        {
+          "palace": 3,
+          "stem": "丙"
+        },
+        {
+          "palace": 4,
+          "stem": "丁"
+        },
+        {
+          "palace": 5,
+          "stem": "癸"
+        },
+        {
+          "palace": 6,
+          "stem": "壬"
+        },
+        {
+          "palace": 7,
+          "stem": "辛"
+        },
+        {
+          "palace": 8,
+          "stem": "庚"
+        },
+        {
+          "palace": 9,
+          "stem": "己"
+        }
+      ],
+      "heavenPlate": [
+        {
+          "palace": 1,
+          "stem": "庚"
+        },
+        {
+          "palace": 2,
+          "stem": "辛"
+        },
+        {
+          "palace": 3,
+          "stem": "丁"
+        },
+        {
+          "palace": 4,
+          "stem": "己"
+        },
+        {
+          "palace": 5,
+          "stem": "癸"
+        },
+        {
+          "palace": 6,
+          "stem": "戊"
+        },
+        {
+          "palace": 7,
+          "stem": "壬"
+        },
+        {
+          "palace": 8,
+          "stem": "丙"
+        },
+        {
+          "palace": 9,
+          "stem": "乙"
+        }
+      ],
+      "stars": [
+        {
+          "palace": 1,
+          "star": "天任"
+        },
+        {
+          "palace": 2,
+          "star": "天柱"
+        },
+        {
+          "palace": 3,
+          "star": "天辅"
+        },
+        {
+          "palace": 4,
+          "star": "天英"
+        },
+        {
+          "palace": 5,
+          "star": "天禽"
+        },
+        {
+          "palace": 6,
+          "star": "天蓬"
+        },
+        {
+          "palace": 7,
+          "star": "天心"
+        },
+        {
+          "palace": 8,
+          "star": "天冲"
+        },
+        {
+          "palace": 9,
+          "star": "天芮"
+        }
+      ],
+      "doors": [
+        {
+          "palace": 1,
+          "door": "惊门"
+        },
+        {
+          "palace": 2,
+          "door": "杜门"
+        },
+        {
+          "palace": 3,
+          "door": "休门"
+        },
+        {
+          "palace": 4,
+          "door": "生门"
+        },
+        {
+          "palace": 5,
+          "door": ""
+        },
+        {
+          "palace": 6,
+          "door": "死门"
+        },
+        {
+          "palace": 7,
+          "door": "景门"
+        },
+        {
+          "palace": 8,
+          "door": "开门"
+        },
+        {
+          "palace": 9,
+          "door": "伤门"
+        }
+      ]
+    },
+    "mrjelly": {
+      "siZhu": {
+        "year": "丙午",
+        "month": "丙申",
+        "day": "丙寅",
+        "time": "庚子"
+      },
+      "ju": "阴遁二局 (上元)",
+      "fu": "值符：天任",
+      "shi": "值使：生门"
+    },
+    "comparison": {
+      "dayEqual": true,
+      "timeEqual": false,
+      "juEqual": false,
+      "zhiFuVisible": "值符：天任",
+      "zhiShiVisible": "值使：生门"
+    }
+  },
+  {
+    "case": {
+      "id": "taraz-birth-civil",
+      "date": "1980-02-05",
+      "time": "16:01",
+      "offset": "+06:00"
+    },
+    "aether": {
+      "day": "戊申",
+      "time": "庚申",
+      "ju": 6,
+      "dun": "阳遁",
+      "zhiFu": "天芮",
+      "zhiShi": "死门",
+      "zhiFuPalace": 8,
+      "zhiShiPalace": 8,
+      "earthPlate": [
+        {
+          "palace": 1,
+          "stem": "壬"
+        },
+        {
+          "palace": 2,
+          "stem": "癸"
+        },
+        {
+          "palace": 3,
+          "stem": "丁"
+        },
+        {
+          "palace": 4,
+          "stem": "丙"
+        },
+        {
+          "palace": 5,
+          "stem": "乙"
+        },
+        {
+          "palace": 6,
+          "stem": "戊"
+        },
+        {
+          "palace": 7,
+          "stem": "己"
+        },
+        {
+          "palace": 8,
+          "stem": "庚"
+        },
+        {
+          "palace": 9,
+          "stem": "辛"
+        }
+      ],
+      "heavenPlate": [
+        {
+          "palace": 1,
+          "stem": "辛"
+        },
+        {
+          "palace": 2,
+          "stem": "庚"
+        },
+        {
+          "palace": 3,
+          "stem": "己"
+        },
+        {
+          "palace": 4,
+          "stem": "戊"
+        },
+        {
+          "palace": 5,
+          "stem": "乙"
+        },
+        {
+          "palace": 6,
+          "stem": "丙"
+        },
+        {
+          "palace": 7,
+          "stem": "丁"
+        },
+        {
+          "palace": 8,
+          "stem": "癸"
+        },
+        {
+          "palace": 9,
+          "stem": "壬"
+        }
+      ],
+      "stars": [
+        {
+          "palace": 1,
+          "star": "天英"
+        },
+        {
+          "palace": 2,
+          "star": "天任"
+        },
+        {
+          "palace": 3,
+          "star": "天柱"
+        },
+        {
+          "palace": 4,
+          "star": "天心"
+        },
+        {
+          "palace": 5,
+          "star": "天禽"
+        },
+        {
+          "palace": 6,
+          "star": "天辅"
+        },
+        {
+          "palace": 7,
+          "star": "天冲"
+        },
+        {
+          "palace": 8,
+          "star": "天芮"
+        },
+        {
+          "palace": 9,
+          "star": "天蓬"
+        }
+      ],
+      "doors": [
+        {
+          "palace": 1,
+          "door": "景门"
+        },
+        {
+          "palace": 2,
+          "door": "生门"
+        },
+        {
+          "palace": 3,
+          "door": "惊门"
+        },
+        {
+          "palace": 4,
+          "door": "开门"
+        },
+        {
+          "palace": 5,
+          "door": ""
+        },
+        {
+          "palace": 6,
+          "door": "杜门"
+        },
+        {
+          "palace": 7,
+          "door": "伤门"
+        },
+        {
+          "palace": 8,
+          "door": "死门"
+        },
+        {
+          "palace": 9,
+          "door": "休门"
+        }
+      ]
+    },
+    "mrjelly": {
+      "siZhu": {
+        "year": "庚申",
+        "month": "戊寅",
+        "day": "戊申",
+        "time": "庚申"
+      },
+      "ju": "阳遁二局 (下元)",
+      "fu": "值符：天柱",
+      "shi": "值使：惊门"
+    },
+    "comparison": {
+      "dayEqual": true,
+      "timeEqual": true,
+      "juEqual": false,
+      "zhiFuVisible": "值符：天柱",
+      "zhiShiVisible": "值使：惊门"
+    }
+  },
+  {
+    "case": {
+      "id": "severobaikalsk-birth-civil",
+      "date": "1986-06-26",
+      "time": "16:40",
+      "offset": "+09:00"
+    },
+    "aether": {
+      "day": "辛丑",
+      "time": "丙申",
+      "ju": 3,
+      "dun": "阴遁",
+      "zhiFu": "天英",
+      "zhiShi": "景门",
+      "zhiFuPalace": 2,
+      "zhiShiPalace": 7,
+      "earthPlate": [
+        {
+          "palace": 1,
+          "stem": "庚"
+        },
+        {
+          "palace": 2,
+          "stem": "己"
+        },
+        {
+          "palace": 3,
+          "stem": "戊"
+        },
+        {
+          "palace": 4,
+          "stem": "乙"
+        },
+        {
+          "palace": 5,
+          "stem": "丙"
+        },
+        {
+          "palace": 6,
+          "stem": "丁"
+        },
+        {
+          "palace": 7,
+          "stem": "癸"
+        },
+        {
+          "palace": 8,
+          "stem": "壬"
+        },
+        {
+          "palace": 9,
+          "stem": "辛"
+        }
+      ],
+      "heavenPlate": [
+        {
+          "palace": 1,
+          "stem": "丁"
+        },
+        {
+          "palace": 2,
+          "stem": "辛"
+        },
+        {
+          "palace": 3,
+          "stem": "壬"
+        },
+        {
+          "palace": 4,
+          "stem": "戊"
+        },
+        {
+          "palace": 5,
+          "stem": "丙"
+        },
+        {
+          "palace": 6,
+          "stem": "癸"
+        },
+        {
+          "palace": 7,
+          "stem": "己"
+        },
+        {
+          "palace": 8,
+          "stem": "庚"
+        },
+        {
+          "palace": 9,
+          "stem": "乙"
+        }
+      ],
+      "stars": [
+        {
+          "palace": 1,
+          "star": "天心"
+        },
+        {
+          "palace": 2,
+          "star": "天英"
+        },
+        {
+          "palace": 3,
+          "star": "天任"
+        },
+        {
+          "palace": 4,
+          "star": "天冲"
+        },
+        {
+          "palace": 5,
+          "star": "天禽"
+        },
+        {
+          "palace": 6,
+          "star": "天柱"
+        },
+        {
+          "palace": 7,
+          "star": "天芮"
+        },
+        {
+          "palace": 8,
+          "star": "天蓬"
+        },
+        {
+          "palace": 9,
+          "star": "天辅"
+        }
+      ],
+      "doors": [
+        {
+          "palace": 1,
+          "door": "惊门"
+        },
+        {
+          "palace": 2,
+          "door": "杜门"
+        },
+        {
+          "palace": 3,
+          "door": "休门"
+        },
+        {
+          "palace": 4,
+          "door": "生门"
+        },
+        {
+          "palace": 5,
+          "door": ""
+        },
+        {
+          "palace": 6,
+          "door": "死门"
+        },
+        {
+          "palace": 7,
+          "door": "景门"
+        },
+        {
+          "palace": 8,
+          "door": "开门"
+        },
+        {
+          "palace": 9,
+          "door": "伤门"
+        }
+      ]
+    },
+    "mrjelly": {
+      "siZhu": {
+        "year": "丙寅",
+        "month": "甲午",
+        "day": "辛丑",
+        "time": "丙申"
+      },
+      "ju": "阴遁三局 (中元)",
+      "fu": "值符：天英",
+      "shi": "值使：景门"
+    },
+    "comparison": {
+      "dayEqual": true,
+      "timeEqual": true,
+      "juEqual": true,
+      "zhiFuVisible": "值符：天英",
+      "zhiShiVisible": "值使：景门"
+    }
+  },
+  {
+    "case": {
+      "id": "khazar-birth-civil",
+      "date": "1981-05-17",
+      "time": "06:30",
+      "offset": "+06:00"
+    },
+    "aether": {
+      "day": "乙未",
+      "time": "己卯",
+      "ju": 5,
+      "dun": "阳遁",
+      "zhiFu": "天心",
+      "zhiShi": "开门",
+      "zhiFuPalace": 6,
+      "zhiShiPalace": 2,
+      "earthPlate": [
+        {
+          "palace": 1,
+          "stem": "癸"
+        },
+        {
+          "palace": 2,
+          "stem": "丁"
+        },
+        {
+          "palace": 3,
+          "stem": "丙"
+        },
+        {
+          "palace": 4,
+          "stem": "乙"
+        },
+        {
+          "palace": 5,
+          "stem": "戊"
+        },
+        {
+          "palace": 6,
+          "stem": "己"
+        },
+        {
+          "palace": 7,
+          "stem": "庚"
+        },
+        {
+          "palace": 8,
+          "stem": "辛"
+        },
+        {
+          "palace": 9,
+          "stem": "壬"
+        }
+      ],
+      "heavenPlate": [
+        {
+          "palace": 1,
+          "stem": "癸"
+        },
+        {
+          "palace": 2,
+          "stem": "丁"
+        },
+        {
+          "palace": 3,
+          "stem": "丙"
+        },
+        {
+          "palace": 4,
+          "stem": "乙"
+        },
+        {
+          "palace": 5,
+          "stem": "戊"
+        },
+        {
+          "palace": 6,
+          "stem": "己"
+        },
+        {
+          "palace": 7,
+          "stem": "庚"
+        },
+        {
+          "palace": 8,
+          "stem": "辛"
+        },
+        {
+          "palace": 9,
+          "stem": "壬"
+        }
+      ],
+      "stars": [
+        {
+          "palace": 1,
+          "star": "天蓬"
+        },
+        {
+          "palace": 2,
+          "star": "天芮"
+        },
+        {
+          "palace": 3,
+          "star": "天冲"
+        },
+        {
+          "palace": 4,
+          "star": "天辅"
+        },
+        {
+          "palace": 5,
+          "star": "天禽"
+        },
+        {
+          "palace": 6,
+          "star": "天心"
+        },
+        {
+          "palace": 7,
+          "star": "天柱"
+        },
+        {
+          "palace": 8,
+          "star": "天任"
+        },
+        {
+          "palace": 9,
+          "star": "天英"
+        }
+      ],
+      "doors": [
+        {
+          "palace": 1,
+          "door": "伤门"
+        },
+        {
+          "palace": 2,
+          "door": "开门"
+        },
+        {
+          "palace": 3,
+          "door": "景门"
+        },
+        {
+          "palace": 4,
+          "door": "死门"
+        },
+        {
+          "palace": 5,
+          "door": ""
+        },
+        {
+          "palace": 6,
+          "door": "生门"
+        },
+        {
+          "palace": 7,
+          "door": "休门"
+        },
+        {
+          "palace": 8,
+          "door": "杜门"
+        },
+        {
+          "palace": 9,
+          "door": "惊门"
+        }
+      ]
+    },
+    "mrjelly": {
+      "siZhu": {
+        "year": "辛酉",
+        "month": "癸巳",
+        "day": "乙未",
+        "time": "己卯"
+      },
+      "ju": "阳遁四局 (上元)",
+      "fu": "值符：天芮",
+      "shi": "值使：死门"
+    },
+    "comparison": {
+      "dayEqual": true,
+      "timeEqual": true,
+      "juEqual": false,
+      "zhiFuVisible": "值符：天芮",
+      "zhiShiVisible": "值使：死门"
+    }
+  },
+  {
+    "case": {
+      "id": "omsk-birth-civil",
+      "date": "1978-07-11",
+      "time": "00:30",
+      "offset": "+06:00"
+    },
+    "aether": {
+      "day": "甲戌",
+      "time": "甲子",
+      "ju": 5,
+      "dun": "阴遁",
+      "zhiFu": "天禽",
+      "zhiShi": "死门",
+      "zhiFuPalace": 2,
+      "zhiShiPalace": 2,
+      "earthPlate": [
+        {
+          "palace": 1,
+          "stem": "壬"
+        },
+        {
+          "palace": 2,
+          "stem": "辛"
+        },
+        {
+          "palace": 3,
+          "stem": "庚"
+        },
+        {
+          "palace": 4,
+          "stem": "己"
+        },
+        {
+          "palace": 5,
+          "stem": "戊"
+        },
+        {
+          "palace": 6,
+          "stem": "乙"
+        },
+        {
+          "palace": 7,
+          "stem": "丙"
+        },
+        {
+          "palace": 8,
+          "stem": "丁"
+        },
+        {
+          "palace": 9,
+          "stem": "癸"
+        }
+      ],
+      "heavenPlate": [
+        {
+          "palace": 1,
+          "stem": "壬"
+        },
+        {
+          "palace": 2,
+          "stem": "辛"
+        },
+        {
+          "palace": 3,
+          "stem": "庚"
+        },
+        {
+          "palace": 4,
+          "stem": "己"
+        },
+        {
+          "palace": 5,
+          "stem": "戊"
+        },
+        {
+          "palace": 6,
+          "stem": "乙"
+        },
+        {
+          "palace": 7,
+          "stem": "丙"
+        },
+        {
+          "palace": 8,
+          "stem": "丁"
+        },
+        {
+          "palace": 9,
+          "stem": "癸"
+        }
+      ],
+      "stars": [
+        {
+          "palace": 1,
+          "star": "天蓬"
+        },
+        {
+          "palace": 2,
+          "star": "天芮"
+        },
+        {
+          "palace": 3,
+          "star": "天冲"
+        },
+        {
+          "palace": 4,
+          "star": "天辅"
+        },
+        {
+          "palace": 5,
+          "star": "天禽"
+        },
+        {
+          "palace": 6,
+          "star": "天心"
+        },
+        {
+          "palace": 7,
+          "star": "天柱"
+        },
+        {
+          "palace": 8,
+          "star": "天任"
+        },
+        {
+          "palace": 9,
+          "star": "天英"
+        }
+      ],
+      "doors": [
+        {
+          "palace": 1,
+          "door": "休门"
+        },
+        {
+          "palace": 2,
+          "door": "死门"
+        },
+        {
+          "palace": 3,
+          "door": "伤门"
+        },
+        {
+          "palace": 4,
+          "door": "杜门"
+        },
+        {
+          "palace": 5,
+          "door": ""
+        },
+        {
+          "palace": 6,
+          "door": "开门"
+        },
+        {
+          "palace": 7,
+          "door": "惊门"
+        },
+        {
+          "palace": 8,
+          "door": "生门"
+        },
+        {
+          "palace": 9,
+          "door": "景门"
+        }
+      ]
+    },
+    "mrjelly": {
+      "siZhu": {
+        "year": "戊午",
+        "month": "己未",
+        "day": "甲戌",
+        "time": "甲子"
+      },
+      "ju": "阴遁五局 (下元)",
+      "fu": "值符：天芮",
+      "shi": "值使：死门"
+    },
+    "comparison": {
+      "dayEqual": true,
+      "timeEqual": true,
+      "juEqual": true,
+      "zhiFuVisible": "值符：天芮",
+      "zhiShiVisible": "值使：死门"
+    }
+  }
+]

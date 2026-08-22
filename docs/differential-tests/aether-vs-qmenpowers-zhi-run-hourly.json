@@ -1,0 +1,2792 @@
+[
+  {
+    "case": {
+      "id": "zi-early",
+      "date": "2026-08-20",
+      "time": "00:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "戊子",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 1,
+      "zhiShiPalace": 4,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "惊门",
+          "deity": "值符"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "杜门",
+          "deity": "六合"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "休门",
+          "deity": "九地"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "生门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "死门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "景门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "开门",
+          "deity": "九天"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "伤门",
+          "deity": "白虎"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "戊子",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天英",
+      "zhiShi": "景门",
+      "zhiFuPalace": 2,
+      "zhiShiPalace": 4,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "生门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "惊门",
+          "deity": "值符"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "杜门",
+          "deity": "六合"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "景门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "休门",
+          "deity": "九地"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "开门",
+          "deity": "九天"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "伤门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "死门",
+          "deity": "螣蛇"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": true,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "chou",
+      "date": "2026-08-20",
+      "time": "02:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "己丑",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 9,
+      "zhiShiPalace": 3,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "开门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "景门",
+          "deity": "九天"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "生门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "伤门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "惊门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "死门",
+          "deity": "九地"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "休门",
+          "deity": "六合"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "杜门",
+          "deity": "值符"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "己丑",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天英",
+      "zhiShi": "景门",
+      "zhiFuPalace": 1,
+      "zhiShiPalace": 4,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "生门",
+          "deity": "值符"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "惊门",
+          "deity": "六合"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "杜门",
+          "deity": "九地"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "景门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "休门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "开门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "伤门",
+          "deity": "九天"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "死门",
+          "deity": "白虎"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "yin",
+      "date": "2026-08-20",
+      "time": "04:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "庚寅",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 8,
+      "zhiShiPalace": 2,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "景门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "生门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "惊门",
+          "deity": "九天"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "开门",
+          "deity": "九地"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "杜门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "伤门",
+          "deity": "六合"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "死门",
+          "deity": "值符"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "休门",
+          "deity": "玄武"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "庚寅",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天英",
+      "zhiShi": "景门",
+      "zhiFuPalace": 9,
+      "zhiShiPalace": 3,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "伤门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "开门",
+          "deity": "九天"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "景门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "死门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "生门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "休门",
+          "deity": "九地"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "杜门",
+          "deity": "六合"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "惊门",
+          "deity": "值符"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "mao",
+      "date": "2026-08-20",
+      "time": "06:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "辛卯",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 7,
+      "zhiShiPalace": 1,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "生门",
+          "deity": "九地"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "惊门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "杜门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "景门",
+          "deity": "六合"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "休门",
+          "deity": "九天"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "开门",
+          "deity": "值符"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "伤门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "死门",
+          "deity": "太阴"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "辛卯",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天英",
+      "zhiShi": "景门",
+      "zhiFuPalace": 8,
+      "zhiShiPalace": 2,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "开门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "景门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "生门",
+          "deity": "九天"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "伤门",
+          "deity": "九地"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "惊门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "死门",
+          "deity": "六合"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "休门",
+          "deity": "值符"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "杜门",
+          "deity": "玄武"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "chen",
+      "date": "2026-08-20",
+      "time": "08:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "壬辰",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 6,
+      "zhiShiPalace": 9,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "死门",
+          "deity": "九天"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "伤门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "开门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "休门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "景门",
+          "deity": "值符"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "杜门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "惊门",
+          "deity": "九地"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "生门",
+          "deity": "六合"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "壬辰",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天英",
+      "zhiShi": "景门",
+      "zhiFuPalace": 7,
+      "zhiShiPalace": 1,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "景门",
+          "deity": "九地"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "生门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "惊门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "开门",
+          "deity": "六合"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "杜门",
+          "deity": "九天"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "伤门",
+          "deity": "值符"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "死门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "休门",
+          "deity": "太阴"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "si",
+      "date": "2026-08-20",
+      "time": "10:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "癸巳",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 2,
+      "zhiShiPalace": 8,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "休门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "死门",
+          "deity": "值符"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "伤门",
+          "deity": "六合"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "杜门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "开门",
+          "deity": "九地"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "惊门",
+          "deity": "九天"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "生门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "景门",
+          "deity": "螣蛇"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "癸巳",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天英",
+      "zhiShi": "景门",
+      "zhiFuPalace": 6,
+      "zhiShiPalace": 9,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "休门",
+          "deity": "九天"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "死门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "伤门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "杜门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "开门",
+          "deity": "值符"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "惊门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "生门",
+          "deity": "九地"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "景门",
+          "deity": "六合"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "wu",
+      "date": "2026-08-20",
+      "time": "12:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "甲午",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天柱",
+      "zhiShi": "惊门",
+      "zhiFuPalace": 7,
+      "zhiShiPalace": 7,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "休门",
+          "deity": "九地"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "死门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "伤门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "杜门",
+          "deity": "六合"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "开门",
+          "deity": "九天"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "惊门",
+          "deity": "值符"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "生门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "景门",
+          "deity": "太阴"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "甲午",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 8,
+      "zhiShiPalace": 8,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "休门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "死门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "伤门",
+          "deity": "九天"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "杜门",
+          "deity": "九地"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "开门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "惊门",
+          "deity": "六合"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "生门",
+          "deity": "值符"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "景门",
+          "deity": "玄武"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "wei",
+      "date": "2026-08-20",
+      "time": "14:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "乙未",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天柱",
+      "zhiShi": "惊门",
+      "zhiFuPalace": 2,
+      "zhiShiPalace": 6,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "开门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "景门",
+          "deity": "值符"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "生门",
+          "deity": "六合"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "伤门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "惊门",
+          "deity": "九地"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "死门",
+          "deity": "九天"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "休门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "杜门",
+          "deity": "螣蛇"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "乙未",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 3,
+      "zhiShiPalace": 7,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "杜门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "休门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "死门",
+          "deity": "值符"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "惊门",
+          "deity": "九天"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "伤门",
+          "deity": "六合"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "生门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "景门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "开门",
+          "deity": "九地"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "shen",
+      "date": "2026-08-20",
+      "time": "16:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "丙申",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天柱",
+      "zhiShi": "惊门",
+      "zhiFuPalace": 3,
+      "zhiShiPalace": 2,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "生门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "惊门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "杜门",
+          "deity": "值符"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "景门",
+          "deity": "九天"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "休门",
+          "deity": "六合"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "开门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "伤门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "死门",
+          "deity": "九地"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "丙申",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 4,
+      "zhiShiPalace": 6,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "伤门",
+          "deity": "六合"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "开门",
+          "deity": "九地"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "景门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "死门",
+          "deity": "值符"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "生门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "休门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "杜门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "惊门",
+          "deity": "九天"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "you",
+      "date": "2026-08-20",
+      "time": "18:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "丁酉",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天柱",
+      "zhiShi": "惊门",
+      "zhiFuPalace": 4,
+      "zhiShiPalace": 4,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "杜门",
+          "deity": "六合"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "休门",
+          "deity": "九地"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "死门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "惊门",
+          "deity": "值符"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "伤门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "生门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "景门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "开门",
+          "deity": "九天"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "丁酉",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 5,
+      "zhiShiPalace": 4,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "惊门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "杜门",
+          "deity": "值符"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "休门",
+          "deity": "六合"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "生门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "死门",
+          "deity": "九地"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "景门",
+          "deity": "九天"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "开门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "伤门",
+          "deity": "螣蛇"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": true,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "xu",
+      "date": "2026-08-20",
+      "time": "20:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "戊戌",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天柱",
+      "zhiShi": "惊门",
+      "zhiFuPalace": 1,
+      "zhiShiPalace": 3,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "景门",
+          "deity": "值符"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "生门",
+          "deity": "六合"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "惊门",
+          "deity": "九地"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "开门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "杜门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "伤门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "死门",
+          "deity": "九天"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "休门",
+          "deity": "白虎"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "戊戌",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 2,
+      "zhiShiPalace": 4,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "惊门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "杜门",
+          "deity": "值符"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "休门",
+          "deity": "六合"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "生门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "死门",
+          "deity": "九地"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "景门",
+          "deity": "九天"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "开门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "伤门",
+          "deity": "螣蛇"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "hai",
+      "date": "2026-08-20",
+      "time": "22:30"
+    },
+    "aether": {
+      "day": "丙寅",
+      "hour": "己亥",
+      "ju": 1,
+      "dun": "阴遁",
+      "zhiFu": "天柱",
+      "zhiShi": "惊门",
+      "zhiFuPalace": 9,
+      "zhiShiPalace": 2,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "戊",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "生门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 2,
+          "earthStem": "乙",
+          "heavenStem": "壬",
+          "star": "天心",
+          "door": "惊门",
+          "deity": "九天"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "己",
+          "star": "天英",
+          "door": "杜门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丁",
+          "heavenStem": "乙",
+          "star": "天芮",
+          "door": "景门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 5,
+          "earthStem": "癸",
+          "heavenStem": "癸",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "壬",
+          "heavenStem": "庚",
+          "star": "天任",
+          "door": "休门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 7,
+          "earthStem": "辛",
+          "heavenStem": "戊",
+          "star": "天蓬",
+          "door": "开门",
+          "deity": "九地"
+        },
+        {
+          "palace": 8,
+          "earthStem": "庚",
+          "heavenStem": "丁",
+          "star": "天辅",
+          "door": "伤门",
+          "deity": "六合"
+        },
+        {
+          "palace": 9,
+          "earthStem": "己",
+          "heavenStem": "辛",
+          "star": "天柱",
+          "door": "死门",
+          "deity": "值符"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丙寅",
+      "hour": "己亥",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天任",
+      "zhiShi": "生门",
+      "zhiFuPalace": 1,
+      "zhiShiPalace": 3,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "开门",
+          "deity": "值符"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "景门",
+          "deity": "六合"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "生门",
+          "deity": "九地"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "伤门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "惊门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "死门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "休门",
+          "deity": "九天"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "杜门",
+          "deity": "白虎"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": false,
+      "dunEqual": true,
+      "zhiFuEqual": false,
+      "zhiShiEqual": false,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": false,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "summer-solstice",
+      "date": "2026-06-22",
+      "time": "03:00"
+    },
+    "aether": {
+      "day": "丁卯",
+      "hour": "壬寅",
+      "ju": 9,
+      "dun": "阴遁",
+      "zhiFu": "天心",
+      "zhiShi": "开门",
+      "zhiFuPalace": 2,
+      "zhiShiPalace": 7,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "乙",
+          "heavenStem": "丁",
+          "star": "天冲",
+          "door": "生门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 2,
+          "earthStem": "丙",
+          "heavenStem": "辛",
+          "star": "天心",
+          "door": "惊门",
+          "deity": "值符"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丁",
+          "heavenStem": "戊",
+          "star": "天英",
+          "door": "杜门",
+          "deity": "六合"
+        },
+        {
+          "palace": 4,
+          "earthStem": "癸",
+          "heavenStem": "丙",
+          "star": "天芮",
+          "door": "景门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 5,
+          "earthStem": "壬",
+          "heavenStem": "壬",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "辛",
+          "heavenStem": "己",
+          "star": "天任",
+          "door": "休门",
+          "deity": "九地"
+        },
+        {
+          "palace": 7,
+          "earthStem": "庚",
+          "heavenStem": "乙",
+          "star": "天蓬",
+          "door": "开门",
+          "deity": "九天"
+        },
+        {
+          "palace": 8,
+          "earthStem": "己",
+          "heavenStem": "癸",
+          "star": "天辅",
+          "door": "伤门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 9,
+          "earthStem": "戊",
+          "heavenStem": "庚",
+          "star": "天柱",
+          "door": "死门",
+          "deity": "螣蛇"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "丁卯",
+      "hour": "壬寅",
+      "ju": 9,
+      "dun": "阴遁",
+      "zhiFu": "天心",
+      "zhiShi": "开门",
+      "zhiFuPalace": 5,
+      "zhiShiPalace": 7,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "乙",
+          "heavenStem": "丁",
+          "star": "天冲",
+          "door": "生门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 2,
+          "earthStem": "丙",
+          "heavenStem": "辛",
+          "star": "天心",
+          "door": "惊门",
+          "deity": "值符"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丁",
+          "heavenStem": "戊",
+          "star": "天英",
+          "door": "杜门",
+          "deity": "六合"
+        },
+        {
+          "palace": 4,
+          "earthStem": "癸",
+          "heavenStem": "丙",
+          "star": "天内",
+          "door": "景门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 5,
+          "earthStem": "壬",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "辛",
+          "heavenStem": "己",
+          "star": "天任",
+          "door": "休门",
+          "deity": "九地"
+        },
+        {
+          "palace": 7,
+          "earthStem": "庚",
+          "heavenStem": "乙",
+          "star": "天蓬",
+          "door": "开门",
+          "deity": "九天"
+        },
+        {
+          "palace": 8,
+          "earthStem": "己",
+          "heavenStem": "癸",
+          "star": "天辅",
+          "door": "伤门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 9,
+          "earthStem": "戊",
+          "heavenStem": "庚",
+          "star": "天柱",
+          "door": "死门",
+          "deity": "螣蛇"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": true,
+      "dunEqual": true,
+      "zhiFuEqual": true,
+      "zhiShiEqual": true,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": true,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "winter-control",
+      "date": "2026-01-15",
+      "time": "12:00"
+    },
+    "aether": {
+      "day": "己丑",
+      "hour": "庚午",
+      "ju": 5,
+      "dun": "阳遁",
+      "zhiFu": "天禽",
+      "zhiShi": "死门",
+      "zhiFuPalace": 7,
+      "zhiShiPalace": 2,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "癸",
+          "heavenStem": "己",
+          "star": "天心",
+          "door": "休门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 2,
+          "earthStem": "丁",
+          "heavenStem": "壬",
+          "star": "天英",
+          "door": "死门",
+          "deity": "九天"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "伤门",
+          "deity": "勾陈"
+        },
+        {
+          "palace": 4,
+          "earthStem": "乙",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "杜门",
+          "deity": "朱雀"
+        },
+        {
+          "palace": 5,
+          "earthStem": "戊",
+          "heavenStem": "戊",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "己",
+          "heavenStem": "庚",
+          "star": "天柱",
+          "door": "开门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 7,
+          "earthStem": "庚",
+          "heavenStem": "丁",
+          "star": "天芮",
+          "door": "惊门",
+          "deity": "值符"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "癸",
+          "star": "天蓬",
+          "door": "生门",
+          "deity": "六合"
+        },
+        {
+          "palace": 9,
+          "earthStem": "壬",
+          "heavenStem": "乙",
+          "star": "天辅",
+          "door": "景门",
+          "deity": "九地"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "己丑",
+      "hour": "庚午",
+      "ju": 5,
+      "dun": "阳遁",
+      "zhiFu": "天禽",
+      "zhiShi": "死门",
+      "zhiFuPalace": 7,
+      "zhiShiPalace": 2,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "癸",
+          "heavenStem": "己",
+          "star": "天心",
+          "door": "休门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 2,
+          "earthStem": "丁",
+          "heavenStem": "壬",
+          "star": "天英",
+          "door": "死门",
+          "deity": "九天"
+        },
+        {
+          "palace": 3,
+          "earthStem": "丙",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "伤门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 4,
+          "earthStem": "乙",
+          "heavenStem": "丙",
+          "star": "天冲",
+          "door": "杜门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 5,
+          "earthStem": "戊",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "己",
+          "heavenStem": "庚",
+          "star": "天柱",
+          "door": "开门",
+          "deity": "螣蛇"
+        },
+        {
+          "palace": 7,
+          "earthStem": "庚",
+          "heavenStem": "丁",
+          "star": "天内",
+          "door": "惊门",
+          "deity": "值符"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "癸",
+          "star": "天蓬",
+          "door": "生门",
+          "deity": "六合"
+        },
+        {
+          "palace": 9,
+          "earthStem": "壬",
+          "heavenStem": "乙",
+          "star": "天辅",
+          "door": "景门",
+          "deity": "九地"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": true,
+      "dunEqual": true,
+      "zhiFuEqual": true,
+      "zhiShiEqual": true,
+      "zhiFuPalaceEqual": true,
+      "zhiShiPalaceEqual": true,
+      "earthEqual": false
+    }
+  },
+  {
+    "case": {
+      "id": "solar-term-edge",
+      "date": "2026-08-07",
+      "time": "10:00"
+    },
+    "aether": {
+      "day": "癸丑",
+      "hour": "丁巳",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天心",
+      "zhiShi": "开门",
+      "zhiFuPalace": 2,
+      "zhiShiPalace": 3,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "死门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "伤门",
+          "deity": "值符"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "开门",
+          "deity": "六合"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "戊",
+          "star": "天芮",
+          "door": "休门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": "丁",
+          "star": "天禽",
+          "door": "",
+          "deity": ""
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "景门",
+          "deity": "九地"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "杜门",
+          "deity": "九天"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "惊门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "生门",
+          "deity": "螣蛇"
+        }
+      ]
+    },
+    "qmenpowers": {
+      "day": "癸丑",
+      "hour": "丁巳",
+      "ju": 2,
+      "dun": "阴遁",
+      "zhiFu": "天心",
+      "zhiShi": "开门",
+      "zhiFuPalace": 5,
+      "zhiShiPalace": 3,
+      "cells": [
+        {
+          "palace": 1,
+          "earthStem": "己",
+          "heavenStem": "乙",
+          "star": "天冲",
+          "door": "死门",
+          "deity": "玄武"
+        },
+        {
+          "palace": 2,
+          "earthStem": "戊",
+          "heavenStem": "癸",
+          "star": "天心",
+          "door": "伤门",
+          "deity": "值符"
+        },
+        {
+          "palace": 3,
+          "earthStem": "乙",
+          "heavenStem": "庚",
+          "star": "天英",
+          "door": "开门",
+          "deity": "六合"
+        },
+        {
+          "palace": 4,
+          "earthStem": "丙",
+          "heavenStem": "戊",
+          "star": "天内",
+          "door": "休门",
+          "deity": "太阴"
+        },
+        {
+          "palace": 5,
+          "earthStem": "丁",
+          "heavenStem": null,
+          "star": null,
+          "door": null,
+          "deity": null
+        },
+        {
+          "palace": 6,
+          "earthStem": "癸",
+          "heavenStem": "辛",
+          "star": "天任",
+          "door": "景门",
+          "deity": "九地"
+        },
+        {
+          "palace": 7,
+          "earthStem": "壬",
+          "heavenStem": "己",
+          "star": "天蓬",
+          "door": "杜门",
+          "deity": "九天"
+        },
+        {
+          "palace": 8,
+          "earthStem": "辛",
+          "heavenStem": "丙",
+          "star": "天辅",
+          "door": "惊门",
+          "deity": "白虎"
+        },
+        {
+          "palace": 9,
+          "earthStem": "庚",
+          "heavenStem": "壬",
+          "star": "天柱",
+          "door": "生门",
+          "deity": "螣蛇"
+        }
+      ]
+    },
+    "comparison": {
+      "dayEqual": true,
+      "hourEqual": true,
+      "juEqual": true,
+      "dunEqual": true,
+      "zhiFuEqual": true,
+      "zhiShiEqual": true,
+      "zhiFuPalaceEqual": false,
+      "zhiShiPalaceEqual": true,
+      "earthEqual": false
+    }
+  }
+]
