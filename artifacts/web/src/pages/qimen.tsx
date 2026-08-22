@@ -238,8 +238,6 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
           <CardDescription>{description}</CardDescription>
           <div className="flex flex-wrap gap-2 text-xs text-muted-foreground pt-1">
             <span>{"monthGz" in chart ? "Столп месяца" : "Столп часа"}: {periodGz}</span>
-          <span>Главные Врата: {chart.zhiShiDoor}</span>
-          <span>Главная звезда: {chart.zhiFuStar}</span>
         </div>
       </CardHeader>
       <CardContent>
