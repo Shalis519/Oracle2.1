@@ -1,6 +1,6 @@
 // Qi Men Dun Jia — rotating-plate (轉盤) hour chart.
 import {
-  DEITIES,
+  deitiesForDun,
   DOORS,
   PALACES,
   PATH,
@@ -163,6 +163,7 @@ function buildPeriodChart(
 
   const iHour = pathIndex(pHour);
   const dir = yin ? -1 : 1;
+  const deities = deitiesForDun(yin);
   const iStar = pathIndex(zhiFuPalace);
   const doorShift = (((pathIndex(zhiShiPalace) - pathIndex(pFu)) % 8) + 8) % 8;
 
@@ -193,7 +194,7 @@ function buildPeriodChart(
       star,
       pairedStar: star === "天芮" ? "天禽" : undefined,
       door: DOOR_AT[doorSrc],
-      deity: DEITIES[deitySteps],
+      deity: deities[deitySteps],
       isVoid: xun.voidPalaces.includes(p),
     };
   }
@@ -225,12 +226,13 @@ function buildPeriodChart(
   };
 }
 
-export function buildChart(date: Date, hourBranch: number, lateZi = false): Chart {
+export function buildChart(date: Date, hourBranch: number, _lateZi = false): Chart {
   const day = dayInfo(date);
   const ju = juForDate(date);
-  // Поздний 子 использует ствол следующего дня, сохраняя дату текущей карты.
-  // Это отличает ранний 戊子 от позднего 庚子 20.08.2026.
-  const effectiveDayStem = lateZi && hourBranch === 0 ? (day.stem + 1) % 10 : day.stem;
+  // В QMDJ одна китайская двухчасовка 子 длится 23:00–01:00 и имеет одну карту.
+  // Параметр _lateZi оставлен для совместимости старых вызывающих функций, но
+  // больше не меняет дневной ствол и не создаёт второй вариант карты.
+  const effectiveDayStem = day.stem;
   const hs = hourStem(effectiveDayStem, hourBranch);
   const hourIdx = hourGanZhiIndex(effectiveDayStem, hourBranch);
   return buildPeriodChart(

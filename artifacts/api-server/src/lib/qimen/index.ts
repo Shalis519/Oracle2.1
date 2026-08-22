@@ -10,12 +10,12 @@ import {
   STEMS,
 } from "./constants";
 import { birthYearBranch, birthYearStem, birthYearRepresentativeStem, dayInfo, xunInfo } from "./calendar";
-import { buildChart, buildPeriodMap, type PalaceCell } from "./chart";
+import { buildChart, buildChartForDateTime, buildPeriodMap, type PalaceCell } from "./chart";
 import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
 import { detectThreeGenerals, detectJadeMaiden } from "./structures";
 import { computeJiFuWishes, type JiFuWish } from "./jifu";
 import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
-import { hourBranchFromClock, isLateZiClock, localSolarTime } from "./birthTime";
+import { localSolarTime } from "./birthTime";
 
 export type { JiFuWish } from "./jifu";
 
@@ -141,15 +141,6 @@ function localCalendarNoon(timezone?: string | null, instant = new Date()): Date
   }
 }
 
-function birthHourParts(birthTime?: string | null): { hourBranch: number; lateZi: boolean; hour: number; minute: number } {
-  const match = /^(\d{1,2}):(\d{2})/.exec(birthTime ?? "12:00");
-  const hour = match ? Number(match[1]) : 12;
-  const minute = match ? Number(match[2]) : 0;
-  const safeHour = hour >= 0 && hour <= 23 ? hour : 12;
-  const safeMinute = minute >= 0 && minute <= 59 ? minute : 0;
-  return { hourBranch: Math.floor((safeHour + 1) / 2) % 12, lateZi: safeHour === 23 && safeMinute >= 29, hour: safeHour, minute: safeMinute };
-}
-
 function buildMonthChart(date: Date): QimenMonthChart {
   const pillar = monthPillarForDate(date);
   const chart = buildPeriodMap(date, "month", pillar, monthJoeyYapJuForDate(date));
@@ -193,20 +184,15 @@ function buildBirthChart(
   const solar = birthLongitude != null
     ? localSolarTime({ isoDate: birthDate, time: civilTime, timezone: birthTimezone, longitude: birthLongitude })
     : null;
-  // Солнечная поправка выбирает часовую ветвь, но не переносит календарную дату
-  // рождения: для ранней Крысы дневной ствол остаётся стволом указанной даты.
-  const chartDateText = birthDate;
   const chartTimeText = solar?.solarTime ?? civilTime;
-  const { hourBranch, lateZi } = solar
-    ? { hourBranch: hourBranchFromClock(chartTimeText), lateZi: solar.solarDate < birthDate || isLateZiClock(solar.solarDate, chartTimeText) }
-    : birthHourParts(civilTime);
+  const chartDateText = solar?.solarDate ?? birthDate;
   const [chartYear, chartMonth, chartDay] = chartDateText.split("-").map(Number);
   const [hour, minute] = chartTimeText.split(":").map(Number);
   const date = new Date(chartYear, chartMonth - 1, chartDay, hour, minute, 0);
-  if (Number.isNaN(date.getTime()) || hourBranch < 0) return null;
-  const chart = buildChart(date, hourBranch, lateZi);
+  if (Number.isNaN(date.getTime())) return null;
+  const { chart, hourBranch, calendarDate } = buildChartForDateTime(date);
   // Дворец Судьбы: дворец НС дня рождения в небесной тарелке.
-  const day = dayInfo(date);
+  const day = dayInfo(calendarDate);
   const destinyStem = day.stem === 0 ? STEMS[xunInfo(day.index).yiStem] : STEMS[day.stem];
   const destinyCell = Object.values(chart.cells).find((cell: PalaceCell) => cell.heavenStem === destinyStem);
   const destinyPalace = destinyCell?.palace ?? null;
@@ -268,17 +254,27 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     const date = new Date(mStart);
     date.setDate(mStart.getDate() + d);
     const day = dayInfo(date);
-    const dayGz = STEMS[day.stem] + BRANCHES[day.branch];
-    // Для прогулки действует запрет личного столкновения: если ветвь дня
-    // конфликтует с ветвью года рождения, Нефритовую Деву не публикуем.
-    // Например, день Тигра исключает рождённых в год Обезьяны.
-    if (hasBirthDate && clashesBranch(yearBranch, day.branch)) continue;
+    // Последний слот 子 относится к следующему календарному дню:
+    // поздняя Крыса 23:00–00:00 завершает текущие сутки, а ранняя
+    // Крыса 00:00–01:00 открывает следующие. Поэтому слот и карта
+    // должны получать собственную календарную дату.
     for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+      const slotDate = slot.lateZi
+        ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
+        : date;
+      const slotDay = dayInfo(slotDate);
+      const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
+      // Для прогулки действует запрет личного столкновения: если ветвь дня
+      // конфликтует с ветвью года рождения, Нефритовую Деву не публикуем.
+      // Например, день Тигра исключает рождённых в год Обезьяны.
+      if (hasBirthDate && clashesBranch(yearBranch, slotDay.branch)) continue;
+      // Ранняя и поздняя Крыса остаются отдельными временными метками;
+      // карта строится по календарной дате конкретного слота.
       const h = slot.branch;
-      for (const hit of detectJadeMaiden(date, h, slot.lateZi, yearStem >= 0 ? yearStem : undefined, representativeYearStem >= 0 ? representativeYearStem : undefined)) {
+      for (const hit of detectJadeMaiden(slotDate, h, slot.lateZi, yearStem >= 0 ? yearStem : undefined, representativeYearStem >= 0 ? representativeYearStem : undefined)) {
         jadeMaidens.push({
-          date: day.iso,
-          dayGanZhi: dayGz,
+          date: slotDay.iso,
+          dayGanZhi: slotDayGz,
           hourBranch: h,
           hourLabel: hourLabel(h, slot.lateZi),
           direction: PALACES[hit.palace].dirFull,
@@ -318,13 +314,17 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     date.setDate(start.getDate() + d);
     const day = dayInfo(date);
     if (clashesBranch(yearBranch, day.branch)) continue; // personal 六冲 filter
-    const dayGz = STEMS[day.stem] + BRANCHES[day.branch];
     for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+      const slotDate = slot.lateZi
+        ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
+        : date;
+      const slotDay = dayInfo(slotDate);
+      const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
       const h = slot.branch;
-      for (const hit of detectThreeGenerals(date, h, slot.lateZi)) {
+      for (const hit of detectThreeGenerals(slotDate, h, slot.lateZi)) {
         structures.push({
-          date: day.iso,
-          dayGanZhi: dayGz,
+          date: slotDay.iso,
+          dayGanZhi: slotDayGz,
           hourBranch: h,
           hourLabel: hourLabel(h, slot.lateZi),
           structure: hit.structure,

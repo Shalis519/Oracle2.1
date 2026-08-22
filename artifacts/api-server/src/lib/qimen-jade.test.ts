@@ -51,14 +51,12 @@ describe("Нефритовая Дева: запрет по столкновен�
     expect(roosterHits).toEqual([]);
   });
 
-  test("разделяет ранний и поздний час Крысы", () => {
+  test("не меняет карту от одного флага при неизменной календарной дате", () => {
     const date = new Date(2026, 7, 20, 12, 0, 0);
-    expect(buildChart(date, 0, false).hourGz).toBe("戊子");
-    expect(buildChart(date, 0, true).hourGz).toBe("庚子");
-    expect(detectThreeGenerals(date, 0, false).map((hit) => hit.direction)).toEqual(["восток"]);
-    expect(detectThreeGenerals(date, 0, true)).toEqual([]);
-
-    const publicResult = computeQimenStructures({ from: date, days: 1, birthDate: "1981-06-01" });
-    expect(publicResult.structures.some((hit) => hit.hourLabel.startsWith("поздний час Крысы"))).toBe(false);
+    const early = buildChart(date, 0, false);
+    const late = buildChart(date, 0, true);
+    expect(early.hourGz).toBe("戊子");
+    expect(late.hourGz).toBe(early.hourGz);
+    expect(detectThreeGenerals(date, 0, true)).toEqual(detectThreeGenerals(date, 0, false));
   });
 });

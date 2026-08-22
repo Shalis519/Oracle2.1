@@ -113,11 +113,11 @@ export function hourBranchFromClock(time: string): number {
   return Math.floor((hour + 1) / 2) % 12;
 }
 
-/** Returns true only for the project's late-Zi interval 23:29–00:28. */
-export function isLateZiClock(date: string, time: string): boolean {
+/** Returns true for the late-Zi half: 23:00–00:00. */
+export function isLateZiClock(_date: string, time: string): boolean {
   const match = /^(\d{1,2}):(\d{2})/.exec(time);
   if (!match) return false;
   const hour = Number(match[1]);
   const minute = Number(match[2]);
-  return (hour === 23 && minute >= 29) || (hour === 0 && minute <= 28);
+  return hour === 23 && minute >= 0 && minute <= 59;
 }
