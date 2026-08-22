@@ -144,9 +144,9 @@ const PALACE_INFO_RU: Record<number, { direction: string; element: string; branc
   9: { direction: "Юг", element: "Огонь", branch: "午 Лошадь" },
 };
 const TOP_RING = [
-  { left: "ЮВ", center: "巳 ЗМЕЯ", right: "" },
-  { left: "ОГОНЬ 火", center: "ЮГ", right: "午 ЛОШАДЬ" },
-  { left: "", center: "未 КОЗА", right: "ЮЗ" },
+  { left: "Юв", center: "巳 Змея", right: "" },
+  { left: "Огонь 火", center: "Юг", right: "午 Лошадь" },
+  { left: "", center: "未 Коза", right: "Юз" },
 ];
 const LEFT_PERIMETER = [
   { element: "Дерево", branch: "辰 Дракон" },
@@ -223,7 +223,7 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
               ))}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="grid grid-cols-3 overflow-hidden rounded-t-sm bg-slate-200 text-[10px] font-semibold uppercase leading-none text-slate-900 sm:text-xs">
+              <div className="grid grid-cols-3 overflow-hidden rounded-t-sm bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:text-xs">
                 {TOP_RING.map((item) => (
                   <div key={`${item.left}-${item.center}-${item.right}`} className="grid h-6 min-w-0 grid-cols-3 items-center px-1 sm:h-7 sm:px-2">
                     <span className="whitespace-nowrap text-left">{item.left}</span>
