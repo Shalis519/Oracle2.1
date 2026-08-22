@@ -12,7 +12,8 @@ router.get("/qimen", requireAuth, async (req, res): Promise<void> => {
   const result = computeQimenStructures({
     birthDate: user.birthDate,
     birthTime: user.birthTime,
-    timezone: user.cityTimezone ?? user.birthTimezone,
+    // Личная карта строится по месту рождения, а не по текущему городу проживания.
+    timezone: user.birthTimezone,
     birthTimezone: user.birthTimezone,
     birthLongitude: user.birthLongitude,
     days: 2,
