@@ -215,12 +215,12 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
           })}
           {LEFT_PERIMETER.map((item, index) => (
             <div key={`left-${item.branch}`} style={{ gridColumn: 1, gridRow: index + 2 }} className="flex min-w-0 items-center justify-end pr-0 text-right text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
-              <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>{item.element} · {item.branch}</span>
+              <span style={{ transform: "rotate(-90deg)", whiteSpace: "nowrap" }}>{item.element} · {item.branch}</span>
             </div>
           ))}
           {RIGHT_PERIMETER.map((item, index) => (
             <div key={`right-${item.branch}`} style={{ gridColumn: 5, gridRow: index + 2 }} className="flex min-w-0 items-center pl-0 text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
-              <span style={{ writingMode: "vertical-rl" }}>{item.element} · {item.branch}</span>
+              <span style={{ transform: "rotate(90deg)", whiteSpace: "nowrap" }}>{item.element} · {item.branch}</span>
             </div>
           ))}
           <div className="col-start-2 col-span-3 row-start-2 row-span-3 grid grid-cols-3 grid-rows-3 aspect-square min-w-0 gap-1.5 sm:gap-2">
