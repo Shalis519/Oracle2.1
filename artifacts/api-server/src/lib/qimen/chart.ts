@@ -58,7 +58,8 @@ export interface PalaceCell {
   palace: number;
   earthStem: string;
   heavenStem: string;
-  hiddenStem: string;
+  hiddenHeavenStem: string;
+  hiddenEarthStem: string;
   star: string;
   /** Парная звезда: 天禽 следует за 天芮 в том же дворце. */
   pairedStar?: string;
@@ -187,7 +188,8 @@ function buildPeriodChart(
       palace: p,
       earthStem: STEMS[earthStem[p]],
       heavenStem,
-      hiddenStem: heavenStem === STEMS[yiStem] ? "甲" : "",
+      hiddenHeavenStem: heavenStem === STEMS[yiStem] ? "甲" : "",
+      hiddenEarthStem: STEMS[earthStem[p]] === STEMS[yiStem] ? "甲" : "",
       star,
       pairedStar: star === "天芮" ? "天禽" : undefined,
       door: DOOR_AT[doorSrc],
@@ -200,7 +202,8 @@ function buildPeriodChart(
     palace: 5,
     earthStem: STEMS[earthStem[5]],
     heavenStem: STEMS[earthStem[5]],
-    hiddenStem: STEMS[earthStem[5]] === STEMS[yiStem] ? "甲" : "",
+    hiddenHeavenStem: STEMS[earthStem[5]] === STEMS[yiStem] ? "甲" : "",
+    hiddenEarthStem: STEMS[earthStem[5]] === STEMS[yiStem] ? "甲" : "",
     star: "天禽",
     door: "",
     deity: "",

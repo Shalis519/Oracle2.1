@@ -68,7 +68,8 @@ export interface QimenBirthChartCell {
   trigram: string;
   earthStem: string;
   heavenStem: string;
-  hiddenStem: string;
+  hiddenHeavenStem: string;
+  hiddenEarthStem: string;
   star: string;
   pairedStar?: string;
   door: string;
@@ -158,7 +159,8 @@ function buildMonthChart(date: Date): QimenMonthChart {
     trigram: PALACES[cell.palace].trigram,
     earthStem: cell.earthStem,
     heavenStem: cell.heavenStem,
-    hiddenStem: cell.hiddenStem,
+    hiddenHeavenStem: cell.hiddenHeavenStem,
+    hiddenEarthStem: cell.hiddenEarthStem,
     star: cell.star,
     pairedStar: cell.pairedStar,
     door: cell.door,
@@ -215,7 +217,8 @@ function buildBirthChart(
     trigram: PALACES[cell.palace].trigram,
     earthStem: cell.earthStem,
     heavenStem: cell.heavenStem,
-    hiddenStem: cell.hiddenStem,
+    hiddenHeavenStem: cell.hiddenHeavenStem,
+    hiddenEarthStem: cell.hiddenEarthStem,
     star: cell.star,
     pairedStar: cell.pairedStar,
     door: cell.door,

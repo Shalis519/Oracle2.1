@@ -66,10 +66,12 @@ describe("Главная звезда и Главные Врата по учеб
   it("показывает только 甲 за инструментом декады на небесной тарелке", () => {
     const built = chart(2017, 6, 8, 8);
     const xun = xunInfo(parseGanZhi(built.hourGz).index);
-    const hidden = Object.values(built.cells).filter((cell) => cell.hiddenStem === "甲");
-    expect(hidden).toHaveLength(1);
-    expect(hidden[0]?.heavenStem).toBe(STEMS[xun.yiStem]);
-    expect(Object.values(built.cells).filter((cell) => cell.hiddenStem && cell.hiddenStem !== "甲")).toHaveLength(0);
+    const heavenHidden = Object.values(built.cells).filter((cell) => cell.hiddenHeavenStem === "甲");
+    const earthHidden = Object.values(built.cells).filter((cell) => cell.hiddenEarthStem === "甲");
+    expect(heavenHidden).toHaveLength(1);
+    expect(earthHidden).toHaveLength(1);
+    expect(heavenHidden[0]?.heavenStem).toBe(STEMS[xun.yiStem]);
+    expect(earthHidden[0]?.earthStem).toBe(STEMS[xun.yiStem]);
   });
 
   it("matches the book example 08.06.2017 丙申, 6 Ян", () => {
