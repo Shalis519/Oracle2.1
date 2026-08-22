@@ -198,10 +198,10 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-[minmax(4rem,auto)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(4rem,auto)] grid-rows-[auto_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-1.5 sm:gap-2 max-w-3xl mx-auto items-stretch">
+        <div className="grid grid-cols-[minmax(4rem,auto)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(4rem,auto)] grid-rows-[auto_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-x-1.5 gap-y-0 sm:gap-x-2 max-w-3xl mx-auto items-stretch">
           {PALACE_LAYOUT_ROWS[0].map((palace, index) => {
             const info = PALACE_INFO_RU[palace];
-            return <div key={`top-${palace}`} style={{ gridColumn: index + 2, gridRow: 1 }} className="flex min-w-0 flex-col justify-end pb-1 text-center text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span><span className="font-normal normal-case text-cyan-300/60">{info.branch}</span></div>;
+            return <div key={`top-${palace}`} style={{ gridColumn: index + 2, gridRow: 1 }} className="flex min-w-0 flex-col justify-end pb-0 text-center text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span><span className="font-normal normal-case text-cyan-300/60">{info.branch}</span></div>;
           })}
           <div className="col-start-1 row-start-3 flex min-w-0 items-center justify-end pr-1 text-right text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
             <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>{PALACE_INFO_RU[3].element} · {PALACE_INFO_RU[3].branch}</span>
