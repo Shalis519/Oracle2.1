@@ -253,21 +253,22 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                     );
                   }
                   return (
-                    <div key={palace} className={`min-w-0 overflow-hidden rounded-lg border p-2 text-[10px] leading-tight transition-colors sm:text-xs ${cell.isDestinyPalace ? "border-emerald-300/80 bg-emerald-400/10 shadow-[inset_0_0_18px_rgba(110,231,183,0.12)]" : "border-cyan-400/20 bg-background/30"}`}>
+                    <div key={palace} className={`flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border p-2 text-[10px] leading-tight transition-colors sm:text-xs ${cell.isDestinyPalace ? "border-emerald-300/80 bg-emerald-400/10 shadow-[inset_0_0_18px_rgba(110,231,183,0.12)]" : "border-cyan-400/20 bg-background/30"}`}>
                       <div className="flex min-w-0 items-start justify-end text-cyan-200 font-semibold"><span className="text-sm leading-none sm:text-base">{cell.trigram}</span></div>
                       {cell.isDestinyPalace ? <div className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-300/10 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-emerald-200">Дворец Судьбы</div> : null}
-                      <div className="mt-2 grid min-w-0 gap-2 text-center">
-                        <div className="grid min-w-0 grid-cols-2 gap-1">
-                          <div className="min-w-0"><div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.deity || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DEITY_NAME_RU[cell.deity] || cell.deity || "Дух"}</div></div>
-                          <div className="min-w-0"><div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.heavenStem || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{STEM_NAME_RU[cell.heavenStem] || cell.heavenStem || "Небо"}</div></div>
+                      <div className="mt-2 grid min-h-0 min-w-0 flex-1 grid-rows-[1fr_1fr] gap-2 text-center">
+                        <div className="grid min-h-0 min-w-0 grid-cols-3 gap-1">
+                          <div className="min-w-0 overflow-hidden"><div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.deity || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DEITY_NAME_RU[cell.deity] || cell.deity || "Дух"}</div></div>
+                          <div className="min-w-0 overflow-hidden"><div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.heavenStem || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{STEM_NAME_RU[cell.heavenStem] || cell.heavenStem || "Небо"}</div></div>
+                          <div aria-hidden="true" />
                         </div>
-                        <div className="grid min-w-0 grid-cols-3 gap-1 text-center">
+                        <div className="grid min-h-0 min-w-0 grid-cols-3 gap-1 text-center">
                           <div className="min-w-0"><div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.star || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{STAR_NAME_RU[cell.star] || cell.star || "Звезда"}{cell.pairedStar ? ` / ${STAR_NAME_RU[cell.pairedStar] || cell.pairedStar}` : ""}</div></div>
                           <div className="min-w-0"><div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.door || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DOOR_NAME_RU[cell.door] || cell.door || "Врата"}</div></div>
                           <div className="min-w-0"><div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.earthStem || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{STEM_NAME_RU[cell.earthStem] || cell.earthStem || "Земля"}</div></div>
                         </div>
                       </div>
-                      {cell.isVoid ? <p className="mt-2 text-amber-200">Пустота</p> : null}
+                      {cell.isVoid ? <p className="mt-auto min-h-[1rem] pt-1 text-amber-200">Пустота</p> : <div className="min-h-[1rem]" aria-hidden="true" />}
                     </div>
                   );
                 })}
