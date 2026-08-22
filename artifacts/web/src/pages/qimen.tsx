@@ -240,7 +240,7 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
       </CardHeader>
       <CardContent>
         <div className="mx-auto flex w-full max-w-2xl flex-col">
-          <div className="grid w-full grid-cols-[1.75rem_minmax(0,1fr)_1.75rem] items-stretch overflow-hidden rounded-sm sm:grid-cols-[1.75rem_minmax(0,1fr)_1.75rem]">
+          <div className="grid w-full grid-cols-[1.75rem_minmax(0,1fr)_1.75rem] items-stretch overflow-hidden rounded-none sm:grid-cols-[1.75rem_minmax(0,1fr)_1.75rem]">
             <div className="flex w-6 shrink-0 flex-col overflow-hidden bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
               {LEFT_PERIMETER.map((item) => (
                 <div key={`left-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden px-1 sm:px-2">
@@ -262,11 +262,11 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                 {BIRTH_CHART_LAYOUT.map((palace) => {
                   const cell = byPalace.get(palace);
                   if (!cell) {
-                    return <div key={palace} className="min-h-0 min-w-0 rounded-lg border border-cyan-400/10 bg-cyan-400/5" />;
+                    return <div key={palace} className="min-h-0 min-w-0 rounded-none border border-cyan-400/10 bg-cyan-400/5" />;
                   }
                   if (palace === 5) {
                     return (
-                      <div key={palace} className="min-h-0 min-w-0 overflow-hidden rounded-lg border border-cyan-300/20 bg-background/20 p-2 text-center text-[10px] leading-tight sm:text-xs">
+                      <div key={palace} className="min-h-0 min-w-0 overflow-hidden rounded-none border border-cyan-300/20 bg-background/20 p-2 text-center text-[10px] leading-tight sm:text-xs">
                         <div className="mt-5 text-2xl font-semibold leading-none text-cyan-100">{chart.yin ? "Инь" : "Ян"} {chart.ju}</div>
                         <div className="mt-3 text-cyan-200">{"monthGz" in chart ? "Расклад месяца" : "Расклад часа"}</div>
                         <div className="mt-1 text-[9px] text-cyan-300/70">Система: Чжи Жунь</div>
@@ -275,7 +275,7 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                     );
                   }
                   return (
-                    <div key={palace} className={`flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border p-2 text-[10px] leading-tight transition-colors sm:text-xs ${cell.isDestinyPalace ? "border-emerald-300/80 bg-emerald-400/10 shadow-[inset_0_0_18px_rgba(110,231,183,0.12)]" : "border-cyan-400/20 bg-background/30"}`}>
+                    <div key={palace} className={`flex min-h-0 min-w-0 flex-col overflow-hidden rounded-none border p-2 text-[10px] leading-tight transition-colors sm:text-xs ${cell.isDestinyPalace ? "border-emerald-300/80 bg-emerald-400/10 shadow-[inset_0_0_18px_rgba(110,231,183,0.12)]" : "border-cyan-400/20 bg-background/30"}`}>
                       <div className="flex min-w-0 items-start justify-end text-cyan-200 font-semibold"><span className="text-sm leading-none sm:text-base">{cell.trigram}</span></div>
                       {cell.isDestinyPalace ? <div className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-300/10 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-emerald-200">Дворец Судьбы</div> : null}
                       <div className="mt-2 grid min-h-0 min-w-0 flex-1 grid-rows-[1fr_1fr] gap-2 text-center">
