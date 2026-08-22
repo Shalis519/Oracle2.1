@@ -191,7 +191,7 @@ const DOOR_NAME_RU: Record<string, string> = {
   "杜门": "Врата Тайник",
   "景门": "Врата Пейзаж",
   "死门": "Врата Смерть",
-  "惊门": "Врата Испуг",
+  "惊门": "Врата Шок",
   "开门": "Врата Открытие",
 };
 	const DOOR_ELEMENT: Record<string, string> = {
