@@ -132,16 +132,16 @@ function formatDate(iso: string): string {
 
 const BIRTH_CHART_LAYOUT = [4, 9, 2, 3, 5, 7, 8, 1, 6];
 const PALACE_LAYOUT_ROWS = [[4, 9, 2], [3, 5, 7], [8, 1, 6]];
-const PALACE_INFO_RU: Record<number, { direction: string; element: string }> = {
-  1: { direction: "Север", element: "Вода" },
-  2: { direction: "Юго-запад", element: "Земля" },
-  3: { direction: "Восток", element: "Дерево" },
-  4: { direction: "Юго-восток", element: "Дерево" },
-  5: { direction: "Центр", element: "Земля" },
-  6: { direction: "Северо-запад", element: "Металл" },
-  7: { direction: "Запад", element: "Металл" },
-  8: { direction: "Северо-восток", element: "Земля" },
-  9: { direction: "Юг", element: "Огонь" },
+const PALACE_INFO_RU: Record<number, { direction: string; element: string; branch: string }> = {
+  1: { direction: "Север", element: "Вода", branch: "子 Крыса" },
+  2: { direction: "Юго-запад", element: "Земля", branch: "未 Коза" },
+  3: { direction: "Восток", element: "Дерево", branch: "卯 Кролик" },
+  4: { direction: "Юго-восток", element: "Дерево", branch: "巳 Змея" },
+  5: { direction: "Центр", element: "Земля", branch: "—" },
+  6: { direction: "Северо-запад", element: "Металл", branch: "亥 Свинья" },
+  7: { direction: "Запад", element: "Металл", branch: "酉 Петух" },
+  8: { direction: "Северо-восток", element: "Земля", branch: "丑 Бык" },
+  9: { direction: "Юг", element: "Огонь", branch: "午 Лошадь" },
 };
 const DEITY_NAME_RU: Record<string, string> = {
   "值符": "Главный Дух",
@@ -154,7 +154,7 @@ const DEITY_NAME_RU: Record<string, string> = {
   "九天": "Девять Небес",
 };
 const STAR_NAME_RU: Record<string, string> = {
-  "天蓬": "Небесный Пэн",
+  "天蓬": "Звезда Пэн",
   "天芮": "Небесный Рис",
   "天冲": "Небесный Агрессор",
   "天辅": "Небесный Помощник",
@@ -201,13 +201,13 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
         <div className="grid grid-cols-[minmax(4rem,auto)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(4rem,auto)] grid-rows-[auto_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-1.5 sm:gap-2 max-w-3xl mx-auto items-stretch">
           {PALACE_LAYOUT_ROWS[0].map((palace, index) => {
             const info = PALACE_INFO_RU[palace];
-            return <div key={`top-${palace}`} style={{ gridColumn: index + 2, gridRow: 1 }} className="flex flex-col justify-end pb-1 text-center text-[9px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span></div>;
+            return <div key={`top-${palace}`} style={{ gridColumn: index + 2, gridRow: 1 }} className="flex min-w-0 flex-col justify-end pb-1 text-center text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span><span className="font-normal normal-case text-cyan-300/60">{info.branch}</span></div>;
           })}
-          <div className="col-start-1 row-start-3 flex min-w-0 items-center justify-end pr-1 text-right text-[8px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">
-            <span>{PALACE_INFO_RU[3].direction}<br /><span className="font-normal normal-case text-cyan-300/70">{PALACE_INFO_RU[3].element}</span></span>
+          <div className="col-start-1 row-start-3 flex min-w-0 items-center justify-end pr-1 text-right text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
+            <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>{PALACE_INFO_RU[3].element} · {PALACE_INFO_RU[3].branch}</span>
           </div>
-          <div className="col-start-5 row-start-3 flex min-w-0 items-center pl-1 text-[8px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">
-            <span>{PALACE_INFO_RU[7].direction}<br /><span className="font-normal normal-case text-cyan-300/70">{PALACE_INFO_RU[7].element}</span></span>
+          <div className="col-start-5 row-start-3 flex min-w-0 items-center pl-1 text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
+            <span style={{ writingMode: "vertical-rl" }}>{PALACE_INFO_RU[7].element} · {PALACE_INFO_RU[7].branch}</span>
           </div>
           <div className="col-start-2 col-span-3 row-start-2 row-span-3 grid grid-cols-3 grid-rows-3 aspect-square min-w-0 gap-1.5 sm:gap-2">
           {BIRTH_CHART_LAYOUT.map((palace) => {
@@ -280,7 +280,7 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
           </div>
           {PALACE_LAYOUT_ROWS[2].map((palace, index) => {
             const info = PALACE_INFO_RU[palace];
-            return <div key={`bottom-${palace}`} style={{ gridColumn: index + 2, gridRow: 5 }} className="flex flex-col pt-1 text-center text-[9px] font-semibold uppercase tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span></div>;
+            return <div key={`bottom-${palace}`} style={{ gridColumn: index + 2, gridRow: 5 }} className="flex min-w-0 flex-col pt-1 text-center text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">{info.direction}<span className="font-normal normal-case text-cyan-300/70">{info.element}</span><span className="font-normal normal-case text-cyan-300/60">{info.branch}</span></div>;
           })}
         </div>
       </CardContent>
