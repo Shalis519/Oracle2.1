@@ -173,6 +173,10 @@ const DEITY_NAME_RU: Record<string, string> = {
   "九地": "Девять Земель",
   "九天": "Девять Небес",
 };
+const DEITY_ELEMENT: Record<string, string> = {
+  "值符": "earth", "螣蛇": "fire", "太阴": "metal", "六合": "wood",
+  "白虎": "metal", "玄武": "water", "九地": "earth", "九天": "metal",
+};
 const STAR_NAME_RU: Record<string, string> = {
   "天蓬": "Небесная Трава",
   "天芮": "Небесная Трава",
@@ -280,7 +284,7 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                       {cell.isDestinyPalace ? <div className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-300/10 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-emerald-200">Дворец Судьбы</div> : null}
                       <div className="mt-2 grid min-h-0 min-w-0 flex-1 grid-rows-[1fr_1fr] gap-2 overflow-hidden text-center">
                         <div className="grid min-h-0 min-w-0 grid-cols-3 gap-1">
-                          <div className="min-w-0 overflow-hidden"><div className="text-base leading-none text-cyan-100 sm:text-lg">{cell.deity || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DEITY_NAME_RU[cell.deity] || cell.deity || "Дух"}</div></div>
+                          <div className="min-w-0 overflow-hidden"><div className={`text-base leading-none sm:text-lg ${elementTextClass(DEITY_ELEMENT[cell.deity])}`}>{cell.deity || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DEITY_NAME_RU[cell.deity] || cell.deity || "Дух"}</div></div>
                           <div className="min-w-0 overflow-hidden"><div className={`text-base leading-none sm:text-lg ${elementTextClass(DOOR_ELEMENT[cell.door])}`}>{cell.door || "—"}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DOOR_NAME_RU[cell.door] || cell.door || "Врата"}</div></div>
                           <div className="min-w-0 overflow-hidden"><div className="flex items-baseline justify-center gap-1"><span className={`text-base leading-none sm:text-lg ${elementTextClass(STEM_ELEMENT[cell.heavenStem])}`}>{cell.heavenStem || "—"}</span>{cell.hiddenStem ? <span className={`text-sm leading-none sm:text-base ${elementTextClass(STEM_ELEMENT[cell.hiddenStem])}`}>{cell.hiddenStem}</span> : null}</div><div className="mt-1 min-h-[1.35rem] break-words text-[8px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{STEM_NAME_RU[cell.heavenStem] || cell.heavenStem || "Небо"}</div></div>
                         </div>
