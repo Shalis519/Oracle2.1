@@ -220,10 +220,10 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
       <CardContent>
         <div className="mx-auto flex w-full max-w-2xl flex-col">
           <div className="flex w-full items-stretch gap-1.5 sm:gap-2">
-            <div className="flex w-5 shrink-0 flex-col sm:w-6">
+            <div className="flex w-6 shrink-0 flex-col overflow-hidden rounded-sm bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
               {LEFT_PERIMETER.map((item) => (
-                <div key={`left-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-visible text-[9px] font-semibold leading-tight text-cyan-200 sm:text-[10px]">
-                  <span className="flex w-max items-center gap-1 whitespace-nowrap" style={{ transform: "rotate(-90deg)" }}>{item.parts.map((part) => <span key={part}>{part}</span>)}</span>
+                <div key={`left-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden">
+                  <span className="whitespace-nowrap" style={{ transform: "rotate(-90deg)" }}>{item.parts.join(" ")}</span>
                 </div>
               ))}
             </div>
@@ -283,10 +283,10 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                 ))}
               </div>
             </div>
-            <div className="flex w-5 shrink-0 flex-col sm:w-6">
+            <div className="flex w-6 shrink-0 flex-col overflow-hidden rounded-sm bg-slate-200 text-[10px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
               {RIGHT_PERIMETER.map((item) => (
-                <div key={`right-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-visible text-[9px] font-semibold leading-tight text-cyan-200 sm:text-[10px]">
-                  <span className="flex w-max items-center gap-1 whitespace-nowrap" style={{ transform: "rotate(90deg)" }}>{item.parts.map((part) => <span key={part}>{part}</span>)}</span>
+                <div key={`right-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden">
+                  <span className="whitespace-nowrap" style={{ transform: "rotate(90deg)" }}>{item.parts.join(" ")}</span>
                 </div>
               ))}
             </div>
