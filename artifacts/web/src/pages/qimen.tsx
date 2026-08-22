@@ -154,14 +154,14 @@ const BOTTOM_RING = [
   { left: "", center: "亥 Свинья", right: "СЗ" },
 ];
 const LEFT_PERIMETER = [
-  { element: "Дерево", branch: "辰 Дракон" },
-  { element: "Дерево", branch: "卯 Кролик" },
-  { element: "Дерево", branch: "寅 Тигр" },
+  { label: "Дерево 辰 Дракон" },
+  { label: "Дерево 卯 Кролик" },
+  { label: "Дерево 寅 Тигр" },
 ];
 const RIGHT_PERIMETER = [
-  { label: "坤 · 申 Обезьяна" },
-  { label: "Металл · З · 酉 Петух" },
-  { label: "戌 Собака · Металл · 乾" },
+  { label: "坤 申 Обезьяна" },
+  { label: "Металл З 酉 Петух" },
+  { label: "戌 Собака Металл 乾" },
 ];
 const DEITY_NAME_RU: Record<string, string> = {
   "值符": "Главный Дух",
@@ -222,8 +222,8 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
           <div className="flex w-full items-stretch gap-1.5 sm:gap-2">
             <div className="flex w-5 shrink-0 flex-col sm:w-6">
               {LEFT_PERIMETER.map((item) => (
-                <div key={`left-${item.branch}`} className="flex min-h-0 flex-1 items-center justify-center overflow-visible text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
-                  <span style={{ transform: "rotate(-90deg)", whiteSpace: "nowrap" }}>{item.element} · {item.branch}</span>
+                <div key={`left-${item.label}`} className="flex min-h-0 flex-1 items-center justify-center overflow-visible text-[9px] font-semibold leading-tight text-cyan-200 sm:text-[10px]">
+                  <span style={{ transform: "rotate(-90deg)", whiteSpace: "nowrap" }}>{item.label}</span>
                 </div>
               ))}
             </div>
@@ -285,7 +285,7 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
             </div>
             <div className="flex w-5 shrink-0 flex-col sm:w-6">
               {RIGHT_PERIMETER.map((item) => (
-                <div key={`right-${item.label}`} className="flex min-h-0 flex-1 items-center justify-center overflow-visible text-[8px] font-semibold uppercase leading-tight tracking-wide text-cyan-200 sm:text-[10px]">
+                <div key={`right-${item.label}`} className="flex min-h-0 flex-1 items-center justify-center overflow-visible text-[9px] font-semibold leading-tight text-cyan-200 sm:text-[10px]">
                   <span style={{ transform: "rotate(90deg)", whiteSpace: "nowrap" }}>{item.label}</span>
                 </div>
               ))}
