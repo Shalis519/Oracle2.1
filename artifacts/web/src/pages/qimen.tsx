@@ -242,8 +242,8 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
       </CardHeader>
       <CardContent>
         <div className="mx-auto flex w-full max-w-2xl flex-col">
-          <div className="grid w-full grid-cols-[1.75rem_minmax(0,1fr)_1.75rem] items-stretch overflow-hidden rounded-none sm:grid-cols-[1.75rem_minmax(0,1fr)_1.75rem]">
-            <div className="flex w-5 shrink-0 flex-col overflow-hidden bg-slate-200 text-[8px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
+          <div className="grid w-full grid-cols-[1.1rem_minmax(0,1fr)_1.1rem] items-stretch overflow-hidden rounded-none sm:grid-cols-[1.75rem_minmax(0,1fr)_1.75rem]">
+            <div className="flex w-4 shrink-0 flex-col overflow-hidden bg-slate-200 text-[7px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
               {LEFT_PERIMETER.map((item) => (
                 <div key={`left-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden px-1 sm:px-2">
                   <span className="whitespace-nowrap" style={{ transform: "rotate(-90deg)", wordSpacing: "0.35em" }}>{item.parts.join(" ")}</span>
@@ -253,12 +253,12 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
             <div className="min-w-0 flex-1">
               <div className="grid grid-cols-9 overflow-hidden bg-slate-200 text-[9px] font-semibold leading-none text-slate-900 sm:text-xs">
                 {TOP_RING.flatMap((item) => [item.left, item.center, item.right]).map((label, index) => (
-                  <div key={`top-${index}-${label}`} className="flex h-6 min-w-0 items-center justify-center overflow-hidden px-0.5 sm:h-7 sm:px-1">
+                  <div key={`top-${index}-${label}`} className="flex h-5 min-w-0 items-center justify-center overflow-hidden px-px text-[7px] sm:h-7 sm:px-1 sm:text-xs">
                     <span className="max-w-full whitespace-nowrap text-center">{label}</span>
                   </div>
                 ))}
               </div>
-              <div className="grid aspect-square min-w-0 grid-cols-3 grid-rows-3 gap-1.5 sm:gap-2">
+              <div className="grid aspect-square min-w-0 grid-cols-3 grid-rows-3 gap-0.5 sm:gap-2">
                 {BIRTH_CHART_LAYOUT.map((palace) => {
                   const cell = byPalace.get(palace);
                   if (!cell) {
@@ -279,35 +279,35 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                   const isMainStar = cell.star === chart.zhiFuStar;
                   const focusFrame = "rounded-none border border-slate-300/80 bg-slate-100/5 px-1 py-0.5";
                   return (
-                    <div key={palace} className={`flex min-h-0 min-w-0 flex-col overflow-hidden rounded-none border p-1 text-[9px] leading-tight transition-colors sm:p-2 sm:text-xs ${cell.isDestinyPalace ? "border-emerald-300/80 bg-emerald-400/10 shadow-[inset_0_0_18px_rgba(110,231,183,0.12)]" : "border-cyan-400/20 bg-background/30"}`}>
-                      <div className="flex min-w-0 items-start justify-end text-cyan-200 font-semibold"><span className="text-sm leading-none sm:text-base">{cell.trigram}</span></div>
-                      {cell.isDestinyPalace ? <div className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-300/10 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-emerald-200">Дворец Судьбы</div> : null}
-                      <div className="mt-1 grid min-h-0 min-w-0 flex-1 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-1 overflow-hidden text-center sm:mt-2 sm:gap-2">
-                        <div className="grid min-h-0 min-w-0 grid-cols-3 gap-0.5 sm:gap-1">
-                          <div className="min-w-0 overflow-hidden"><div className={`text-base leading-none sm:text-lg ${elementTextClass(DEITY_ELEMENT[cell.deity])}`}>{cell.deity || "—"}</div><div className="mt-1 min-h-[1.35rem] line-clamp-2 break-words text-[6px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DEITY_NAME_RU[cell.deity] || cell.deity || "Дух"}</div></div>
-                          <div className={`min-w-0 overflow-hidden ${isMainDoor ? focusFrame : ""}`} aria-label={isMainDoor ? "Главные Врата" : undefined}><div className={`text-base leading-none sm:text-lg ${elementTextClass(DOOR_ELEMENT[cell.door])}`}>{cell.door || "—"}</div><div className="mt-1 min-h-[1.35rem] line-clamp-2 break-words text-[6px] leading-[1.05] text-cyan-300/70 sm:text-[9px]">{DOOR_NAME_RU[cell.door] || cell.door || "Врата"}</div></div>
-                          <div className="min-w-0 overflow-hidden"><div className="relative mx-auto w-fit"><span className={`text-[13px] leading-none sm:text-lg ${elementTextClass(STEM_ELEMENT[cell.heavenStem])}`}>{cell.heavenStem || "—"}</span>{cell.hiddenHeavenStem ? <span className={`absolute left-full top-0 ml-0.5 text-[7px] leading-none sm:text-[10px] ${elementTextClass(STEM_ELEMENT[cell.hiddenHeavenStem])}`}>{cell.hiddenHeavenStem}</span> : null}</div><div className="mt-0.5 min-h-[1.05rem] line-clamp-2 break-words text-[6px] leading-[1.05] text-cyan-300/70 sm:mt-1 sm:min-h-[1.35rem] sm:text-[9px]">{STEM_NAME_RU[cell.heavenStem] || cell.heavenStem || "Небо"}</div></div>
+                    <div key={palace} className={`flex min-h-0 min-w-0 flex-col overflow-hidden rounded-none border p-0.5 text-[7px] leading-[0.95] transition-colors sm:p-2 sm:text-xs sm:leading-tight ${cell.isDestinyPalace ? "border-emerald-300/80 bg-emerald-400/10 shadow-[inset_0_0_18px_rgba(110,231,183,0.12)]" : "border-cyan-400/20 bg-background/30"}`}>
+                      <div className="flex min-w-0 items-start justify-end text-cyan-200 font-semibold"><span className="text-xs leading-none sm:text-base">{cell.trigram}</span></div>
+                      {cell.isDestinyPalace ? <div className="mt-0.5 inline-flex max-w-full rounded border border-emerald-300/60 bg-emerald-300/10 px-1 py-px text-[7px] font-semibold leading-[1.05] tracking-wide text-emerald-200 sm:mt-1 sm:px-1.5 sm:py-0.5 sm:text-[9px]">Дворец Судьбы</div> : null}
+                      <div className="mt-0.5 grid min-h-0 min-w-0 flex-1 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-0.5 overflow-hidden text-center sm:mt-2 sm:gap-2">
+                        <div className="grid min-h-0 min-w-0 grid-cols-3 gap-px sm:gap-1">
+                          <div className="min-w-0 overflow-hidden"><div className={`text-base leading-none sm:text-lg ${elementTextClass(DEITY_ELEMENT[cell.deity])}`}>{cell.deity || "—"}</div><div className="mt-0.5 min-h-[1.05rem] line-clamp-2 break-words text-[5px] leading-[0.95] text-cyan-300/70 sm:mt-1 sm:min-h-[1.35rem] sm:text-[9px]">{DEITY_NAME_RU[cell.deity] || cell.deity || "Дух"}</div></div>
+                          <div className={`min-w-0 overflow-hidden ${isMainDoor ? focusFrame : ""}`} aria-label={isMainDoor ? "Главные Врата" : undefined}><div className={`text-base leading-none sm:text-lg ${elementTextClass(DOOR_ELEMENT[cell.door])}`}>{cell.door || "—"}</div><div className="mt-0.5 min-h-[1.05rem] line-clamp-2 break-words text-[5px] leading-[0.95] text-cyan-300/70 sm:mt-1 sm:min-h-[1.35rem] sm:text-[9px]">{DOOR_NAME_RU[cell.door] || cell.door || "Врата"}</div></div>
+                          <div className="min-w-0 overflow-hidden"><div className="relative mx-auto w-fit"><span className={`text-[13px] leading-none sm:text-lg ${elementTextClass(STEM_ELEMENT[cell.heavenStem])}`}>{cell.heavenStem || "—"}</span>{cell.hiddenHeavenStem ? <span className={`absolute left-full top-0 ml-0.5 text-[7px] leading-none sm:text-[10px] ${elementTextClass(STEM_ELEMENT[cell.hiddenHeavenStem])}`}>{cell.hiddenHeavenStem}</span> : null}</div><div className="mt-px min-h-[0.9rem] line-clamp-2 break-words text-[5px] leading-[0.95] text-cyan-300/70 sm:mt-1 sm:min-h-[1.35rem] sm:text-[9px]">{STEM_NAME_RU[cell.heavenStem] || cell.heavenStem || "Небо"}</div></div>
                         </div>
-                        <div className="grid min-h-0 min-w-0 grid-cols-3 gap-0.5 text-center sm:gap-1">
-                          <div className={`min-w-0 overflow-hidden ${isMainStar ? focusFrame : ""}`} aria-label={isMainStar ? "Главная звезда" : undefined}><div className={`text-base leading-none sm:text-lg ${elementTextClass(STAR_ELEMENT[cell.star])}`}>{cell.star || "—"}</div><div className="mt-1 min-h-[1.35rem] line-clamp-2 whitespace-normal break-words text-[6px] leading-[1.05] text-cyan-300/70 sm:text-[8px]">{STAR_NAME_RU[cell.star] || cell.star || "Звезда"}</div></div>
-                          {cell.pairedStar ? <div className="min-w-0 overflow-hidden"><div className={`text-base leading-none sm:text-lg ${elementTextClass(STAR_ELEMENT[cell.pairedStar])}`}>{cell.pairedStar}</div><div className="mt-1 min-h-[1.35rem] line-clamp-2 whitespace-normal break-words text-[6px] leading-[1.05] text-cyan-300/70 sm:text-[8px]">{STAR_NAME_RU[cell.pairedStar] || cell.pairedStar}</div></div> : <div aria-hidden="true" />}
-                          <div className="min-w-0 overflow-hidden"><div className="relative mx-auto w-fit"><span className={`text-[13px] leading-none sm:text-lg ${elementTextClass(STEM_ELEMENT[cell.earthStem])}`}>{cell.earthStem || "—"}</span>{cell.hiddenEarthStem ? <span className={`absolute left-full top-0 ml-0.5 text-[7px] leading-none sm:text-[10px] ${elementTextClass(STEM_ELEMENT[cell.hiddenEarthStem])}`}>{cell.hiddenEarthStem}</span> : null}</div><div className="mt-0.5 min-h-[1.05rem] line-clamp-2 break-words text-[6px] leading-[1.05] text-cyan-300/70 sm:mt-1 sm:min-h-[1.35rem] sm:text-[9px]">{STEM_NAME_RU[cell.earthStem] || cell.earthStem || "Земля"}</div></div>
+                        <div className="grid min-h-0 min-w-0 grid-cols-3 gap-px text-center sm:gap-1">
+                          <div className={`min-w-0 overflow-hidden ${isMainStar ? focusFrame : ""}`} aria-label={isMainStar ? "Главная звезда" : undefined}><div className={`text-base leading-none sm:text-lg ${elementTextClass(STAR_ELEMENT[cell.star])}`}>{cell.star || "—"}</div><div className="mt-0.5 min-h-[1.05rem] line-clamp-2 whitespace-normal break-words text-[5px] leading-[0.95] text-cyan-300/70 sm:mt-1 sm:min-h-[1.35rem] sm:text-[8px]">{STAR_NAME_RU[cell.star] || cell.star || "Звезда"}</div></div>
+                          {cell.pairedStar ? <div className="min-w-0 overflow-hidden"><div className={`text-base leading-none sm:text-lg ${elementTextClass(STAR_ELEMENT[cell.pairedStar])}`}>{cell.pairedStar}</div><div className="mt-0.5 min-h-[1.05rem] line-clamp-2 whitespace-normal break-words text-[5px] leading-[0.95] text-cyan-300/70 sm:mt-1 sm:min-h-[1.35rem] sm:text-[8px]">{STAR_NAME_RU[cell.pairedStar] || cell.pairedStar}</div></div> : <div aria-hidden="true" />}
+                          <div className="min-w-0 overflow-hidden"><div className="relative mx-auto w-fit"><span className={`text-[13px] leading-none sm:text-lg ${elementTextClass(STEM_ELEMENT[cell.earthStem])}`}>{cell.earthStem || "—"}</span>{cell.hiddenEarthStem ? <span className={`absolute left-full top-0 ml-0.5 text-[7px] leading-none sm:text-[10px] ${elementTextClass(STEM_ELEMENT[cell.hiddenEarthStem])}`}>{cell.hiddenEarthStem}</span> : null}</div><div className="mt-px min-h-[0.9rem] line-clamp-2 break-words text-[5px] leading-[0.95] text-cyan-300/70 sm:mt-1 sm:min-h-[1.35rem] sm:text-[9px]">{STEM_NAME_RU[cell.earthStem] || cell.earthStem || "Земля"}</div></div>
                         </div>
                       </div>
-                      {cell.isVoid ? <div className="mt-1 flex h-4 shrink-0 items-center justify-center border border-amber-300/70 px-1 text-[8px] font-semibold text-amber-200 sm:text-[9px]">Пустота</div> : <div className="mt-1 h-4 shrink-0" aria-hidden="true" />}
+                      {cell.isVoid ? <div className="mt-0.5 flex h-3.5 shrink-0 items-center justify-center border border-amber-300/70 px-0.5 text-[7px] font-semibold leading-none text-amber-200 sm:mt-1 sm:h-4 sm:px-1 sm:text-[9px]">Пустота</div> : <div className="mt-0.5 h-3.5 shrink-0 sm:mt-1 sm:h-4" aria-hidden="true" />}
                     </div>
                   );
                 })}
               </div>
               <div className="grid grid-cols-9 overflow-hidden bg-slate-200 text-[9px] font-semibold leading-none text-slate-900 sm:text-xs">
                 {BOTTOM_RING.flatMap((item) => [item.left, item.center, item.right]).map((label, index) => (
-                  <div key={`bottom-${index}-${label}`} className="flex h-6 min-w-0 items-center justify-center overflow-hidden px-0.5 sm:h-7 sm:px-1">
+                  <div key={`bottom-${index}-${label}`} className="flex h-5 min-w-0 items-center justify-center overflow-hidden px-px text-[7px] sm:h-7 sm:px-1 sm:text-xs">
                     <span className="max-w-full whitespace-nowrap text-center">{label}</span>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="flex w-5 shrink-0 flex-col overflow-hidden bg-slate-200 text-[8px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
+            <div className="flex w-4 shrink-0 flex-col overflow-hidden bg-slate-200 text-[7px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
               {RIGHT_PERIMETER.map((item) => (
                 <div key={`right-${item.parts.join("-")}`} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden px-1 sm:px-2">
                   <span className="whitespace-nowrap" style={{ transform: "rotate(90deg)", wordSpacing: "0.35em" }}>{item.parts.join(" ")}</span>
