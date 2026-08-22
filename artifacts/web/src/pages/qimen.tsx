@@ -273,6 +273,7 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                         <div className="mt-3 text-cyan-200">{"monthGz" in chart ? "Расклад месяца" : "Расклад часа"}</div>
                         <div className="mt-1 text-[9px] text-cyan-300/70">Система: Чжи Жунь</div>
                         <div className="mt-1 text-[9px] text-cyan-300/70">{periodGz}</div>
+                        {cell.isVoid ? <div className="mx-auto mt-2 inline-flex h-4 items-center border border-amber-300/70 px-1.5 text-[8px] font-semibold text-amber-200">Пустота</div> : null}
                       </div>
                     );
                   }
@@ -295,7 +296,7 @@ function BirthChartCard({ chart, title = "Личная карта Ци Мэнь"
                           <div className="min-w-0 overflow-hidden"><div className="relative mx-auto w-fit"><span className={`text-[13px] leading-none sm:text-lg ${elementTextClass(STEM_ELEMENT[cell.earthStem])}`}>{cell.earthStem || "—"}</span>{cell.hiddenEarthStem ? <span className={`absolute left-full top-0 ml-0.5 text-[7px] leading-none sm:text-[10px] ${elementTextClass(STEM_ELEMENT[cell.hiddenEarthStem])}`}>{cell.hiddenEarthStem}</span> : null}</div><div className="mt-0.5 min-h-[1.05rem] line-clamp-2 break-words text-[6px] leading-[1.05] text-cyan-300/70 sm:mt-1 sm:min-h-[1.35rem] sm:text-[9px]">{STEM_NAME_RU[cell.earthStem] || cell.earthStem || "Земля"}</div></div>
                         </div>
                       </div>
-                      {cell.isVoid ? <p className="mt-1 h-4 shrink-0 overflow-hidden text-amber-200">Пустота</p> : <div className="mt-1 h-4 shrink-0" aria-hidden="true" />}
+                      {cell.isVoid ? <div className="mt-1 flex h-4 shrink-0 items-center justify-center border border-amber-300/70 px-1 text-[8px] font-semibold text-amber-200 sm:text-[9px]">Пустота</div> : <div className="mt-1 h-4 shrink-0" aria-hidden="true" />}
                     </div>
                   );
                 })}
