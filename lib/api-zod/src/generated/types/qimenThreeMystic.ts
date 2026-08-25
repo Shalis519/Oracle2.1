@@ -5,6 +5,7 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { QimenThreeMysticSupportRelation } from './qimenThreeMysticSupportRelation';
 import type { QimenThreeMysticWonder } from './qimenThreeMysticWonder';
 
 export interface QimenThreeMystic {
@@ -17,10 +18,14 @@ export interface QimenThreeMystic {
   dom: string;
   wonder: QimenThreeMysticWonder;
   wonderName: string;
+  earthStem: string;
+  earthStemName: string;
   goal: string;
   star: string;
   starName: string;
   door: string;
   doorName: string;
   activation: string;
+  supportRelation?: QimenThreeMysticSupportRelation;
+  supportMessage?: string;
 }

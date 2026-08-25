@@ -526,20 +526,28 @@ function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
         <CardContent className="py-4 space-y-3">
           <div className="flex items-start justify-between gap-3">
             <p className="text-sm leading-relaxed">
-              Домашняя активация в секторе{" "}
+              Для активации используйте сектор{" "}
               <span className="font-semibold text-fuchsia-200">{m.direction}</span>{" "}
-              в <span className="font-semibold text-fuchsia-200">{m.hourLabel}</span>.
+              в период <span className="font-semibold text-fuchsia-200">{m.hourLabel}</span>.
             </p>
             <span className="shrink-0 rounded-full bg-fuchsia-400/15 px-3 py-1 text-xs font-medium text-fuchsia-200">
               {formatDate(m.date)}
             </span>
           </div>
           <p className="text-sm leading-relaxed text-fuchsia-100/90">
-            <span className="font-medium">Цель:</span> {m.goal}.
+            <span className="font-medium">Подходит, чтобы:</span> {m.goal}.
           </p>
+          {m.supportMessage ? (
+            <p className="rounded-lg border border-fuchsia-400/15 bg-fuchsia-400/5 p-3 text-sm leading-relaxed text-fuchsia-100/90">
+              {m.supportMessage}
+            </p>
+          ) : null}
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-200/90">
               Мистик: {m.wonderName}
+            </span>
+            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-200/90">
+              Связка: {m.wonder} над {m.earthStem} · {m.earthStemName}
             </span>
             <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-200/90">
               {m.starName}
@@ -549,7 +557,7 @@ function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
             </span>
           </div>
           <div className="rounded-lg border border-fuchsia-400/15 bg-fuchsia-400/5 p-3 text-sm leading-relaxed">
-            <span className="font-medium text-fuchsia-200">Активатор: </span>
+            <span className="font-medium text-fuchsia-200">Для запуска: </span>
             {m.activation}.
           </div>
         </CardContent>
@@ -773,9 +781,11 @@ export default function QimenPage() {
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-3 text-sm leading-relaxed">
-                    <p>Это домашняя активация: используйте сектор внутри дома в указанную двухчасовку.</p>
-                    <p>Активируется только один мистик, который соответствует вашей цели: И — отношения, Бин — финансы, Дин — документы, договорённости и переговоры.</p>
-                    <p>Предмет для активации определяется звездой: Небесный Помощник — фонтанчик, Небесное Сердце — вентилятор, Небесный Чиновник — свеча или газовая конфорка.</p>
+                    <p>Это работа с помещением, а не прогулка: включите указанный предмет в нужном секторе дома в соответствующую двухчасовку.</p>
+                    <p>В расчёт входят Врата Жизни (Рождения), Отдыха, Открытия, Тайника и Сцены (景门), а также звёзды Небесный Помощник, Небесное Сердце и Небесный Чиновник.</p>
+                    <p>Карточка выбирает один мистик под задачу: И помогает в теме отношений, Бин — в денежных вопросах, Дин — в документах и согласованиях.</p>
+                    <p>Сначала проверяется благоприятная связка Небесного и Земного стволов, затем — поддерживает ли сектор ваш НС года. Поэтому здесь показываются только персонально подходящие варианты.</p>
+                    <p>Выберите предмет по звезде: фонтанчик для Небесного Помощника, вентилятор для Небесного Сердца, свечу или газовую конфорку для Небесного Чиновника.</p>
                   </div>
                 </DialogContent>
               </Dialog>

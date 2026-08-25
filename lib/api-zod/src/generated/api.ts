@@ -688,12 +688,16 @@ export const GetQimenResponse = zod.object({
   "dom": zod.string(),
   "wonder": zod.enum(['乙', '丙', '丁']),
   "wonderName": zod.string(),
+  "earthStem": zod.string(),
+  "earthStemName": zod.string(),
   "goal": zod.string(),
   "star": zod.string(),
   "starName": zod.string(),
   "door": zod.string(),
   "doorName": zod.string(),
-  "activation": zod.string()
+  "activation": zod.string(),
+  "supportRelation": zod.enum(['same', 'supports']).optional(),
+  "supportMessage": zod.string().optional()
 })),
   "birthChart": zod.union([zod.object({
   "hourGz": zod.string(),

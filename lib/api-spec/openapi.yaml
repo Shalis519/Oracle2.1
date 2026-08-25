@@ -1820,6 +1820,8 @@ components:
           dom,
           wonder,
           wonderName,
+          earthStem,
+          earthStemName,
           goal,
           star,
           starName,
@@ -1837,12 +1839,18 @@ components:
         dom: { type: string }
         wonder: { type: string, enum: ["乙", "丙", "丁"] }
         wonderName: { type: string }
+        earthStem: { type: string }
+        earthStemName: { type: string }
         goal: { type: string }
         star: { type: string }
         starName: { type: string }
         door: { type: string }
         doorName: { type: string }
         activation: { type: string }
+        supportRelation:
+          type: string
+          enum: [same, supports]
+        supportMessage: { type: string }
 
     QimenBirthChartCell:
       type: object

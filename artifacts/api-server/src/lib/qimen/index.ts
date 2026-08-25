@@ -75,12 +75,16 @@ export interface QimenThreeMystic {
   dom: string;
   wonder: "乙" | "丙" | "丁";
   wonderName: string;
+  earthStem: string;
+  earthStemName: string;
   goal: string;
   star: string;
   starName: string;
   door: string;
   doorName: string;
   activation: string;
+  supportRelation?: "same" | "supports";
+  supportMessage?: string;
 }
 
 export interface QimenBirthChartCell {
@@ -281,6 +285,19 @@ function jadeMaidenSupportMessage(
     : `${prefix} Структура вас поддерживает (У-Син). Эта прогулка с высокой вероятностью принесёт результат!`;
 }
 
+function threeMysticsSupportMessage(
+  relation: "same" | "supports",
+  structureElement: string,
+  personElement: string,
+): string {
+  const structure = ELEMENT_NAME_RU_LOWER[structureElement] ?? structureElement;
+  const person = ELEMENT_NAME_RU_LOWER[personElement] ?? personElement;
+  const basis = `Сектор структуры относится к стихии «${structure}», а НС вашего года — к стихии «${person}».`;
+  return relation === "same"
+    ? `${basis} Стихии совпадают, поэтому эту активацию можно использовать для вашей цели.`
+    : `${basis} Сектор питает вашу стихию по кругу У-Син, поэтому активация для вас поддерживающая.`;
+}
+
 function hourLabel(hourBranch: number, lateZi = false): string {
   if (hourBranch === 0) {
     return `${lateZi ? "Поздняя" : "Ранняя"} Крыса (${lateZi ? "23:00–00:00" : "00:00–01:00"})`;
@@ -305,37 +322,48 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const birthChart = buildBirthChart(opts.birthDate, opts.birthTime, opts.birthTimezone ?? opts.timezone, opts.birthLongitude);
   const monthChart = buildMonthChart(from);
 
-  // «Три Мистика» и Нефритовая Дева — универсальные часовые структуры.
-  // Домашняя активация «Трёх Мистиков» показывается на ближайший день.
+  // «Три Мистика» — персональная домашняя активация. Карточка публикуется
+  // только после проверки пользы сектора по НС года рождения пользователя.
   const threeMystics: QimenThreeMystic[] = [];
-  const mysticsStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
-  for (let d = 0; d < MAIDEN_DAYS; d++) {
-    const date = new Date(mysticsStart);
-    date.setDate(mysticsStart.getDate() + d);
-    for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-      const slotDate = slot.branch === 0 && !slot.lateZi
-        ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
-        : date;
-      const slotDay = dayInfo(slotDate);
-      const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
-      for (const hit of detectThreeMystics(slotDate, slot.branch, slot.lateZi)) {
-        threeMystics.push({
-          date: slotDay.iso,
-          dayGanZhi: slotDayGz,
-          hourBranch: slot.branch,
-          hourLabel: hourLabel(slot.branch, slot.lateZi),
-          direction: hit.direction,
-          dir: PALACES[hit.palace].dir,
-          dom: hit.dom,
-          wonder: hit.wonder,
-          wonderName: hit.wonderName,
-          goal: hit.goal,
-          star: hit.star,
-          starName: hit.starName,
-          door: hit.door,
-          doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
-          activation: hit.activation,
-        });
+  if (hasBirthDate && yearStem >= 0) {
+    const mysticsStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
+    for (let d = 0; d < MAIDEN_DAYS; d++) {
+      const date = new Date(mysticsStart);
+      date.setDate(mysticsStart.getDate() + d);
+      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+        const slotDate = slot.branch === 0 && !slot.lateZi
+          ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
+          : date;
+        const slotDay = dayInfo(slotDate);
+        const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
+        for (const hit of detectThreeMystics(slotDate, slot.branch, slot.lateZi, yearStem, representativeYearStem)) {
+          const support = hit.support!;
+          threeMystics.push({
+            date: slotDay.iso,
+            dayGanZhi: slotDayGz,
+            hourBranch: slot.branch,
+            hourLabel: hourLabel(slot.branch, slot.lateZi),
+            direction: hit.direction,
+            dir: PALACES[hit.palace].dir,
+            dom: hit.dom,
+            wonder: hit.wonder,
+            wonderName: hit.wonderName,
+            earthStem: hit.earthStem,
+            earthStemName: STEM_NAME_RU[hit.earthStem] ?? hit.earthStem,
+            goal: hit.goal,
+            star: hit.star,
+            starName: hit.starName,
+            door: hit.door,
+            doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
+            activation: hit.activation,
+            supportRelation: support.relation === "same" || support.relation === "supports"
+              ? support.relation
+              : undefined,
+            supportMessage: support.relation === "same" || support.relation === "supports"
+              ? threeMysticsSupportMessage(support.relation, support.structureElement, support.personElement)
+              : undefined,
+          });
+        }
       }
     }
   }

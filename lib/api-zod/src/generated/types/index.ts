@@ -151,6 +151,7 @@ export * from './qimenMonthChart';
 export * from './qimenStructure';
 export * from './qimenSummary';
 export * from './qimenThreeMystic';
+export * from './qimenThreeMysticSupportRelation';
 export * from './qimenThreeMysticWonder';
 export * from './relocation';
 export * from './searchCitiesParams';

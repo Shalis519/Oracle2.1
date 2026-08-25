@@ -15,9 +15,17 @@ const QUALIFY_DOORS = new Set(["休门", "生门", "开门"]);
 // «Три Мистика» — домашняя активация: дополнительно допустимы Врата Вида и Тайника.
 const THREE_MYSTICS_DOORS = new Set(["休门", "生门", "开门", "景门", "杜门"]);
 const THREE_MYSTICS_GOAL: Record<"乙" | "丙" | "丁", string> = {
-  乙: "Поиск партнёра и улучшение отношений",
-  丙: "Финансы, рост дохода и благосостояние",
-  丁: "Документы, договорённости и переговоры",
+  乙: "Поддержать знакомство, важный контакт или уже существующие отношения",
+  丙: "Усилить денежные дела, доход и практические финансовые задачи",
+  丁: "Продвинуть документы, согласования, переписку или деловой разговор",
+};
+// Полностью благоприятные сочетания Heaven Stem → Earth Stem из таблиц
+// Yi/Bing/Ding and Stem Combo в книге 540 Yang Structure. Умеренные (半吉)
+// сочетания намеренно не включены в пользовательский вывод.
+const THREE_MYSTICS_GOOD_EARTH_STEMS: Record<"乙" | "丙" | "丁", ReadonlySet<string>> = {
+  乙: new Set(["丙", "丁"]),
+  丙: new Set(["甲", "乙", "丁", "戊", "辛"]),
+  丁: new Set(["甲", "乙", "丙", "丁", "戊", "壬"]),
 };
 const THREE_MYSTICS_ACTIVATION: Record<string, string> = {
   天辅: "Фонтанчик",
@@ -65,11 +73,13 @@ export interface ThreeMysticsHit {
   dom: string;
   wonder: "乙" | "丙" | "丁";
   wonderName: string;
+  earthStem: string;
   goal: string;
   star: string;
   starName: string;
   door: string;
   activation: string;
+  support?: SupportCheck;
 }
 
 /**
@@ -160,7 +170,13 @@ export function detectThreeGenerals(date: Date, hourBranch: number, lateZi = fal
  * The formula is universal: it uses the hourly chart and does not depend on birth data.
  * A hit requires a Mystic on the Heaven plate, a permitted door and a qualifying star.
  */
-export function detectThreeMystics(date: Date, hourBranch: number, lateZi = false): ThreeMysticsHit[] {
+export function detectThreeMystics(
+  date: Date,
+  hourBranch: number,
+  lateZi = false,
+  birthYearStem?: number,
+  representativeStem?: number,
+): ThreeMysticsHit[] {
   const chart = buildChart(date, hourBranch, lateZi);
   if (chart.fuYin) return [];
 
@@ -172,6 +188,7 @@ export function detectThreeMystics(date: Date, hourBranch: number, lateZi = fals
     if (!WONDERS.includes(wonder)) continue;
     if (!QUALIFY_STARS.has(cell.star)) continue;
     if (!THREE_MYSTICS_DOORS.has(cell.door)) continue;
+    if (!THREE_MYSTICS_GOOD_EARTH_STEMS[wonder].has(cell.earthStem)) continue;
 
     // Явные табу исходной схемы и общие безопасные ограничения активаций.
     if (cell.isVoid) continue;
@@ -181,9 +198,12 @@ export function detectThreeMystics(date: Date, hourBranch: number, lateZi = fals
     if (DOOR_AVOID[cell.door] === p) continue;
     if (annualYellowFive(p, date)) continue;
     if (controls(DOOR_ELEMENT[cell.door], STAR_ELEMENT[cell.star])) continue;
-    // В источнике «позитивная структура» не задана как вычисляемое правило
-    // сочетания двух стволов, поэтому отдельный неподтверждённый фильтр здесь
-    // не вводится: публикуются только кандидаты с формально указанными условиями.
+    // Сочетание Небесного и Земного стволов уже прошло строгую проверку
+    // по списку благоприятных формирований из книги 540 Yang Structure.
+    const support = birthYearStem === undefined
+      ? undefined
+      : evaluateSupportPalace(chart, p, birthYearStem, representativeStem);
+    if (birthYearStem !== undefined && (!support || !support.supported)) continue;
 
     hits.push({
       palace: p,
@@ -191,11 +211,13 @@ export function detectThreeMystics(date: Date, hourBranch: number, lateZi = fals
       dom: PALACES[p].dom,
       wonder,
       wonderName: WONDER_NAME[wonder],
+      earthStem: cell.earthStem,
       goal: THREE_MYSTICS_GOAL[wonder],
       star: cell.star,
       starName: GENERALS_STAR_NAME[cell.star],
       door: cell.door,
       activation: THREE_MYSTICS_ACTIVATION[cell.star],
+      support: support ?? undefined,
     });
   }
   return hits;

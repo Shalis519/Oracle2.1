@@ -578,6 +578,14 @@ export const QimenThreeMysticWonder = {
   丁: '丁',
 } as const;
 
+export type QimenThreeMysticSupportRelation = typeof QimenThreeMysticSupportRelation[keyof typeof QimenThreeMysticSupportRelation];
+
+
+export const QimenThreeMysticSupportRelation = {
+  same: 'same',
+  supports: 'supports',
+} as const;
+
 export interface QimenThreeMystic {
   date: string;
   dayGanZhi: string;
@@ -588,12 +596,16 @@ export interface QimenThreeMystic {
   dom: string;
   wonder: QimenThreeMysticWonder;
   wonderName: string;
+  earthStem: string;
+  earthStemName: string;
   goal: string;
   star: string;
   starName: string;
   door: string;
   doorName: string;
   activation: string;
+  supportRelation?: QimenThreeMysticSupportRelation;
+  supportMessage?: string;
 }
 
 export interface QimenBirthChartCell {
