@@ -2,10 +2,18 @@ import { describe, expect, it } from "vitest";
 import { buildChart, buildPeriodMap, mainGateStar } from "./qimen/chart";
 import { Solar } from "lunar-typescript";
 import { parseGanZhi, STEMS, BRANCHES } from "./qimen/constants";
-import { monthJoeyYapJuForDate, monthJoeyYapStructure, monthPillarForDate } from "./qimen/ju";
+import {
+  monthJoeyYapJuForDate,
+  monthJoeyYapStructure,
+  monthPillarForDate,
+} from "./qimen/ju";
 import { CHRONOLOGICAL_HOUR_SLOTS } from "./qimen/constants";
 import { xunInfo } from "./qimen/calendar";
-import { detectFlyingBirdFallsIntoCave, detectJadeMaiden, jadeMaidenVariant } from "./qimen/structures";
+import {
+  detectFlyingBirdFallsIntoCave,
+  detectJadeMaiden,
+  jadeMaidenVariant,
+} from "./qimen/structures";
 
 function chart(year: number, month: number, day: number, hourBranch: number) {
   return buildChart(new Date(year, month - 1, day, 12, 0, 0), hourBranch);
@@ -13,12 +21,17 @@ function chart(year: number, month: number, day: number, hourBranch: number) {
 
 describe("Месячная карта Joey Yap", () => {
   it("определяет солнечный столп 丙申 для 21.08.2026", () => {
-    expect(monthPillarForDate(new Date(2026, 7, 21, 12))).toMatchObject({ label: "丙申" });
+    expect(monthPillarForDate(new Date(2026, 7, 21, 12))).toMatchObject({
+      label: "丙申",
+    });
   });
 
   it("выбирает Yin 7 для годового столпа 丙午 2026", () => {
     expect(monthJoeyYapStructure("丙午")).toBe(7);
-    expect(monthJoeyYapJuForDate(new Date(2026, 7, 21, 12))).toMatchObject({ yin: true, ju: 7 });
+    expect(monthJoeyYapJuForDate(new Date(2026, 7, 21, 12))).toMatchObject({
+      yin: true,
+      ju: 7,
+    });
   });
 
   it("распределяет контрольные годы по таблице Month Charts", () => {
@@ -30,7 +43,12 @@ describe("Месячная карта Joey Yap", () => {
   it("строит месячную карту 丙申 2026 как Yin 7 с Mingli-эталоном", () => {
     const date = new Date(2026, 7, 21, 12);
     const pillar = monthPillarForDate(date);
-    const built = buildPeriodMap(date, "month", pillar, monthJoeyYapJuForDate(date));
+    const built = buildPeriodMap(
+      date,
+      "month",
+      pillar,
+      monthJoeyYapJuForDate(date),
+    );
     expect(pillar.label).toBe("丙申");
     expect(built.ju).toMatchObject({ yin: true, ju: 7 });
     expect(built.zhiFuStar).toBe("天辅");
@@ -40,7 +58,12 @@ describe("Месячная карта Joey Yap", () => {
   it("строит карту Mingli на 22.09.2026 как 丁酉/Yin 7", () => {
     const date = new Date(2026, 8, 22, 12);
     const pillar = monthPillarForDate(date);
-    const built = buildPeriodMap(date, "month", pillar, monthJoeyYapJuForDate(date));
+    const built = buildPeriodMap(
+      date,
+      "month",
+      pillar,
+      monthJoeyYapJuForDate(date),
+    );
     expect(pillar.label).toBe("丁酉");
     expect(built.ju).toMatchObject({ yin: true, ju: 7 });
     expect(built.zhiFuStar).toBe("天辅");
@@ -51,14 +74,23 @@ describe("Месячная карта Joey Yap", () => {
 describe("Заглушка структуры Птица падает в гнездо", () => {
   it("распознаёт только 丙 на Небесной тарелке над 戊 на Земной тарелке и не публикует результат", () => {
     const hits = CHRONOLOGICAL_HOUR_SLOTS.flatMap((slot) =>
-      detectFlyingBirdFallsIntoCave(new Date(2026, 7, 20, 12), slot.branch, slot.lateZi),
+      detectFlyingBirdFallsIntoCave(
+        new Date(2026, 7, 20, 12),
+        slot.branch,
+        slot.lateZi,
+      ),
     );
     expect(hits.length).toBeGreaterThan(0);
     const sixYi = new Set(["戊", "己", "庚", "辛", "壬", "癸"]);
-    expect(hits.every((hit) =>
-      hit.heavenStem === "丙" && sixYi.has(hit.earthStem) &&
-      hit.status === "placeholder" && hit.published === false,
-    )).toBe(true);
+    expect(
+      hits.every(
+        (hit) =>
+          hit.heavenStem === "丙" &&
+          sixYi.has(hit.earthStem) &&
+          hit.status === "placeholder" &&
+          hit.published === false,
+      ),
+    ).toBe(true);
   });
 });
 
@@ -66,8 +98,12 @@ describe("Главная звезда и Главные Врата по учеб
   it("показывает только 甲 за инструментом декады на небесной тарелке", () => {
     const built = chart(2017, 6, 8, 8);
     const xun = xunInfo(parseGanZhi(built.hourGz).index);
-    const heavenHidden = Object.values(built.cells).filter((cell) => cell.hiddenHeavenStem === "甲");
-    const earthHidden = Object.values(built.cells).filter((cell) => cell.hiddenEarthStem === "甲");
+    const heavenHidden = Object.values(built.cells).filter(
+      (cell) => cell.hiddenHeavenStem === "甲",
+    );
+    const earthHidden = Object.values(built.cells).filter(
+      (cell) => cell.hiddenEarthStem === "甲",
+    );
     expect(heavenHidden).toHaveLength(1);
     expect(earthHidden).toHaveLength(1);
     expect(heavenHidden[0]?.heavenStem).toBe(STEMS[xun.yiStem]);
@@ -76,14 +112,22 @@ describe("Главная звезда и Главные Врата по учеб
 
   it("matches the book example 08.06.2017 丙申, 6 Ян", () => {
     const built = chart(2017, 6, 8, 8);
-    expect(mainGateStar(built)).toEqual({ gate: "景门", star: "天英", palace: 2 });
+    expect(mainGateStar(built)).toEqual({
+      gate: "景门",
+      star: "天英",
+      palace: 2,
+    });
     expect(built.cells[4]?.star).toBe("天英");
     expect(built.cells[2]?.door).toBe("景门");
   });
 
   it("matches the book example 31.12.2021 丁巳, 1 Ян", () => {
     const built = chart(2021, 12, 31, 5);
-    expect(mainGateStar(built)).toEqual({ gate: "开门", star: "天心", palace: 9 });
+    expect(mainGateStar(built)).toEqual({
+      gate: "开门",
+      star: "天心",
+      palace: 9,
+    });
     expect(built.cells[7]?.star).toBe("天心");
     expect(built.cells[9]?.door).toBe("开门");
   });
@@ -91,30 +135,48 @@ describe("Главная звезда и Главные Врата по учеб
   it("matches the Mingli annual 2026 reference map", () => {
     const date = new Date(2026, 11, 15, 12, 0, 0);
     const year = parseGanZhi(
-      Solar.fromYmdHms(2026, 12, 15, 12, 0, 0).getLunar().getYearInGanZhiExact(),
+      Solar.fromYmdHms(2026, 12, 15, 12, 0, 0)
+        .getLunar()
+        .getYearInGanZhiExact(),
     );
-    const built = buildPeriodMap(date, "year", {
-      stem: year.stem,
-      effectiveStem: year.stem,
-      branch: year.branch,
-      index: year.index,
-      label: STEMS[year.stem] + BRANCHES[year.branch],
-    }, { yin: true, ju: 1, term: "年家 Mingli", yuan: 0 });
-    expect(mainGateStar(built)).toEqual({ gate: "开门", star: "天心", palace: 4 });
+    const built = buildPeriodMap(
+      date,
+      "year",
+      {
+        stem: year.stem,
+        effectiveStem: year.stem,
+        branch: year.branch,
+        index: year.index,
+        label: STEMS[year.stem] + BRANCHES[year.branch],
+      },
+      { yin: true, ju: 1, term: "年家 Mingli", yuan: 0 },
+    );
+    expect(mainGateStar(built)).toEqual({
+      gate: "开门",
+      star: "天心",
+      palace: 4,
+    });
   });
 
   it("matches the Mingli annual 2027 main gate and main star positions", () => {
     const date = new Date(2027, 11, 15, 12, 0, 0);
     const year = parseGanZhi(
-      Solar.fromYmdHms(2027, 12, 15, 12, 0, 0).getLunar().getYearInGanZhiExact(),
+      Solar.fromYmdHms(2027, 12, 15, 12, 0, 0)
+        .getLunar()
+        .getYearInGanZhiExact(),
     );
-    const built = buildPeriodMap(date, "year", {
-      stem: year.stem,
-      effectiveStem: year.stem,
-      branch: year.branch,
-      index: year.index,
-      label: STEMS[year.stem] + BRANCHES[year.branch],
-    }, { yin: true, ju: 9, term: "年家 Mingli", yuan: 0 });
+    const built = buildPeriodMap(
+      date,
+      "year",
+      {
+        stem: year.stem,
+        effectiveStem: year.stem,
+        branch: year.branch,
+        index: year.index,
+        label: STEMS[year.stem] + BRANCHES[year.branch],
+      },
+      { yin: true, ju: 9, term: "年家 Mingli", yuan: 0 },
+    );
 
     expect(built.zhiShiDoor).toBe("死门");
     expect(built.zhiShiPalace).toBe(2); // ЮЗ
@@ -151,10 +213,25 @@ describe("Главная звезда и Главные Врата по учеб
       heavenStem: "丁",
       door: "生门",
     });
-    expect(jadeMaidenVariant(rabbit.cells[1].heavenStem, rabbit.cells[1].earthStem, true)).toBe(3);
-    expect(detectJadeMaiden(new Date(2026, 7, 20, 12), 3)).toEqual(expect.arrayContaining([
-      expect.objectContaining({ palace: 1, variant: 3, heavenStem: "丁", earthStem: "戊" }),
-    ]));
+    expect(
+      jadeMaidenVariant(
+        rabbit.cells[1].heavenStem,
+        rabbit.cells[1].earthStem,
+        true,
+      ),
+    ).toBe(3);
+    // Формула Нефритовой Девы распознана, но Врата Жизни в дворце Воды
+    // контролируют дворец. Новый общий фильтр не публикует такой вариант.
+    expect(detectJadeMaiden(new Date(2026, 7, 20, 12), 3)).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          palace: 1,
+          variant: 3,
+          heavenStem: "丁",
+          earthStem: "戊",
+        }),
+      ]),
+    );
 
     const horse = chart(2026, 8, 21, 6);
     expect(horse.cells[4]).toMatchObject({
@@ -162,9 +239,23 @@ describe("Главная звезда и Главные Врата по учеб
       heavenStem: "戊",
       door: "开门",
     });
-    expect(jadeMaidenVariant(horse.cells[4].heavenStem, horse.cells[4].earthStem, true)).toBe(4);
-    expect(detectJadeMaiden(new Date(2026, 7, 21, 12), 6)).toEqual(expect.arrayContaining([
-      expect.objectContaining({ palace: 4, variant: 4, heavenStem: "戊", earthStem: "丁" }),
-    ]));
+    expect(
+      jadeMaidenVariant(
+        horse.cells[4].heavenStem,
+        horse.cells[4].earthStem,
+        true,
+      ),
+    ).toBe(4);
+    // Врата Открытия в дворце Дерева контролируют дворец и также исключаются.
+    expect(detectJadeMaiden(new Date(2026, 7, 21, 12), 6)).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          palace: 4,
+          variant: 4,
+          heavenStem: "戊",
+          earthStem: "丁",
+        }),
+      ]),
+    );
   });
 });

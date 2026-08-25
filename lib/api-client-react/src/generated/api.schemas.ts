@@ -618,6 +618,34 @@ export interface QimenThreeMystic {
   supportMessage?: string;
 }
 
+export type QimenFiveBattalionHeavenStem = typeof QimenFiveBattalionHeavenStem[keyof typeof QimenFiveBattalionHeavenStem];
+
+
+export const QimenFiveBattalionHeavenStem = {
+  甲: '甲',
+  乙: '乙',
+  丙: '丙',
+  丁: '丁',
+  戊: '戊',
+} as const;
+
+export interface QimenFiveBattalion {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  heavenStem: QimenFiveBattalionHeavenStem;
+  heavenStemName: string;
+  earthStem: string;
+  earthStemName: string;
+  door: string;
+  doorName: string;
+  goal: string;
+}
+
 export interface QimenBirthChartCell {
   palace: number;
   direction: string;
@@ -671,6 +699,7 @@ export interface QimenSummary {
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
   threeMystics: QimenThreeMystic[];
+  fiveBattalions: QimenFiveBattalion[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }

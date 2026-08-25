@@ -145,6 +145,8 @@ export * from './profileInputGender';
 export * from './promotionActivation';
 export * from './qimenBirthChart';
 export * from './qimenBirthChartCell';
+export * from './qimenFiveBattalion';
+export * from './qimenFiveBattalionHeavenStem';
 export * from './qimenJadeMaiden';
 export * from './qimenJadeMaidenSupportRelation';
 export * from './qimenMonthChart';

@@ -1073,7 +1073,16 @@ components:
 
     BaziHoursResult:
       type: object
-      required: [sunrise, sunset, shiftMinutes, equationOfTimeMinutes, solar, rubber, combined]
+      required:
+        [
+          sunrise,
+          sunset,
+          shiftMinutes,
+          equationOfTimeMinutes,
+          solar,
+          rubber,
+          combined,
+        ]
       properties:
         sunrise:
           type: string
@@ -1226,7 +1235,17 @@ components:
 
     Journal:
       type: object
-      required: [id, marriages, children, relocations, jobChanges, losses, createdAt, updatedAt]
+      required:
+        [
+          id,
+          marriages,
+          children,
+          relocations,
+          jobChanges,
+          losses,
+          createdAt,
+          updatedAt,
+        ]
       properties:
         id:
           type: integer
@@ -1321,7 +1340,20 @@ components:
 
     ArcanaDetail:
       type: object
-      required: [number, name, essence, pros, cons, herbs, oils, cocktail, health, energyChannels, nutrition]
+      required:
+        [
+          number,
+          name,
+          essence,
+          pros,
+          cons,
+          herbs,
+          oils,
+          cocktail,
+          health,
+          energyChannels,
+          nutrition,
+        ]
       properties:
         number:
           type: integer
@@ -1856,9 +1888,57 @@ components:
           enum: [same, supports]
         supportMessage: { type: string }
 
+    QimenFiveBattalion:
+      type: object
+      required:
+        [
+          date,
+          dayGanZhi,
+          hourBranch,
+          hourLabel,
+          direction,
+          dir,
+          dom,
+          heavenStem,
+          heavenStemName,
+          earthStem,
+          earthStemName,
+          door,
+          doorName,
+          goal,
+        ]
+      properties:
+        date: { type: string }
+        dayGanZhi: { type: string }
+        hourBranch: { type: integer }
+        hourLabel: { type: string }
+        direction: { type: string }
+        dir: { type: string }
+        dom: { type: string }
+        heavenStem: { type: string, enum: ["甲", "乙", "丙", "丁", "戊"] }
+        heavenStemName: { type: string }
+        earthStem: { type: string }
+        earthStemName: { type: string }
+        door: { type: string }
+        doorName: { type: string }
+        goal: { type: string }
+
     QimenBirthChartCell:
       type: object
-      required: [palace, direction, trigram, earthStem, heavenStem, hiddenHeavenStem, hiddenEarthStem, star, door, deity, isVoid]
+      required:
+        [
+          palace,
+          direction,
+          trigram,
+          earthStem,
+          heavenStem,
+          hiddenHeavenStem,
+          hiddenEarthStem,
+          star,
+          door,
+          deity,
+          isVoid,
+        ]
       properties:
         palace: { type: integer }
         direction: { type: string }
@@ -1876,7 +1956,19 @@ components:
 
     QimenBirthChart:
       type: object
-      required: [hourGz, ju, yin, fuYin, zhiFuStar, zhiShiDoor, zhiFuPalace, zhiShiPalace, destinyPalace, cells]
+      required:
+        [
+          hourGz,
+          ju,
+          yin,
+          fuYin,
+          zhiFuStar,
+          zhiShiDoor,
+          zhiFuPalace,
+          zhiShiPalace,
+          destinyPalace,
+          cells,
+        ]
       properties:
         hourGz: { type: string }
         ju: { type: integer }
@@ -1893,7 +1985,18 @@ components:
 
     QimenMonthChart:
       type: object
-      required: [monthGz, ju, yin, fuYin, zhiFuStar, zhiShiDoor, zhiFuPalace, zhiShiPalace, cells]
+      required:
+        [
+          monthGz,
+          ju,
+          yin,
+          fuYin,
+          zhiFuStar,
+          zhiShiDoor,
+          zhiFuPalace,
+          zhiShiPalace,
+          cells,
+        ]
       properties:
         monthGz: { type: string }
         ju: { type: integer }
@@ -1919,6 +2022,7 @@ components:
           jiFuWishes,
           jadeMaidens,
           threeMystics,
+          fiveBattalions,
           birthChart,
           monthChart,
         ]
@@ -1947,6 +2051,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QimenThreeMystic"
+        fiveBattalions:
+          type: array
+          items:
+            $ref: "#/components/schemas/QimenFiveBattalion"
         birthChart:
           oneOf:
             - $ref: "#/components/schemas/QimenBirthChart"
@@ -2023,7 +2131,20 @@ components:
 
     NobleHelperActivation:
       type: object
-      required: [goal, taichi, animal, sector, degrees, hours, avoidHours, instruction, caution, date, daysUntil]
+      required:
+        [
+          goal,
+          taichi,
+          animal,
+          sector,
+          degrees,
+          hours,
+          avoidHours,
+          instruction,
+          caution,
+          date,
+          daysUntil,
+        ]
       properties:
         goal:
           type: string
@@ -2070,7 +2191,21 @@ components:
 
     VtalkivanieActivation:
       type: object
-      required: [date, daysUntil, month, dayAnimal, hourAnimal, period, yearStem, dayStem, stars, businessInstruction, relationshipInstruction, familyInstruction]
+      required:
+        [
+          date,
+          daysUntil,
+          month,
+          dayAnimal,
+          hourAnimal,
+          period,
+          yearStem,
+          dayStem,
+          stars,
+          businessInstruction,
+          relationshipInstruction,
+          familyInstruction,
+        ]
       properties:
         date:
           type: string
@@ -2101,7 +2236,8 @@ components:
 
     VtalkivanieMoneyStarSector:
       type: object
-      required: [number, source, direction, degrees, activator, replacedByMonthlyFive]
+      required:
+        [number, source, direction, degrees, activator, replacedByMonthlyFive]
       properties:
         number:
           type: integer
@@ -2130,7 +2266,18 @@ components:
 
     VtalkivanieMoneyActivation:
       type: object
-      required: [date, daysUntil, month, dayAnimal, daySources, hours, stars, warning, instruction]
+      required:
+        [
+          date,
+          daysUntil,
+          month,
+          dayAnimal,
+          daySources,
+          hours,
+          stars,
+          warning,
+          instruction,
+        ]
       properties:
         date:
           type: string
@@ -2172,7 +2319,20 @@ components:
 
     PersonalPostHorseActivation:
       type: object
-      required: [date, daysUntil, dayAnimal, horseAnimal, mountain, direction, degrees, image, hours, instruction, safety]
+      required:
+        [
+          date,
+          daysUntil,
+          dayAnimal,
+          horseAnimal,
+          mountain,
+          direction,
+          degrees,
+          image,
+          hours,
+          instruction,
+          safety,
+        ]
       properties:
         date:
           type: string
@@ -2262,7 +2422,18 @@ components:
 
     DailyForecast:
       type: object
-      required: [id, date, arcanaNumber, arcanaName, hasWarning, synthesisText, matrix, conflicts, warnings]
+      required:
+        [
+          id,
+          date,
+          arcanaNumber,
+          arcanaName,
+          hasWarning,
+          synthesisText,
+          matrix,
+          conflicts,
+          warnings,
+        ]
       properties:
         id:
           type: integer
@@ -2502,7 +2673,17 @@ components:
           $ref: "#/components/schemas/Contact"
         result:
           type: object
-          required: [version, status, calculatedAt, inputHash, summary, cinderellaGates, aspects, warnings]
+          required:
+            [
+              version,
+              status,
+              calculatedAt,
+              inputHash,
+              summary,
+              cinderellaGates,
+              aspects,
+              warnings,
+            ]
           properties:
             version:
               type: integer
@@ -2594,7 +2775,17 @@ components:
 
     Task:
       type: object
-      required: [id, date, taskType, taskText, targetValue, actualValue, isCompleted, isDailyGoal]
+      required:
+        [
+          id,
+          date,
+          taskType,
+          taskText,
+          targetValue,
+          actualValue,
+          isCompleted,
+          isDailyGoal,
+        ]
       properties:
         id:
           type: integer
@@ -2728,7 +2919,15 @@ components:
 
     Dashboard:
       type: object
-      required: [profileComplete, upcomingBirthdaysCount, waterProgress, waterTarget, stepsProgress, stepsTarget]
+      required:
+        [
+          profileComplete,
+          upcomingBirthdaysCount,
+          waterProgress,
+          waterTarget,
+          stepsProgress,
+          stepsTarget,
+        ]
       properties:
         profileComplete:
           type: boolean
@@ -2804,7 +3003,19 @@ components:
 
     NatalBody:
       type: object
-      required: [key, name, symbol, sign, signKey, signSymbol, longitude, degreeInSign, house, retrograde]
+      required:
+        [
+          key,
+          name,
+          symbol,
+          sign,
+          signKey,
+          signSymbol,
+          longitude,
+          degreeInSign,
+          house,
+          retrograde,
+        ]
       properties:
         key:
           type: string
@@ -2829,7 +3040,8 @@ components:
 
     NatalAngle:
       type: object
-      required: [key, name, abbr, sign, signKey, signSymbol, longitude, degreeInSign]
+      required:
+        [key, name, abbr, sign, signKey, signSymbol, longitude, degreeInSign]
       properties:
         key:
           type: string
@@ -2867,7 +3079,8 @@ components:
 
     NatalAspect:
       type: object
-      required: [body1, body1Symbol, body2, body2Symbol, type, typeKey, typeSymbol, orb]
+      required:
+        [body1, body1Symbol, body2, body2Symbol, type, typeKey, typeSymbol, orb]
       properties:
         body1:
           type: string
@@ -2905,7 +3118,23 @@ components:
 
     CinderellaGate:
       type: object
-      required: [id, mode, transitBody, transitBodySymbol, natalBody, natalBodySymbol, aspectType, aspectKey, aspectSymbol, orb, peakDate, activeFrom, activeTo, interpretation]
+      required:
+        [
+          id,
+          mode,
+          transitBody,
+          transitBodySymbol,
+          natalBody,
+          natalBodySymbol,
+          aspectType,
+          aspectKey,
+          aspectSymbol,
+          orb,
+          peakDate,
+          activeFrom,
+          activeTo,
+          interpretation,
+        ]
       properties:
         id:
           type: string
@@ -2989,7 +3218,20 @@ components:
 
     LunarReturn:
       type: object
-      required: [returnDate, returnTime, periodStart, periodEnd, location, usedBirthPlace, warning, ascendant, moon, keyThemes, recommendations]
+      required:
+        [
+          returnDate,
+          returnTime,
+          periodStart,
+          periodEnd,
+          location,
+          usedBirthPlace,
+          warning,
+          ascendant,
+          moon,
+          keyThemes,
+          recommendations,
+        ]
       properties:
         returnDate:
           type: string
@@ -3067,7 +3309,15 @@ components:
           type: string
         kind:
           type: string
-          enum: [natal, secondary_progression, fast_progression, solar_arc, transit, retrograde_support]
+          enum:
+            [
+              natal,
+              secondary_progression,
+              fast_progression,
+              solar_arc,
+              transit,
+              retrograde_support,
+            ]
         label:
           type: string
         date:
@@ -3153,7 +3403,16 @@ components:
           type: string
         role:
           type: string
-          enum: [ruler, retrograde_ruler, co_ruler, junior_co_ruler, planet_in_house, planet_near_next_cusp, symbolic]
+          enum:
+            [
+              ruler,
+              retrograde_ruler,
+              co_ruler,
+              junior_co_ruler,
+              planet_in_house,
+              planet_near_next_cusp,
+              symbolic,
+            ]
         signKey:
           type: [string, "null"]
         repeatedRole:
@@ -3183,7 +3442,19 @@ components:
 
     MarriageHouseConnection:
       type: object
-      required: [id, formula, fromHouse, toHouse, fromBodyKey, toBodyKey, fromRole, toRole, relation, auxiliary]
+      required:
+        [
+          id,
+          formula,
+          fromHouse,
+          toHouse,
+          fromBodyKey,
+          toBodyKey,
+          fromRole,
+          toRole,
+          relation,
+          auxiliary,
+        ]
       properties:
         id:
           type: string
@@ -3214,7 +3485,16 @@ components:
 
     StrictNatalMarriageProfile:
       type: object
-      required: [gender, sect, firstMarriageSignificator, firstMarriageSignificatorName, houses, connections, formulas]
+      required:
+        [
+          gender,
+          sect,
+          firstMarriageSignificator,
+          firstMarriageSignificatorName,
+          houses,
+          connections,
+          formulas,
+        ]
       properties:
         gender:
           type: [string, "null"]
@@ -3259,7 +3539,15 @@ components:
 
     NatalMarriageCharacter:
       type: object
-      required: [participantNames, harmoniousCount, tenseCount, neutralCount, aspects, summary]
+      required:
+        [
+          participantNames,
+          harmoniousCount,
+          tenseCount,
+          neutralCount,
+          aspects,
+          summary,
+        ]
       properties:
         participantNames:
           type: array
@@ -3280,7 +3568,18 @@ components:
 
     NatalMarriageCycle:
       type: object
-      required: [loveFormulaStatus, loveFormulas, officialMarriageStatus, officialMarriageFormula, connectionCount, officialConnectionCount, celibacyAssessment, celibacyNote, summary]
+      required:
+        [
+          loveFormulaStatus,
+          loveFormulas,
+          officialMarriageStatus,
+          officialMarriageFormula,
+          connectionCount,
+          officialConnectionCount,
+          celibacyAssessment,
+          celibacyNote,
+          summary,
+        ]
       properties:
         loveFormulaStatus:
           type: string
@@ -3309,7 +3608,8 @@ components:
 
     MarriageWindow:
       type: object
-      required: [dateFrom, dateTo, ageFrom, ageTo, confirmations, strength, indicators]
+      required:
+        [dateFrom, dateTo, ageFrom, ageTo, confirmations, strength, indicators]
       properties:
         dateFrom:
           type: string
@@ -3331,7 +3631,22 @@ components:
 
     MarriageFormulaResult:
       type: object
-      required: [formula, formulaLabel, searchFrom, searchTo, ageFrom, ageTo, natalBasis, natalProfile, natalCharacter, natalCycle, strictNatalProfile, windows, methodology]
+      required:
+        [
+          formula,
+          formulaLabel,
+          searchFrom,
+          searchTo,
+          ageFrom,
+          ageTo,
+          natalBasis,
+          natalProfile,
+          natalCharacter,
+          natalCycle,
+          strictNatalProfile,
+          windows,
+          methodology,
+        ]
       properties:
         formula:
           type: string
@@ -3364,7 +3679,13 @@ components:
             $ref: "#/components/schemas/MarriageWindow"
         methodology:
           type: object
-          required: [houseSystem, progression, minConfirmations, retrogradeProgressivePlanets]
+          required:
+            [
+              houseSystem,
+              progression,
+              minConfirmations,
+              retrogradeProgressivePlanets,
+            ]
           properties:
             houseSystem:
               type: string

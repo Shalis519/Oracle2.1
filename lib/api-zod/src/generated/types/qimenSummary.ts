@@ -7,6 +7,7 @@
  */
 import type { JiFuWish } from './jiFuWish';
 import type { QimenBirthChart } from './qimenBirthChart';
+import type { QimenFiveBattalion } from './qimenFiveBattalion';
 import type { QimenJadeMaiden } from './qimenJadeMaiden';
 import type { QimenMonthChart } from './qimenMonthChart';
 import type { QimenStructure } from './qimenStructure';
@@ -22,6 +23,7 @@ export interface QimenSummary {
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
   threeMystics: QimenThreeMystic[];
+  fiveBattalions: QimenFiveBattalion[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }

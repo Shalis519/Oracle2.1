@@ -10,10 +10,21 @@ import {
   STEMS,
 } from "./constants";
 import { Solar } from "lunar-typescript";
-import { birthYearBranch, birthYearStem, birthYearRepresentativeStem, dayInfo, xunInfo } from "./calendar";
+import {
+  birthYearBranch,
+  birthYearStem,
+  birthYearRepresentativeStem,
+  dayInfo,
+  xunInfo,
+} from "./calendar";
 import { buildChart, buildPeriodMap, type PalaceCell } from "./chart";
 import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
-import { detectThreeGenerals, detectThreeMystics, detectJadeMaiden } from "./structures";
+import {
+  detectFiveBattalions,
+  detectThreeGenerals,
+  detectThreeMystics,
+  detectJadeMaiden,
+} from "./structures";
 import { computeJiFuWishes, type JiFuWish } from "./jifu";
 import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
 import { isLateZiClock } from "./birthTime";
@@ -89,6 +100,23 @@ export interface QimenThreeMystic {
   supportMessage?: string;
 }
 
+export interface QimenFiveBattalion {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  heavenStem: string;
+  heavenStemName: string;
+  earthStem: string;
+  earthStemName: string;
+  door: string;
+  doorName: string;
+  goal: string;
+}
+
 export interface QimenBirthChartCell {
   palace: number;
   direction: string;
@@ -139,6 +167,7 @@ export interface QimenResult {
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
   threeMystics: QimenThreeMystic[];
+  fiveBattalions: QimenFiveBattalion[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }
@@ -153,8 +182,19 @@ export interface ComputeOptions {
   days?: number;
 }
 
-function localCalendarNoon(timezone?: string | null, instant = new Date()): Date {
-  if (!timezone) return new Date(instant.getFullYear(), instant.getMonth(), instant.getDate(), 12, 0, 0);
+function localCalendarNoon(
+  timezone?: string | null,
+  instant = new Date(),
+): Date {
+  if (!timezone)
+    return new Date(
+      instant.getFullYear(),
+      instant.getMonth(),
+      instant.getDate(),
+      12,
+      0,
+      0,
+    );
   try {
     const parts = new Intl.DateTimeFormat("en-CA", {
       timeZone: timezone,
@@ -162,16 +202,37 @@ function localCalendarNoon(timezone?: string | null, instant = new Date()): Date
       month: "2-digit",
       day: "2-digit",
     }).formatToParts(instant);
-    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-    return new Date(Number(values.year), Number(values.month) - 1, Number(values.day), 12, 0, 0);
+    const values = Object.fromEntries(
+      parts.map((part) => [part.type, part.value]),
+    );
+    return new Date(
+      Number(values.year),
+      Number(values.month) - 1,
+      Number(values.day),
+      12,
+      0,
+      0,
+    );
   } catch {
-    return new Date(instant.getFullYear(), instant.getMonth(), instant.getDate(), 12, 0, 0);
+    return new Date(
+      instant.getFullYear(),
+      instant.getMonth(),
+      instant.getDate(),
+      12,
+      0,
+      0,
+    );
   }
 }
 
 function buildMonthChart(date: Date): QimenMonthChart {
   const pillar = monthPillarForDate(date);
-  const chart = buildPeriodMap(date, "month", pillar, monthJoeyYapJuForDate(date));
+  const chart = buildPeriodMap(
+    date,
+    "month",
+    pillar,
+    monthJoeyYapJuForDate(date),
+  );
   const cells = Object.values(chart.cells).map((cell: PalaceCell) => ({
     palace: cell.palace,
     direction: PALACES[cell.palace].dir,
@@ -211,17 +272,27 @@ function buildBirthChart(
   const civilTime = birthTime ?? "12:00";
   const [chartYear, chartMonth, chartDay] = birthDate.split("-").map(Number);
   const [hour, minute] = civilTime.split(":").map(Number);
-  if (![chartYear, chartMonth, chartDay, hour, minute].every(Number.isFinite)) return null;
+  if (![chartYear, chartMonth, chartDay, hour, minute].every(Number.isFinite))
+    return null;
 
   // The personal Qimen hour must be identical to BaZi: lunar-typescript receives
   // the civil birth date/time and supplies the canonical hour branch. The
   // longitude/solar-time diagnostic path is intentionally not used here.
   let hourBranch = -1;
   try {
-    const eightChar = Solar.fromYmdHms(chartYear, chartMonth, chartDay, hour, minute, 0)
+    const eightChar = Solar.fromYmdHms(
+      chartYear,
+      chartMonth,
+      chartDay,
+      hour,
+      minute,
+      0,
+    )
       .getLunar()
       .getEightChar();
-    hourBranch = BRANCHES.indexOf(eightChar.getTimeZhi() as typeof BRANCHES[number]);
+    hourBranch = BRANCHES.indexOf(
+      eightChar.getTimeZhi() as (typeof BRANCHES)[number],
+    );
   } catch {
     return null;
   }
@@ -234,8 +305,11 @@ function buildBirthChart(
   const calendarDate = date;
   // Дворец Судьбы: дворец НС дня рождения в небесной тарелке.
   const day = dayInfo(calendarDate);
-  const destinyStem = day.stem === 0 ? STEMS[xunInfo(day.index).yiStem] : STEMS[day.stem];
-  const destinyCell = Object.values(chart.cells).find((cell: PalaceCell) => cell.heavenStem === destinyStem);
+  const destinyStem =
+    day.stem === 0 ? STEMS[xunInfo(day.index).yiStem] : STEMS[day.stem];
+  const destinyCell = Object.values(chart.cells).find(
+    (cell: PalaceCell) => cell.heavenStem === destinyStem,
+  );
   const destinyPalace = destinyCell?.palace ?? null;
   const cells = Object.values(chart.cells).map((cell: PalaceCell) => ({
     palace: cell.palace,
@@ -315,30 +389,65 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const days = opts.days ?? 14;
   const from = localCalendarNoon(opts.timezone, opts.from ?? new Date());
   const hasBirthDate = !!opts.birthDate;
-  const yearBranch = hasBirthDate ? birthYearBranch(opts.birthDate!, opts.birthTime) : -1;
-  const yearStem = hasBirthDate ? birthYearStem(opts.birthDate!, opts.birthTime) : -1;
-  const representativeYearStem = hasBirthDate ? birthYearRepresentativeStem(opts.birthDate!, opts.birthTime) : -1;
+  const yearBranch = hasBirthDate
+    ? birthYearBranch(opts.birthDate!, opts.birthTime)
+    : -1;
+  const yearStem = hasBirthDate
+    ? birthYearStem(opts.birthDate!, opts.birthTime)
+    : -1;
+  const representativeYearStem = hasBirthDate
+    ? birthYearRepresentativeStem(opts.birthDate!, opts.birthTime)
+    : -1;
 
   // Джи Фу is universal (no personal/六冲 gate) and shown for the current day only.
   const jiFuWishes = computeJiFuWishes(from, 1);
-  const birthChart = buildBirthChart(opts.birthDate, opts.birthTime, opts.birthTimezone ?? opts.timezone, opts.birthLongitude);
+  const birthChart = buildBirthChart(
+    opts.birthDate,
+    opts.birthTime,
+    opts.birthTimezone ?? opts.timezone,
+    opts.birthLongitude,
+  );
+  const wealthPalace = opts.birthTime
+    ? birthChart?.cells.find((cell) => cell.door === "生门")?.palace
+    : undefined;
   const monthChart = buildMonthChart(from);
 
   // «Три Мистика» — персональная домашняя активация. Карточка публикуется
   // только после проверки пользы сектора по НС года рождения пользователя.
   const threeMystics: QimenThreeMystic[] = [];
   if (hasBirthDate && yearStem >= 0) {
-    const mysticsStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
+    const mysticsStart = new Date(
+      from.getFullYear(),
+      from.getMonth(),
+      from.getDate(),
+      12,
+      0,
+      0,
+    );
     for (let d = 0; d < MAIDEN_DAYS; d++) {
       const date = new Date(mysticsStart);
       date.setDate(mysticsStart.getDate() + d);
       for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-        const slotDate = slot.branch === 0 && !slot.lateZi
-          ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
-          : date;
+        const slotDate =
+          slot.branch === 0 && !slot.lateZi
+            ? new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate() + 1,
+                12,
+                0,
+                0,
+              )
+            : date;
         const slotDay = dayInfo(slotDate);
         const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
-        for (const hit of detectThreeMystics(slotDate, slot.branch, slot.lateZi, yearStem, representativeYearStem)) {
+        for (const hit of detectThreeMystics(
+          slotDate,
+          slot.branch,
+          slot.lateZi,
+          yearStem,
+          representativeYearStem,
+        )) {
           const support = hit.support!;
           threeMystics.push({
             date: slotDay.iso,
@@ -358,12 +467,18 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
             door: hit.door,
             doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
             activation: hit.activation,
-            supportRelation: support.relation === "same" || support.relation === "supports"
-              ? support.relation
-              : undefined,
-            supportMessage: support.relation === "same" || support.relation === "supports"
-              ? threeMysticsSupportMessage(support.relation, support.structureElement, support.personElement)
-              : undefined,
+            supportRelation:
+              support.relation === "same" || support.relation === "supports"
+                ? support.relation
+                : undefined,
+            supportMessage:
+              support.relation === "same" || support.relation === "supports"
+                ? threeMysticsSupportMessage(
+                    support.relation,
+                    support.structureElement,
+                    support.personElement,
+                  )
+                : undefined,
           });
         }
       }
@@ -372,7 +487,14 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
 
   // Нефритовая Дева is universal and scanned over the next MAIDEN_DAYS days.
   const jadeMaidens: QimenJadeMaiden[] = [];
-  const mStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
+  const mStart = new Date(
+    from.getFullYear(),
+    from.getMonth(),
+    from.getDate(),
+    12,
+    0,
+    0,
+  );
   for (let d = 0; d < MAIDEN_DAYS; d++) {
     const date = new Date(mStart);
     date.setDate(mStart.getDate() + d);
@@ -382,9 +504,17 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     // Крыса 00:00–01:00 открывает следующие. Поэтому слот и карта
     // должны получать собственную календарную дату.
     for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-      const slotDate = slot.branch === 0 && !slot.lateZi
-        ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
-        : date;
+      const slotDate =
+        slot.branch === 0 && !slot.lateZi
+          ? new Date(
+              date.getFullYear(),
+              date.getMonth(),
+              date.getDate() + 1,
+              12,
+              0,
+              0,
+            )
+          : date;
       const slotDay = dayInfo(slotDate);
       const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
       // Для прогулки действует запрет личного столкновения: если ветвь дня
@@ -394,7 +524,13 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       // Ранняя и поздняя Крыса остаются отдельными временными метками;
       // карта строится по календарной дате конкретного слота.
       const h = slot.branch;
-      for (const hit of detectJadeMaiden(slotDate, h, slot.lateZi, yearStem >= 0 ? yearStem : undefined, representativeYearStem >= 0 ? representativeYearStem : undefined)) {
+      for (const hit of detectJadeMaiden(
+        slotDate,
+        h,
+        slot.lateZi,
+        yearStem >= 0 ? yearStem : undefined,
+        representativeYearStem >= 0 ? representativeYearStem : undefined,
+      )) {
         jadeMaidens.push({
           date: slotDay.iso,
           dayGanZhi: slotDayGz,
@@ -409,20 +545,29 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           earthStemName: STEM_NAME_RU[hit.earthStem] ?? "",
           door: hit.door,
           doorName: DOOR_NAME_RU[hit.door] ?? "",
-                        isMainGate: hit.isMainGate,
-          supportRelation: hit.support?.relation === "same" || hit.support?.relation === "supports"
-            ? hit.support.relation
-            : undefined,
-          supportMessage: hit.support && (hit.support.relation === "same" || hit.support.relation === "supports")
-            ? jadeMaidenSupportMessage(hit.support.relation, hit.support.structureElement, hit.support.personElement)
-            : undefined,
-
+          isMainGate: hit.isMainGate,
+          supportRelation:
+            hit.support?.relation === "same" ||
+            hit.support?.relation === "supports"
+              ? hit.support.relation
+              : undefined,
+          supportMessage:
+            hit.support &&
+            (hit.support.relation === "same" ||
+              hit.support.relation === "supports")
+              ? jadeMaidenSupportMessage(
+                  hit.support.relation,
+                  hit.support.structureElement,
+                  hit.support.personElement,
+                )
+              : undefined,
         });
       }
     }
   }
 
   const structures: QimenStructure[] = [];
+  const fiveBattalions: QimenFiveBattalion[] = [];
   if (!hasBirthDate || yearBranch < 0) {
     return {
       hasBirthDate,
@@ -433,25 +578,47 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       jiFuWishes,
       jadeMaidens,
       threeMystics,
+      fiveBattalions,
       birthChart,
       monthChart,
     };
   }
 
-  const start = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
+  const start = new Date(
+    from.getFullYear(),
+    from.getMonth(),
+    from.getDate(),
+    12,
+    0,
+    0,
+  );
   for (let d = 0; d < days; d++) {
     const date = new Date(start);
     date.setDate(start.getDate() + d);
     const day = dayInfo(date);
     if (clashesBranch(yearBranch, day.branch)) continue; // personal 六冲 filter
     for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-      const slotDate = slot.branch === 0 && !slot.lateZi
-        ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
-        : date;
+      const slotDate =
+        slot.branch === 0 && !slot.lateZi
+          ? new Date(
+              date.getFullYear(),
+              date.getMonth(),
+              date.getDate() + 1,
+              12,
+              0,
+              0,
+            )
+          : date;
       const slotDay = dayInfo(slotDate);
       const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
       const h = slot.branch;
-      for (const hit of detectThreeGenerals(slotDate, h, slot.lateZi, yearStem, representativeYearStem)) {
+      for (const hit of detectThreeGenerals(
+        slotDate,
+        h,
+        slot.lateZi,
+        yearStem,
+        representativeYearStem,
+      )) {
         structures.push({
           date: slotDay.iso,
           dayGanZhi: slotDayGz,
@@ -471,13 +638,47 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           signs: hit.signs,
           result: hit.result,
           note: hit.note,
-          supportRelation: hit.support?.relation === "same" || hit.support?.relation === "supports"
-            ? hit.support.relation
-            : undefined,
-          supportMessage: hit.support && (hit.support.relation === "same" || hit.support.relation === "supports")
-            ? jadeMaidenSupportMessage(hit.support.relation, hit.support.structureElement, hit.support.personElement)
-            : undefined,
+          supportRelation:
+            hit.support?.relation === "same" ||
+            hit.support?.relation === "supports"
+              ? hit.support.relation
+              : undefined,
+          supportMessage:
+            hit.support &&
+            (hit.support.relation === "same" ||
+              hit.support.relation === "supports")
+              ? jadeMaidenSupportMessage(
+                  hit.support.relation,
+                  hit.support.structureElement,
+                  hit.support.personElement,
+                )
+              : undefined,
         });
+      }
+      if (wealthPalace !== undefined) {
+        for (const hit of detectFiveBattalions(
+          slotDate,
+          h,
+          wealthPalace,
+          slot.lateZi,
+        )) {
+          fiveBattalions.push({
+            date: slotDay.iso,
+            dayGanZhi: slotDayGz,
+            hourBranch: h,
+            hourLabel: hourLabel(h, slot.lateZi),
+            direction: hit.direction,
+            dir: PALACES[hit.palace].dir,
+            dom: hit.dom,
+            heavenStem: hit.heavenStem,
+            heavenStemName: STEM_NAME_RU[hit.heavenStem] ?? hit.heavenStem,
+            earthStem: hit.earthStem,
+            earthStemName: STEM_NAME_RU[hit.earthStem] ?? hit.earthStem,
+            door: hit.door,
+            doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
+            goal: hit.goal,
+          });
+        }
       }
     }
   }
@@ -491,6 +692,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     jiFuWishes,
     jadeMaidens,
     threeMystics,
+    fiveBattalions,
     birthChart,
     monthChart,
   };
