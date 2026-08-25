@@ -7,6 +7,8 @@ import {
   STARS,
   STEMS,
   BRANCHES,
+  STEM_ELEMENT,
+  controls,
   type Element,
   pathIndex,
 } from "./constants";
@@ -38,15 +40,21 @@ for (const d of DOORS) DOOR_ELEMENT[d.name] = d.element;
 // Подтверждённые годовые позиции Mingli. Годовые карты используют отдельный
 // слой правил и не должны выводить Главную звезду из часовой формулы.
 const MINGLI_ANNUAL_MAIN: Record<string, { star: string; palace: number }> = {
-  "丙午": { star: "天心", palace: 3 }, // 2026: Восток
-  "丁未": { star: "天芮", palace: 3 }, // 2027; 天芮 несёт 天禽 в паре
+  丙午: { star: "天心", palace: 3 }, // 2026: Восток
+  丁未: { star: "天芮", palace: 3 }, // 2027; 天芮 несёт 天禽 в паре
 };
 
 const MINGLI_ANNUAL_STARS: Record<string, Record<number, string>> = {
   // Карта 2027 со скриншота Mingli: 天芮 и 天禽 идут одной парой.
-  "丁未": {
-    1: "天辅", 8: "天英", 3: "天芮", 4: "天柱",
-    9: "天心", 2: "天蓬", 7: "天冲", 6: "天任",
+  丁未: {
+    1: "天辅",
+    8: "天英",
+    3: "天芮",
+    4: "天柱",
+    9: "天心",
+    2: "天蓬",
+    7: "天冲",
+    6: "天任",
   },
 };
 
@@ -127,12 +135,14 @@ function buildPeriodChart(
 
   // Номер декады в цикле 甲子: 甲子=1, 甲戌=2, ..., 甲寅=6.
   const decadeNumber = xun.xunNo + 1;
-  const wrapPalace = (value: number) => ((value - 1) % 9 + 9) % 9 + 1;
+  const wrapPalace = (value: number) => ((((value - 1) % 9) + 9) % 9) + 1;
   const mainNumber = yin
     ? wrapPalace(1 + ju.ju - decadeNumber)
     : wrapPalace(ju.ju + decadeNumber - 1);
-  const annualMain = period === "year" ? MINGLI_ANNUAL_MAIN[pillar.label] : undefined;
-  const mainStar = annualMain?.star ?? (mainNumber === 5 ? "天禽" : STAR_AT[mainNumber]);
+  const annualMain =
+    period === "year" ? MINGLI_ANNUAL_MAIN[pillar.label] : undefined;
+  const mainStar =
+    annualMain?.star ?? (mainNumber === 5 ? "天禽" : STAR_AT[mainNumber]);
   const mainGate = mainNumber === 5 ? "死门" : DOOR_AT[mainNumber];
 
   // Положение Главной звезды: номер НС часа в таблице «6 инструментов и
@@ -140,12 +150,30 @@ function buildPeriodChart(
   // декады, как предписано в учебнике.
   const starStem = hs === 0 ? yiStem : hs;
   const yangStarStemNumbers: Record<number, number> = {
-    4: 1, 5: 2, 6: 3, 7: 4, 8: 5, 9: 6, 3: 7, 2: 8, 1: 9,
+    4: 1,
+    5: 2,
+    6: 3,
+    7: 4,
+    8: 5,
+    9: 6,
+    3: 7,
+    2: 8,
+    1: 9,
   };
   const yinStarStemNumbers: Record<number, number> = {
-    4: 1, 5: 9, 6: 8, 7: 7, 8: 6, 9: 5, 3: 4, 2: 3, 1: 2,
+    4: 1,
+    5: 9,
+    6: 8,
+    7: 7,
+    8: 6,
+    9: 5,
+    3: 4,
+    2: 3,
+    1: 2,
   };
-  const starStemNumber = (yin ? yinStarStemNumbers : yangStarStemNumbers)[starStem];
+  const starStemNumber = (yin ? yinStarStemNumbers : yangStarStemNumbers)[
+    starStem
+  ];
   const starTargetRaw = yin
     ? wrapPalace(1 + ju.ju - starStemNumber)
     : wrapPalace(starStemNumber + ju.ju - 1);
@@ -174,14 +202,15 @@ function buildPeriodChart(
     // находиться в дворце Главной звезды, а остальные земные стволы идут по
     // кольцу в направлении, заданном полярностью часового ствола. Это отделяет раскладку
     // стволов от последующего вращения самих звёзд.
-      // В Чжи Рен Небесная тарелка начинается с Fu Tou (旬首仪),
+    // В Чжи Рен Небесная тарелка начинается с Fu Tou (旬首仪),
     // который помещается в дворец часового ствола, и далее идёт по PATH.
     // Для часовых карт это эквивалентно сдвигу от pFu к pHour.
     const hourHeavenShift = pathIndex(pFu) - pathIndex(pHour);
     const heavenSource = (((i + hourHeavenShift) % 8) + 8) % 8;
     const heavenStem = STEMS[earthStem[PATH[heavenSource]]];
     const starSrc = PATH[(((i - (iStar - pathIndex(pFu))) % 8) + 8) % 8];
-    const annualStarLayout = period === "year" ? MINGLI_ANNUAL_STARS[pillar.label] : undefined;
+    const annualStarLayout =
+      period === "year" ? MINGLI_ANNUAL_STARS[pillar.label] : undefined;
     const star = annualStarLayout?.[p] ?? STAR_AT[starSrc];
     const doorSrc = PATH[(((i - doorShift) % 8) + 8) % 8];
     const deitySteps = ((((i - iHour) * dir) % 8) + 8) % 8;
@@ -226,7 +255,18 @@ function buildPeriodChart(
   };
 }
 
-export function buildChart(date: Date, hourBranch: number, _lateZi = false): Chart {
+/** Час пяти дисгармоний: Небесный ствол часа контролирует Небесный ствол дня. */
+export function isHourControlsDay(
+  chart: Pick<Chart, "day" | "hourStem">,
+): boolean {
+  return controls(STEM_ELEMENT[chart.hourStem], STEM_ELEMENT[chart.day.stem]);
+}
+
+export function buildChart(
+  date: Date,
+  hourBranch: number,
+  _lateZi = false,
+): Chart {
   const day = dayInfo(date);
   const ju = juForDate(date);
   // В QMDJ одна китайская двухчасовка 子 длится 23:00–01:00 и имеет одну карту.
@@ -269,7 +309,14 @@ export function buildChartForDateTime(dateTime: Date): DateTimeChartResult {
   const minute = dateTime.getMinutes();
   const hourBranch = Math.floor((hour + 1) / 2) % 12;
   const lateZi = hour === 23;
-  const calendarDate = new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate(), 12, 0, 0);
+  const calendarDate = new Date(
+    dateTime.getFullYear(),
+    dateTime.getMonth(),
+    dateTime.getDate(),
+    12,
+    0,
+    0,
+  );
   return {
     chart: buildChart(calendarDate, hourBranch, lateZi),
     hourBranch,

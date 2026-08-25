@@ -5,6 +5,8 @@ import {
   FIVE_BATTALIONS_GOAL,
   hasDoorPalaceConflict,
 } from "./qimen/structures";
+import { isHourControlsDay } from "./qimen/chart";
+import { DOOR_NAME_RU } from "../data/qimen/maidens";
 
 const GOOD_EARTH_STEMS: Record<string, Set<string>> = {
   甲: new Set(["丙", "丁"]),
@@ -54,14 +56,42 @@ describe("Пять Батальонов", () => {
     expect(FIVE_BATTALIONS_GOAL.死门).toContain("разорвать отношения");
   });
 
-  test("исключает любое контролирующее взаимодействие Врат и дворца", () => {
-    expect(hasDoorPalaceConflict("杜门", 7)).toBe(true); // Металл Запада контролирует Дерево Тайника.
-    expect(hasDoorPalaceConflict("杜门", 6)).toBe(true); // Северо-запад также Металл.
-    expect(hasDoorPalaceConflict("杜门", 8)).toBe(true); // Дерево Врат контролирует Землю дворца.
-    expect(hasDoorPalaceConflict("杜门", 1)).toBe(false); // Вода дворца поддерживает Дерево Врат.
-    expect(hasDoorPalaceConflict("休门", 9)).toBe(true);
-    expect(hasDoorPalaceConflict("生门", 1)).toBe(true);
-    expect(hasDoorPalaceConflict("开门", 3)).toBe(true);
+  test("использует согласованное название Врат Ужаса", () => {
+    expect(DOOR_NAME_RU.惊门).toBe("Врата Ужаса");
+  });
+
+  test("исключает только положения, где Врата контролируют дворец", () => {
+    const forbidden: Record<string, number[]> = {
+      生门: [1],
+      开门: [3, 4],
+      休门: [9],
+      景门: [6, 7],
+      伤门: [2, 8],
+      惊门: [3, 4],
+      死门: [1],
+      杜门: [2, 8],
+    };
+
+    for (const [door, palaces] of Object.entries(forbidden)) {
+      for (const palace of palaces)
+        expect(hasDoorPalaceConflict(door, palace)).toBe(true);
+    }
+    // Металл Запада контролирует Дерево Врат Тайника, но это обратное
+    // отношение не является запретом на приложенной схеме.
+    expect(hasDoorPalaceConflict("杜门", 7)).toBe(false);
+    expect(hasDoorPalaceConflict("杜门", 6)).toBe(false);
+    expect(hasDoorPalaceConflict("杜门", 1)).toBe(false);
+  });
+
+  test("распознаёт час пяти дисгармоний по контролю часа над днём", () => {
+    const check = (hourStem: number, dayStem: number) =>
+      isHourControlsDay({ hourStem, day: { stem: dayStem } } as Parameters<
+        typeof isHourControlsDay
+      >[0]);
+
+    expect(check(6, 0)).toBe(true); // Металл часа контролирует Дерево дня.
+    expect(check(2, 6)).toBe(true); // Огонь часа контролирует Металл дня.
+    expect(check(0, 8)).toBe(false); // Дерево часа не контролирует Воду дня.
   });
 
   test("публикует только личные часы с разрешёнными стволами и строгими связками", () => {

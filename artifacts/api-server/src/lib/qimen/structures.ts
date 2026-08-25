@@ -7,7 +7,13 @@ import {
   parseGanZhi,
   type Element,
 } from "./constants";
-import { buildChart, DOOR_ELEMENT, STAR_ELEMENT, mainGateStar } from "./chart";
+import {
+  buildChart,
+  DOOR_ELEMENT,
+  isHourControlsDay,
+  STAR_ELEMENT,
+  mainGateStar,
+} from "./chart";
 import {
   GENERALS_ACTIVATION,
   GENERALS_STAR_NAME,
@@ -50,15 +56,13 @@ const THREE_MYSTICS_ACTIVATION: Record<string, string> = {
 const TOMB: Record<string, number> = { 乙: 6, 丙: 6, 丁: 8 };
 // Per-wonder direction cautions to avoid (Правила активации).
 const WONDER_AVOID: Record<string, number[]> = { 乙: [2], 丙: [1], 丁: [6, 2] };
-// Врата и дворец не должны контролировать друг друга. Такое положение
-// ограничивает действие Врат и не публикуется ни в одной пользовательской структуре.
+// Врата не должны контролировать дворец. Это положение ограничивает действие
+// и не публикуется ни в одной пользовательской структуре.
 export function hasDoorPalaceConflict(door: string, palace: number): boolean {
   if (palace === 5 || !DOOR_ELEMENT[door] || !PALACES[palace]) return true;
   const doorElement = DOOR_ELEMENT[door];
   const palaceElement = PALACES[palace].element;
-  return (
-    controls(doorElement, palaceElement) || controls(palaceElement, doorElement)
-  );
+  return controls(doorElement, palaceElement);
 }
 
 const FIVE_BATTALIONS_STEMS = ["甲", "乙", "丙", "丁", "戊"] as const;
@@ -194,7 +198,7 @@ export function detectThreeGenerals(
   representativeStem?: number,
 ): GeneralsHit[] {
   const chart = buildChart(date, hourBranch, lateZi);
-  if (chart.fuYin) return []; // Избегаем Фу Инь
+  if (chart.fuYin || isHourControlsDay(chart)) return []; // Фу Инь и час пяти дисгармоний
 
   const hits: GeneralsHit[] = [];
   for (let p = 1; p <= 9; p++) {
@@ -256,7 +260,7 @@ export function detectThreeMystics(
   representativeStem?: number,
 ): ThreeMysticsHit[] {
   const chart = buildChart(date, hourBranch, lateZi);
-  if (chart.fuYin) return [];
+  if (chart.fuYin || isHourControlsDay(chart)) return [];
 
   const hits: ThreeMysticsHit[] = [];
   for (let p = 1; p <= 9; p++) {
@@ -425,6 +429,7 @@ export function detectJadeMaiden(
   representativeStem?: number,
 ): JadeMaidenHit[] {
   const chart = buildChart(date, hourBranch, lateZi);
+  if (isHourControlsDay(chart)) return [];
   const main = mainGateStar(chart);
   const hits: JadeMaidenHit[] = [];
   for (let p = 1; p <= 9; p++) {
@@ -476,7 +481,12 @@ export function detectFiveBattalions(
 ): FiveBattalionsHit[] {
   if (wealthPalace === 5 || !PALACES[wealthPalace]) return [];
   const chart = buildChart(date, hourBranch, lateZi);
-  if (chart.fuYin || chart.zhiShiPalace !== wealthPalace) return [];
+  if (
+    chart.fuYin ||
+    isHourControlsDay(chart) ||
+    chart.zhiShiPalace !== wealthPalace
+  )
+    return [];
 
   const cell = chart.cells[wealthPalace];
   if (!cell || cell.door !== chart.zhiShiDoor) return [];
