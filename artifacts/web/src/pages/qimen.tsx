@@ -540,7 +540,7 @@ function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
             </span>
           </div>
           <p className="text-sm leading-relaxed text-fuchsia-100/90">
-            <span className="font-medium">Подходит, чтобы:</span> {m.goal}.
+            <span className="font-medium">Цель:</span> {m.goal}.
           </p>
           {m.supportMessage ? (
             <p className="rounded-lg border border-fuchsia-400/15 bg-fuchsia-400/5 p-3 text-sm leading-relaxed text-fuchsia-100/90">
