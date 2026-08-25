@@ -45,8 +45,7 @@ async function cleanupOldForecasts(userId: number): Promise<void> {
   // осиротевшие записи и не нарушать будущие внешние ограничения целостности.
   await db.delete(feedbackTable).where(
     sql`${feedbackTable.userId} = ${userId} AND ${feedbackTable.forecastId} IN (
-      SELECT ${forecastsTable.id}
-      FROM ${forecastsTable}
+      SELECT ${forecastsTable.id} FROM ${forecastsTable}
       WHERE ${forecastsTable.userId} = ${userId}
         AND ${forecastsTable.date} < ${cutoffDate}
     )`,
@@ -94,13 +93,12 @@ function buildForecast(
 
 // Increment when forecast semantics, Studio seed data, or rendering logic changes.
 // This forces persisted daily rows to regenerate instead of serving stale prose.
-export const CURRENT_FORECAST_VERSION = 62;
+export const CURRENT_FORECAST_VERSION = 63;
 
 async function getOrComputeToday(
   userId: number,
   birthDate: string | null,
   birthTime: string | null,
-  natalChartJson: unknown | null,
   birthLatitude: number | null,
   birthLongitude: number | null,
   birthTimezone: string | null,
@@ -120,34 +118,25 @@ async function getOrComputeToday(
 
   if (!birthDate || birthLatitude == null || birthLongitude == null) return null;
 
-  // Use cached natal chart or compute live from birth data
+  // Дневной синтез всегда пересчитывает карту по исходным данным профиля.
+  // JSON-снимок карты сохраняется для отображения, но мог быть построен до
+  // исправления часового пояса или алгоритма домов и поэтому не годится как
+  // источник для текущего прогноза.
   let natalChart: NatalChart | null = null;
-  if (natalChartJson) {
-    try {
-      const parsed = natalChartJson as { bodies?: unknown[] };
-      if (parsed && Array.isArray(parsed.bodies) && parsed.bodies.length > 0) {
-        natalChart = natalChartJson as NatalChart;
-      }
-    } catch {
-      natalChart = null;
-    }
-  }
-  if (!natalChart) {
-    const [y, m, d] = birthDate.split("-").map(Number);
-    const [h, min] = birthTime ? birthTime.split(":").map(Number) : [12, 0];
-    const input: NatalChartInput = {
-      year: y, month: m, day: d,
-      hour: Number.isFinite(h) ? h : 12,
-      minute: Number.isFinite(min) ? min : 0,
-      latitude: birthLatitude,
-      longitude: birthLongitude,
-      timezone: birthTimezone,
-    };
-    try {
-      natalChart = computeNatalChart(input);
-    } catch {
-      natalChart = null;
-    }
+  const [y, m, d] = birthDate.split("-").map(Number);
+  const [h, min] = birthTime ? birthTime.split(":").map(Number) : [12, 0];
+  const input: NatalChartInput = {
+    year: y, month: m, day: d,
+    hour: Number.isFinite(h) ? h : 12,
+    minute: Number.isFinite(min) ? min : 0,
+    latitude: birthLatitude,
+    longitude: birthLongitude,
+    timezone: birthTimezone,
+  };
+  try {
+    natalChart = computeNatalChart(input);
+  } catch {
+    natalChart = null;
   }
 
   const transits = natalChart
@@ -224,7 +213,6 @@ router.get("/forecast/today", requireAuth, async (req, res): Promise<void> => {
     user.id,
     user.birthDate,
     user.birthTime,
-    user.natalChart ?? null,
     user.birthLatitude,
     user.birthLongitude,
     user.birthTimezone,
@@ -277,6 +265,7 @@ router.post(
       res.status(400).json({ error: params.error.message });
       return;
     }
+
     const body = SubmitFeedbackBody.safeParse(req.body);
     if (!body.success) {
       res.status(400).json({ error: body.error.message });
@@ -340,7 +329,6 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
       user.id,
       user.birthDate,
       user.birthTime,
-      user.natalChart ?? null,
       user.birthLatitude,
       user.birthLongitude,
       user.birthTimezone,
@@ -374,7 +362,7 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
   const [recentDream] = await db
     .select()
     .from(dreamsTable)
-    .where(eq(dreamsTable.userId, user.id))
+    .where(eq(dreamsTable.userId, req.localUser!.id))
     .orderBy(desc(dreamsTable.createdAt))
     .limit(1);
 
@@ -387,8 +375,7 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
       upcomingBirthdaysCount,
       waterProgress: water?.actualValue ?? 0,
       waterTarget: water?.targetValue ?? 8,
-      stepsProgress: steps?.actualValue ?? 0,
-      stepsTarget: steps?.targetValue ?? 10000,
+      stepsProgress: steps?.actualValue ?? 10000,
       recentDream: recentDream
         ? {
             id: recentDream.id,
