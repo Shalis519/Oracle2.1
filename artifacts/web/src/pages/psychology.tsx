@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   getListPsychologyPracticesQueryKey,
@@ -21,10 +21,13 @@ import {
   Clock3,
   Edit3,
   Info,
+  Pause,
   Play,
+  RotateCcw,
   Save,
   ShieldCheck,
   Trash2,
+  Volume2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -54,6 +57,131 @@ function practiceAnswerPreview(reflection: PsychologyReflection): string {
   return values[0] ?? "Запись без текстового ответа";
 }
 
+const DAILY_PRACTICE_COUNT = 3;
+
+type GuidanceAudio = {
+  instruction: string;
+  file: string;
+};
+
+const GUIDANCE_AUDIO: Record<string, Record<string, GuidanceAudio>> = {
+  "cognitive-rehearsal": {
+    result: {
+      instruction:
+        "Опишите один конкретный результат, которого Вы хотите достичь. Не пытайтесь решить всё сразу.",
+      file: "cognitive-rehearsal-result.wav",
+    },
+    scene: {
+      instruction:
+        "Представьте очень короткий момент после завершённого действия. Не оценивайте образ, просто отметьте детали, которые приходят.",
+      file: "cognitive-rehearsal-scene.wav",
+    },
+    state: {
+      instruction:
+        "Выберите чувство, с которым Вы хотите действовать. Достаточно одного или двух слов.",
+      file: "cognitive-rehearsal-state.wav",
+    },
+    nextStep: {
+      instruction:
+        "Запишите один небольшой шаг, который можно реально выполнить сегодня.",
+      file: "cognitive-rehearsal-next-step.wav",
+    },
+  },
+  "pause-before-response": {
+    situation: {
+      instruction:
+        "Коротко опишите событие или разговор, который вызывает напряжение.",
+      file: "pause-before-response-situation.wav",
+    },
+    reaction: {
+      instruction:
+        "Отделите сам факт ситуации от первой мысли, эмоции или импульса.",
+      file: "pause-before-response-reaction.wav",
+    },
+    influence: {
+      instruction:
+        "Запишите, на что Вы действительно можете повлиять в этой ситуации.",
+      file: "pause-before-response-influence.wav",
+    },
+    nextStep: {
+      instruction:
+        "Сформулируйте один конкретный шаг, который поможет Вам действовать без лишнего давления.",
+      file: "pause-before-response-next-step.wav",
+    },
+  },
+  "intention-anchor": {
+    intention: {
+      instruction:
+        "Выберите одну достижимую цель и запишите её в позитивной, понятной форме.",
+      file: "intention-anchor-intention.wav",
+    },
+    importance: {
+      instruction:
+        "Налейте обычную питьевую воду. Несколько минут спокойно удерживайте внимание на смысле Вашей формулировки.",
+      file: "intention-anchor-importance.wav",
+    },
+    water: {
+      instruction:
+        "Выпейте воду как нейтральное завершение короткой паузы внимания. Вода не обладает особыми свойствами в рамках этой практики.",
+      file: "intention-anchor-water.wav",
+    },
+    nextStep: {
+      instruction:
+        "Запишите один реальный шаг на сегодня, который приблизит Вас к намерению.",
+      file: "intention-anchor-next-step.wav",
+    },
+  },
+};
+
+function getLocalDayKey(date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function millisecondsUntilNextLocalDay(): number {
+  const nextDay = new Date();
+  nextDay.setHours(24, 0, 1, 0);
+  return Math.max(1_000, nextDay.getTime() - Date.now());
+}
+
+function getDailyPractices(
+  practices: PsychologyPractice[],
+  dayKey: string,
+): PsychologyPractice[] {
+  if (practices.length <= DAILY_PRACTICE_COUNT) return practices;
+
+  let seed = 0;
+  for (const character of dayKey) {
+    seed = (seed * 31 + character.charCodeAt(0)) >>> 0;
+  }
+
+  const shuffled = [...practices];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    seed = (seed * 1_664_525 + 1_013_904_223) >>> 0;
+    const swapIndex = seed % (index + 1);
+    [shuffled[index], shuffled[swapIndex]] = [
+      shuffled[swapIndex],
+      shuffled[index],
+    ];
+  }
+
+  return shuffled.slice(0, DAILY_PRACTICE_COUNT);
+}
+
+function getGuidanceAudio(
+  practice: PsychologyPractice | null,
+  step: PsychologyPractice["steps"][number] | undefined,
+): string | null {
+  if (!practice || !step) return null;
+
+  const guidance = GUIDANCE_AUDIO[practice.slug]?.[step.id];
+  if (!guidance || guidance.instruction !== step.instruction) return null;
+
+  return `${import.meta.env.BASE_URL}audio/psychology/${guidance.file}`;
+}
+
 export default function PsychologyPage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -73,6 +201,12 @@ export default function PsychologyPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const activeStep = activePractice?.steps[stepIndex];
+  const guidanceAudioSrc = getGuidanceAudio(activePractice, activeStep);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioSourceRef = useRef<string | null>(null);
+  const [isGuidancePlaying, setIsGuidancePlaying] = useState(false);
+  const [hasGuidanceProgress, setHasGuidanceProgress] = useState(false);
+  const [dayKey, setDayKey] = useState(getLocalDayKey);
   const isLastStep = Boolean(
     activePractice && stepIndex === activePractice.steps.length - 1,
   );
@@ -86,6 +220,65 @@ export default function PsychologyPage() {
     () => new Map(practices.map((practice) => [practice.id, practice])),
     [practices],
   );
+  const dailyPractices = useMemo(
+    () => getDailyPractices(practices, dayKey),
+    [dayKey, practices],
+  );
+
+  const stopGuidanceAudio = useCallback(() => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    audioSourceRef.current = null;
+    setIsGuidancePlaying(false);
+    setHasGuidanceProgress(false);
+  }, []);
+
+  const playGuidanceAudio = useCallback(
+    (restart = false) => {
+      if (!guidanceAudioSrc) return;
+
+      let audio = audioRef.current;
+      if (!audio || audioSourceRef.current !== guidanceAudioSrc) {
+        stopGuidanceAudio();
+        audio = new Audio(guidanceAudioSrc);
+        audioRef.current = audio;
+        audioSourceRef.current = guidanceAudioSrc;
+        audio.onended = () => {
+          setIsGuidancePlaying(false);
+          setHasGuidanceProgress(false);
+        };
+        audio.onpause = () => setIsGuidancePlaying(false);
+      }
+
+      if (restart) audio.currentTime = 0;
+      void audio
+        .play()
+        .then(() => {
+          setIsGuidancePlaying(true);
+          setHasGuidanceProgress(true);
+        })
+        .catch(() => {
+          setIsGuidancePlaying(false);
+          toast({
+            title: "Не удалось включить голосовую инструкцию",
+            variant: "destructive",
+          });
+        });
+    },
+    [guidanceAudioSrc, stopGuidanceAudio, toast],
+  );
+
+  useEffect(() => {
+    const timeout = window.setTimeout(
+      () => setDayKey(getLocalDayKey()),
+      millisecondsUntilNextLocalDay(),
+    );
+    return () => window.clearTimeout(timeout);
+  }, [dayKey]);
+
+  useEffect(() => {
+    stopGuidanceAudio();
+  }, [activePractice?.id, stepIndex, stopGuidanceAudio]);
 
   const invalidatePsychology = () => {
     queryClient.invalidateQueries({
@@ -107,6 +300,7 @@ export default function PsychologyPage() {
   };
 
   const closePractice = () => {
+    stopGuidanceAudio();
     setActivePractice(null);
     setEditingReflection(null);
     setStepIndex(0);
@@ -197,6 +391,11 @@ export default function PsychologyPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               Выберите одну практику и пройдите её в комфортном для Вас темпе.
             </p>
+            {practices.length > DAILY_PRACTICE_COUNT ? (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Сегодня выбраны три практики. Завтра набор обновится.
+              </p>
+            ) : null}
           </div>
         </div>
 
@@ -204,9 +403,9 @@ export default function PsychologyPage() {
           <div className="flex justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
           </div>
-        ) : practices.length > 0 ? (
+        ) : dailyPractices.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-3">
-            {practices.map((practice, index) => (
+            {dailyPractices.map((practice, index) => (
               <motion.div
                 key={practice.id}
                 initial={{ opacity: 0, y: 12 }}
@@ -376,6 +575,44 @@ export default function PsychologyPage() {
                     {activeStep.instruction}
                   </p>
                 </div>
+                {guidanceAudioSrc ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (isGuidancePlaying) {
+                          audioRef.current?.pause();
+                          return;
+                        }
+                        playGuidanceAudio();
+                      }}
+                    >
+                      {isGuidancePlaying ? (
+                        <Pause className="mr-2 h-4 w-4" />
+                      ) : (
+                        <Volume2 className="mr-2 h-4 w-4" />
+                      )}
+                      {isGuidancePlaying
+                        ? "Пауза"
+                        : hasGuidanceProgress
+                          ? "Продолжить"
+                          : "Прослушать инструкцию"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9"
+                      onClick={() => playGuidanceAudio(true)}
+                      title="Прослушать с начала"
+                      aria-label="Прослушать инструкцию с начала"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : null}
                 {activeStep.fieldLabel ? (
                   <div className="space-y-2">
                     <label
