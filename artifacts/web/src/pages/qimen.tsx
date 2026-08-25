@@ -360,7 +360,7 @@ function StructureCard({ s }: { s: QimenStructure }) {
           <div className="flex items-start gap-2 text-sm">
             <Sparkles className="w-4 h-4 mt-0.5 shrink-0 text-emerald-400/80" />
             <p className="leading-relaxed">
-              <span className="font-medium">Активация:</span> {s.activation}.{" "}
+              <span className="font-medium">Активатор:</span> {s.activation}.{" "}
               <span className="text-muted-foreground">
                 {s.starName}, {s.wonderName}.
               </span>
@@ -557,7 +557,7 @@ function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
             </span>
           </div>
           <div className="rounded-lg border border-fuchsia-400/15 bg-fuchsia-400/5 p-3 text-sm leading-relaxed">
-            <span className="font-medium text-fuchsia-200">Для запуска: </span>
+            <span className="font-medium text-fuchsia-200">Активатор: </span>
             {m.activation}.
           </div>
         </CardContent>
