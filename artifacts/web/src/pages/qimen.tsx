@@ -557,7 +557,6 @@ export default function QimenPage() {
   const jiFuWishes = data?.jiFuWishes ?? [];
   const jadeMaidens = data?.jadeMaidens ?? [];
   const windowDays = data?.windowDays ?? 14;
-  const maidenWindowDays = data?.maidenWindowDays ?? 7;
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-8">
@@ -665,36 +664,36 @@ export default function QimenPage() {
         )}
       </section>
 
-      {/* Нефритовая Дева: поиск выполняется только в часовых раскладах */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Heart className="w-5 h-5 text-rose-300" />
-          <h2 className="text-xl font-serif font-semibold">
-            <Dialog open={jadeInfoOpen} onOpenChange={setJadeInfoOpen}>
-              <DialogTrigger asChild>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-rose-300/60 underline-offset-4 hover:text-rose-200 transition-colors"
-                >
-                  Нефритовая Дева
-                  <Info className="w-4 h-4 text-rose-300/80" />
-                </button>
-              </DialogTrigger>
-              <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="font-serif flex items-center gap-2">
-                    <Heart className="w-5 h-5 text-rose-300" />
+      {/* Нефритовая Дева: показывается только при найденных структурах. */}
+      {jadeMaidens.length > 0 ? (
+        <section className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Heart className="w-5 h-5 text-rose-300" />
+            <h2 className="text-xl font-serif font-semibold">
+              <Dialog open={jadeInfoOpen} onOpenChange={setJadeInfoOpen}>
+                <DialogTrigger asChild>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-rose-300/60 underline-offset-4 hover:text-rose-200 transition-colors"
+                  >
                     Нефритовая Дева
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-3 text-sm leading-relaxed">
-                  <p>{JADE_INTRO}</p>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </h2>
-        </div>
-        {jadeMaidens.length > 0 ? (
+                    <Info className="w-4 h-4 text-rose-300/80" />
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="font-serif flex items-center gap-2">
+                      <Heart className="w-5 h-5 text-rose-300" />
+                      Нефритовая Дева
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-3 text-sm leading-relaxed">
+                    <p>{JADE_INTRO}</p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </h2>
+          </div>
           <div className="space-y-3">
             {jadeMaidens.map((m, i) => (
               <JadeMaidenCard
@@ -703,15 +702,8 @@ export default function QimenPage() {
               />
             ))}
           </div>
-        ) : (
-          <Card className="bg-card/40 backdrop-blur-md">
-            <CardContent className="py-8 text-center text-sm text-muted-foreground">
-              На ближайшие {maidenWindowDays} {pluralDays(maidenWindowDays)}{" "}
-              структур «Нефритовая Дева» не найдено.
-            </CardContent>
-          </Card>
-        )}
-      </section>
+        </section>
+      ) : null}
 
       {/* Персональные структуры «Три Генерала», требуют дату рождения */}
       <section className="space-y-4">
