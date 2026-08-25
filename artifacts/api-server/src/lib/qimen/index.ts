@@ -21,12 +21,15 @@ import { buildChart, buildPeriodMap, type PalaceCell } from "./chart";
 import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
 import {
   detectFiveBattalions,
+  detectTigerDun,
+  TIGER_DUN_GOAL,
   detectThreeGenerals,
   detectThreeMystics,
   detectJadeMaiden,
 } from "./structures";
 import { computeJiFuWishes, type JiFuWish } from "./jifu";
 import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
+import { GENERALS_STAR_NAME } from "../../data/qimen/threeGenerals";
 import { isLateZiClock } from "./birthTime";
 
 export type { JiFuWish } from "./jifu";
@@ -117,6 +120,29 @@ export interface QimenFiveBattalion {
   goal: string;
 }
 
+export interface QimenTigerDun {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  variant: 1 | 2 | 3 | 4;
+  heavenStem: string;
+  heavenStemName: string;
+  earthStem: string;
+  earthStemName: string;
+  earthStemRequired: boolean;
+  door: string;
+  doorName: string;
+  star: string;
+  starName: string;
+  goal: string;
+  supportRelation: "same" | "supports";
+  supportMessage: string;
+}
+
 export interface QimenBirthChartCell {
   palace: number;
   direction: string;
@@ -168,6 +194,7 @@ export interface QimenResult {
   jadeMaidens: QimenJadeMaiden[];
   threeMystics: QimenThreeMystic[];
   fiveBattalions: QimenFiveBattalion[];
+  tigerDuns: QimenTigerDun[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }
@@ -568,6 +595,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
 
   const structures: QimenStructure[] = [];
   const fiveBattalions: QimenFiveBattalion[] = [];
+  const tigerDuns: QimenTigerDun[] = [];
   if (!hasBirthDate || yearBranch < 0) {
     return {
       hasBirthDate,
@@ -579,6 +607,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       jadeMaidens,
       threeMystics,
       fiveBattalions,
+      tigerDuns,
       birthChart,
       monthChart,
     };
@@ -680,6 +709,43 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           });
         }
       }
+      if (!clashesBranch(yearBranch, slotDay.branch) && yearStem >= 0) {
+        for (const hit of detectTigerDun(
+          slotDate,
+          h,
+          slot.lateZi,
+          yearStem,
+          representativeYearStem,
+        )) {
+          const support = hit.support!;
+          tigerDuns.push({
+            date: slotDay.iso,
+            dayGanZhi: slotDayGz,
+            hourBranch: h,
+            hourLabel: hourLabel(h, slot.lateZi),
+            direction: hit.direction,
+            dir: PALACES[hit.palace].dir,
+            dom: hit.dom,
+            variant: hit.variant,
+            heavenStem: hit.heavenStem,
+            heavenStemName: STEM_NAME_RU[hit.heavenStem] ?? hit.heavenStem,
+            earthStem: hit.earthStem,
+            earthStemName: STEM_NAME_RU[hit.earthStem] ?? hit.earthStem,
+            earthStemRequired: hit.variant === 1 || hit.variant === 3,
+            door: hit.door,
+            doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
+            star: hit.star,
+            starName: GENERALS_STAR_NAME[hit.star] ?? hit.star,
+            goal: TIGER_DUN_GOAL,
+            supportRelation: support.relation as "same" | "supports",
+            supportMessage: threeMysticsSupportMessage(
+              support.relation as "same" | "supports",
+              support.structureElement,
+              support.personElement,
+            ),
+          });
+        }
+      }
     }
   }
 
@@ -693,6 +759,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     jadeMaidens,
     threeMystics,
     fiveBattalions,
+    tigerDuns,
     birthChart,
     monthChart,
   };

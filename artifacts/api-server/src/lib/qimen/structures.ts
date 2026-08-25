@@ -521,3 +521,109 @@ export function detectFiveBattalions(
 }
 
 export { STEMS };
+
+export type TigerDunVariant = 1 | 2 | 3 | 4;
+
+export interface TigerDunHit {
+  palace: number;
+  variant: TigerDunVariant;
+  direction: string;
+  dom: string;
+  heavenStem: string;
+  earthStem: string;
+  door: string;
+  star: string;
+  support?: SupportCheck;
+}
+
+export const TIGER_DUN_GOAL =
+  "преодолеть препятствие, защитить свои интересы, провести сложные переговоры или укрепить позицию в важном деле";
+
+function tigerDunVariant(cell: {
+  palace: number;
+  heavenStem: string;
+  earthStem: string;
+  door: string;
+}): TigerDunVariant | 0 {
+  // Полная формула на схеме задаёт сочетания Врат и дворцов. Поэтому общий
+  // фильтр «Врата контролируют дворец» к этой структуре намеренно не применяется.
+  if (cell.palace === 8) {
+    if (
+      cell.heavenStem === "乙" &&
+      cell.earthStem === "辛" &&
+      cell.door === "休门"
+    )
+      return 1;
+    if (cell.heavenStem === "乙" && cell.door === "生门") return 2;
+    if (
+      cell.heavenStem === "辛" &&
+      cell.earthStem === "乙" &&
+      cell.door === "生门"
+    )
+      return 3;
+  }
+  if (cell.palace === 7 && cell.heavenStem === "庚" && cell.door === "开门")
+    return 4;
+  return 0;
+}
+
+/**
+ * Detect the personal structure «Тигровый Дунь» (虎遁).
+ * The second and fourth rows of the source scheme do not specify an Earth Plate
+ * stem, so their Earth Plate is intentionally left unrestricted. 庚 is required
+ * by row four and must not be rejected by the generic 庚 safeguards of other structures.
+ */
+export function detectTigerDun(
+  date: Date,
+  hourBranch: number,
+  lateZi = false,
+  birthYearStem?: number,
+  representativeStem?: number,
+): TigerDunHit[] {
+  const chart = buildChart(date, hourBranch, lateZi);
+  if (chart.fuYin || isHourControlsDay(chart)) return [];
+
+  const hits: TigerDunHit[] = [];
+  for (const palace of [8, 7]) {
+    const cell = chart.cells[palace];
+    if (!cell) continue;
+    const variant = tigerDunVariant(cell);
+    if (!variant) continue;
+
+    if (cell.isVoid) continue;
+    if (annualYellowFive(palace, date)) continue;
+    if (controls(DOOR_ELEMENT[cell.door], STAR_ELEMENT[cell.star])) continue;
+
+    // Только второй вариант использует Небесный ствол Трёх Мистиков без
+    // заданного ствола Земной тарелки. Проверяем табу, зависящие от 乙 и дворца.
+    if (variant === 2) {
+      if (TOMB.乙 === palace) continue;
+      if ((WONDER_AVOID.乙 ?? []).includes(palace)) continue;
+    }
+
+    const support =
+      birthYearStem === undefined
+        ? undefined
+        : evaluateSupportPalace(
+            chart,
+            palace,
+            birthYearStem,
+            representativeStem,
+          );
+    if (birthYearStem !== undefined && (!support || !support.supported))
+      continue;
+
+    hits.push({
+      palace,
+      variant,
+      direction: PALACES[palace].dirFull,
+      dom: PALACES[palace].dom,
+      heavenStem: cell.heavenStem,
+      earthStem: cell.earthStem,
+      door: cell.door,
+      star: cell.star,
+      support: support ?? undefined,
+    });
+  }
+  return hits;
+}

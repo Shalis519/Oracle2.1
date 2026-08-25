@@ -1923,6 +1923,53 @@ components:
         doorName: { type: string }
         goal: { type: string }
 
+    QimenTigerDun:
+      type: object
+      required:
+        [
+          date,
+          dayGanZhi,
+          hourBranch,
+          hourLabel,
+          direction,
+          dir,
+          dom,
+          variant,
+          heavenStem,
+          heavenStemName,
+          earthStem,
+          earthStemName,
+          earthStemRequired,
+          door,
+          doorName,
+          star,
+          starName,
+          goal,
+          supportRelation,
+          supportMessage,
+        ]
+      properties:
+        date: { type: string }
+        dayGanZhi: { type: string }
+        hourBranch: { type: integer }
+        hourLabel: { type: string }
+        direction: { type: string }
+        dir: { type: string }
+        dom: { type: string }
+        variant: { type: integer, enum: [1, 2, 3, 4] }
+        heavenStem: { type: string, enum: ["乙", "庚", "辛"] }
+        heavenStemName: { type: string }
+        earthStem: { type: string }
+        earthStemName: { type: string }
+        earthStemRequired: { type: boolean }
+        door: { type: string, enum: ["休门", "生门", "开门"] }
+        doorName: { type: string }
+        star: { type: string }
+        starName: { type: string }
+        goal: { type: string }
+        supportRelation: { type: string, enum: [same, supports] }
+        supportMessage: { type: string }
+
     QimenBirthChartCell:
       type: object
       required:
@@ -2023,6 +2070,7 @@ components:
           jadeMaidens,
           threeMystics,
           fiveBattalions,
+          tigerDuns,
           birthChart,
           monthChart,
         ]
@@ -2055,6 +2103,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QimenFiveBattalion"
+        tigerDuns:
+          type: array
+          items:
+            $ref: "#/components/schemas/QimenTigerDun"
         birthChart:
           oneOf:
             - $ref: "#/components/schemas/QimenBirthChart"

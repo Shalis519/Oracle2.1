@@ -12,6 +12,7 @@ import type {
   QimenJadeMaiden,
   QimenThreeMystic,
   QimenFiveBattalion,
+  QimenTigerDun,
   QimenBirthChart,
   QimenMonthChart,
 } from "@workspace/api-client-react";
@@ -41,6 +42,7 @@ import {
   Info,
   Heart,
   Flame,
+  Shield,
 } from "lucide-react";
 
 const HOUR_RANGES: Record<string, string> = {
@@ -846,6 +848,73 @@ function FiveBattalionsCard({ hit }: { hit: QimenFiveBattalion }) {
   );
 }
 
+function TigerDunCard({ hit }: { hit: QimenTigerDun }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Card className="bg-card/40 backdrop-blur-md border-orange-400/30">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="font-serif text-lg">
+              Структура «Тигровый Дунь»
+            </CardTitle>
+            <span className="shrink-0 rounded-full bg-orange-400/15 px-3 py-1 text-xs font-medium text-orange-200">
+              {formatDate(hit.date)}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-start gap-2 text-sm">
+            <Target className="mt-0.5 h-4 w-4 shrink-0 text-orange-300/80" />
+            <p className="leading-relaxed">
+              <span className="font-medium">Цель:</span> {hit.goal}.
+            </p>
+          </div>
+          <div className="flex items-start gap-2 text-sm">
+            <Compass className="mt-0.5 h-4 w-4 shrink-0 text-orange-300/80" />
+            <p className="leading-relaxed">
+              Сектор{" "}
+              <span className="font-semibold text-orange-200">
+                {hit.direction}
+              </span>{" "}
+              в {hit.hourLabel}.
+            </p>
+          </div>
+          <p className="rounded-lg border border-orange-400/15 bg-orange-400/5 p-3 text-sm leading-relaxed text-orange-100/90">
+            {hit.supportMessage}
+          </p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
+              Вариант {hit.variant}
+            </span>
+            <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
+              Небо: {hit.heavenStemName}
+            </span>
+            {hit.earthStemRequired ? (
+              <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
+                Земля: {hit.earthStemName}
+              </span>
+            ) : (
+              <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
+                Земная тарелка: без условия
+              </span>
+            )}
+            <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
+              {hit.doorName}
+            </span>
+            <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
+              {hit.starName}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
   return (
     <motion.div
@@ -909,6 +978,7 @@ export default function QimenPage() {
   const [jadeInfoOpen, setJadeInfoOpen] = useState(false);
   const [threeMysticsInfoOpen, setThreeMysticsInfoOpen] = useState(false);
   const [fiveBattalionsInfoOpen, setFiveBattalionsInfoOpen] = useState(false);
+  const [tigerDunInfoOpen, setTigerDunInfoOpen] = useState(false);
   const [genInfoOpen, setGenInfoOpen] = useState(false);
   const { data, isLoading, isError } = useGetQimen({
     query: { retry: false, queryKey: getGetQimenQueryKey() },
@@ -952,6 +1022,7 @@ export default function QimenPage() {
   const jadeMaidens = data?.jadeMaidens ?? [];
   const threeMystics = data?.threeMystics ?? [];
   const fiveBattalions = data?.fiveBattalions ?? [];
+  const tigerDuns = data?.tigerDuns ?? [];
   const windowDays = data?.windowDays ?? 14;
 
   return (
@@ -1241,6 +1312,68 @@ export default function QimenPage() {
             {fiveBattalions.map((hit, index) => (
               <FiveBattalionsCard
                 key={`${hit.date}-${hit.hourBranch}-${hit.dom}-${index}`}
+                hit={hit}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {/* Тигровый Дунь: личная структура, показывается только после всех защитных проверок. */}
+      {tigerDuns.length > 0 ? (
+        <section className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Shield className="w-5 h-5 text-orange-300" />
+            <h2 className="text-xl font-serif font-semibold">
+              <Dialog
+                open={tigerDunInfoOpen}
+                onOpenChange={setTigerDunInfoOpen}
+              >
+                <DialogTrigger asChild>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-orange-300/60 underline-offset-4 hover:text-orange-200 transition-colors"
+                  >
+                    Тигровый Дунь
+                    <Info className="w-4 h-4 text-orange-300/80" />
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle className="font-serif flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-orange-300" />
+                      Тигровый Дунь
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-3 text-sm leading-relaxed">
+                    <p>
+                      Индивидуальная структура для преодоления препятствий,
+                      защиты интересов и важных переговоров.
+                    </p>
+                    <p>
+                      Карточка показывается только после проверки Пустоты, Фу
+                      Инь, часа пяти дисгармоний, годовой Жёлтой Пятёрки,
+                      личного столкновения дня и пользы дворца по НС вашего
+                      года.
+                    </p>
+                    <p>
+                      Положение Врат и дворцов берётся напрямую из формулы
+                      Тигрового Дунь, поэтому общий фильтр контроля Врат над
+                      дворцом к ней не применяется.
+                    </p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </h2>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Подходящие двухчасовки на ближайшие {windowDays}{" "}
+            {pluralDays(windowDays)}.
+          </p>
+          <div className="space-y-3">
+            {tigerDuns.map((hit, index) => (
+              <TigerDunCard
+                key={`${hit.date}-${hit.hourBranch}-${hit.dom}-${hit.variant}-${index}`}
                 hit={hit}
               />
             ))}

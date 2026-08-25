@@ -717,6 +717,28 @@ export const GetQimenResponse = zod.object({
   "doorName": zod.string(),
   "goal": zod.string()
 })),
+  "tigerDuns": zod.array(zod.object({
+  "date": zod.string(),
+  "dayGanZhi": zod.string(),
+  "hourBranch": zod.number(),
+  "hourLabel": zod.string(),
+  "direction": zod.string(),
+  "dir": zod.string(),
+  "dom": zod.string(),
+  "variant": zod.union([zod.literal(1),zod.literal(2),zod.literal(3),zod.literal(4)]),
+  "heavenStem": zod.enum(['乙', '庚', '辛']),
+  "heavenStemName": zod.string(),
+  "earthStem": zod.string(),
+  "earthStemName": zod.string(),
+  "earthStemRequired": zod.boolean(),
+  "door": zod.enum(['休门', '生门', '开门']),
+  "doorName": zod.string(),
+  "star": zod.string(),
+  "starName": zod.string(),
+  "goal": zod.string(),
+  "supportRelation": zod.enum(['same', 'supports']),
+  "supportMessage": zod.string()
+})),
   "birthChart": zod.union([zod.object({
   "hourGz": zod.string(),
   "ju": zod.number(),
