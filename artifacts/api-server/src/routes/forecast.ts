@@ -45,7 +45,8 @@ async function cleanupOldForecasts(userId: number): Promise<void> {
   // осиротевшие записи и не нарушать будущие внешние ограничения целостности.
   await db.delete(feedbackTable).where(
     sql`${feedbackTable.userId} = ${userId} AND ${feedbackTable.forecastId} IN (
-      SELECT ${forecastsTable.id} FROM ${forecastsTable}
+      SELECT ${forecastsTable.id}
+      FROM ${forecastsTable}
       WHERE ${forecastsTable.userId} = ${userId}
         AND ${forecastsTable.date} < ${cutoffDate}
     )`,
@@ -265,7 +266,6 @@ router.post(
       res.status(400).json({ error: params.error.message });
       return;
     }
-
     const body = SubmitFeedbackBody.safeParse(req.body);
     if (!body.success) {
       res.status(400).json({ error: body.error.message });
@@ -362,7 +362,7 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
   const [recentDream] = await db
     .select()
     .from(dreamsTable)
-    .where(eq(dreamsTable.userId, req.localUser!.id))
+    .where(eq(dreamsTable.userId, user.id))
     .orderBy(desc(dreamsTable.createdAt))
     .limit(1);
 
@@ -375,7 +375,8 @@ router.get("/dashboard", requireAuth, async (req, res): Promise<void> => {
       upcomingBirthdaysCount,
       waterProgress: water?.actualValue ?? 0,
       waterTarget: water?.targetValue ?? 8,
-      stepsProgress: steps?.actualValue ?? 10000,
+      stepsProgress: steps?.actualValue ?? 0,
+      stepsTarget: steps?.targetValue ?? 10000,
       recentDream: recentDream
         ? {
             id: recentDream.id,
