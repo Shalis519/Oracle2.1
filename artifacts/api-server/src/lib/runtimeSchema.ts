@@ -8,6 +8,44 @@ import { LONG_TERM_TRANSIT_CARD_SEEDS } from "./longTermTransitCardSeeds";
  * workflow. Every statement is idempotent and safe to run on every API start.
  */
 export async function ensureRuntimeSchema(): Promise<void> {
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS psychology_practices (
+      id SERIAL PRIMARY KEY,
+      slug TEXT NOT NULL UNIQUE,
+      title TEXT NOT NULL,
+      summary TEXT NOT NULL,
+      outcome TEXT NOT NULL,
+      duration_minutes INTEGER NOT NULL DEFAULT 5,
+      steps JSONB NOT NULL DEFAULT '[]'::jsonb,
+      safety_note TEXT NOT NULL,
+      source_note TEXT,
+      is_active BOOLEAN NOT NULL DEFAULT TRUE,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS psychology_reflections (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      practice_id INTEGER NOT NULL REFERENCES psychology_practices(id),
+      answers JSONB NOT NULL DEFAULT '{}'::jsonb,
+      next_step TEXT,
+      deleted_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+  await db.execute(sql`
+    ALTER TABLE psychology_reflections
+      ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ
+  `);
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS psychology_reflections_user_updated_idx
+      ON psychology_reflections (user_id, updated_at DESC)
+  `);
+
   // Forecast versioning was introduced before every deployment environment
   // consistently applied the Drizzle schema. Keep the API self-healing on
   // Render, where the free plan does not provide a shell for drizzle-kit push.
@@ -389,7 +427,9 @@ async function ensureMoneyStudioSeeds(): Promise<void> {
   }
 
   for (const houseKey of ["house:2", "house:5", "house:8"]) {
-    const houseSeed = MONEY_STUDIO_SEEDS.find((seed) => seed.context === "house" && seed.key === houseKey);
+    const houseSeed = MONEY_STUDIO_SEEDS.find(
+      (seed) => seed.context === "house" && seed.key === houseKey,
+    );
     if (!houseSeed) continue;
 
     await db.execute(sql`

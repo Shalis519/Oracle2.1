@@ -601,6 +601,157 @@ paths:
         "204":
           description: Deleted
 
+  /psychology/practices:
+    get:
+      operationId: listPsychologyPractices
+      tags: [psychology]
+      summary: List published psychology practices
+      responses:
+        "200":
+          description: Published practices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PsychologyPractice"
+
+  /psychology/reflections:
+    get:
+      operationId: listPsychologyReflections
+      tags: [psychology]
+      summary: List the current user's psychology reflections
+      responses:
+        "200":
+          description: Private reflections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PsychologyReflection"
+    post:
+      operationId: createPsychologyReflection
+      tags: [psychology]
+      summary: Save a private psychology reflection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PsychologyReflectionInput"
+      responses:
+        "201":
+          description: Created reflection
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PsychologyReflection"
+
+  /psychology/reflections/{id}:
+    put:
+      operationId: updatePsychologyReflection
+      tags: [psychology]
+      summary: Update a private psychology reflection
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PsychologyReflectionInput"
+      responses:
+        "200":
+          description: Updated reflection
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PsychologyReflection"
+    delete:
+      operationId: deletePsychologyReflection
+      tags: [psychology]
+      summary: Delete a private psychology reflection
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  /admin/psychology/practices:
+    get:
+      operationId: listAdminPsychologyPractices
+      tags: [admin]
+      summary: List all psychology practices for administration
+      responses:
+        "200":
+          description: Practices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PsychologyPractice"
+    post:
+      operationId: createAdminPsychologyPractice
+      tags: [admin]
+      summary: Create a psychology practice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PsychologyPracticeInput"
+      responses:
+        "201":
+          description: Created practice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PsychologyPractice"
+
+  /admin/psychology/practices/{id}:
+    put:
+      operationId: updateAdminPsychologyPractice
+      tags: [admin]
+      summary: Update a psychology practice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PsychologyPracticeInput"
+      responses:
+        "200":
+          description: Updated practice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PsychologyPractice"
+    delete:
+      operationId: deleteAdminPsychologyPractice
+      tags: [admin]
+      summary: Delete a psychology practice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
   /tasks:
     get:
       operationId: listTasks
@@ -2798,6 +2949,105 @@ components:
           type: integer
         connectionType:
           type: string
+
+    PsychologyPracticeStep:
+      type: object
+      required: [id, title, instruction]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        instruction: { type: string }
+        fieldLabel: { type: [string, "null"] }
+        fieldPlaceholder: { type: [string, "null"] }
+        optional: { type: boolean }
+
+    PsychologyPractice:
+      type: object
+      required:
+        [
+          id,
+          slug,
+          title,
+          summary,
+          outcome,
+          durationMinutes,
+          steps,
+          safetyNote,
+          isActive,
+          sortOrder,
+          createdAt,
+          updatedAt,
+        ]
+      properties:
+        id: { type: integer }
+        slug: { type: string }
+        title: { type: string }
+        summary: { type: string }
+        outcome: { type: string }
+        durationMinutes: { type: integer }
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/PsychologyPracticeStep"
+        safetyNote: { type: string }
+        sourceNote: { type: [string, "null"] }
+        isActive: { type: boolean }
+        sortOrder: { type: integer }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+
+    PsychologyPracticeInput:
+      type: object
+      required:
+        [
+          slug,
+          title,
+          summary,
+          outcome,
+          durationMinutes,
+          steps,
+          safetyNote,
+          isActive,
+          sortOrder,
+        ]
+      properties:
+        slug: { type: string }
+        title: { type: string }
+        summary: { type: string }
+        outcome: { type: string }
+        durationMinutes: { type: integer }
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/PsychologyPracticeStep"
+        safetyNote: { type: string }
+        sourceNote: { type: [string, "null"] }
+        isActive: { type: boolean }
+        sortOrder: { type: integer }
+
+    PsychologyReflection:
+      type: object
+      required: [id, practiceId, practiceTitle, answers, createdAt, updatedAt]
+      properties:
+        id: { type: integer }
+        practiceId: { type: integer }
+        practiceTitle: { type: string }
+        answers:
+          type: object
+          additionalProperties: { type: string }
+        nextStep: { type: [string, "null"] }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+
+    PsychologyReflectionInput:
+      type: object
+      required: [practiceId, answers]
+      properties:
+        practiceId: { type: integer }
+        answers:
+          type: object
+          additionalProperties: { type: string }
+        nextStep: { type: [string, "null"] }
 
     Dream:
       type: object

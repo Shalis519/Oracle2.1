@@ -1456,6 +1456,239 @@ export const DeleteDreamResponse = zod.void()
 
 
 /**
+ * @summary List published psychology practices
+ */
+export const ListPsychologyPracticesResponseItem = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "title": zod.string(),
+  "summary": zod.string(),
+  "outcome": zod.string(),
+  "durationMinutes": zod.number(),
+  "steps": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "instruction": zod.string(),
+  "fieldLabel": zod.string().nullish(),
+  "fieldPlaceholder": zod.string().nullish(),
+  "optional": zod.boolean().optional()
+})),
+  "safetyNote": zod.string(),
+  "sourceNote": zod.string().nullish(),
+  "isActive": zod.boolean(),
+  "sortOrder": zod.number(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+export const ListPsychologyPracticesResponse = zod.array(ListPsychologyPracticesResponseItem)
+
+
+/**
+ * @summary List the current user's psychology reflections
+ */
+export const ListPsychologyReflectionsResponseItem = zod.object({
+  "id": zod.number(),
+  "practiceId": zod.number(),
+  "practiceTitle": zod.string(),
+  "answers": zod.record(zod.string(), zod.string()),
+  "nextStep": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+export const ListPsychologyReflectionsResponse = zod.array(ListPsychologyReflectionsResponseItem)
+
+
+/**
+ * @summary Save a private psychology reflection
+ */
+export const CreatePsychologyReflectionBody = zod.object({
+  "practiceId": zod.number(),
+  "answers": zod.record(zod.string(), zod.string()),
+  "nextStep": zod.string().nullish()
+})
+
+export const CreatePsychologyReflectionResponse = zod.object({
+  "id": zod.number(),
+  "practiceId": zod.number(),
+  "practiceTitle": zod.string(),
+  "answers": zod.record(zod.string(), zod.string()),
+  "nextStep": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Update a private psychology reflection
+ */
+export const UpdatePsychologyReflectionParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdatePsychologyReflectionBody = zod.object({
+  "practiceId": zod.number(),
+  "answers": zod.record(zod.string(), zod.string()),
+  "nextStep": zod.string().nullish()
+})
+
+export const UpdatePsychologyReflectionResponse = zod.object({
+  "id": zod.number(),
+  "practiceId": zod.number(),
+  "practiceTitle": zod.string(),
+  "answers": zod.record(zod.string(), zod.string()),
+  "nextStep": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Delete a private psychology reflection
+ */
+export const DeletePsychologyReflectionParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeletePsychologyReflectionResponse = zod.void()
+
+
+/**
+ * @summary List all psychology practices for administration
+ */
+export const ListAdminPsychologyPracticesResponseItem = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "title": zod.string(),
+  "summary": zod.string(),
+  "outcome": zod.string(),
+  "durationMinutes": zod.number(),
+  "steps": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "instruction": zod.string(),
+  "fieldLabel": zod.string().nullish(),
+  "fieldPlaceholder": zod.string().nullish(),
+  "optional": zod.boolean().optional()
+})),
+  "safetyNote": zod.string(),
+  "sourceNote": zod.string().nullish(),
+  "isActive": zod.boolean(),
+  "sortOrder": zod.number(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+export const ListAdminPsychologyPracticesResponse = zod.array(ListAdminPsychologyPracticesResponseItem)
+
+
+/**
+ * @summary Create a psychology practice
+ */
+export const CreateAdminPsychologyPracticeBody = zod.object({
+  "slug": zod.string(),
+  "title": zod.string(),
+  "summary": zod.string(),
+  "outcome": zod.string(),
+  "durationMinutes": zod.number(),
+  "steps": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "instruction": zod.string(),
+  "fieldLabel": zod.string().nullish(),
+  "fieldPlaceholder": zod.string().nullish(),
+  "optional": zod.boolean().optional()
+})),
+  "safetyNote": zod.string(),
+  "sourceNote": zod.string().nullish(),
+  "isActive": zod.boolean(),
+  "sortOrder": zod.number()
+})
+
+export const CreateAdminPsychologyPracticeResponse = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "title": zod.string(),
+  "summary": zod.string(),
+  "outcome": zod.string(),
+  "durationMinutes": zod.number(),
+  "steps": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "instruction": zod.string(),
+  "fieldLabel": zod.string().nullish(),
+  "fieldPlaceholder": zod.string().nullish(),
+  "optional": zod.boolean().optional()
+})),
+  "safetyNote": zod.string(),
+  "sourceNote": zod.string().nullish(),
+  "isActive": zod.boolean(),
+  "sortOrder": zod.number(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Update a psychology practice
+ */
+export const UpdateAdminPsychologyPracticeParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateAdminPsychologyPracticeBody = zod.object({
+  "slug": zod.string(),
+  "title": zod.string(),
+  "summary": zod.string(),
+  "outcome": zod.string(),
+  "durationMinutes": zod.number(),
+  "steps": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "instruction": zod.string(),
+  "fieldLabel": zod.string().nullish(),
+  "fieldPlaceholder": zod.string().nullish(),
+  "optional": zod.boolean().optional()
+})),
+  "safetyNote": zod.string(),
+  "sourceNote": zod.string().nullish(),
+  "isActive": zod.boolean(),
+  "sortOrder": zod.number()
+})
+
+export const UpdateAdminPsychologyPracticeResponse = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "title": zod.string(),
+  "summary": zod.string(),
+  "outcome": zod.string(),
+  "durationMinutes": zod.number(),
+  "steps": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "instruction": zod.string(),
+  "fieldLabel": zod.string().nullish(),
+  "fieldPlaceholder": zod.string().nullish(),
+  "optional": zod.boolean().optional()
+})),
+  "safetyNote": zod.string(),
+  "sourceNote": zod.string().nullish(),
+  "isActive": zod.boolean(),
+  "sortOrder": zod.number(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Delete a psychology practice
+ */
+export const DeleteAdminPsychologyPracticeParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteAdminPsychologyPracticeResponse = zod.void()
+
+
+/**
  * @summary List habit tasks for a date
  */
 export const ListTasksQueryParams = zod.object({

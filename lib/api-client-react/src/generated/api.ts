@@ -67,6 +67,10 @@ import type {
   PredictiveFormulaInput,
   Profile,
   ProfileInput,
+  PsychologyPractice,
+  PsychologyPracticeInput,
+  PsychologyReflection,
+  PsychologyReflectionInput,
   QimenSummary,
   SearchCitiesParams,
   SynastryCalculationResponse,
@@ -2628,6 +2632,659 @@ export const useDeleteDream = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getDeleteDreamMutationOptions(options));
+    }
+
+export const getListPsychologyPracticesUrl = () => {
+
+
+
+
+  return `/api/psychology/practices`
+}
+
+/**
+ * @summary List published psychology practices
+ */
+export const listPsychologyPractices = async ( options?: RequestInit): Promise<PsychologyPractice[]> => {
+
+  return customFetch<PsychologyPractice[]>(getListPsychologyPracticesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListPsychologyPracticesQueryKey = () => {
+    return [
+    `/api/psychology/practices`
+    ] as const;
+    }
+
+
+export const getListPsychologyPracticesQueryOptions = <TData = Awaited<ReturnType<typeof listPsychologyPractices>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPsychologyPractices>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListPsychologyPracticesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPsychologyPractices>>> = ({ signal }) => listPsychologyPractices({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPsychologyPractices>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListPsychologyPracticesQueryResult = NonNullable<Awaited<ReturnType<typeof listPsychologyPractices>>>
+export type ListPsychologyPracticesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List published psychology practices
+ */
+
+export function useListPsychologyPractices<TData = Awaited<ReturnType<typeof listPsychologyPractices>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPsychologyPractices>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListPsychologyPracticesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getListPsychologyReflectionsUrl = () => {
+
+
+
+
+  return `/api/psychology/reflections`
+}
+
+/**
+ * @summary List the current user's psychology reflections
+ */
+export const listPsychologyReflections = async ( options?: RequestInit): Promise<PsychologyReflection[]> => {
+
+  return customFetch<PsychologyReflection[]>(getListPsychologyReflectionsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListPsychologyReflectionsQueryKey = () => {
+    return [
+    `/api/psychology/reflections`
+    ] as const;
+    }
+
+
+export const getListPsychologyReflectionsQueryOptions = <TData = Awaited<ReturnType<typeof listPsychologyReflections>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPsychologyReflections>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListPsychologyReflectionsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPsychologyReflections>>> = ({ signal }) => listPsychologyReflections({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPsychologyReflections>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListPsychologyReflectionsQueryResult = NonNullable<Awaited<ReturnType<typeof listPsychologyReflections>>>
+export type ListPsychologyReflectionsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List the current user's psychology reflections
+ */
+
+export function useListPsychologyReflections<TData = Awaited<ReturnType<typeof listPsychologyReflections>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPsychologyReflections>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListPsychologyReflectionsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreatePsychologyReflectionUrl = () => {
+
+
+
+
+  return `/api/psychology/reflections`
+}
+
+/**
+ * @summary Save a private psychology reflection
+ */
+export const createPsychologyReflection = async (psychologyReflectionInput: PsychologyReflectionInput, options?: RequestInit): Promise<PsychologyReflection> => {
+
+  return customFetch<PsychologyReflection>(getCreatePsychologyReflectionUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(psychologyReflectionInput)
+  }
+);}
+
+
+
+
+export const getCreatePsychologyReflectionMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPsychologyReflection>>, TError,{data: BodyType<PsychologyReflectionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createPsychologyReflection>>, TError,{data: BodyType<PsychologyReflectionInput>}, TContext> => {
+
+const mutationKey = ['createPsychologyReflection'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPsychologyReflection>>, {data: BodyType<PsychologyReflectionInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createPsychologyReflection(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreatePsychologyReflectionMutationResult = NonNullable<Awaited<ReturnType<typeof createPsychologyReflection>>>
+    export type CreatePsychologyReflectionMutationBody = BodyType<PsychologyReflectionInput>
+    export type CreatePsychologyReflectionMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Save a private psychology reflection
+ */
+export const useCreatePsychologyReflection = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPsychologyReflection>>, TError,{data: BodyType<PsychologyReflectionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createPsychologyReflection>>,
+        TError,
+        {data: BodyType<PsychologyReflectionInput>},
+        TContext
+      > => {
+      return useMutation(getCreatePsychologyReflectionMutationOptions(options));
+    }
+
+export const getUpdatePsychologyReflectionUrl = (id: number,) => {
+
+
+
+
+  return `/api/psychology/reflections/${id}`
+}
+
+/**
+ * @summary Update a private psychology reflection
+ */
+export const updatePsychologyReflection = async (id: number,
+    psychologyReflectionInput: PsychologyReflectionInput, options?: RequestInit): Promise<PsychologyReflection> => {
+
+  return customFetch<PsychologyReflection>(getUpdatePsychologyReflectionUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(psychologyReflectionInput)
+  }
+);}
+
+
+
+
+export const getUpdatePsychologyReflectionMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePsychologyReflection>>, TError,{id: number;data: BodyType<PsychologyReflectionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updatePsychologyReflection>>, TError,{id: number;data: BodyType<PsychologyReflectionInput>}, TContext> => {
+
+const mutationKey = ['updatePsychologyReflection'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePsychologyReflection>>, {id: number;data: BodyType<PsychologyReflectionInput>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updatePsychologyReflection(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdatePsychologyReflectionMutationResult = NonNullable<Awaited<ReturnType<typeof updatePsychologyReflection>>>
+    export type UpdatePsychologyReflectionMutationBody = BodyType<PsychologyReflectionInput>
+    export type UpdatePsychologyReflectionMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Update a private psychology reflection
+ */
+export const useUpdatePsychologyReflection = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePsychologyReflection>>, TError,{id: number;data: BodyType<PsychologyReflectionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updatePsychologyReflection>>,
+        TError,
+        {id: number;data: BodyType<PsychologyReflectionInput>},
+        TContext
+      > => {
+      return useMutation(getUpdatePsychologyReflectionMutationOptions(options));
+    }
+
+export const getDeletePsychologyReflectionUrl = (id: number,) => {
+
+
+
+
+  return `/api/psychology/reflections/${id}`
+}
+
+/**
+ * @summary Delete a private psychology reflection
+ */
+export const deletePsychologyReflection = async (id: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getDeletePsychologyReflectionUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeletePsychologyReflectionMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePsychologyReflection>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deletePsychologyReflection>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deletePsychologyReflection'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePsychologyReflection>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deletePsychologyReflection(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeletePsychologyReflectionMutationResult = NonNullable<Awaited<ReturnType<typeof deletePsychologyReflection>>>
+
+    export type DeletePsychologyReflectionMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Delete a private psychology reflection
+ */
+export const useDeletePsychologyReflection = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePsychologyReflection>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deletePsychologyReflection>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeletePsychologyReflectionMutationOptions(options));
+    }
+
+export const getListAdminPsychologyPracticesUrl = () => {
+
+
+
+
+  return `/api/admin/psychology/practices`
+}
+
+/**
+ * @summary List all psychology practices for administration
+ */
+export const listAdminPsychologyPractices = async ( options?: RequestInit): Promise<PsychologyPractice[]> => {
+
+  return customFetch<PsychologyPractice[]>(getListAdminPsychologyPracticesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListAdminPsychologyPracticesQueryKey = () => {
+    return [
+    `/api/admin/psychology/practices`
+    ] as const;
+    }
+
+
+export const getListAdminPsychologyPracticesQueryOptions = <TData = Awaited<ReturnType<typeof listAdminPsychologyPractices>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAdminPsychologyPractices>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListAdminPsychologyPracticesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminPsychologyPractices>>> = ({ signal }) => listAdminPsychologyPractices({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminPsychologyPractices>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListAdminPsychologyPracticesQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminPsychologyPractices>>>
+export type ListAdminPsychologyPracticesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List all psychology practices for administration
+ */
+
+export function useListAdminPsychologyPractices<TData = Awaited<ReturnType<typeof listAdminPsychologyPractices>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listAdminPsychologyPractices>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListAdminPsychologyPracticesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateAdminPsychologyPracticeUrl = () => {
+
+
+
+
+  return `/api/admin/psychology/practices`
+}
+
+/**
+ * @summary Create a psychology practice
+ */
+export const createAdminPsychologyPractice = async (psychologyPracticeInput: PsychologyPracticeInput, options?: RequestInit): Promise<PsychologyPractice> => {
+
+  return customFetch<PsychologyPractice>(getCreateAdminPsychologyPracticeUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(psychologyPracticeInput)
+  }
+);}
+
+
+
+
+export const getCreateAdminPsychologyPracticeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminPsychologyPractice>>, TError,{data: BodyType<PsychologyPracticeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createAdminPsychologyPractice>>, TError,{data: BodyType<PsychologyPracticeInput>}, TContext> => {
+
+const mutationKey = ['createAdminPsychologyPractice'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createAdminPsychologyPractice>>, {data: BodyType<PsychologyPracticeInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createAdminPsychologyPractice(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateAdminPsychologyPracticeMutationResult = NonNullable<Awaited<ReturnType<typeof createAdminPsychologyPractice>>>
+    export type CreateAdminPsychologyPracticeMutationBody = BodyType<PsychologyPracticeInput>
+    export type CreateAdminPsychologyPracticeMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Create a psychology practice
+ */
+export const useCreateAdminPsychologyPractice = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminPsychologyPractice>>, TError,{data: BodyType<PsychologyPracticeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createAdminPsychologyPractice>>,
+        TError,
+        {data: BodyType<PsychologyPracticeInput>},
+        TContext
+      > => {
+      return useMutation(getCreateAdminPsychologyPracticeMutationOptions(options));
+    }
+
+export const getUpdateAdminPsychologyPracticeUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/psychology/practices/${id}`
+}
+
+/**
+ * @summary Update a psychology practice
+ */
+export const updateAdminPsychologyPractice = async (id: number,
+    psychologyPracticeInput: PsychologyPracticeInput, options?: RequestInit): Promise<PsychologyPractice> => {
+
+  return customFetch<PsychologyPractice>(getUpdateAdminPsychologyPracticeUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(psychologyPracticeInput)
+  }
+);}
+
+
+
+
+export const getUpdateAdminPsychologyPracticeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminPsychologyPractice>>, TError,{id: number;data: BodyType<PsychologyPracticeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAdminPsychologyPractice>>, TError,{id: number;data: BodyType<PsychologyPracticeInput>}, TContext> => {
+
+const mutationKey = ['updateAdminPsychologyPractice'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAdminPsychologyPractice>>, {id: number;data: BodyType<PsychologyPracticeInput>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateAdminPsychologyPractice(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAdminPsychologyPracticeMutationResult = NonNullable<Awaited<ReturnType<typeof updateAdminPsychologyPractice>>>
+    export type UpdateAdminPsychologyPracticeMutationBody = BodyType<PsychologyPracticeInput>
+    export type UpdateAdminPsychologyPracticeMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Update a psychology practice
+ */
+export const useUpdateAdminPsychologyPractice = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminPsychologyPractice>>, TError,{id: number;data: BodyType<PsychologyPracticeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateAdminPsychologyPractice>>,
+        TError,
+        {id: number;data: BodyType<PsychologyPracticeInput>},
+        TContext
+      > => {
+      return useMutation(getUpdateAdminPsychologyPracticeMutationOptions(options));
+    }
+
+export const getDeleteAdminPsychologyPracticeUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/psychology/practices/${id}`
+}
+
+/**
+ * @summary Delete a psychology practice
+ */
+export const deleteAdminPsychologyPractice = async (id: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getDeleteAdminPsychologyPracticeUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteAdminPsychologyPracticeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAdminPsychologyPractice>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteAdminPsychologyPractice>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteAdminPsychologyPractice'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAdminPsychologyPractice>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteAdminPsychologyPractice(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteAdminPsychologyPracticeMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAdminPsychologyPractice>>>
+
+    export type DeleteAdminPsychologyPracticeMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Delete a psychology practice
+ */
+export const useDeleteAdminPsychologyPractice = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAdminPsychologyPractice>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteAdminPsychologyPractice>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteAdminPsychologyPracticeMutationOptions(options));
     }
 
 export const getListTasksUrl = (params?: ListTasksParams,) => {

@@ -56,6 +56,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     { href: "/tarot", label: "Таро", icon: Star },
     { href: "/dreams", label: "Сны и сонник", icon: Moon },
     { href: "/journal", label: "Мой дневник", icon: BookHeart },
+    { href: "/psychology", label: "Психология", icon: BrainCircuit },
     { href: "/contacts", label: "Контакты", icon: Users },
     { href: "/habits", label: "Трекер привычек", icon: ListTodo },
     { href: "/travel", label: "Карта путешествий", icon: MapIcon },

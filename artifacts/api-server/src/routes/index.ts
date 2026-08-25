@@ -21,6 +21,8 @@ import adminSynastryRouter from "./adminSynastry";
 import adminLunarRouter from "./adminLunar";
 import adminForecastTemplatesRouter from "./adminForecastTemplates";
 import adminLongTermForecastsRouter from "./adminLongTermForecasts";
+import psychologyRouter from "./psychology";
+import adminPsychologyRouter from "./adminPsychology";
 
 const router: IRouter = Router();
 
@@ -37,6 +39,7 @@ router.use(tasksRouter);
 router.use(travelRouter);
 router.use(chatRouter);
 router.use(journalRouter);
+router.use(psychologyRouter);
 router.use(astrologyRouter);
 router.use(notepadRouter);
 router.use(adminOntologyRouter);
@@ -46,5 +49,6 @@ router.use(adminSynastryRouter);
 router.use(adminLunarRouter);
 router.use(adminForecastTemplatesRouter);
 router.use(adminLongTermForecastsRouter);
+router.use(adminPsychologyRouter);
 
 export default router;

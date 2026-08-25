@@ -1035,6 +1035,70 @@ export interface FamilyConnectionInput {
   connectionType: string;
 }
 
+export interface PsychologyPracticeStep {
+  id: string;
+  title: string;
+  instruction: string;
+  /** @nullable */
+  fieldLabel?: string | null;
+  /** @nullable */
+  fieldPlaceholder?: string | null;
+  optional?: boolean;
+}
+
+export interface PsychologyPractice {
+  id: number;
+  slug: string;
+  title: string;
+  summary: string;
+  outcome: string;
+  durationMinutes: number;
+  steps: PsychologyPracticeStep[];
+  safetyNote: string;
+  /** @nullable */
+  sourceNote?: string | null;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PsychologyPracticeInput {
+  slug: string;
+  title: string;
+  summary: string;
+  outcome: string;
+  durationMinutes: number;
+  steps: PsychologyPracticeStep[];
+  safetyNote: string;
+  /** @nullable */
+  sourceNote?: string | null;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export type PsychologyReflectionAnswers = {[key: string]: string};
+
+export interface PsychologyReflection {
+  id: number;
+  practiceId: number;
+  practiceTitle: string;
+  answers: PsychologyReflectionAnswers;
+  /** @nullable */
+  nextStep?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type PsychologyReflectionInputAnswers = {[key: string]: string};
+
+export interface PsychologyReflectionInput {
+  practiceId: number;
+  answers: PsychologyReflectionInputAnswers;
+  /** @nullable */
+  nextStep?: string | null;
+}
+
 export interface Dream {
   id: number;
   date: string;

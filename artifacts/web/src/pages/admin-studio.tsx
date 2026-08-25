@@ -51,6 +51,7 @@ import {
   type City,
 } from "@workspace/api-client-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { PsychologyPracticeAdminPanel } from "@/components/admin/psychology-practice-admin";
 
 interface Entity {
   id: number;
@@ -1811,6 +1812,7 @@ export default function AdminStudioPage() {
           <TabsTrigger value="synastry" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><Link2 className="w-4 h-4 mr-2" />Общая синастрия</TabsTrigger>
           <TabsTrigger value="lunar" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><span className="mr-2">☾</span>Лунар</TabsTrigger>
           <TabsTrigger value="forecastTemplates" onClick={() => setForecastTemplateFilter("all")} className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><BrainCircuit className="w-4 h-4 mr-2" />Шаблоны прогноза</TabsTrigger>
+          <TabsTrigger value="psychology" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><BrainCircuit className="w-4 h-4 mr-2" />Психология</TabsTrigger>
           <TabsTrigger value="money" onClick={() => setForecastTemplateFilter("money")} className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><Coins className="w-4 h-4 mr-2" />Денежная формула</TabsTrigger>
           <TabsTrigger value="longTerm" className="rounded-md border border-border bg-background/40 px-3 py-2 shadow-sm data-[state=active]:border-primary data-[state=active]:bg-primary/15 data-[state=active]:text-primary"><RefreshCw className="w-4 h-4 mr-2" />Долгосрочный прогноз</TabsTrigger>
         </TabsList>
@@ -2241,6 +2243,10 @@ export default function AdminStudioPage() {
             </DialogContent>
           </Dialog>
         </TabsContent>
+        <TabsContent value="psychology" className="space-y-6">
+          <PsychologyPracticeAdminPanel />
+        </TabsContent>
+
         <TabsContent value="longTerm" className="space-y-6">
           <Card>
             <CardHeader>

@@ -24,6 +24,7 @@ const HabitsPage = lazy(() => import("./pages/habits"));
 const TravelPage = lazy(() => import("./pages/travel"));
 const TarotPage = lazy(() => import("./pages/tarot"));
 const JournalPage = lazy(() => import("./pages/journal"));
+const PsychologyPage = lazy(() => import("./pages/psychology"));
 import PrivacyPage from "./pages/privacy";
 const AdminStudioPage = lazy(() => import("./pages/admin-studio"));
 import NotFound from "./pages/not-found";
@@ -257,6 +258,7 @@ function ClerkProviderWithRoutes() {
             <Route path="/contacts" component={() => <ProtectedRoute component={ContactsPage} />} />
             <Route path="/dreams" component={() => <ProtectedRoute component={DreamsPage} />} />
             <Route path="/journal" component={() => <ProtectedRoute component={JournalPage} />} />
+            <Route path="/psychology" component={() => <ProtectedRoute component={PsychologyPage} />} />
             <Route path="/admin/studio" component={() => <ProtectedRoute component={AdminStudioPage} />} />
             <Route path="/habits" component={() => <ProtectedRoute component={HabitsPage} />} />
             <Route path="/travel" component={() => <ProtectedRoute component={TravelPage} />} />
