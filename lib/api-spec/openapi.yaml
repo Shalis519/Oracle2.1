@@ -1689,6 +1689,10 @@ components:
           type: string
         note:
           type: ["string", "null"]
+        supportRelation:
+          type: string
+          enum: [same, supports]
+        supportMessage: { type: string }
 
     JiFuWish:
       type: object

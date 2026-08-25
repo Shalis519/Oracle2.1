@@ -5,6 +5,7 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { QimenStructureSupportRelation } from './qimenStructureSupportRelation';
 
 export interface QimenStructure {
   date: string;
@@ -26,4 +27,6 @@ export interface QimenStructure {
   result: string;
   /** @nullable */
   note?: string | null;
+  supportRelation?: QimenStructureSupportRelation;
+  supportMessage?: string;
 }

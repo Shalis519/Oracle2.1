@@ -498,6 +498,14 @@ export interface PeachBlossomSummary {
   activation: PeachActivation;
 }
 
+export type QimenStructureSupportRelation = typeof QimenStructureSupportRelation[keyof typeof QimenStructureSupportRelation];
+
+
+export const QimenStructureSupportRelation = {
+  same: 'same',
+  supports: 'supports',
+} as const;
+
 export interface QimenStructure {
   date: string;
   dayGanZhi: string;
@@ -518,6 +526,8 @@ export interface QimenStructure {
   result: string;
   /** @nullable */
   note?: string | null;
+  supportRelation?: QimenStructureSupportRelation;
+  supportMessage?: string;
 }
 
 export interface JiFuWish {

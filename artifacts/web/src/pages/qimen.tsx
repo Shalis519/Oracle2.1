@@ -357,6 +357,11 @@ function StructureCard({ s }: { s: QimenStructure }) {
               в {s.hourLabel}.
             </p>
           </div>
+          {s.supportMessage ? (
+            <p className="rounded-lg border border-emerald-500/15 bg-emerald-500/5 p-3 text-sm leading-relaxed text-emerald-100/90">
+              {s.supportMessage}
+            </p>
+          ) : null}
           <div className="flex items-start gap-2 text-sm">
             <Sparkles className="w-4 h-4 mt-0.5 shrink-0 text-emerald-400/80" />
             <p className="leading-relaxed">

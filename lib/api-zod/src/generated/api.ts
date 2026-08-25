@@ -637,7 +637,9 @@ export const GetQimenResponse = zod.object({
   "activation": zod.string(),
   "signs": zod.array(zod.string()),
   "result": zod.string(),
-  "note": zod.string().nullish()
+  "note": zod.string().nullish(),
+  "supportRelation": zod.enum(['same', 'supports']).optional(),
+  "supportMessage": zod.string().optional()
 })),
   "jiFuWishes": zod.array(zod.object({
   "date": zod.string(),

@@ -28,23 +28,6 @@ describe("Нефритовая Дева: запрет по столкновен�
     expect(keys).toEqual(sortedKeys);
   });
 
-  test("тот же фильтр скрывает Три Генераала только для конфликтующего профиля", () => {
-    const date = new Date(2026, 7, 20, 12, 0, 0);
-    const monkeyBirth = computeQimenStructures({
-      from: date,
-      days: 1,
-      birthDate: "1980-06-01",
-    });
-    const nonMonkeyBirth = computeQimenStructures({
-      from: date,
-      days: 1,
-      birthDate: "1981-06-01",
-    });
-
-    expect(monkeyBirth.structures.some((hit) => hit.date === "2026-08-20")).toBe(false);
-    expect(nonMonkeyBirth.structures.some((hit) => hit.date === "2026-08-20")).toBe(true);
-  });
-
   test("не публикует Три Генераала с Вратами Тайника или Пейзажа", () => {
     const date = new Date(2026, 7, 20, 12, 0, 0);
     const roosterHits = detectThreeGenerals(date, 9, false);

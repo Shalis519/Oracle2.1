@@ -65,6 +65,7 @@ export interface GeneralsHit {
   signs: string[];
   result: string;
   note?: string;
+  support?: SupportCheck;
 }
 
 export interface ThreeMysticsHit {
@@ -121,7 +122,13 @@ export function detectFlyingBirdFallsIntoCave(date: Date, hourBranch: number, la
   return hits;
 }
 
-export function detectThreeGenerals(date: Date, hourBranch: number, lateZi = false): GeneralsHit[] {
+export function detectThreeGenerals(
+  date: Date,
+  hourBranch: number,
+  lateZi = false,
+  birthYearStem?: number,
+  representativeStem?: number,
+): GeneralsHit[] {
   const chart = buildChart(date, hourBranch, lateZi);
   if (chart.fuYin) return []; // Избегаем Фу Инь
 
@@ -145,6 +152,10 @@ export function detectThreeGenerals(date: Date, hourBranch: number, lateZi = fal
 
     const row = THREE_GENERALS_TABLE[wonder as "乙" | "丙" | "丁"][p];
     if (!row) continue;
+    const support = birthYearStem === undefined
+      ? undefined
+      : evaluateSupportPalace(chart, p, birthYearStem, representativeStem);
+    if (birthYearStem !== undefined && (!support || !support.supported)) continue;
 
     hits.push({
       structure: "three_generals",
@@ -160,6 +171,7 @@ export function detectThreeGenerals(date: Date, hourBranch: number, lateZi = fal
       signs: row.signs,
       result: row.result,
       note: row.note,
+      support: support ?? undefined,
     });
   }
   return hits;

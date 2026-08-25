@@ -44,6 +44,8 @@ export interface QimenStructure {
   signs: string[];
   result: string;
   note?: string;
+  supportRelation?: "same" | "supports";
+  supportMessage?: string;
 }
 
 export interface QimenJadeMaiden {
@@ -449,7 +451,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       const slotDay = dayInfo(slotDate);
       const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
       const h = slot.branch;
-      for (const hit of detectThreeGenerals(slotDate, h, slot.lateZi)) {
+      for (const hit of detectThreeGenerals(slotDate, h, slot.lateZi, yearStem, representativeYearStem)) {
         structures.push({
           date: slotDay.iso,
           dayGanZhi: slotDayGz,
@@ -469,6 +471,12 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           signs: hit.signs,
           result: hit.result,
           note: hit.note,
+          supportRelation: hit.support?.relation === "same" || hit.support?.relation === "supports"
+            ? hit.support.relation
+            : undefined,
+          supportMessage: hit.support && (hit.support.relation === "same" || hit.support.relation === "supports")
+            ? jadeMaidenSupportMessage(hit.support.relation, hit.support.structureElement, hit.support.personElement)
+            : undefined,
         });
       }
     }

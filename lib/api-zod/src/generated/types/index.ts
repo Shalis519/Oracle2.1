@@ -149,6 +149,7 @@ export * from './qimenJadeMaiden';
 export * from './qimenJadeMaidenSupportRelation';
 export * from './qimenMonthChart';
 export * from './qimenStructure';
+export * from './qimenStructureSupportRelation';
 export * from './qimenSummary';
 export * from './qimenThreeMystic';
 export * from './qimenThreeMysticSupportRelation';
