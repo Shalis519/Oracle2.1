@@ -569,6 +569,33 @@ export interface QimenJadeMaiden {
   supportMessage?: string;
 }
 
+export type QimenThreeMysticWonder = typeof QimenThreeMysticWonder[keyof typeof QimenThreeMysticWonder];
+
+
+export const QimenThreeMysticWonder = {
+  乙: '乙',
+  丙: '丙',
+  丁: '丁',
+} as const;
+
+export interface QimenThreeMystic {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  wonder: QimenThreeMysticWonder;
+  wonderName: string;
+  goal: string;
+  star: string;
+  starName: string;
+  door: string;
+  doorName: string;
+  activation: string;
+}
+
 export interface QimenBirthChartCell {
   palace: number;
   direction: string;
@@ -621,6 +648,7 @@ export interface QimenSummary {
   structures: QimenStructure[];
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
+  threeMystics: QimenThreeMystic[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }

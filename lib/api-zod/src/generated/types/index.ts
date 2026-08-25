@@ -150,6 +150,8 @@ export * from './qimenJadeMaidenSupportRelation';
 export * from './qimenMonthChart';
 export * from './qimenStructure';
 export * from './qimenSummary';
+export * from './qimenThreeMystic';
+export * from './qimenThreeMysticWonder';
 export * from './relocation';
 export * from './searchCitiesParams';
 export * from './strictNatalMarriageProfile';

@@ -1807,6 +1807,43 @@ components:
           enum: [same, supports]
         supportMessage:
           type: string
+    QimenThreeMystic:
+      type: object
+      required:
+        [
+          date,
+          dayGanZhi,
+          hourBranch,
+          hourLabel,
+          direction,
+          dir,
+          dom,
+          wonder,
+          wonderName,
+          goal,
+          star,
+          starName,
+          door,
+          doorName,
+          activation,
+        ]
+      properties:
+        date: { type: string }
+        dayGanZhi: { type: string }
+        hourBranch: { type: integer }
+        hourLabel: { type: string }
+        direction: { type: string }
+        dir: { type: string }
+        dom: { type: string }
+        wonder: { type: string, enum: ["乙", "丙", "丁"] }
+        wonderName: { type: string }
+        goal: { type: string }
+        star: { type: string }
+        starName: { type: string }
+        door: { type: string }
+        doorName: { type: string }
+        activation: { type: string }
+
     QimenBirthChartCell:
       type: object
       required: [palace, direction, trigram, earthStem, heavenStem, hiddenHeavenStem, hiddenEarthStem, star, door, deity, isVoid]
@@ -1869,6 +1906,7 @@ components:
           structures,
           jiFuWishes,
           jadeMaidens,
+          threeMystics,
           birthChart,
           monthChart,
         ]
@@ -1893,6 +1931,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QimenJadeMaiden"
+        threeMystics:
+          type: array
+          items:
+            $ref: "#/components/schemas/QimenThreeMystic"
         birthChart:
           oneOf:
             - $ref: "#/components/schemas/QimenBirthChart"

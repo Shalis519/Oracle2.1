@@ -13,7 +13,7 @@ import { Solar } from "lunar-typescript";
 import { birthYearBranch, birthYearStem, birthYearRepresentativeStem, dayInfo, xunInfo } from "./calendar";
 import { buildChart, buildPeriodMap, type PalaceCell } from "./chart";
 import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
-import { detectThreeGenerals, detectJadeMaiden } from "./structures";
+import { detectThreeGenerals, detectThreeMystics, detectJadeMaiden } from "./structures";
 import { computeJiFuWishes, type JiFuWish } from "./jifu";
 import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
 import { isLateZiClock } from "./birthTime";
@@ -65,6 +65,24 @@ export interface QimenJadeMaiden {
   supportMessage?: string;
 }
 
+export interface QimenThreeMystic {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  wonder: "乙" | "丙" | "丁";
+  wonderName: string;
+  goal: string;
+  star: string;
+  starName: string;
+  door: string;
+  doorName: string;
+  activation: string;
+}
+
 export interface QimenBirthChartCell {
   palace: number;
   direction: string;
@@ -114,6 +132,7 @@ export interface QimenResult {
   structures: QimenStructure[];
   jiFuWishes: JiFuWish[];
   jadeMaidens: QimenJadeMaiden[];
+  threeMystics: QimenThreeMystic[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }
@@ -286,6 +305,41 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const birthChart = buildBirthChart(opts.birthDate, opts.birthTime, opts.birthTimezone ?? opts.timezone, opts.birthLongitude);
   const monthChart = buildMonthChart(from);
 
+  // «Три Мистика» и Нефритовая Дева — универсальные часовые структуры.
+  // Домашняя активация «Трёх Мистиков» показывается на ближайший день.
+  const threeMystics: QimenThreeMystic[] = [];
+  const mysticsStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
+  for (let d = 0; d < MAIDEN_DAYS; d++) {
+    const date = new Date(mysticsStart);
+    date.setDate(mysticsStart.getDate() + d);
+    for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+      const slotDate = slot.branch === 0 && !slot.lateZi
+        ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
+        : date;
+      const slotDay = dayInfo(slotDate);
+      const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
+      for (const hit of detectThreeMystics(slotDate, slot.branch, slot.lateZi)) {
+        threeMystics.push({
+          date: slotDay.iso,
+          dayGanZhi: slotDayGz,
+          hourBranch: slot.branch,
+          hourLabel: hourLabel(slot.branch, slot.lateZi),
+          direction: hit.direction,
+          dir: PALACES[hit.palace].dir,
+          dom: hit.dom,
+          wonder: hit.wonder,
+          wonderName: hit.wonderName,
+          goal: hit.goal,
+          star: hit.star,
+          starName: hit.starName,
+          door: hit.door,
+          doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
+          activation: hit.activation,
+        });
+      }
+    }
+  }
+
   // Нефритовая Дева is universal and scanned over the next MAIDEN_DAYS days.
   const jadeMaidens: QimenJadeMaiden[] = [];
   const mStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
@@ -348,6 +402,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       structures,
       jiFuWishes,
       jadeMaidens,
+      threeMystics,
       birthChart,
       monthChart,
     };
@@ -399,6 +454,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     structures,
     jiFuWishes,
     jadeMaidens,
+    threeMystics,
     birthChart,
     monthChart,
   };

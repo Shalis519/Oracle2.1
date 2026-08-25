@@ -5,6 +5,7 @@ import type {
   QimenStructure,
   JiFuWish,
   QimenJadeMaiden,
+  QimenThreeMystic,
   QimenBirthChart,
   QimenMonthChart,
 } from "@workspace/api-client-react";
@@ -514,12 +515,54 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
   );
 }
 
-
+function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Card className="bg-card/40 backdrop-blur-md border-fuchsia-400/30">
+        <CardContent className="py-4 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm leading-relaxed">
+              Домашняя активация в секторе{" "}
+              <span className="font-semibold text-fuchsia-200">{m.direction}</span>{" "}
+              в <span className="font-semibold text-fuchsia-200">{m.hourLabel}</span>.
+            </p>
+            <span className="shrink-0 rounded-full bg-fuchsia-400/15 px-3 py-1 text-xs font-medium text-fuchsia-200">
+              {formatDate(m.date)}
+            </span>
+          </div>
+          <p className="text-sm leading-relaxed text-fuchsia-100/90">
+            <span className="font-medium">Цель:</span> {m.goal}.
+          </p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-200/90">
+              Мистик: {m.wonderName}
+            </span>
+            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-200/90">
+              {m.starName}
+            </span>
+            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-200/90">
+              {m.doorName}
+            </span>
+          </div>
+          <div className="rounded-lg border border-fuchsia-400/15 bg-fuchsia-400/5 p-3 text-sm leading-relaxed">
+            <span className="font-medium text-fuchsia-200">Активатор: </span>
+            {m.activation}.
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
 
 export default function QimenPage() {
   const [rulesOpen, setRulesOpen] = useState(false);
   const [jifuInfoOpen, setJifuInfoOpen] = useState(false);
   const [jadeInfoOpen, setJadeInfoOpen] = useState(false);
+  const [threeMysticsInfoOpen, setThreeMysticsInfoOpen] = useState(false);
   const [genInfoOpen, setGenInfoOpen] = useState(false);
   const { data, isLoading, isError } = useGetQimen({
     query: { retry: false, queryKey: getGetQimenQueryKey() },
@@ -556,6 +599,7 @@ export default function QimenPage() {
   const structures = data?.structures ?? [];
   const jiFuWishes = data?.jiFuWishes ?? [];
   const jadeMaidens = data?.jadeMaidens ?? [];
+  const threeMystics = data?.threeMystics ?? [];
   const windowDays = data?.windowDays ?? 14;
 
   return (
@@ -700,6 +744,46 @@ export default function QimenPage() {
                 key={`${m.date}-${m.hourBranch}-${m.dom}-${i}`}
                 m={m}
               />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {/* Три Мистика: домашняя активация, показывается только при найденных структурах. */}
+      {threeMystics.length > 0 ? (
+        <section className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Flame className="w-5 h-5 text-fuchsia-300" />
+            <h2 className="text-xl font-serif font-semibold">
+              <Dialog open={threeMysticsInfoOpen} onOpenChange={setThreeMysticsInfoOpen}>
+                <DialogTrigger asChild>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-fuchsia-300/60 underline-offset-4 hover:text-fuchsia-200 transition-colors"
+                  >
+                    Три Мистика
+                    <Info className="w-4 h-4 text-fuchsia-300/80" />
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="font-serif flex items-center gap-2">
+                      <Flame className="w-5 h-5 text-fuchsia-300" />
+                      Три Мистика
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-3 text-sm leading-relaxed">
+                    <p>Это домашняя активация: используйте сектор внутри дома в указанную двухчасовку.</p>
+                    <p>Активируется только один мистик, который соответствует вашей цели: И — отношения, Бин — финансы, Дин — документы, договорённости и переговоры.</p>
+                    <p>Предмет для активации определяется звездой: Небесный Помощник — фонтанчик, Небесное Сердце — вентилятор, Небесный Чиновник — свеча или газовая конфорка.</p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </h2>
+          </div>
+          <div className="space-y-3">
+            {threeMystics.map((m, i) => (
+              <ThreeMysticsCard key={`${m.date}-${m.hourBranch}-${m.dom}-${m.wonder}-${i}`} m={m} />
             ))}
           </div>
         </section>

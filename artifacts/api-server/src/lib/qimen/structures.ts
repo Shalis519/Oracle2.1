@@ -12,6 +12,18 @@ const QUALIFY_STARS = new Set(["天辅", "天心", "天任"]);
 // Для публикации допускаются только Врата Отдыха, Жизни и Открытия.
 // Тайник, Пейзаж, Шок, Ранение и Смерть не проходят пользовательский фильтр.
 const QUALIFY_DOORS = new Set(["休门", "生门", "开门"]);
+// «Три Мистика» — домашняя активация: дополнительно допустимы Врата Вида и Тайника.
+const THREE_MYSTICS_DOORS = new Set(["休门", "生门", "开门", "景门", "杜门"]);
+const THREE_MYSTICS_GOAL: Record<"乙" | "丙" | "丁", string> = {
+  乙: "Поиск партнёра и улучшение отношений",
+  丙: "Финансы, рост дохода и благосостояние",
+  丁: "Документы, договорённости и переговоры",
+};
+const THREE_MYSTICS_ACTIVATION: Record<string, string> = {
+  天辅: "Фонтанчик",
+  天心: "Вентилятор",
+  天任: "Свеча или газовая конфорка",
+};
 
 // 墓 (tomb) palace per wonder.
 const TOMB: Record<string, number> = { 乙: 6, 丙: 6, 丁: 8 };
@@ -45,6 +57,19 @@ export interface GeneralsHit {
   signs: string[];
   result: string;
   note?: string;
+}
+
+export interface ThreeMysticsHit {
+  palace: number;
+  direction: string;
+  dom: string;
+  wonder: "乙" | "丙" | "丁";
+  wonderName: string;
+  goal: string;
+  star: string;
+  starName: string;
+  door: string;
+  activation: string;
 }
 
 /**
@@ -125,6 +150,52 @@ export function detectThreeGenerals(date: Date, hourBranch: number, lateZi = fal
       signs: row.signs,
       result: row.result,
       note: row.note,
+    });
+  }
+  return hits;
+}
+
+/**
+ * Detect "Три Мистика" (三奇) for an indoor activation.
+ * The formula is universal: it uses the hourly chart and does not depend on birth data.
+ * A hit requires a Mystic on the Heaven plate, a permitted door and a qualifying star.
+ */
+export function detectThreeMystics(date: Date, hourBranch: number, lateZi = false): ThreeMysticsHit[] {
+  const chart = buildChart(date, hourBranch, lateZi);
+  if (chart.fuYin) return [];
+
+  const hits: ThreeMysticsHit[] = [];
+  for (let p = 1; p <= 9; p++) {
+    if (p === 5) continue;
+    const cell = chart.cells[p];
+    const wonder = cell.heavenStem as "乙" | "丙" | "丁";
+    if (!WONDERS.includes(wonder)) continue;
+    if (!QUALIFY_STARS.has(cell.star)) continue;
+    if (!THREE_MYSTICS_DOORS.has(cell.door)) continue;
+
+    // Явные табу исходной схемы и общие безопасные ограничения активаций.
+    if (cell.isVoid) continue;
+    if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue;
+    if (TOMB[wonder] === p) continue;
+    if ((WONDER_AVOID[wonder] ?? []).includes(p)) continue;
+    if (DOOR_AVOID[cell.door] === p) continue;
+    if (annualYellowFive(p, date)) continue;
+    if (controls(DOOR_ELEMENT[cell.door], STAR_ELEMENT[cell.star])) continue;
+    // В источнике «позитивная структура» не задана как вычисляемое правило
+    // сочетания двух стволов, поэтому отдельный неподтверждённый фильтр здесь
+    // не вводится: публикуются только кандидаты с формально указанными условиями.
+
+    hits.push({
+      palace: p,
+      direction: PALACES[p].dirFull,
+      dom: PALACES[p].dom,
+      wonder,
+      wonderName: WONDER_NAME[wonder],
+      goal: THREE_MYSTICS_GOAL[wonder],
+      star: cell.star,
+      starName: GENERALS_STAR_NAME[cell.star],
+      door: cell.door,
+      activation: THREE_MYSTICS_ACTIVATION[cell.star],
     });
   }
   return hits;
