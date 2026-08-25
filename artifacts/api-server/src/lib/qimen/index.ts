@@ -292,9 +292,9 @@ function threeMysticsSupportMessage(
 ): string {
   const structure = ELEMENT_NAME_RU_LOWER[structureElement] ?? structureElement;
   const person = ELEMENT_NAME_RU_LOWER[personElement] ?? personElement;
-  const basis = `Сектор структуры относится к стихии «${structure}», а НС вашего года — к стихии «${person}».`;
+  const basis = `Сектор структуры стихия «${structure}», НС вашего года - стихия «${person}».`;
   return relation === "same"
-    ? `${basis} Стихии совпадают, поэтому эту активацию можно использовать для вашей цели.`
+    ? `${basis} Для вас эта активация благополучна.`
     : `${basis} Сектор питает вашу стихию по кругу У-Син, поэтому активация для вас поддерживающая.`;
 }
 
