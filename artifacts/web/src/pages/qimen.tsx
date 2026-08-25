@@ -837,7 +837,7 @@ function FiveBattalionsCard({ hit }: { hit: QimenFiveBattalion }) {
               Земля: {hit.earthStemName}
             </span>
             <span className="rounded-full bg-cyan-400/10 px-2 py-0.5 text-xs text-cyan-100">
-              {hit.doorName}
+              Главные Врата: {hit.doorName}
             </span>
           </div>
         </CardContent>
