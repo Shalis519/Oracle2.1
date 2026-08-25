@@ -533,7 +533,7 @@ function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
             <p className="text-sm leading-relaxed">
               Для активации используйте сектор{" "}
               <span className="font-semibold text-fuchsia-200">{m.direction}</span>{" "}
-              в период <span className="font-semibold text-fuchsia-200">{m.hourLabel}</span>.
+              в <span className="font-semibold text-fuchsia-200">{m.hourLabel}</span>.
             </p>
             <span className="shrink-0 rounded-full bg-fuchsia-400/15 px-3 py-1 text-xs font-medium text-fuchsia-200">
               {formatDate(m.date)}
