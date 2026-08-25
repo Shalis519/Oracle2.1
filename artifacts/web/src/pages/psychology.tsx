@@ -54,18 +54,6 @@ function practiceAnswerPreview(reflection: PsychologyReflection): string {
   return values[0] ?? "Запись без текстового ответа";
 }
 
-function normalizeReflectionText(value?: string | null): string {
-  return value?.trim().replace(/\s+/g, " ").toLocaleLowerCase("ru-RU") ?? "";
-}
-
-function hasDistinctNextStep(reflection: PsychologyReflection): boolean {
-  const nextStep = normalizeReflectionText(reflection.nextStep);
-  if (!nextStep) return false;
-  return !Object.values(reflection.answers).some(
-    (answer) => normalizeReflectionText(answer) === nextStep,
-  );
-}
-
 export default function PsychologyPage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -297,17 +285,18 @@ export default function PsychologyPage() {
                           { locale: ru },
                         )}
                       </p>
-                      <p className="line-clamp-2 text-sm text-muted-foreground">
-                        {practiceAnswerPreview(reflection)}
-                      </p>
-                      {hasDistinctNextStep(reflection) ? (
+                      {reflection.nextStep?.trim() ? (
                         <p className="text-sm">
                           <span className="font-medium text-primary">
                             Следующий шаг:{" "}
                           </span>
                           {reflection.nextStep}
                         </p>
-                      ) : null}
+                      ) : (
+                        <p className="line-clamp-2 text-sm text-muted-foreground">
+                          {practiceAnswerPreview(reflection)}
+                        </p>
+                      )}
                     </div>
                     <div className="flex shrink-0 gap-2">
                       <Button
