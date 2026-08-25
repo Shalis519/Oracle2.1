@@ -54,6 +54,8 @@ describe("Пять Батальонов", () => {
     expect(FIVE_BATTALIONS_GOAL.休门).toContain("путешествие");
     expect(FIVE_BATTALIONS_GOAL.休门).toContain("свидание");
     expect(FIVE_BATTALIONS_GOAL.死门).toContain("разорвать отношения");
+    expect(FIVE_BATTALIONS_GOAL.开门).toContain("авиапутешествие");
+    expect(FIVE_BATTALIONS_GOAL.开门).toContain("торговую точку");
   });
 
   test("использует согласованное название Врат Шока", () => {
