@@ -27,10 +27,10 @@ type DestinyMatrixWheelProps = {
 };
 
 const BASE_NODES: WheelNode[] = [
-  { id: "month", label: "Месяц", x: 360, y: 94, accent: "base", labelPlacement: "top" },
-  { id: "day", label: "День", x: 626, y: 360, accent: "base", labelPlacement: "right" },
-  { id: "foundation", label: "Основа", x: 360, y: 626, accent: "base", labelPlacement: "bottom" },
-  { id: "year", label: "Год", x: 94, y: 360, accent: "base", labelPlacement: "left" },
+  { id: "month", label: "Главный талант", x: 360, y: 94, accent: "base", labelPlacement: "top" },
+  { id: "day", label: "Визитная карточка", x: 626, y: 360, accent: "base", labelPlacement: "bottom" },
+  { id: "foundation", label: "Кармический хвост", x: 360, y: 626, accent: "base", labelPlacement: "bottom" },
+  { id: "year", label: "Задача души", x: 94, y: 360, accent: "base", labelPlacement: "top" },
 ];
 
 const DIRECT_NODES: WheelNode[] = [
