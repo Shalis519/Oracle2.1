@@ -1115,6 +1115,29 @@ export default function QimenPage() {
           </h2>
         </div>
 
+        <Card className="border-amber-400/30 bg-amber-400/5">
+          <CardContent className="space-y-3 p-4 sm:p-5">
+            <div className="space-y-1">
+              <h3 className="font-serif text-lg font-semibold text-amber-100">
+                Со-настройка с Джи Фу
+              </h3>
+              <p className="text-sm leading-relaxed text-amber-100/80">
+                Спокойный счёт от 64 до 1. Повторяйте числа вслух или про себя.
+                После счёта голос предложит сформулировать просьбу и оставит Вам
+                тишину для этого.
+              </p>
+            </div>
+            <audio
+              className="w-full accent-amber-300"
+              controls
+              preload="metadata"
+              src={`${import.meta.env.BASE_URL}audio/qimen/jifu-attunement.mp3`}
+            >
+              Ваш браузер не поддерживает воспроизведение аудио.
+            </audio>
+          </CardContent>
+        </Card>
+
         {jiFuWishes.length > 0 ? (
           <div className="space-y-3">
             {jiFuWishes.map((w, i) => (
