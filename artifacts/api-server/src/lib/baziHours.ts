@@ -415,7 +415,9 @@ function applyDoubled(list: NumInterval[], doubledRat: boolean): NumInterval[] {
   if (doubledRat) return list;
   const rat = list[0]!;
   const [late, early] = splitRat(rat.s, rat.e);
-  return [late, early, ...list.slice(1)];
+  // В публичной таблице день начинается с ранней Крысы после полуночи,
+  // а поздняя Крыса завершает порядок после Свиньи.
+  return [early, ...list.slice(1), late];
 }
 
 /**

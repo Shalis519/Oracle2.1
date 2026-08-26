@@ -46,7 +46,7 @@ describe("baziHours Marina modes", () => {
     }
   });
 
-  it("places Omsk 00:30 into the early Rat in rubber time", () => {
+  it("показывает раннюю Крысу первой, а позднюю после Свиньи", () => {
     const result = computeBaziHours({
       lat: 54.9914,
       lng: 73.3645,
@@ -55,8 +55,14 @@ describe("baziHours Marina modes", () => {
       doubledRat: false,
     });
     expect(result.equationOfTimeMinutes).toBeLessThan(0);
-    expect(result.rubber[1]?.animal).toBe("Крыса (ранняя)");
-    expect(result.rubber[1]?.start).toBe("00:00");
-    expect(result.rubber[1]?.end).not.toBeNull();
+    expect(result.rubber[0]?.animal).toBe("Крыса (ранняя)");
+    expect(result.rubber[0]?.start).not.toBeNull();
+    expect(result.rubber[0]?.end).not.toBeNull();
+
+    for (const rows of [result.solar, result.rubber, result.combined]) {
+      expect(rows[0]?.animal).toBe("Крыса (ранняя)");
+      expect(rows[rows.length - 1]?.animal).toBe("Крыса (поздняя)");
+      expect(rows[rows.length - 2]?.animal).toBe("Свинья");
+    }
   });
 });
