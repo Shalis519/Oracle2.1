@@ -539,6 +539,23 @@ export interface TigerDunHit {
 export const TIGER_DUN_GOAL =
   "преодолеть препятствие, защитить свои интересы, провести сложные переговоры или укрепить позицию в важном деле";
 
+// Во второй и четвёртой строках исходной схемы Земная тарелка не задана.
+// Для публикации оставляем только сочетания Неба и Земли, признанные
+// благоприятными в изученном материале, с учётом уже заданных Врат.
+const TIGER_DUN_GOOD_EARTH_STEMS: Record<2 | 4, ReadonlySet<string>> = {
+  2: new Set(["丁", "己"]), // 乙 над 丁; 乙 над 己 при Вратах Жизни - «Земной Дунь».
+  4: new Set(["丁"]), // 庚 над 丁 при счастливых Вратах; Открытие - счастливые Врата.
+};
+
+export function isTigerDunEarthStemAllowed(
+  variant: TigerDunVariant,
+  earthStem: string,
+): boolean {
+  if (variant === 1) return earthStem === "辛";
+  if (variant === 3) return earthStem === "乙";
+  return TIGER_DUN_GOOD_EARTH_STEMS[variant].has(earthStem);
+}
+
 function tigerDunVariant(cell: {
   palace: number;
   heavenStem: string;
@@ -569,9 +586,10 @@ function tigerDunVariant(cell: {
 
 /**
  * Detect the personal structure «Тигровый Дунь» (虎遁).
- * The second and fourth rows of the source scheme do not specify an Earth Plate
- * stem, so their Earth Plate is intentionally left unrestricted. 庚 is required
- * by row four and must not be rejected by the generic 庚 safeguards of other structures.
+ * Во второй и четвёртой строках исходной схемы Земная тарелка не названа,
+ * поэтому она дополнительно проходит белый список благоприятных сочетаний
+ * Небесного и Земного стволов. 庚 обязателен только на Небесной тарелке
+ * четвёртого варианта и не должен попадать под общие запреты других структур.
  */
 export function detectTigerDun(
   date: Date,
@@ -590,9 +608,9 @@ export function detectTigerDun(
     const variant = tigerDunVariant(cell);
     if (!variant) continue;
 
-    // Гэн допустим только на Небесной тарелке четвёртого варианта.
-    // На Земной тарелке он не входит ни в одну из четырёх строк схемы.
-    if (cell.earthStem === "庚") continue;
+    // В строках 2 и 4 исходная схема не фиксирует Земную тарелку.
+    // Публикуем только проверенные благоприятные сочетания стволов.
+    if (!isTigerDunEarthStemAllowed(variant, cell.earthStem)) continue;
 
     if (cell.isVoid) continue;
     if (annualYellowFive(palace, date)) continue;

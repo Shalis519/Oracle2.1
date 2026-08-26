@@ -1,7 +1,10 @@
 import { describe, expect, test } from "vitest";
 import { GetQimenResponse } from "@workspace/api-zod";
 import { computeQimenStructures } from "./qimen";
-import { detectTigerDun } from "./qimen/structures";
+import {
+  detectTigerDun,
+  isTigerDunEarthStemAllowed,
+} from "./qimen/structures";
 import {
   buildChart,
   DOOR_ELEMENT,
@@ -21,21 +24,17 @@ type RawTigerHit = ReturnType<typeof detectTigerDun>[number] & {
 
 function findTigerHits(): RawTigerHit[] {
   const hits: RawTigerHit[] = [];
-  const variants = new Set<number>();
-  for (let offset = 0; offset < 365 && variants.size < 4; offset++) {
+  for (let offset = 0; offset < 365; offset++) {
     const date = new Date(START);
     date.setDate(START.getDate() + offset);
     for (let hourBranch = 0; hourBranch < 12; hourBranch++) {
       for (const hit of detectTigerDun(date, hourBranch)) {
         hits.push({ ...hit, date, hourBranch });
-        variants.add(hit.variant);
       }
     }
   }
-  if (variants.size !== 4) {
-    throw new Error(
-      `Не найдены все варианты Тигрового Дунь: ${Array.from(variants).join(", ")}`,
-    );
+  if (hits.length === 0) {
+    throw new Error("Не найдено ни одной допустимой структуры Тигрового Дунь");
   }
   return hits;
 }
@@ -56,10 +55,8 @@ function firstPersonalResult() {
 }
 
 describe("Тигровый Дунь", () => {
-  test("находит все четыре точных варианта из схемы", () => {
+  test("публикует только точные варианты и разрешённые сочетания Земной тарелки", () => {
     const hits = findTigerHits();
-    const variants = new Set(hits.map((hit) => hit.variant));
-    expect(variants).toEqual(new Set([1, 2, 3, 4]));
 
     for (const hit of hits) {
       expect(hit.earthStem).not.toBe("庚");
@@ -78,6 +75,7 @@ describe("Тигровый Дунь", () => {
           heavenStem: "乙",
           door: "生门",
         });
+        expect(["丁", "己"]).toContain(hit.earthStem);
       }
       if (hit.variant === 3) {
         expect(hit).toMatchObject({
@@ -92,10 +90,25 @@ describe("Тигровый Дунь", () => {
           palace: 7,
           heavenStem: "庚",
           door: "开门",
+          earthStem: "丁",
         });
       }
     }
   }, 30_000);
+
+  test("допускает только утверждённый белый список Земной тарелки", () => {
+    expect(isTigerDunEarthStemAllowed(1, "辛")).toBe(true);
+    expect(isTigerDunEarthStemAllowed(1, "丁")).toBe(false);
+    expect(isTigerDunEarthStemAllowed(2, "丁")).toBe(true);
+    expect(isTigerDunEarthStemAllowed(2, "己")).toBe(true);
+    expect(isTigerDunEarthStemAllowed(2, "庚")).toBe(false);
+    expect(isTigerDunEarthStemAllowed(2, "辛")).toBe(false);
+    expect(isTigerDunEarthStemAllowed(3, "乙")).toBe(true);
+    expect(isTigerDunEarthStemAllowed(3, "丁")).toBe(false);
+    expect(isTigerDunEarthStemAllowed(4, "丁")).toBe(true);
+    expect(isTigerDunEarthStemAllowed(4, "己")).toBe(false);
+    expect(isTigerDunEarthStemAllowed(4, "庚")).toBe(false);
+  });
 
   test("применяет Пустоту, Фу Инь, час пяти дисгармоний и контроль Врат над звездой", () => {
     for (const hit of findTigerHits()) {
