@@ -131,6 +131,200 @@ const GUIDANCE_AUDIO: Record<string, Record<string, GuidanceAudio>> = {
       file: "intention-anchor-next-step.wav",
     },
   },
+  "what-matters-now": {
+    feeling: {
+      instruction:
+        "Остановитесь на минуту и выберите слово или короткую фразу, которая точнее всего описывает Ваше состояние сейчас.",
+      file: "what-matters-now-feeling.wav",
+    },
+    need: {
+      instruction:
+        "Спросите себя, чего Вам сейчас может не хватать: ясности, отдыха, поддержки, времени, разговора, порядка или чего-то другого.",
+      file: "what-matters-now-need.wav",
+    },
+    support: {
+      instruction:
+        "Запишите один доступный способ поддержать себя в ближайшее время. Не нужно решать всю ситуацию сразу.",
+      file: "what-matters-now-support.wav",
+    },
+    nextStep: {
+      instruction:
+        "Выберите одно небольшое действие, которое можно выполнить сегодня.",
+      file: "what-matters-now-next-step.wav",
+    },
+  },
+  "desire-without-negation": {
+    avoid: {
+      instruction:
+        "Запишите то, чего Вы сейчас не хотите или от чего пытаетесь уйти. Формулировка может быть любой.",
+      file: "desire-without-negation-avoid.wav",
+    },
+    direction: {
+      instruction:
+        "Спросите себя: если убрать нежелательное, что я хотел(а) бы видеть вместо этого? Сформулируйте ответ простыми словами.",
+      file: "desire-without-negation-direction.wav",
+    },
+    signal: {
+      instruction:
+        "Выберите один признак, по которому Вы поймёте, что движетесь в нужную сторону. Это должен быть результат, связанный с Вашими действиями.",
+      file: "desire-without-negation-signal.wav",
+    },
+    nextStep: {
+      instruction:
+        "Запишите одно небольшое действие, которое поможет приблизиться к выбранному направлению.",
+      file: "desire-without-negation-next-step.wav",
+    },
+  },
+  "one-delayed-step": {
+    task: {
+      instruction:
+        "Выберите одно дело, к которому Вам трудно приступить. Не берите весь большой проект.",
+      file: "one-delayed-step-task.wav",
+    },
+    barrier: {
+      instruction:
+        "Спросите себя, что делает начало трудным: неопределённость, усталость, страх оценки, нехватка времени или другое препятствие.",
+      file: "one-delayed-step-barrier.wav",
+    },
+    smallStep: {
+      instruction:
+        "Превратите задачу в действие, которое можно начать и закончить примерно за десять минут.",
+      file: "one-delayed-step-small-step.wav",
+    },
+    nextStep: {
+      instruction:
+        "Выберите время или обстоятельство, в котором Вы попробуете сделать этот маленький шаг.",
+      file: "one-delayed-step-next-step.wav",
+    },
+  },
+  "support-and-boundaries": {
+    situation: {
+      instruction:
+        "Выберите один контакт или ситуацию, в которой Вам сейчас особенно нужна ясность.",
+      file: "support-and-boundaries-situation.wav",
+    },
+    support: {
+      instruction:
+        "Запишите, какая поддержка могла бы быть полезна: внимание, информация, помощь, время, тишина или другое.",
+      file: "support-and-boundaries-support.wav",
+    },
+    boundary: {
+      instruction:
+        "Сформулируйте, что Вам важно сохранить: время, личное пространство, темп, право отказаться или право подумать.",
+      file: "support-and-boundaries-boundary.wav",
+    },
+    phrase: {
+      instruction:
+        "Напишите короткую фразу от первого лица, которую Вы могли бы использовать в разговоре.",
+      file: "support-and-boundaries-phrase.wav",
+    },
+    nextStep: {
+      instruction:
+        "Выберите одно действие: подготовить разговор, попросить о помощи, ответить позже или обозначить границу.",
+      file: "support-and-boundaries-next-step.wav",
+    },
+  },
+  "voice-in-important-conversation": {
+    pause: {
+      instruction:
+        "Сядьте удобно. Сделайте два обычных спокойных вдоха и выдоха. Не нужно менять темп дыхания или терпеть дискомфорт.",
+      file: "voice-in-important-conversation-pause.wav",
+    },
+    important: {
+      instruction:
+        "Подумайте, что Вам важно сказать в одном разговоре. Это может быть просьба, чувство, вопрос или предложение.",
+      file: "voice-in-important-conversation-important.wav",
+    },
+    phrase: {
+      instruction:
+        "Сформулируйте фразу от первого лица без обвинения другого человека.",
+      file: "voice-in-important-conversation-phrase.wav",
+    },
+    readiness: {
+      instruction:
+        "Спросите себя, что поможет Вам чувствовать больше опоры: заметки, пауза, время на подготовку или разговор с поддерживающим человеком.",
+      file: "voice-in-important-conversation-readiness.wav",
+    },
+    nextStep: {
+      instruction: "Выберите один небольшой шаг к разговору.",
+      file: "voice-in-important-conversation-next-step.wav",
+    },
+  },
+  "parts-before-financial-decision": {
+    question: {
+      instruction:
+        "Назовите финансовый вопрос, который требует внимания. Не указывайте лишние личные данные.",
+      file: "parts-before-financial-decision-question.wav",
+    },
+    caution: {
+      instruction:
+        "Запишите, чего опасается Ваша осторожная часть. Её задача может состоять в защите от риска.",
+      file: "parts-before-financial-decision-caution.wav",
+    },
+    aspiration: {
+      instruction:
+        "Запишите, к чему стремится другая часть: больше ясности, роста, свободы, порядка или уверенности.",
+      file: "parts-before-financial-decision-aspiration.wav",
+    },
+    criterion: {
+      instruction:
+        "Сформулируйте правило, которое уважает обе позиции. Например: сначала собрать данные, не принимать решение в спешке или обсудить вопрос со специалистом.",
+      file: "parts-before-financial-decision-criterion.wav",
+    },
+    nextStep: {
+      instruction:
+        "Выберите действие по подготовке: проверить условия, составить список вопросов или отложить решение до нужной информации.",
+      file: "parts-before-financial-decision-next-step.wav",
+    },
+  },
+  "my-suitable-day": {
+    day: {
+      instruction:
+        "Подумайте не об идеальном будущем, а о реалистичном дне, после которого Вы чувствуете больше устойчивости.",
+      file: "my-suitable-day-day.wav",
+    },
+    element: {
+      instruction:
+        "Отметьте один элемент, который особенно поддерживает Вас: сон, еда, движение, тишина, общение, работа в спокойном темпе или другое.",
+      file: "my-suitable-day-element.wav",
+    },
+    smallVersion: {
+      instruction:
+        "Выберите короткий и осуществимый вариант этого элемента на ближайшие дни.",
+      file: "my-suitable-day-small-version.wav",
+    },
+    nextStep: {
+      instruction: "Назначьте конкретное время или условие для этого действия.",
+      file: "my-suitable-day-next-step.wav",
+    },
+  },
+  "small-experiment": {
+    interest: {
+      instruction:
+        "Вспомните действие, навык или опыт, который вызывает любопытство.",
+      file: "small-experiment-interest.wav",
+    },
+    doubt: {
+      instruction:
+        "Запишите одну мысль, которая останавливает Вас. Не спорьте с ней, просто назовите её.",
+      file: "small-experiment-doubt.wav",
+    },
+    experiment: {
+      instruction:
+        "Уменьшите эксперимент до короткой и безопасной пробы без обязательства продолжать.",
+      file: "small-experiment-experiment.wav",
+    },
+    observation: {
+      instruction:
+        "Решите, что Вы хотите заметить после попытки: интерес, удобство, сложность, настроение или новую информацию о себе.",
+      file: "small-experiment-observation.wav",
+    },
+    nextStep: {
+      instruction:
+        "Выберите время для эксперимента или действие по подготовке к нему.",
+      file: "small-experiment-next-step.wav",
+    },
+  },
 };
 
 function getLocalDayKey(date = new Date()): string {
