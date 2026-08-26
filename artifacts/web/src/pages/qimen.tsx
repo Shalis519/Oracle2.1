@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "wouter";
 import {
   useGetQimen,
   getGetQimenQueryKey,
@@ -40,9 +39,7 @@ import {
   Sparkles,
   AlertCircle,
   Info,
-  Heart,
   Flame,
-  Shield,
 } from "lucide-react";
 
 const HOUR_RANGES: Record<string, string> = {
@@ -84,6 +81,25 @@ function sortBySchedule<T extends { date: string; hourBranch: number }>(
     const rightHour = right.hourBranch === 0 ? 12 : right.hourBranch;
     return leftHour - rightHour;
   });
+}
+
+type ScheduledPublication =
+  | { kind: "jade"; item: QimenJadeMaiden }
+  | { kind: "mystic"; item: QimenThreeMystic }
+  | { kind: "battalion"; item: QimenFiveBattalion }
+  | { kind: "tiger"; item: QimenTigerDun }
+  | { kind: "general"; item: QimenStructure };
+
+function compareSchedule(
+  left: { date: string; hourBranch: number },
+  right: { date: string; hourBranch: number },
+): number {
+  const dateOrder = left.date.localeCompare(right.date);
+  if (dateOrder !== 0) return dateOrder;
+
+  const leftHour = left.hourBranch === 0 ? 12 : left.hourBranch;
+  const rightHour = right.hourBranch === 0 ? 12 : right.hourBranch;
+  return leftHour - rightHour;
 }
 
 const WALK_RULES: string[] = [
@@ -989,11 +1005,6 @@ function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
 export default function QimenPage() {
   const [rulesOpen, setRulesOpen] = useState(false);
   const [jifuInfoOpen, setJifuInfoOpen] = useState(false);
-  const [jadeInfoOpen, setJadeInfoOpen] = useState(false);
-  const [threeMysticsInfoOpen, setThreeMysticsInfoOpen] = useState(false);
-  const [fiveBattalionsInfoOpen, setFiveBattalionsInfoOpen] = useState(false);
-  const [tigerDunInfoOpen, setTigerDunInfoOpen] = useState(false);
-  const [genInfoOpen, setGenInfoOpen] = useState(false);
   const { data, isLoading, isError } = useGetQimen({
     query: { retry: false, queryKey: getGetQimenQueryKey() },
   });
@@ -1038,6 +1049,13 @@ export default function QimenPage() {
   const fiveBattalions = sortBySchedule<QimenFiveBattalion>(data?.fiveBattalions ?? []);
   const tigerDuns = sortBySchedule<QimenTigerDun>(data?.tigerDuns ?? []);
   const windowDays = data?.windowDays ?? 14;
+  const scheduledPublications: ScheduledPublication[] = [
+    ...jadeMaidens.map((item) => ({ kind: "jade" as const, item })),
+    ...threeMystics.map((item) => ({ kind: "mystic" as const, item })),
+    ...fiveBattalions.map((item) => ({ kind: "battalion" as const, item })),
+    ...tigerDuns.map((item) => ({ kind: "tiger" as const, item })),
+    ...structures.map((item) => ({ kind: "general" as const, item })),
+  ].sort((left, right) => compareSchedule(left.item, right.item));
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-8">
@@ -1167,358 +1185,39 @@ export default function QimenPage() {
         )}
       </section>
 
-      {/* Нефритовая Дева: показывается только при найденных структурах. */}
-      {jadeMaidens.length > 0 ? (
-        <section className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Heart className="w-5 h-5 text-rose-300" />
-            <h2 className="text-xl font-serif font-semibold">
-              <Dialog open={jadeInfoOpen} onOpenChange={setJadeInfoOpen}>
-                <DialogTrigger asChild>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-rose-300/60 underline-offset-4 hover:text-rose-200 transition-colors"
-                  >
-                    Нефритовая Дева
-                    <Info className="w-4 h-4 text-rose-300/80" />
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle className="font-serif flex items-center gap-2">
-                      <Heart className="w-5 h-5 text-rose-300" />
-                      Нефритовая Дева
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-3 text-sm leading-relaxed">
-                    <p>{JADE_INTRO}</p>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </h2>
-          </div>
-          <div className="space-y-3">
-            {jadeMaidens.map((m, i) => (
-              <JadeMaidenCard
-                key={`${m.date}-${m.hourBranch}-${m.dom}-${i}`}
-                m={m}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* Три Мистика: домашняя активация, показывается только при найденных структурах. */}
-      {threeMystics.length > 0 ? (
-        <section className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Flame className="w-5 h-5 text-fuchsia-300" />
-            <h2 className="text-xl font-serif font-semibold">
-              <Dialog
-                open={threeMysticsInfoOpen}
-                onOpenChange={setThreeMysticsInfoOpen}
-              >
-                <DialogTrigger asChild>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-fuchsia-300/60 underline-offset-4 hover:text-fuchsia-200 transition-colors"
-                  >
-                    Три Мистика
-                    <Info className="w-4 h-4 text-fuchsia-300/80" />
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle className="font-serif flex items-center gap-2">
-                      <Flame className="w-5 h-5 text-fuchsia-300" />
-                      Три Мистика
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-3 text-sm leading-relaxed">
-                    <p>
-                      Техника Три Мистика позволяет подключить энергию дома к
-                      вашей цели. Это не ремонт и не перестановка мебели. Это
-                      точечный «пусковой механизм», который запускается простым
-                      предметом и начинает притягивать нужные события.
-                    </p>
-                    <p>
-                      💫 Отношения - когда нужно встретить партнёра, помириться,
-                      улучшить семейную атмосферу или выйти на новый уровень
-                      общения.
-                    </p>
-                    <p>
-                      💰 Финансы - если стоит вопрос роста дохода, нового
-                      источника прибыли, улучшения благосостояния.
-                    </p>
-                    <p>
-                      📄 Документы и переговоры - когда важно подписать договор,
-                      договориться, пройти согласование без проволочек.
-                    </p>
-                    <p className="font-semibold text-fuchsia-200">
-                      Перед проведением активации ЧЁТКО формулируйте цель и
-                      желание!
-                    </p>
-                    <div className="space-y-2">
-                      <p className="font-semibold">Процесс активации:</p>
-                      <ol className="list-decimal list-outside space-y-1.5 pl-5">
-                        <li>Найдите нужный сектор в доме.</li>
-                        <li>
-                          Поставьте активатор в этом секторе в указанную
-                          двухчасовку минимум на 1,5 часа.
-                        </li>
-                      </ol>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </h2>
-          </div>
-          <div className="space-y-3">
-            {threeMystics.map((m, i) => (
-              <ThreeMysticsCard
-                key={`${m.date}-${m.hourBranch}-${m.dom}-${m.wonder}-${i}`}
-                m={m}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* Пять Батальонов: индивидуальная структура, показывается только при найденных двухчасовках. */}
-      {fiveBattalions.length > 0 ? (
-        <section className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Compass className="w-5 h-5 text-cyan-300" />
-            <h2 className="text-xl font-serif font-semibold">
-              <Dialog
-                open={fiveBattalionsInfoOpen}
-                onOpenChange={setFiveBattalionsInfoOpen}
-              >
-                <DialogTrigger asChild>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-cyan-300/60 underline-offset-4 hover:text-cyan-200 transition-colors"
-                  >
-                    Пять Батальонов
-                    <Info className="w-4 h-4 text-cyan-300/80" />
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle className="font-serif flex items-center gap-2">
-                      <Compass className="w-5 h-5 text-cyan-300" />
-                      Пять Батальонов
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 text-sm leading-relaxed">
-                    <p>
-                      Выберите один из двух вариантов. В обоих случаях
-                      ориентируйтесь на строку «Цель:» в карточке выбранной
-                      двухчасовки.
-                    </p>
-                    <div className="space-y-2">
-                      <p className="font-semibold text-cyan-200">
-                        Вариант 1. В помещении
-                      </p>
-                      <ol className="list-decimal list-outside space-y-1.5 pl-5">
-                        {FIVE_BATTALIONS_INDOOR_STEPS.map((step, index) => (
-                          <li key={index}>{step}</li>
-                        ))}
-                      </ol>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="font-semibold text-cyan-200">
-                        Вариант 2. Прогулка
-                      </p>
-                      <ol className="list-decimal list-outside space-y-1.5 pl-5">
-                        {FIVE_BATTALIONS_WALK_STEPS.map((step, index) => (
-                          <li key={index}>{step}</li>
-                        ))}
-                      </ol>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </h2>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Подходящие двухчасовки на ближайшие {windowDays}{" "}
-            {pluralDays(windowDays)}.
-          </p>
-          <div className="space-y-3">
-            {fiveBattalions.map((hit, index) => (
-              <FiveBattalionsCard
-                key={`${hit.date}-${hit.hourBranch}-${hit.dom}-${index}`}
-                hit={hit}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* Тигровый Дунь: личная структура, показывается только после всех защитных проверок. */}
-      {tigerDuns.length > 0 ? (
-        <section className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-orange-300" />
-            <h2 className="text-xl font-serif font-semibold">
-              <Dialog
-                open={tigerDunInfoOpen}
-                onOpenChange={setTigerDunInfoOpen}
-              >
-                <DialogTrigger asChild>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-orange-300/60 underline-offset-4 hover:text-orange-200 transition-colors"
-                  >
-                    Тигровый Дунь
-                    <Info className="w-4 h-4 text-orange-300/80" />
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle className="font-serif flex items-center gap-2">
-                      <Shield className="w-5 h-5 text-orange-300" />
-                      Тигровый Дунь
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-3 text-sm leading-relaxed">
-                    <p>
-                      Это структура для уверенного, настойчивого действия, когда
-                      важно заявить о себе и довести дело до результата.
-                    </p>
-                    <p className="font-semibold text-orange-200">
-                      Где пригодится:
-                    </p>
-                    <div className="space-y-2">
-                      <p>
-                        <span className="font-medium">Карьера и статус.</span>{" "}
-                        Когда Вы хотите получить повышение, признание или
-                        укрепить авторитет. Особенно уместна в задачах
-                        управления, спорта и сферах с высокой ответственностью.
-                      </p>
-                      <p>
-                        <span className="font-medium">Дом.</span> Для защиты
-                        пространства, благословения дома и наведения порядка.
-                      </p>
-                      <p>
-                        <span className="font-medium">Личная сила.</span> Когда
-                        Вы хотите почувствовать опору в себе, перестать
-                        отступать и начать отстаивать свои границы.
-                      </p>
-                      <p>
-                        <span className="font-medium">Спорт и достижения.</span>{" "}
-                        Помогает укрепить выносливость, боевой дух и стремление
-                        к победе.
-                      </p>
-                    </div>
-                    <p className="font-medium text-orange-100">
-                      Это не про агрессию. Это про внутреннюю твёрдость, которая
-                      помогает быть услышанным.
-                    </p>
-                    <p className="font-semibold text-orange-200">
-                      Как использовать:
-                    </p>
-                    <p>
-                      В указанный день и час действуйте уверенно и настойчиво.
-                      Например, сядьте спиной к указанному сектору и позвоните
-                      человеку, с которым нужно обсудить важный вопрос. На
-                      переговорах сядьте спиной к указанному сектору и спокойно
-                      отстаивайте свою точку зрения.
-                    </p>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </h2>
-          </div>
-          <div className="space-y-3">
-            {tigerDuns.map((hit, index) => (
-              <TigerDunCard
-                key={`${hit.date}-${hit.hourBranch}-${hit.dom}-${hit.variant}-${index}`}
-                hit={hit}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* Персональные структуры «Три Генерала», требуют дату рождения */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-serif font-semibold">
-          <Dialog open={genInfoOpen} onOpenChange={setGenInfoOpen}>
-            <DialogTrigger asChild>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1.5 underline decoration-dotted decoration-emerald-300/60 underline-offset-4 hover:text-emerald-200 transition-colors"
-              >
-                Структуры «Три Генерала»
-                <Info className="w-4 h-4 text-emerald-300/80" />
-              </button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="font-serif">
-                  Структура «Три Генерала»
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-3 text-sm leading-relaxed">
-                <p className="font-medium text-emerald-200">
-                  Используем для помощи в:
-                </p>
-                <ul className="list-disc list-outside space-y-1.5 pl-5">
-                  {GEN_AREAS.map((a, i) => (
-                    <li key={i}>{a}</li>
-                  ))}
-                </ul>
-                <p className="font-medium text-emerald-200">{GEN_NOTE}</p>
-                <p className="font-semibold text-emerald-200">
-                  Процесс активации:
-                </p>
-                <ol className="list-decimal list-outside space-y-1.5 pl-5">
-                  {GEN_PROCESS.map((p, i) => (
-                    <li key={i}>{p}</li>
-                  ))}
-                </ol>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </h2>
-
+      <section className="space-y-4" aria-label="Ближайшие публикации структур">
         {!hasBirthDate ? (
           <Card className="bg-card/40 backdrop-blur-md">
-            <CardContent className="py-8 flex flex-col items-center text-center space-y-4">
-              <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
-                <AlertCircle className="w-7 h-7" />
-              </div>
-              <p className="text-muted-foreground max-w-md text-sm">
-                Персональные структуры рассчитываются по дате вашего рождения.
-                Пожалуйста, заполните её в настройках профиля.
-              </p>
-              <Link href="/profile">
-                <Button size="lg" className="mt-1">
-                  Перейти в профиль
-                </Button>
-              </Link>
+            <CardContent className="py-8 text-center text-sm text-muted-foreground">
+              Персональные структуры рассчитываются по дате Вашего рождения. Заполните её в настройках профиля, чтобы увидеть подходящие публикации.
             </CardContent>
           </Card>
-        ) : structures.length > 0 ? (
+        ) : null}
+
+        {scheduledPublications.length > 0 ? (
           <div className="space-y-4">
-            {structures.map((s, i) => (
-              <StructureCard
-                key={`${s.date}-${s.hourBranch}-${s.dom}-${i}`}
-                s={s}
-              />
-            ))}
+            {scheduledPublications.map((publication, index) => {
+              switch (publication.kind) {
+                case "jade":
+                  return <JadeMaidenCard key={`jade-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`} m={publication.item} />;
+                case "mystic":
+                  return <ThreeMysticsCard key={`mystic-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.wonder}-${index}`} m={publication.item} />;
+                case "battalion":
+                  return <FiveBattalionsCard key={`battalion-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`} hit={publication.item} />;
+                case "tiger":
+                  return <TigerDunCard key={`tiger-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.variant}-${index}`} hit={publication.item} />;
+                case "general":
+                  return <StructureCard key={`general-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`} s={publication.item} />;
+              }
+            })}
           </div>
-        ) : (
+        ) : hasBirthDate ? (
           <Card className="bg-card/40 backdrop-blur-md">
             <CardContent className="py-10 text-center text-sm text-muted-foreground">
-              На ближайшие {windowDays} {pluralDays(windowDays)} благоприятных
-              структур не найдено. Загляните позже, структуры появляются по
-              благоприятным дням и часам.
+              На ближайшие {windowDays} {pluralDays(windowDays)} благоприятных структур не найдено. Загляните позже, публикации появляются по благоприятным дням и часам.
             </CardContent>
           </Card>
-        )}
+        ) : null}
       </section>
 
       {activations && activations.items.length > 0 && (
