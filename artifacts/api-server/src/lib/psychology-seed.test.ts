@@ -34,16 +34,24 @@ describe("начальное наполнение раздела психоло�
     mocks.onConflictDoNothing.mockClear();
   });
 
-  it("создаёт три утверждённые практики без перезаписи правок администратора", async () => {
+  it("создаёт все утверждённые практики без перезаписи правок администратора", async () => {
     await ensurePsychologyPractices();
 
     expect(mocks.insert).toHaveBeenCalledOnce();
     const practices = seededPractices();
-    expect(practices).toHaveLength(3);
+    expect(practices).toHaveLength(11);
     expect(practices.map((practice) => practice.slug)).toEqual([
       "cognitive-rehearsal",
       "pause-before-response",
       "intention-anchor",
+      "what-matters-now",
+      "desire-without-negation",
+      "one-delayed-step",
+      "support-and-boundaries",
+      "voice-in-important-conversation",
+      "parts-before-financial-decision",
+      "my-suitable-day",
+      "small-experiment",
     ]);
     expect(mocks.onConflictDoNothing).toHaveBeenCalledWith({ target: "slug" });
   });
@@ -63,5 +71,13 @@ describe("начальное наполнение раздела психоло�
     const waterStep = waterPractice!.steps.find((step) => step.id === "water");
     expect(waterStep).toBeDefined();
     expect(waterStep!.instruction).toContain("не обладает особыми свойствами");
+
+    const financialPractice = practices.find(
+      (practice) => practice.slug === "parts-before-financial-decision",
+    );
+    expect(financialPractice).toBeDefined();
+    expect(financialPractice!.safetyNote).toContain(
+      "не финансовая консультация",
+    );
   });
 });
