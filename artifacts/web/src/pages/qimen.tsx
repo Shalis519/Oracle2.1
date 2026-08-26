@@ -920,10 +920,10 @@ function TigerDunCard({ hit }: { hit: QimenTigerDun }) {
               Небо: {hit.heavenStemName}
             </span>
             <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
-              Земная тарелка: {hit.earthStemName}
+              Земля: {hit.earthStemName}
             </span>
             <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
-              {hit.doorName}
+              Главные Врата: {hit.doorName}
             </span>
           </div>
         </CardContent>
