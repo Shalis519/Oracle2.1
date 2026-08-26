@@ -57,19 +57,6 @@ const HOUR_RANGES: Record<string, string> = {
   Свинья: "21:00–23:00",
 };
 
-const STEM_ELEMENT_RU: Record<string, string> = {
-  甲: "Дерево",
-  乙: "Дерево",
-  丙: "Огонь",
-  丁: "Огонь",
-  戊: "Земля",
-  己: "Земля",
-  庚: "Металл",
-  辛: "Металл",
-  壬: "Вода",
-  癸: "Вода",
-};
-
 function sortBySchedule<T extends { date: string; hourBranch: number }>(
   items: readonly T[],
 ): T[] {
@@ -933,7 +920,7 @@ function TigerDunCard({ hit }: { hit: QimenTigerDun }) {
               Небо: {hit.heavenStemName}
             </span>
             <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
-              Земная тарелка: {STEM_ELEMENT_RU[hit.earthStem] ?? hit.earthStemName}
+              Земная тарелка: {hit.earthStemName}
             </span>
             <span className="rounded-full bg-orange-400/10 px-2 py-0.5 text-xs text-orange-100">
               {hit.doorName}
