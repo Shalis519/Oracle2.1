@@ -119,10 +119,6 @@ export default function MatrixPage() {
             <p className="leading-relaxed text-foreground/90">
               {selectedPoint.essence}
             </p>
-            <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-sm leading-relaxed text-muted-foreground">
-              <span className="font-semibold text-foreground">Расчёт:</span>{" "}
-              {selectedPoint.formula}
-            </div>
           </CardContent>
         </Card>
       </motion.div>
