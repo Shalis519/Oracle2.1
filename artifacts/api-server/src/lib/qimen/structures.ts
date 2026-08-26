@@ -590,6 +590,10 @@ export function detectTigerDun(
     const variant = tigerDunVariant(cell);
     if (!variant) continue;
 
+    // Гэн допустим только на Небесной тарелке четвёртого варианта.
+    // На Земной тарелке он не входит ни в одну из четырёх строк схемы.
+    if (cell.earthStem === "庚") continue;
+
     if (cell.isVoid) continue;
     if (annualYellowFive(palace, date)) continue;
     if (controls(DOOR_ELEMENT[cell.door], STAR_ELEMENT[cell.star])) continue;

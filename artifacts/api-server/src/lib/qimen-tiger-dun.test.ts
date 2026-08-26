@@ -62,6 +62,8 @@ describe("Тигровый Дунь", () => {
     expect(variants).toEqual(new Set([1, 2, 3, 4]));
 
     for (const hit of hits) {
+      expect(hit.earthStem).not.toBe("庚");
+
       if (hit.variant === 1) {
         expect(hit).toMatchObject({
           palace: 8,
