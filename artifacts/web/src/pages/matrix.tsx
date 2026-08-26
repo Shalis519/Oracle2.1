@@ -72,10 +72,6 @@ export default function MatrixPage() {
             <h1 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl">
               Матрица Судьбы
             </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Полная круговая схема по дате рождения: исходные опоры, два квадрата,
-              линии и четыре уровня предназначения в символическом прочтении.
-            </p>
           </div>
         </div>
       </motion.div>
