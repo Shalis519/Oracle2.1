@@ -777,15 +777,36 @@ export interface FengShuiInfo {
   recommendation: string;
 }
 
+export type MatrixPointSection = typeof MatrixPointSection[keyof typeof MatrixPointSection];
+
+
+export const MatrixPointSection = {
+  diagonal: 'diagonal',
+  direct: 'direct',
+  line: 'line',
+  purpose: 'purpose',
+} as const;
+
 export interface MatrixPoint {
+  id: string;
+  section: MatrixPointSection;
   position: string;
   arcanaNumber: number;
   arcanaName: string;
   essence: string;
+  formula: string;
 }
+
+export type PersonalMatrixCalculationVersion = typeof PersonalMatrixCalculationVersion[keyof typeof PersonalMatrixCalculationVersion];
+
+
+export const PersonalMatrixCalculationVersion = {
+  'full-wheel-v1': 'full-wheel-v1',
+} as const;
 
 export interface PersonalMatrix {
   birthDate: string;
+  calculationVersion: PersonalMatrixCalculationVersion;
   points: MatrixPoint[];
 }
 

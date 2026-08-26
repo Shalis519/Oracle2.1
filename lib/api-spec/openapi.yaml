@@ -2601,8 +2601,13 @@ components:
 
     MatrixPoint:
       type: object
-      required: [position, arcanaNumber, arcanaName, essence]
+      required: [id, section, position, arcanaNumber, arcanaName, essence, formula]
       properties:
+        id:
+          type: string
+        section:
+          type: string
+          enum: [diagonal, direct, line, purpose]
         position:
           type: string
         arcanaNumber:
@@ -2611,13 +2616,18 @@ components:
           type: string
         essence:
           type: string
+        formula:
+          type: string
 
     PersonalMatrix:
       type: object
-      required: [birthDate, points]
+      required: [birthDate, calculationVersion, points]
       properties:
         birthDate:
           type: string
+        calculationVersion:
+          type: string
+          enum: [full-wheel-v1]
         points:
           type: array
           items:

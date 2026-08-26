@@ -5,10 +5,14 @@
  * Aether Oracle API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { MatrixPointSection } from './matrixPointSection';
 
 export interface MatrixPoint {
+  id: string;
+  section: MatrixPointSection;
   position: string;
   arcanaNumber: number;
   arcanaName: string;
   essence: string;
+  formula: string;
 }

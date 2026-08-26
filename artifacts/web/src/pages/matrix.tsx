@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import { Layers, AlertCircle, Sparkles } from "lucide-react";
 import { DestinyMatrixWheel } from "@/components/matrix/destiny-matrix-wheel";
 
-const DEFAULT_SELECTED_POINT = 6;
+const DEFAULT_SELECTED_POINT_ID = "center";
 
 export default function MatrixPage() {
   const {
@@ -20,8 +20,8 @@ export default function MatrixPage() {
   } = useGetMatrix({
     query: { retry: false, queryKey: getGetMatrixQueryKey() },
   });
-  const [selectedPointIndex, setSelectedPointIndex] = useState(
-    DEFAULT_SELECTED_POINT,
+  const [selectedPointId, setSelectedPointId] = useState(
+    DEFAULT_SELECTED_POINT_ID,
   );
 
   if (isLoading) {
@@ -54,7 +54,8 @@ export default function MatrixPage() {
     );
   }
 
-  const selectedPoint = matrix.points[selectedPointIndex] ?? matrix.points[0];
+  const selectedPoint =
+    matrix.points.find((point) => point.id === selectedPointId) ?? matrix.points[0];
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6 md:space-y-8 md:p-10">
@@ -72,8 +73,8 @@ export default function MatrixPage() {
               Матрица Судьбы
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Круговая схема на основе девяти расчётных точек Вашей даты
-              рождения и 22 старших арканов.
+              Полная круговая схема по дате рождения: исходные опоры, два квадрата,
+              линии и четыре уровня предназначения в символическом прочтении.
             </p>
           </div>
         </div>
@@ -86,13 +87,13 @@ export default function MatrixPage() {
       >
         <DestinyMatrixWheel
           points={matrix.points}
-          selectedIndex={selectedPointIndex}
-          onSelect={setSelectedPointIndex}
+          selectedId={selectedPointId}
+          onSelect={setSelectedPointId}
         />
       </motion.div>
 
       <motion.div
-        key={`${selectedPoint.position}-${selectedPoint.arcanaNumber}`}
+        key={`${selectedPoint.id}-${selectedPoint.arcanaNumber}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
@@ -118,6 +119,10 @@ export default function MatrixPage() {
             <p className="leading-relaxed text-foreground/90">
               {selectedPoint.essence}
             </p>
+            <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-sm leading-relaxed text-muted-foreground">
+              <span className="font-semibold text-foreground">Расчёт:</span>{" "}
+              {selectedPoint.formula}
+            </div>
           </CardContent>
         </Card>
       </motion.div>
@@ -134,12 +139,12 @@ export default function MatrixPage() {
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {matrix.points.map((point, index) => {
-            const isSelected = index === selectedPointIndex;
+            const isSelected = point.id === selectedPointId;
             return (
               <motion.button
-                key={`${point.position}-${point.arcanaNumber}`}
+                key={`${point.id}-${point.arcanaNumber}`}
                 type="button"
-                onClick={() => setSelectedPointIndex(index)}
+                onClick={() => setSelectedPointId(point.id)}
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: index * 0.04 }}

@@ -385,11 +385,15 @@ export const SubmitFeedbackResponse = zod.object({
  */
 export const GetMatrixResponse = zod.object({
   "birthDate": zod.string(),
+  "calculationVersion": zod.enum(['full-wheel-v1']),
   "points": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.enum(['diagonal', 'direct', 'line', 'purpose']),
   "position": zod.string(),
   "arcanaNumber": zod.number(),
   "arcanaName": zod.string(),
-  "essence": zod.string()
+  "essence": zod.string(),
+  "formula": zod.string()
 }))
 })
 

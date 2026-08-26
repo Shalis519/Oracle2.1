@@ -16,6 +16,10 @@ import { DREAM_MEANINGS, DEFAULT_DREAM_INTERPRETATION } from "./data/dreams";
 import { Solar } from "lunar-typescript";
 import { selectTopTransits } from "./transitScore";
 import { futuristicGenerator } from "./futuristicGenerator";
+import {
+  buildFullMatrixNumbers,
+  type FullMatrixPointId,
+} from "./matrixDestinyCore";
 import { db, motivationPhrasesTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 
@@ -88,59 +92,140 @@ function parseDate(dateStr: string): ParsedDate | null {
 }
 
 export interface MatrixPointResult {
+  id: FullMatrixPointId;
+  section: "diagonal" | "direct" | "line" | "purpose";
   position: string;
   arcanaNumber: number;
   arcanaName: string;
   essence: string;
+  formula: string;
 }
 
 export interface PersonalMatrixResult {
   birthDate: string;
+  calculationVersion: "full-wheel-v1";
   points: MatrixPointResult[];
 }
 
-/** Matrix of Destiny core points derived from the birth date. */
+const MATRIX_POINT_COPY: Record<
+  FullMatrixPointId,
+  { position: string; essence: string }
+> = {
+  day: {
+    position: "День рождения",
+    essence: "Первая опора полной схемы. Она предлагает посмотреть, как Вы проявляете инициативу и выбираете направление для себя.",
+  },
+  month: {
+    position: "Месяц рождения",
+    essence: "Верхняя опора полной схемы. Это символическая тема восприятия, обучения и того, на что Вы опираетесь в развитии.",
+  },
+  year: {
+    position: "Редуцированный год",
+    essence: "Вторая земная опора. Она помогает рассматривать широкий жизненный контекст и накопленный опыт без оценок и предсказаний.",
+  },
+  foundation: {
+    position: "Нижняя опора",
+    essence: "Суммарная точка трёх исходных значений. В ней можно увидеть, как первичные качества соединяются в практическом жизненном основании.",
+  },
+  center: {
+    position: "Центр матрицы",
+    essence: "Центральная точка объединяет четыре исходные опоры. Используйте её как нейтральный фокус для самонаблюдения и выбора следующего шага.",
+  },
+  directTopLeft: {
+    position: "Верхний левый угол прямого квадрата",
+    essence: "Производная опора полной схемы. Она показывает одну из связок между исходными значениями и помогает заметить их совместную тему.",
+  },
+  directTopRight: {
+    position: "Верхний правый угол прямого квадрата",
+    essence: "Производная опора полной схемы. Она раскрывает связку двух соседних исходных значений в самостоятельном символическом контексте.",
+  },
+  directBottomRight: {
+    position: "Нижний правый угол прямого квадрата",
+    essence: "Производная опора полной схемы. Её можно рассматривать как подсказку для осознанного отношения к повторяющимся жизненным задачам.",
+  },
+  directBottomLeft: {
+    position: "Нижний левый угол прямого квадрата",
+    essence: "Производная опора полной схемы. Она помогает увидеть, как две базовые точки могут поддерживать более целостный взгляд на свой путь.",
+  },
+  heaven: {
+    position: "Линия Неба",
+    essence: "Вертикальная линия полной схемы. Это символический язык внутреннего потенциала, смысла и личной направленности.",
+  },
+  earth: {
+    position: "Линия Земли",
+    essence: "Горизонтальная линия полной схемы. Она предлагает поразмышлять о действиях, устойчивости и контакте с повседневной реальностью.",
+  },
+  personalPurpose: {
+    position: "Личное предназначение",
+    essence: "Сумма Неба и Земли. В этой точке можно сформулировать, чему Вы хотите научиться для собственной целостности и развития.",
+  },
+  fatherLine: {
+    position: "Род отца",
+    essence: "Одна из родовых линий полной схемы. Это не оценка семьи, а мягкий повод заметить унаследованные способы действия и поддержки.",
+  },
+  motherLine: {
+    position: "Род матери",
+    essence: "Одна из родовых линий полной схемы. Это не оценка семьи, а мягкий повод заметить унаследованные способы связи, заботы и выбора.",
+  },
+  socialPurpose: {
+    position: "Социальное предназначение",
+    essence: "Сумма двух родовых линий. Она задаёт вопрос о том, каким вкладом и качествами Вам хочется делиться с людьми вокруг.",
+  },
+  spiritualPurpose: {
+    position: "Общее предназначение",
+    essence: "Следующий уровень объединения личной и социальной тем. Его можно использовать для размышления о направлении роста, а не как готовый сценарий будущего.",
+  },
+  planetaryPurpose: {
+    position: "Планетарное предназначение",
+    essence: "Самый широкий символический уровень схемы. Он приглашает подумать, какую ценность Вы хотите создавать для более широкого круга людей.",
+  },
+};
+
+const FULL_MATRIX_POINT_ORDER: FullMatrixPointId[] = [
+  "day",
+  "month",
+  "year",
+  "foundation",
+  "center",
+  "directTopLeft",
+  "directTopRight",
+  "directBottomRight",
+  "directBottomLeft",
+  "heaven",
+  "earth",
+  "personalPurpose",
+  "fatherLine",
+  "motherLine",
+  "socialPurpose",
+  "spiritualPurpose",
+  "planetaryPurpose",
+];
+
+/** Full Matrix of Destiny wheel derived from a birth date. */
 export function computeMatrix(birthDate: string): PersonalMatrixResult | null {
   const d = parseDate(birthDate);
   if (!d) return null;
 
-  const dayArc = reduceToArcana(d.day);
-  const monthArc = reduceToArcana(d.month);
-  const yearArc = reduceToArcana(
-    String(d.year)
-      .split("")
-      .reduce((a, c) => a + Number(c), 0),
-  );
-  const purpose = reduceToArcana(dayArc + monthArc + yearArc);
-  const talent = reduceToArcana(dayArc + monthArc);
-  const heart = reduceToArcana(monthArc + yearArc);
-  const karma = reduceToArcana(dayArc + yearArc);
-  const sky = reduceToArcana(purpose + talent);
-  const earth = reduceToArcana(purpose + heart);
-
-  const make = (position: string, num: number): MatrixPointResult => {
-    const a = getArcana(num);
-    return {
-      position,
-      arcanaNumber: a.number,
-      arcanaName: a.name,
-      essence: a.essence,
-    };
-  };
+  const result = buildFullMatrixNumbers(d);
+  if (!result) return null;
 
   return {
     birthDate,
-    points: [
-      make("Портрет личности (день)", dayArc),
-      make("Линия рода (месяц)", monthArc),
-      make("Духовные задачи (год)", yearArc),
-      make("Зона комфорта и таланты", talent),
-      make("Сердце и отношения", heart),
-      make("Кармический урок", karma),
-      make("Небесная линия (предназначение)", purpose),
-      make("Социальная реализация", sky),
-      make("Земная линия (деньги и быт)", earth),
-    ],
+    calculationVersion: "full-wheel-v1",
+    points: FULL_MATRIX_POINT_ORDER.map((id) => {
+      const point = result.points[id];
+      const arcana = getArcana(point.value);
+      const copy = MATRIX_POINT_COPY[id];
+      return {
+        id,
+        section: point.section,
+        position: copy.position,
+        arcanaNumber: arcana.number,
+        arcanaName: arcana.name,
+        essence: copy.essence,
+        formula: point.formula,
+      };
+    }),
   };
 }
 

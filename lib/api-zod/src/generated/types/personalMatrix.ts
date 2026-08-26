@@ -6,8 +6,10 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { MatrixPoint } from './matrixPoint';
+import type { PersonalMatrixCalculationVersion } from './personalMatrixCalculationVersion';
 
 export interface PersonalMatrix {
   birthDate: string;
+  calculationVersion: PersonalMatrixCalculationVersion;
   points: MatrixPoint[];
 }
