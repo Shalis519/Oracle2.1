@@ -60,6 +60,19 @@ const HOUR_RANGES: Record<string, string> = {
   Свинья: "21:00–23:00",
 };
 
+function sortBySchedule<T extends { date: string; hourBranch: number }>(
+  items: readonly T[],
+): T[] {
+  return [...items].sort((left, right) => {
+    const dateOrder = left.date.localeCompare(right.date);
+    if (dateOrder !== 0) return dateOrder;
+
+    const leftHour = left.hourBranch === 0 ? 12 : left.hourBranch;
+    const rightHour = right.hourBranch === 0 ? 12 : right.hourBranch;
+    return leftHour - rightHour;
+  });
+}
+
 const WALK_RULES: string[] = [
   "Выходите точно в указанный двухчасовой интервал (час). Раньше или позже энергия уже другая.",
   "Двигайтесь в указанном направлении от своего дома или текущей точки. Пройдите ощутимое расстояние, не разворачивайтесь сразу.",
@@ -1019,12 +1032,12 @@ export default function QimenPage() {
   }
 
   const hasBirthDate = data?.hasBirthDate ?? false;
-  const structures = data?.structures ?? [];
-  const jiFuWishes = data?.jiFuWishes ?? [];
-  const jadeMaidens = data?.jadeMaidens ?? [];
-  const threeMystics = data?.threeMystics ?? [];
-  const fiveBattalions = data?.fiveBattalions ?? [];
-  const tigerDuns = data?.tigerDuns ?? [];
+  const structures = sortBySchedule<QimenStructure>(data?.structures ?? []);
+  const jiFuWishes = sortBySchedule<JiFuWish>(data?.jiFuWishes ?? []);
+  const jadeMaidens = sortBySchedule<QimenJadeMaiden>(data?.jadeMaidens ?? []);
+  const threeMystics = sortBySchedule<QimenThreeMystic>(data?.threeMystics ?? []);
+  const fiveBattalions = sortBySchedule<QimenFiveBattalion>(data?.fiveBattalions ?? []);
+  const tigerDuns = sortBySchedule<QimenTigerDun>(data?.tigerDuns ?? []);
   const windowDays = data?.windowDays ?? 14;
 
   return (
@@ -1419,10 +1432,6 @@ export default function QimenPage() {
               </Dialog>
             </h2>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Подходящие двухчасовки на ближайшие {windowDays}{" "}
-            {pluralDays(windowDays)}.
-          </p>
           <div className="space-y-3">
             {tigerDuns.map((hit, index) => (
               <TigerDunCard
