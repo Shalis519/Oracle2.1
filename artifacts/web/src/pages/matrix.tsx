@@ -54,9 +54,6 @@ export default function MatrixPage() {
     );
   }
 
-  const selectedPoint =
-    matrix.points.find((point) => point.id === selectedPointId) ?? matrix.points[0];
-
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6 md:space-y-8 md:p-10">
       <motion.div
@@ -86,37 +83,6 @@ export default function MatrixPage() {
           selectedId={selectedPointId}
           onSelect={setSelectedPointId}
         />
-      </motion.div>
-
-      <motion.div
-        key={`${selectedPoint.id}-${selectedPoint.arcanaNumber}`}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-      >
-        <Card className="overflow-hidden border-primary/35 bg-card/70 shadow-[0_14px_48px_hsl(var(--primary)/0.12)]">
-          <div className="h-1.5 bg-gradient-to-r from-primary via-[#d9b75b] to-primary" />
-          <CardHeader className="pb-3">
-            <div className="flex items-start gap-3">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-primary/35 bg-primary/15 font-serif text-lg font-bold text-primary">
-                {selectedPoint.arcanaNumber}
-              </span>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {selectedPoint.position}
-                </p>
-                <CardTitle className="mt-1 font-serif text-2xl">
-                  {selectedPoint.arcanaName}
-                </CardTitle>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="leading-relaxed text-foreground/90">
-              {selectedPoint.essence}
-            </p>
-          </CardContent>
-        </Card>
       </motion.div>
 
       <section aria-labelledby="matrix-details-heading">
