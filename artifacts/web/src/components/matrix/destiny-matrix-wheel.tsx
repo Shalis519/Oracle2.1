@@ -170,18 +170,10 @@ export function DestinyMatrixWheel({
   return (
     <section
       className="relative overflow-hidden rounded-[2rem] border border-primary/30 bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/0.22),transparent_40%),linear-gradient(145deg,hsl(var(--card)/0.96),hsl(var(--background)/0.82))] p-3 shadow-[0_24px_90px_hsl(var(--primary)/0.16)] sm:p-5"
-      aria-labelledby="matrix-wheel-heading"
+      aria-label="Интерактивное колесо Матрицы Судьбы"
     >
       <div className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(hsl(var(--primary)/0.24)_1px,transparent_1px)] [background-size:18px_18px]" />
-      <div className="relative mb-3 flex items-start justify-between gap-4 px-2 pt-1 sm:mb-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
-            Полная схема
-          </p>
-          <h2 id="matrix-wheel-heading" className="mt-1 font-serif text-xl font-semibold sm:text-2xl">
-            Круг Вашей матрицы
-          </h2>
-        </div>
+      <div className="relative mb-1 flex justify-end px-2 pt-1 sm:mb-2">
         <div className="hidden rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs text-muted-foreground sm:block">
           Нажмите на точку
         </div>
@@ -226,16 +218,12 @@ export function DestinyMatrixWheel({
         <path d="M186 186 L534 534 M534 186 L186 534" stroke="#d9b75b" strokeOpacity="0.45" strokeWidth="1.5" />
 
         <g aria-hidden="true" transform="translate(264 264) rotate(45)">
-          <rect x="-84" y="-14" width="168" height="28" rx="14" fill="hsl(var(--background) / 0.8)" stroke="hsl(var(--primary) / 0.42)" strokeWidth="1" />
-          <circle cx="-68" cy="0" r="4" fill="hsl(var(--primary))" />
-          <text x="-56" y="4" fill="hsl(var(--foreground))" fontSize="11" fontWeight="700">
+          <text textAnchor="middle" y="4" fill="hsl(var(--foreground) / 0.78)" fontSize="10" fontWeight="600">
             Линия мужского рода
           </text>
         </g>
         <g aria-hidden="true" transform="translate(456 264) rotate(-45)">
-          <rect x="-84" y="-14" width="168" height="28" rx="14" fill="hsl(var(--background) / 0.8)" stroke="#d66d62" strokeOpacity="0.68" strokeWidth="1" />
-          <circle cx="-68" cy="0" r="4" fill="#d66d62" />
-          <text x="-56" y="4" fill="hsl(var(--foreground))" fontSize="11" fontWeight="700">
+          <text textAnchor="middle" y="4" fill="hsl(var(--foreground) / 0.78)" fontSize="10" fontWeight="600">
             Линия женского рода
           </text>
         </g>
