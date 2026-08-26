@@ -17,6 +17,7 @@ router.get("/qimen", requireAuth, async (req, res): Promise<void> => {
     birthTimezone: user.birthTimezone,
     birthLongitude: user.birthLongitude,
     days: 14,
+    tigerDunDays: 30,
   });
   res.json(GetQimenResponse.parse(result));
 });

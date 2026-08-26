@@ -207,6 +207,7 @@ export interface ComputeOptions {
   birthTimezone?: string | null;
   birthLongitude?: number | null;
   days?: number;
+  tigerDunDays?: number;
 }
 
 function localCalendarNoon(
@@ -414,6 +415,7 @@ function hourLabel(hourBranch: number, lateZi = false): string {
  */
 export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const days = opts.days ?? 14;
+  const tigerDunDays = opts.tigerDunDays ?? days;
   const from = localCalendarNoon(opts.timezone, opts.from ?? new Date());
   const hasBirthDate = !!opts.birthDate;
   const yearBranch = hasBirthDate
@@ -723,6 +725,71 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
             dayGanZhi: slotDayGz,
             hourBranch: h,
             hourLabel: hourLabel(h, slot.lateZi),
+            direction: hit.direction,
+            dir: PALACES[hit.palace].dir,
+            dom: hit.dom,
+            variant: hit.variant,
+            heavenStem: hit.heavenStem,
+            heavenStemName: STEM_NAME_RU[hit.heavenStem] ?? hit.heavenStem,
+            earthStem: hit.earthStem,
+            earthStemName: STEM_NAME_RU[hit.earthStem] ?? hit.earthStem,
+            earthStemRequired: hit.variant === 1 || hit.variant === 3,
+            door: hit.door,
+            doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
+            star: hit.star,
+            starName: GENERALS_STAR_NAME[hit.star] ?? hit.star,
+            goal: TIGER_DUN_GOAL,
+            supportRelation: support.relation as "same" | "supports",
+            supportMessage: threeMysticsSupportMessage(
+              support.relation as "same" | "supports",
+              support.structureElement,
+              support.personElement,
+            ),
+          });
+        }
+      }
+    }
+  }
+
+  // Тигровый Дунь публикуется на отдельном месячном горизонте. Первые
+  // `days` дней уже обработаны вместе с общими структурами, поэтому здесь
+  // продолжаем сканирование только с первой ещё не просмотренной даты.
+  if (tigerDunDays > days && yearStem >= 0) {
+    for (let d = days; d < tigerDunDays; d++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + d);
+      const day = dayInfo(date);
+      if (clashesBranch(yearBranch, day.branch)) continue;
+
+      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+        const slotDate =
+          slot.branch === 0 && !slot.lateZi
+            ? new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate() + 1,
+                12,
+                0,
+                0,
+              )
+            : date;
+        const slotDay = dayInfo(slotDate);
+        if (clashesBranch(yearBranch, slotDay.branch)) continue;
+        const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
+
+        for (const hit of detectTigerDun(
+          slotDate,
+          slot.branch,
+          slot.lateZi,
+          yearStem,
+          representativeYearStem,
+        )) {
+          const support = hit.support!;
+          tigerDuns.push({
+            date: slotDay.iso,
+            dayGanZhi: slotDayGz,
+            hourBranch: slot.branch,
+            hourLabel: hourLabel(slot.branch, slot.lateZi),
             direction: hit.direction,
             dir: PALACES[hit.palace].dir,
             dom: hit.dom,

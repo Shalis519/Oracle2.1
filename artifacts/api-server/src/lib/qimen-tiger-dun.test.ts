@@ -112,6 +112,22 @@ describe("Тигровый Дунь", () => {
     }
   }, 30_000);
 
+  test("рассчитывает Тигровый Дунь на отдельном 30-дневном горизонте", () => {
+    const shared = {
+      from: START,
+      days: 14,
+      birthDate: "1980-02-05",
+      birthTime: "16:01",
+    };
+    const standard = computeQimenStructures(shared);
+    const tigerMonth = computeQimenStructures({ ...shared, tigerDunDays: 30 });
+    const allMonth = computeQimenStructures({ ...shared, days: 30 });
+
+    expect(tigerMonth.structures).toEqual(standard.structures);
+    expect(tigerMonth.fiveBattalions).toEqual(standard.fiveBattalions);
+    expect(tigerMonth.tigerDuns).toEqual(allMonth.tigerDuns);
+  }, 30_000);
+
   test("не публикует структуру без данных рождения, а при публикации подтверждает пользу по НС года", () => {
     const withoutBirth = computeQimenStructures({ from: START, days: 14 });
     expect(GetQimenResponse.parse(withoutBirth).tigerDuns).toEqual([]);
