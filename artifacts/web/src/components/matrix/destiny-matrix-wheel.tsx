@@ -278,9 +278,6 @@ export function DestinyMatrixWheel({
         })}
       </div>
 
-      <p className="relative z-10 mt-3 px-2 text-center text-xs leading-relaxed text-muted-foreground">
-        Схема служит для символического самоисследования и не является предсказанием или оценкой Вашей жизни.
-      </p>
     </section>
   );
 }
