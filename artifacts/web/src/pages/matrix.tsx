@@ -1,71 +1,178 @@
-import { useGetMatrix, getGetMatrixQueryKey } from "@workspace/api-client-react";
+import { useState } from "react";
+import {
+  useGetMatrix,
+  getGetMatrixQueryKey,
+} from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Layers, AlertCircle } from "lucide-react";
+import { Layers, AlertCircle, Sparkles } from "lucide-react";
+import { DestinyMatrixWheel } from "@/components/matrix/destiny-matrix-wheel";
+
+const DEFAULT_SELECTED_POINT = 6;
 
 export default function MatrixPage() {
-  const { data: matrix, isLoading, error } = useGetMatrix({ query: { retry: false, queryKey: getGetMatrixQueryKey() } });
+  const {
+    data: matrix,
+    isLoading,
+    error,
+  } = useGetMatrix({
+    query: { retry: false, queryKey: getGetMatrixQueryKey() },
+  });
+  const [selectedPointIndex, setSelectedPointIndex] = useState(
+    DEFAULT_SELECTED_POINT,
+  );
 
   if (isLoading) {
-    return <div className="flex h-[50vh] items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+      </div>
+    );
   }
 
   const isMissingData = error?.status === 400 || !matrix;
 
   if (isMissingData) {
     return (
-      <div className="p-6 md:p-10 max-w-3xl mx-auto space-y-8 flex flex-col items-center text-center mt-12">
-        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive mb-4">
-          <AlertCircle className="w-8 h-8" />
+      <div className="mt-12 flex max-w-3xl flex-col items-center space-y-8 p-6 text-center md:p-10">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+          <AlertCircle className="h-8 w-8" />
         </div>
-        <h1 className="text-3xl font-serif font-bold">Данные не заполнены</h1>
-        <p className="text-muted-foreground max-w-md">
-          Для расчета Матрицы Судьбы необходима дата вашего рождения. Пожалуйста, заполните ее в настройках профиля.
+        <h1 className="font-serif text-3xl font-bold">Данные не заполнены</h1>
+        <p className="max-w-md text-muted-foreground">
+          Для расчёта Матрицы Судьбы необходима дата Вашего рождения.
+          Пожалуйста, заполните её в настройках профиля.
         </p>
         <Link href="/profile">
-          <Button size="lg" className="mt-4">Перейти в профиль</Button>
+          <Button size="lg" className="mt-4">
+            Перейти в профиль
+          </Button>
         </Link>
       </div>
     );
   }
 
+  const selectedPoint = matrix.points[selectedPointIndex] ?? matrix.points[0];
+
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h1 className="text-4xl font-serif font-bold mb-2 flex items-center gap-3">
-          <Layers className="text-primary" />
-          Матрица Судьбы
-        </h1>
-        <p className="text-muted-foreground">Кармический портрет на основе 22 старших арканов.</p>
+    <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6 md:space-y-8 md:p-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="flex items-start gap-3">
+          <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+            <Layers className="h-6 w-6" />
+          </div>
+          <div>
+            <h1 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl">
+              Матрица Судьбы
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+              Круговая схема на основе девяти расчётных точек Вашей даты
+              рождения и 22 старших арканов.
+            </p>
+          </div>
+        </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {matrix.points.map((point, i) => (
-          <motion.div 
-            key={i}
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-          >
-            <Card className="bg-card/40 backdrop-blur-md h-full border-border hover:border-primary/50 transition-colors">
-              <CardHeader className="pb-2">
-                <div className="text-sm font-medium text-muted-foreground mb-1">{point.position}</div>
-                <CardTitle className="font-serif text-xl flex items-center gap-2">
-                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20 text-primary text-sm">
-                    {point.arcanaNumber}
-                  </span>
-                  {point.arcanaName}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.08 }}
+      >
+        <DestinyMatrixWheel
+          points={matrix.points}
+          selectedIndex={selectedPointIndex}
+          onSelect={setSelectedPointIndex}
+        />
+      </motion.div>
+
+      <motion.div
+        key={`${selectedPoint.position}-${selectedPoint.arcanaNumber}`}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+      >
+        <Card className="overflow-hidden border-primary/35 bg-card/70 shadow-[0_14px_48px_hsl(var(--primary)/0.12)]">
+          <div className="h-1.5 bg-gradient-to-r from-primary via-[#d9b75b] to-primary" />
+          <CardHeader className="pb-3">
+            <div className="flex items-start gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-primary/35 bg-primary/15 font-serif text-lg font-bold text-primary">
+                {selectedPoint.arcanaNumber}
+              </span>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {selectedPoint.position}
+                </p>
+                <CardTitle className="mt-1 font-serif text-2xl">
+                  {selectedPoint.arcanaName}
                 </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-relaxed">{point.essence}</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="leading-relaxed text-foreground/90">
+              {selectedPoint.essence}
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      <section aria-labelledby="matrix-details-heading">
+        <div className="mb-4 flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-primary" />
+          <h2
+            id="matrix-details-heading"
+            className="font-serif text-2xl font-semibold"
+          >
+            Расшифровки точек
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {matrix.points.map((point, index) => {
+            const isSelected = index === selectedPointIndex;
+            return (
+              <motion.button
+                key={`${point.position}-${point.arcanaNumber}`}
+                type="button"
+                onClick={() => setSelectedPointIndex(index)}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: index * 0.04 }}
+                className={`group h-full rounded-2xl border p-0 text-left outline-none transition-[border-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+                  isSelected
+                    ? "border-primary/70 bg-primary/10 shadow-[0_10px_32px_hsl(var(--primary)/0.14)]"
+                    : "border-border bg-card/45 hover:border-primary/45"
+                }`}
+                aria-pressed={isSelected}
+              >
+                <Card className="h-full border-0 bg-transparent shadow-none">
+                  <CardHeader className="pb-2">
+                    <div className="mb-1 text-sm font-medium text-muted-foreground">
+                      {point.position}
+                    </div>
+                    <CardTitle className="flex items-center gap-2 font-serif text-xl">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-sm text-primary">
+                        {point.arcanaNumber}
+                      </span>
+                      {point.arcanaName}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm leading-relaxed text-foreground/85">
+                      {point.essence}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.button>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
