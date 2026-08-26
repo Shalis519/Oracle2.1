@@ -136,7 +136,7 @@ export function DestinyMatrixWheel({
       </div>
 
       <svg
-        className="relative z-10 mx-auto block h-auto w-[80%] max-w-[610px]"
+        className="relative z-10 mx-auto block h-auto w-[64%] max-w-[488px]"
         viewBox="0 0 720 720"
         role="group"
         aria-labelledby={`${titleId} ${descriptionId}`}
