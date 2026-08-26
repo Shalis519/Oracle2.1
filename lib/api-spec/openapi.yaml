@@ -2601,7 +2601,7 @@ components:
 
     MatrixPoint:
       type: object
-      required: [id, section, position, arcanaNumber, arcanaName, essence, formula]
+      required: [id, section, position, arcanaNumber, arcanaName, essence, strength, practice, formula]
       properties:
         id:
           type: string
@@ -2615,6 +2615,10 @@ components:
         arcanaName:
           type: string
         essence:
+          type: string
+        strength:
+          type: string
+        practice:
           type: string
         formula:
           type: string

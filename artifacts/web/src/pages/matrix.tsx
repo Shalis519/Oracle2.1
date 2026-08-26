@@ -125,10 +125,18 @@ export default function MatrixPage() {
                       {point.arcanaName}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-3">
                     <p className="text-sm leading-relaxed text-foreground/85">
                       {point.essence}
                     </p>
+                    <div className="border-l-2 border-primary/55 pl-3 text-sm leading-relaxed text-foreground/90">
+                      <span className="font-semibold text-primary">Ваша сильная сторона: </span>
+                      {point.strength.replace("Ваша сильная сторона здесь - ", "")}
+                    </div>
+                    <div className="rounded-xl border border-primary/25 bg-primary/8 p-3 text-sm leading-relaxed text-foreground/90">
+                      <p className="mb-1 font-semibold text-primary">Попробуйте</p>
+                      <p>{point.practice}</p>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.button>

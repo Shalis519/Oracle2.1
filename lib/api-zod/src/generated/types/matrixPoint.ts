@@ -14,5 +14,7 @@ export interface MatrixPoint {
   arcanaNumber: number;
   arcanaName: string;
   essence: string;
+  strength: string;
+  practice: string;
   formula: string;
 }

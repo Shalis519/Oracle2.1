@@ -393,6 +393,8 @@ export const GetMatrixResponse = zod.object({
   "arcanaNumber": zod.number(),
   "arcanaName": zod.string(),
   "essence": zod.string(),
+  "strength": zod.string(),
+  "practice": zod.string(),
   "formula": zod.string()
 }))
 })
