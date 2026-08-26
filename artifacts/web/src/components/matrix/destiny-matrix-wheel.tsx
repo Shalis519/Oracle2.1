@@ -225,6 +225,21 @@ export function DestinyMatrixWheel({
         <path d="M360 94 L360 626 M94 360 L626 360" stroke="hsl(var(--primary) / 0.38)" strokeWidth="1.5" />
         <path d="M186 186 L534 534 M534 186 L186 534" stroke="#d9b75b" strokeOpacity="0.45" strokeWidth="1.5" />
 
+        <g aria-hidden="true" transform="translate(264 264) rotate(45)">
+          <rect x="-84" y="-14" width="168" height="28" rx="14" fill="hsl(var(--background) / 0.8)" stroke="hsl(var(--primary) / 0.42)" strokeWidth="1" />
+          <circle cx="-68" cy="0" r="4" fill="hsl(var(--primary))" />
+          <text x="-56" y="4" fill="hsl(var(--foreground))" fontSize="11" fontWeight="700">
+            Линия мужского рода
+          </text>
+        </g>
+        <g aria-hidden="true" transform="translate(456 264) rotate(-45)">
+          <rect x="-84" y="-14" width="168" height="28" rx="14" fill="hsl(var(--background) / 0.8)" stroke="#d66d62" strokeOpacity="0.68" strokeWidth="1" />
+          <circle cx="-68" cy="0" r="4" fill="#d66d62" />
+          <text x="-56" y="4" fill="hsl(var(--foreground))" fontSize="11" fontWeight="700">
+            Линия женского рода
+          </text>
+        </g>
+
         <g
           transform="translate(360 360)"
           role="button"
