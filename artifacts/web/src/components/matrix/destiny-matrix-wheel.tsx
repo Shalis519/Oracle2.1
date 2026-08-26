@@ -28,23 +28,23 @@ type DestinyMatrixWheelProps = {
 
 const BASE_NODES: WheelNode[] = [
   { id: "month", label: "Главный талант", x: 360, y: 94, accent: "base", labelPlacement: "top" },
-  { id: "day", label: "Визитная карточка", x: 626, y: 360, accent: "base", labelPlacement: "bottom" },
+  { id: "day", label: "Визитная карточка", x: 94, y: 360, accent: "base", labelPlacement: "bottom" },
   { id: "foundation", label: "Кармический хвост", x: 360, y: 626, accent: "base", labelPlacement: "bottom" },
-  { id: "year", label: "Задача души", x: 94, y: 360, accent: "base", labelPlacement: "top" },
+  { id: "year", label: "Задача души", x: 626, y: 360, accent: "base", labelPlacement: "bottom" },
 ];
 
 const DIRECT_NODES: WheelNode[] = [
-  { id: "directTopLeft", label: "Мать: духовное", x: 186, y: 186, accent: "direct", labelPlacement: "top" },
-  { id: "directTopRight", label: "Отец: духовное", x: 534, y: 186, accent: "direct", labelPlacement: "top" },
-  { id: "directBottomRight", label: "Мать: материальное", x: 534, y: 534, accent: "direct", labelPlacement: "bottom" },
-  { id: "directBottomLeft", label: "Отец: материальное", x: 186, y: 534, accent: "direct", labelPlacement: "bottom" },
+  { id: "directTopLeft", label: "Мать: духовное", x: 534, y: 186, accent: "direct", labelPlacement: "top" },
+  { id: "directTopRight", label: "Отец: духовное", x: 186, y: 186, accent: "direct", labelPlacement: "top" },
+  { id: "directBottomRight", label: "Мать: материальное", x: 186, y: 534, accent: "direct", labelPlacement: "bottom" },
+  { id: "directBottomLeft", label: "Отец: материальное", x: 534, y: 534, accent: "direct", labelPlacement: "bottom" },
 ];
 
 const LINE_NODES: WheelNode[] = [
-  { id: "heaven", label: "Небо", x: 406, y: 235, accent: "line", labelPlacement: "right" },
-  { id: "earth", label: "Земля", x: 235, y: 406, accent: "line", labelPlacement: "left" },
-  { id: "fatherLine", label: "Род отца", x: 258, y: 312, accent: "line", labelPlacement: "left" },
-  { id: "motherLine", label: "Род матери", x: 462, y: 408, accent: "line", labelPlacement: "right" },
+  { id: "heaven", label: "Небо", x: 314, y: 235, accent: "line", labelPlacement: "left" },
+  { id: "earth", label: "Земля", x: 485, y: 406, accent: "line", labelPlacement: "right" },
+  { id: "fatherLine", label: "Род отца", x: 462, y: 312, accent: "line", labelPlacement: "right" },
+  { id: "motherLine", label: "Род матери", x: 258, y: 408, accent: "line", labelPlacement: "left" },
 ];
 
 const PURPOSE_IDS = [
