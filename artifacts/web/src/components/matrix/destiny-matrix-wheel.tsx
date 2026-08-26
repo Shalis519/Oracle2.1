@@ -34,10 +34,10 @@ const BASE_NODES: WheelNode[] = [
 ];
 
 const DIRECT_NODES: WheelNode[] = [
-  { id: "directTopLeft", label: "Угол", x: 186, y: 186, accent: "direct", labelPlacement: "top" },
-  { id: "directTopRight", label: "Угол", x: 534, y: 186, accent: "direct", labelPlacement: "top" },
-  { id: "directBottomRight", label: "Угол", x: 534, y: 534, accent: "direct", labelPlacement: "bottom" },
-  { id: "directBottomLeft", label: "Угол", x: 186, y: 534, accent: "direct", labelPlacement: "bottom" },
+  { id: "directTopLeft", label: "Мать: духовное", x: 186, y: 186, accent: "direct", labelPlacement: "top" },
+  { id: "directTopRight", label: "Отец: духовное", x: 534, y: 186, accent: "direct", labelPlacement: "top" },
+  { id: "directBottomRight", label: "Мать: материальное", x: 534, y: 534, accent: "direct", labelPlacement: "bottom" },
+  { id: "directBottomLeft", label: "Отец: материальное", x: 186, y: 534, accent: "direct", labelPlacement: "bottom" },
 ];
 
 const LINE_NODES: WheelNode[] = [
@@ -240,7 +240,7 @@ export function DestinyMatrixWheel({
             {center.arcanaNumber}
           </text>
           <text y="72" textAnchor="middle" fill="hsl(var(--foreground))" fontSize="13" fontWeight="700">
-            Центр
+            Зона комфорта
           </text>
           <text y="91" textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize="11">
             {center.arcanaName}
