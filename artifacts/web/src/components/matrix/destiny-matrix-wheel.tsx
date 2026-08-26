@@ -78,6 +78,9 @@ function labelPlacement(node: WheelNode): {
   y: number;
   anchor: "start" | "middle" | "end";
 } {
+  if (node.key === "day" || node.key === "earth") {
+    return { x: node.x, y: node.y + 58, anchor: "middle" };
+  }
   if (node.y < 200) return { x: node.x, y: node.y - 54, anchor: "middle" };
   if (node.y > 520) return { x: node.x, y: node.y + 58, anchor: "middle" };
   if (node.x < 200) return { x: node.x - 52, y: node.y + 5, anchor: "end" };
@@ -133,7 +136,7 @@ export function DestinyMatrixWheel({
       </div>
 
       <svg
-        className="relative z-10 mx-auto block h-auto w-full max-w-[760px]"
+        className="relative z-10 mx-auto block h-auto w-[80%] max-w-[610px]"
         viewBox="0 0 720 720"
         role="group"
         aria-labelledby={`${titleId} ${descriptionId}`}
@@ -211,27 +214,6 @@ export function DestinyMatrixWheel({
           strokeOpacity="0.32"
           strokeWidth="1.25"
         />
-
-        <g
-          opacity="0.78"
-          fill="hsl(var(--muted-foreground))"
-          fontSize="11"
-          fontWeight="600"
-          letterSpacing="1.6"
-        >
-          <text x="360" y="46" textAnchor="middle">
-            ДУХОВНЫЙ ВЕКТОР
-          </text>
-          <text x="673" y="354" textAnchor="end">
-            МАТЕРИАЛЬНАЯ ЛИНИЯ
-          </text>
-          <text x="360" y="690" textAnchor="middle">
-            ОПЫТ И ТАЛАНТЫ
-          </text>
-          <text x="47" y="354">
-            ЛИЧНОСТЬ И РОД
-          </text>
-        </g>
 
         <g
           transform="translate(360 360)"
