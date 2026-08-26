@@ -333,10 +333,8 @@ function BirthChartCard({
       </CardHeader>
       <CardContent>
         <div className="mx-auto flex w-full max-w-2xl flex-col">
-          <div className="relative grid w-full grid-cols-[1.1rem_minmax(0,1fr)_1.1rem] items-stretch overflow-hidden rounded-none border border-slate-200 sm:grid-cols-[1.75rem_minmax(0,1fr)_1.75rem]">
-            <div aria-hidden="true" className="absolute left-0 top-0 z-10 h-5 w-4 border-b border-r border-slate-300 bg-slate-200 sm:h-7 sm:w-7" />
-            <div aria-hidden="true" className="absolute bottom-0 left-0 z-10 h-5 w-4 border-r border-t border-slate-300 bg-slate-200 sm:h-7 sm:w-7" />
-            <div className="flex w-4 shrink-0 flex-col overflow-hidden bg-slate-200 text-[7px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
+          <div className="grid w-full grid-cols-[1.1rem_minmax(0,1fr)_1.1rem] items-stretch overflow-hidden rounded-none border border-slate-200 sm:grid-cols-[1.75rem_minmax(0,1fr)_1.75rem]">
+            <div className="flex w-4 shrink-0 flex-col overflow-hidden border-r border-slate-300 bg-slate-200 text-[7px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
               {LEFT_PERIMETER.map((item) => (
                 <div
                   key={`left-${item.parts.join("-")}`}
@@ -355,7 +353,7 @@ function BirthChartCard({
               ))}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="grid grid-cols-9 overflow-hidden bg-slate-200 text-[9px] font-semibold leading-none text-slate-900 sm:text-xs">
+              <div className="grid grid-cols-9 overflow-hidden border-b border-slate-300 bg-slate-200 text-[9px] font-semibold leading-none text-slate-900 sm:text-xs">
                 {TOP_RING.flatMap((item) => [
                   item.left,
                   item.center,
@@ -546,7 +544,7 @@ function BirthChartCard({
                   );
                 })}
               </div>
-              <div className="grid grid-cols-9 overflow-hidden bg-slate-200 text-[9px] font-semibold leading-none text-slate-900 sm:text-xs">
+              <div className="grid grid-cols-9 overflow-hidden border-t border-slate-300 bg-slate-200 text-[9px] font-semibold leading-none text-slate-900 sm:text-xs">
                 {BOTTOM_RING.flatMap((item) => [
                   item.left,
                   item.center,
@@ -563,7 +561,7 @@ function BirthChartCard({
                 ))}
               </div>
             </div>
-            <div className="flex w-4 shrink-0 flex-col overflow-hidden bg-slate-200 text-[7px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
+            <div className="flex w-4 shrink-0 flex-col overflow-hidden border-l border-slate-300 bg-slate-200 text-[7px] font-semibold leading-none text-slate-900 sm:w-7 sm:text-xs">
               {RIGHT_PERIMETER.map((item) => (
                 <div
                   key={`right-${item.parts.join("-")}`}
