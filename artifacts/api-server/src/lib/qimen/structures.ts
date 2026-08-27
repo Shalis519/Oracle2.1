@@ -212,6 +212,7 @@ export function detectThreeGenerals(
     if (cell.isVoid) continue; // Избегаем дворца ПУСТОТЫ (空亡)
     if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue; // Избегаем Гэн
     if (TOMB[wonder] === p) continue; // Избегаем сектора МОГИЛЫ (墓)
+    if (isAnnualYellowFive(p, date)) continue; // Годовая Жёлтая Пятёрка
     if (hasDoorPalaceConflict(cell.door, p)) continue;
     if ((WONDER_AVOID[wonder] ?? []).includes(p)) continue; // per-wonder cautions
     // 门迫: door must not control (克) the star.
@@ -277,7 +278,7 @@ export function detectThreeMystics(
     if (TOMB[wonder] === p) continue;
     if ((WONDER_AVOID[wonder] ?? []).includes(p)) continue;
     if (hasDoorPalaceConflict(cell.door, p)) continue;
-    if (annualYellowFive(p, date)) continue;
+    if (isAnnualYellowFive(p, date)) continue;
     if (controls(DOOR_ELEMENT[cell.door], STAR_ELEMENT[cell.star])) continue;
     // Сочетание Небесного и Земного стволов уже прошло строгую проверку
     // по списку благоприятных формирований из книги 540 Yang Structure.
@@ -400,6 +401,108 @@ export function evaluateSupportPalace(
   };
 }
 
+export type WindDunVariant = 1 | 2 | 3 | 4;
+
+export interface WindDunHit {
+  palace: number;
+  variant: WindDunVariant;
+  direction: string;
+  dom: string;
+  heavenStem: string;
+  earthStem: string;
+  door: string;
+  deity: string;
+  support?: SupportCheck;
+}
+
+export const WIND_DUN_GOAL =
+  "рассказать о предложении, подготовить рекламную публикацию, разместить объявление или расширить полезные контакты";
+
+const WIND_DUN_DOORS = new Set(["休门", "生门", "开门"]);
+const SOUTHEAST_PALACE = 4;
+
+export function windDunVariant(
+  palace: number,
+  heavenStem: string,
+  earthStem: string,
+  door: string,
+  deity: string,
+): WindDunVariant | null {
+  const allowedDoor = WIND_DUN_DOORS.has(door);
+  const inSoutheast = palace === SOUTHEAST_PALACE;
+
+  if (inSoutheast && heavenStem === "乙" && allowedDoor && deity === "六合")
+    return 1;
+  if (inSoutheast && heavenStem === "乙" && allowedDoor) return 2;
+  if (inSoutheast && heavenStem === "丙" && door === "开门") return 3;
+  if (heavenStem === "辛" && earthStem === "乙" && allowedDoor) return 4;
+  return null;
+}
+
+/**
+ * Detect "Ветряной Дунь" (風遁) by the four rows of the user-provided scheme.
+ * Rows 1-3 require the Xun / southeast palace. Row 4 has no palace condition
+ * and is checked in any outer palace, with the ordinary door-palace safety rule.
+ */
+export function detectWindDun(
+  date: Date,
+  hourBranch: number,
+  lateZi = false,
+  birthYearStem?: number,
+  representativeStem?: number,
+): WindDunHit[] {
+  const chart = buildChart(date, hourBranch, lateZi);
+  if (chart.fuYin || isHourControlsDay(chart)) return [];
+
+  const hits: WindDunHit[] = [];
+  for (let palace = 1; palace <= 9; palace++) {
+    if (palace === 5) continue;
+    const cell = chart.cells[palace];
+    const variant = windDunVariant(
+      palace,
+      cell.heavenStem,
+      cell.earthStem,
+      cell.door,
+      cell.deity,
+    );
+    if (!variant) continue;
+
+    if (cell.isVoid) continue;
+    if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue;
+    if (isAnnualYellowFive(palace, date)) continue;
+    if (controls(DOOR_ELEMENT[cell.door], STAR_ELEMENT[cell.star])) continue;
+    // In rows 1-3 the direction and door are explicit parts of the formula.
+    // Row 4 does not specify a palace, so the ordinary safety filter applies.
+    if (variant === 4 && hasDoorPalaceConflict(cell.door, palace)) continue;
+
+    const support =
+      birthYearStem === undefined
+        ? undefined
+        : evaluateSupportPalace(
+            chart,
+            palace,
+            birthYearStem,
+            representativeStem,
+          );
+    if (birthYearStem !== undefined && (!support || !support.supported))
+      continue;
+
+    hits.push({
+      palace,
+      variant,
+      direction: PALACES[palace].dirFull,
+      dom: PALACES[palace].dom,
+      heavenStem: cell.heavenStem,
+      earthStem: cell.earthStem,
+      door: cell.door,
+      deity: cell.deity,
+      support: support ?? undefined,
+    });
+  }
+
+  return hits;
+}
+
 export interface JadeMaidenHit {
   palace: number;
   variant: number;
@@ -430,7 +533,7 @@ export function jadeMaidenVariant(
 
 // Годовая летящая звезда сектора === 5 (五黄 «Жёлтая Пятёрка»): в Ци Мэнь такой
 // сектор не используется. Направление берётся из годовой карты (2026 — юг).
-function annualYellowFive(palace: number, date: Date): boolean {
+export function isAnnualYellowFive(palace: number, date: Date): boolean {
   const dirFull = PALACES[palace].dirFull;
   const dir = dirFull.charAt(0).toUpperCase() + dirFull.slice(1);
   return getFlyingStar(dir, flyingStarYear(date)).starNumber === 5;
@@ -457,7 +560,7 @@ export function detectJadeMaiden(
     if (!variant) continue;
     // 五黄: сектор с годовой звездой «Жёлтая Пятёрка» в Ци Мэнь не используется
     // (в 2026 году — юг); такие структуры исключаем.
-    if (annualYellowFive(p, date)) continue;
+    if (isAnnualYellowFive(p, date)) continue;
     if (hasDoorPalaceConflict(c.door, p)) continue;
     // В формуле участвуют только Отдых, Открытие, Жизнь, Пейзаж и Тайник.
     // Врата Тайника допустимы с отдельной оговоркой для скрытых встреч.
@@ -513,7 +616,7 @@ export function detectFiveBattalions(
   if (cell.isVoid) return [];
   if (cell.heavenStem === "庚" || cell.earthStem === "庚") return [];
   if (hasDoorPalaceConflict(cell.door, wealthPalace)) return [];
-  if (annualYellowFive(wealthPalace, date)) return [];
+  if (isAnnualYellowFive(wealthPalace, date)) return [];
   if (controls(DOOR_ELEMENT[cell.door], STAR_ELEMENT[cell.star])) return [];
 
   // Табу, относящиеся именно к Трём Мистикам, применяются только к 乙, 丙 и 丁.
@@ -628,7 +731,7 @@ export function detectTigerDun(
     if (!isTigerDunEarthStemAllowed(variant, cell.earthStem)) continue;
 
     if (cell.isVoid) continue;
-    if (annualYellowFive(palace, date)) continue;
+    if (isAnnualYellowFive(palace, date)) continue;
     if (controls(DOOR_ELEMENT[cell.door], STAR_ELEMENT[cell.star])) continue;
 
     // Только второй вариант использует Небесный ствол Трёх Мистиков без

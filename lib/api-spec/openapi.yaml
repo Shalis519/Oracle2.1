@@ -2074,6 +2074,48 @@ components:
         doorName: { type: string }
         goal: { type: string }
 
+    QimenWindDun:
+      type: object
+      required:
+        [
+          date,
+          dayGanZhi,
+          hourBranch,
+          hourLabel,
+          direction,
+          dir,
+          dom,
+          heavenStem,
+          heavenStemName,
+          earthStem,
+          earthStemName,
+          door,
+          doorName,
+          deity,
+          goal,
+          supportRelation,
+          supportMessage,
+        ]
+      properties:
+        date: { type: string }
+        dayGanZhi: { type: string }
+        hourBranch: { type: integer }
+        hourLabel: { type: string }
+        direction: { type: string }
+        dir: { type: string }
+        dom: { type: string }
+        heavenStem: { type: string, enum: ["乙", "丙", "辛"] }
+        heavenStemName: { type: string }
+        earthStem: { type: string }
+        earthStemName: { type: string }
+        door: { type: string, enum: ["休门", "生门", "开门"] }
+        doorName: { type: string }
+        deity: { type: string }
+        deityName: { type: string }
+        goal: { type: string }
+        supportRelation: { type: string, enum: [same, supports] }
+        supportMessage: { type: string }
+
     QimenTigerDun:
       type: object
       required:
@@ -2221,6 +2263,7 @@ components:
           jadeMaidens,
           threeMystics,
           fiveBattalions,
+          windDuns,
           tigerDuns,
           birthChart,
           monthChart,
@@ -2254,6 +2297,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QimenFiveBattalion"
+        windDuns:
+          type: array
+          items:
+            $ref: "#/components/schemas/QimenWindDun"
         tigerDuns:
           type: array
           items:

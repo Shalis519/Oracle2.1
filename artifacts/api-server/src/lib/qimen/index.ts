@@ -22,7 +22,9 @@ import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
 import {
   detectFiveBattalions,
   detectTigerDun,
+  detectWindDun,
   TIGER_DUN_GOAL,
+  WIND_DUN_GOAL,
   detectThreeGenerals,
   detectThreeMystics,
   detectJadeMaiden,
@@ -121,6 +123,27 @@ export interface QimenFiveBattalion {
   goal: string;
 }
 
+export interface QimenWindDun {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  heavenStem: string;
+  heavenStemName: string;
+  earthStem: string;
+  earthStemName: string;
+  door: string;
+  doorName: string;
+  deity: string;
+  deityName?: string;
+  goal: string;
+  supportRelation: "same" | "supports";
+  supportMessage: string;
+}
+
 export interface QimenTigerDun {
   date: string;
   dayGanZhi: string;
@@ -195,6 +218,7 @@ export interface QimenResult {
   jadeMaidens: QimenJadeMaiden[];
   threeMystics: QimenThreeMystic[];
   fiveBattalions: QimenFiveBattalion[];
+  windDuns: QimenWindDun[];
   tigerDuns: QimenTigerDun[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
@@ -600,6 +624,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
 
   const structures: QimenStructure[] = [];
   const fiveBattalions: QimenFiveBattalion[] = [];
+  const windDuns: QimenWindDun[] = [];
   const tigerDuns: QimenTigerDun[] = [];
   if (!hasBirthDate || yearBranch < 0) {
     return {
@@ -612,6 +637,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       jadeMaidens,
       threeMystics,
       fiveBattalions,
+      windDuns,
       tigerDuns,
       birthChart,
       monthChart,
@@ -721,6 +747,39 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
         }
       }
       if (!clashesBranch(yearBranch, slotDay.branch) && yearStem >= 0) {
+        for (const hit of detectWindDun(
+          slotDate,
+          h,
+          slot.lateZi,
+          yearStem,
+          representativeYearStem,
+        )) {
+          const support = hit.support!;
+          windDuns.push({
+            date: slotDay.iso,
+            dayGanZhi: slotDayGz,
+            hourBranch: h,
+            hourLabel: hourLabel(h, slot.lateZi),
+            direction: hit.direction,
+            dir: PALACES[hit.palace].dir,
+            dom: hit.dom,
+            heavenStem: hit.heavenStem,
+            heavenStemName: STEM_NAME_RU[hit.heavenStem] ?? hit.heavenStem,
+            earthStem: hit.earthStem,
+            earthStemName: STEM_NAME_RU[hit.earthStem] ?? hit.earthStem,
+            door: hit.door,
+            doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
+            deity: hit.deity,
+            deityName: hit.deity === "六合" ? "Шесть Гармоний" : undefined,
+            goal: WIND_DUN_GOAL,
+            supportRelation: support.relation as "same" | "supports",
+            supportMessage: threeMysticsSupportMessage(
+              support.relation as "same" | "supports",
+              support.structureElement,
+              support.personElement,
+            ),
+          });
+        }
         for (const hit of detectTigerDun(
           slotDate,
           h,
@@ -835,6 +894,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     jadeMaidens,
     threeMystics,
     fiveBattalions,
+    windDuns,
     tigerDuns,
     birthChart,
     monthChart,

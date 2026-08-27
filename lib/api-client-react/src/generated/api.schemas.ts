@@ -646,6 +646,53 @@ export interface QimenFiveBattalion {
   goal: string;
 }
 
+export type QimenWindDunHeavenStem = typeof QimenWindDunHeavenStem[keyof typeof QimenWindDunHeavenStem];
+
+
+export const QimenWindDunHeavenStem = {
+  乙: '乙',
+  丙: '丙',
+  辛: '辛',
+} as const;
+
+export type QimenWindDunDoor = typeof QimenWindDunDoor[keyof typeof QimenWindDunDoor];
+
+
+export const QimenWindDunDoor = {
+  休门: '休门',
+  生门: '生门',
+  开门: '开门',
+} as const;
+
+export type QimenWindDunSupportRelation = typeof QimenWindDunSupportRelation[keyof typeof QimenWindDunSupportRelation];
+
+
+export const QimenWindDunSupportRelation = {
+  same: 'same',
+  supports: 'supports',
+} as const;
+
+export interface QimenWindDun {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  heavenStem: QimenWindDunHeavenStem;
+  heavenStemName: string;
+  earthStem: string;
+  earthStemName: string;
+  door: QimenWindDunDoor;
+  doorName: string;
+  deity: string;
+  deityName?: string;
+  goal: string;
+  supportRelation: QimenWindDunSupportRelation;
+  supportMessage: string;
+}
+
 export type QimenTigerDunVariant = typeof QimenTigerDunVariant[keyof typeof QimenTigerDunVariant];
 
 
@@ -759,6 +806,7 @@ export interface QimenSummary {
   jadeMaidens: QimenJadeMaiden[];
   threeMystics: QimenThreeMystic[];
   fiveBattalions: QimenFiveBattalion[];
+  windDuns: QimenWindDun[];
   tigerDuns: QimenTigerDun[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;

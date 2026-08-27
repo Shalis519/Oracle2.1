@@ -13,6 +13,7 @@ import type { QimenMonthChart } from './qimenMonthChart';
 import type { QimenStructure } from './qimenStructure';
 import type { QimenThreeMystic } from './qimenThreeMystic';
 import type { QimenTigerDun } from './qimenTigerDun';
+import type { QimenWindDun } from './qimenWindDun';
 
 export interface QimenSummary {
   hasBirthDate: boolean;
@@ -25,6 +26,7 @@ export interface QimenSummary {
   jadeMaidens: QimenJadeMaiden[];
   threeMystics: QimenThreeMystic[];
   fiveBattalions: QimenFiveBattalion[];
+  windDuns: QimenWindDun[];
   tigerDuns: QimenTigerDun[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;

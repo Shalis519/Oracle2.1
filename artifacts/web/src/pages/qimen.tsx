@@ -11,6 +11,7 @@ import type {
   QimenJadeMaiden,
   QimenThreeMystic,
   QimenFiveBattalion,
+  QimenWindDun,
   QimenTigerDun,
   QimenBirthChart,
   QimenMonthChart,
@@ -74,6 +75,7 @@ type ScheduledPublication =
   | { kind: "jade"; item: QimenJadeMaiden }
   | { kind: "mystic"; item: QimenThreeMystic }
   | { kind: "battalion"; item: QimenFiveBattalion }
+  | { kind: "wind"; item: QimenWindDun }
   | { kind: "tiger"; item: QimenTigerDun }
   | { kind: "general"; item: QimenStructure };
 
@@ -169,7 +171,13 @@ const FIVE_BATTALIONS_WALK_STEPS = [
   "Не совмещайте в одной прогулке цели, которые противоречат друг другу.",
 ];
 
-type StructureInfoKind = "jade" | "mystic" | "battalion" | "tiger" | "general";
+type StructureInfoKind =
+  | "jade"
+  | "mystic"
+  | "battalion"
+  | "wind"
+  | "tiger"
+  | "general";
 
 function StructureInfoContent({ kind }: { kind: StructureInfoKind }) {
   if (kind === "jade") {
@@ -240,6 +248,45 @@ function StructureInfoContent({ kind }: { kind: StructureInfoKind }) {
               <li key={index}>{step}</li>
             ))}
           </ol>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "wind") {
+    return (
+      <div className="space-y-4 text-sm leading-relaxed">
+        <div className="space-y-1.5">
+          <p className="font-semibold text-sky-200">
+            🏠 Быстрая продажа недвижимости
+          </p>
+          <p>
+            Структура эффективна, когда нужно оперативно найти покупателя на
+            жильё. Достаточно сообщить о продаже одному знакомому - и информация
+            мгновенно распространится среди большого числа людей.
+          </p>
+        </div>
+        <div className="space-y-1.5">
+          <p className="font-semibold text-sky-200">
+            📢 Эффект сарафанного радио
+          </p>
+          <p>Работает по принципу устного вирусного маркетинга:</p>
+          <ol className="list-decimal list-outside space-y-1.5 pl-5">
+            <li>Вы делитесь новостью с близким человеком.</li>
+            <li>Он передаёт её дальше по цепочке.</li>
+            <li>В итоге о Вашем предложении узнаёт широкая аудитория.</li>
+          </ol>
+        </div>
+        <div className="space-y-1.5">
+          <p className="font-semibold text-sky-200">
+            ⭐ Рост популярности и узнаваемости
+          </p>
+          <p>Структура помогает:</p>
+          <ul className="list-disc list-outside space-y-1.5 pl-5">
+            <li>увеличить личную известность;</li>
+            <li>укрепить репутацию эксперта;</li>
+            <li>расширить аудиторию.</li>
+          </ul>
         </div>
       </div>
     );
@@ -1059,6 +1106,69 @@ function FiveBattalionsCard({ hit }: { hit: QimenFiveBattalion }) {
   );
 }
 
+function WindDunCard({ hit }: { hit: QimenWindDun }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Card className="border-sky-400/30 bg-card/40 backdrop-blur-md">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="font-serif text-lg">
+              <StructureInfoDialog
+                kind="wind"
+                title="Структура «Ветряной Дунь»"
+              />
+            </CardTitle>
+            <span className="shrink-0 rounded-full bg-sky-400/15 px-3 py-1 text-xs font-medium text-sky-200">
+              {formatDate(hit.date)}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-start gap-2 text-sm">
+            <Target className="mt-0.5 h-4 w-4 shrink-0 text-sky-300/80" />
+            <p className="leading-relaxed">
+              <span className="font-medium">Цель:</span> {hit.goal}.
+            </p>
+          </div>
+          <div className="flex items-start gap-2 text-sm">
+            <Compass className="mt-0.5 h-4 w-4 shrink-0 text-sky-300/80" />
+            <p className="leading-relaxed">
+              Сектор{" "}
+              <span className="font-semibold text-sky-200">
+                {hit.direction}
+              </span>{" "}
+              в {hit.hourLabel}.
+            </p>
+          </div>
+          <p className="rounded-lg border border-sky-400/15 bg-sky-400/5 p-3 text-sm leading-relaxed text-sky-100/90">
+            {hit.supportMessage}
+          </p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-sky-400/10 px-2 py-0.5 text-xs text-sky-100">
+              Небо: {hit.heavenStemName}
+            </span>
+            <span className="rounded-full bg-sky-400/10 px-2 py-0.5 text-xs text-sky-100">
+              Земля: {hit.earthStemName}
+            </span>
+            <span className="rounded-full bg-sky-400/10 px-2 py-0.5 text-xs text-sky-100">
+              Врата: {hit.doorName}
+            </span>
+            {hit.deityName ? (
+              <span className="rounded-full bg-sky-400/10 px-2 py-0.5 text-xs text-sky-100">
+                Божество: {hit.deityName}
+              </span>
+            ) : null}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 function TigerDunCard({ hit }: { hit: QimenTigerDun }) {
   return (
     <motion.div
@@ -1227,12 +1337,14 @@ export default function QimenPage() {
   const fiveBattalions = sortBySchedule<QimenFiveBattalion>(
     data?.fiveBattalions ?? [],
   );
+  const windDuns = sortBySchedule<QimenWindDun>(data?.windDuns ?? []);
   const tigerDuns = sortBySchedule<QimenTigerDun>(data?.tigerDuns ?? []);
   const windowDays = data?.windowDays ?? 14;
   const scheduledPublications: ScheduledPublication[] = [
     ...jadeMaidens.map((item) => ({ kind: "jade" as const, item })),
     ...threeMystics.map((item) => ({ kind: "mystic" as const, item })),
     ...fiveBattalions.map((item) => ({ kind: "battalion" as const, item })),
+    ...windDuns.map((item) => ({ kind: "wind" as const, item })),
     ...tigerDuns.map((item) => ({ kind: "tiger" as const, item })),
     ...structures.map((item) => ({ kind: "general" as const, item })),
   ].sort((left, right) => compareSchedule(left.item, right.item));
@@ -1398,6 +1510,13 @@ export default function QimenPage() {
                   return (
                     <FiveBattalionsCard
                       key={`battalion-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`}
+                      hit={publication.item}
+                    />
+                  );
+                case "wind":
+                  return (
+                    <WindDunCard
+                      key={`wind-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`}
                       hit={publication.item}
                     />
                   );
