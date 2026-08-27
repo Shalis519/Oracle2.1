@@ -107,6 +107,23 @@ describe("audit regressions", () => {
     expect(runtimeSchema).toContain("await ensureLongTermTransitCardSeeds();");
   });
 
+  it("keeps the Sun-square-Uranus general card independent from house-specific topics", () => {
+    const runtimeSchema = readFileSync(
+      resolve(process.cwd(), "src/lib/runtimeSchema.ts"),
+      "utf8",
+    );
+
+    expect(runtimeSchema).toContain(
+      "В этот день может усилиться потребность выйти за привычные рамки",
+    );
+    expect(runtimeSchema).not.toContain(
+      "обратите внимание на свои траты на развлечения и хобби",
+    );
+    expect(runtimeSchema).not.toContain(
+      "Может появиться желание потратить больше обычного на хобби, детей или лотереи",
+    );
+  });
+
   it("keeps the complete Money Houses Studio library", () => {
     expect(MONEY_STUDIO_SEEDS).toHaveLength(84);
     expect(
