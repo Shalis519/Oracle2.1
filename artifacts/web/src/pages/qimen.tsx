@@ -956,19 +956,15 @@ function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
+          <p className="text-sm leading-relaxed text-fuchsia-100/90">
+            <span className="font-medium">Цель:</span> {m.goal}.
+          </p>
           <p className="text-sm leading-relaxed">
-            Для активации используйте сектор{" "}
+            Сектор{" "}
             <span className="font-semibold text-fuchsia-200">
               {m.direction}
             </span>{" "}
-            в{" "}
-            <span className="font-semibold text-fuchsia-200">
-              {m.hourLabel}
-            </span>
-            .
-          </p>
-          <p className="text-sm leading-relaxed text-fuchsia-100/90">
-            <span className="font-medium">Цель:</span> {m.goal}.
+            в {m.hourLabel}.
           </p>
           {m.supportMessage ? (
             <p className="rounded-lg border border-fuchsia-400/15 bg-fuchsia-400/5 p-3 text-sm leading-relaxed text-fuchsia-100/90">
