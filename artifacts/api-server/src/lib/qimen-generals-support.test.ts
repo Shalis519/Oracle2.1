@@ -15,19 +15,23 @@ const BIRTH_DATES = [
   "1993-06-01",
 ];
 
-function firstSupportedGeneralsResult() {
+function firstSupportedGeneralsInput() {
   const start = new Date(2026, 7, 20, 12, 0, 0);
   for (let offset = 0; offset < 60; offset++) {
-    const date = new Date(start);
-    date.setDate(start.getDate() + offset);
+    const from = new Date(start);
+    from.setDate(start.getDate() + offset);
     for (const birthDate of BIRTH_DATES) {
-      const result = computeQimenStructures({ from: date, days: 1, birthDate });
-      if (result.structures.length > 0) return result;
+      const result = computeQimenStructures({ from, days: 1, birthDate });
+      if (result.structures.length > 0) return { from, birthDate };
     }
   }
   throw new Error(
     "Не найден персонально подходящий контрольный пример «Трёх Генералов»",
   );
+}
+
+function firstSupportedGeneralsResult() {
+  return computeQimenStructures({ ...firstSupportedGeneralsInput(), days: 1 });
 }
 
 describe("Три Генерала: персональная польза", () => {
@@ -51,6 +55,23 @@ describe("Три Генерала: персональная польза", () =>
       ).toBe(true);
       expect(hit.supportMessage).toMatch(/^Дворец структуры - стихия /);
       expect(hit.supportMessage).toContain("Личный дворец НС вашего года");
+    }
+  });
+
+  test("публикует Три Генерала только на ближайшие три календарных дня", () => {
+    const { from, birthDate } = firstSupportedGeneralsInput();
+    const result = GetQimenResponse.parse(
+      computeQimenStructures({ from, days: 14, birthDate }),
+    );
+    const endExclusive = new Date(
+      from.getFullYear(),
+      from.getMonth(),
+      from.getDate() + 3,
+    );
+
+    expect(result.structures.length).toBeGreaterThan(0);
+    for (const hit of result.structures) {
+      expect(new Date(hit.date).getTime()).toBeLessThan(endExclusive.getTime());
     }
   });
 });

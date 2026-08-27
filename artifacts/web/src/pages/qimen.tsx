@@ -169,6 +169,176 @@ const FIVE_BATTALIONS_WALK_STEPS = [
   "Не совмещайте в одной прогулке цели, которые противоречат друг другу.",
 ];
 
+type StructureInfoKind = "jade" | "mystic" | "battalion" | "tiger" | "general";
+
+function StructureInfoContent({ kind }: { kind: StructureInfoKind }) {
+  if (kind === "jade") {
+    return (
+      <div className="space-y-3 text-sm leading-relaxed">
+        <p>{JADE_INTRO}</p>
+      </div>
+    );
+  }
+
+  if (kind === "mystic") {
+    return (
+      <div className="space-y-3 text-sm leading-relaxed">
+        <p>
+          Техника Три Мистика позволяет подключить энергию дома к вашей цели.
+          Это не ремонт и не перестановка мебели. Это точечный «пусковой
+          механизм», который запускается простым предметом и начинает
+          притягивать нужные события.
+        </p>
+        <p>
+          💫 Отношения - когда нужно встретить партнёра, помириться, улучшить
+          семейную атмосферу или выйти на новый уровень общения.
+        </p>
+        <p>
+          💰 Финансы - если стоит вопрос роста дохода, нового источника прибыли,
+          улучшения благосостояния.
+        </p>
+        <p>
+          📄 Документы и переговоры - когда важно подписать договор,
+          договориться, пройти согласование без проволочек.
+        </p>
+        <p className="font-semibold text-fuchsia-200">
+          Перед проведением активации ЧЁТКО формулируйте цель и желание!
+        </p>
+        <div className="space-y-2">
+          <p className="font-semibold">Процесс активации:</p>
+          <ol className="list-decimal list-outside space-y-1.5 pl-5">
+            <li>Найдите нужный сектор в доме.</li>
+            <li>
+              Поставьте активатор в этом секторе в указанную двухчасовку минимум
+              на 1,5 часа.
+            </li>
+          </ol>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "battalion") {
+    return (
+      <div className="space-y-4 text-sm leading-relaxed">
+        <p>
+          Выберите один из двух вариантов. В обоих случаях ориентируйтесь на
+          строку «Цель:» в карточке выбранной двухчасовки.
+        </p>
+        <div className="space-y-2">
+          <p className="font-semibold text-cyan-200">Вариант 1. В помещении</p>
+          <ol className="list-decimal list-outside space-y-1.5 pl-5">
+            {FIVE_BATTALIONS_INDOOR_STEPS.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
+        </div>
+        <div className="space-y-2">
+          <p className="font-semibold text-cyan-200">Вариант 2. Прогулка</p>
+          <ol className="list-decimal list-outside space-y-1.5 pl-5">
+            {FIVE_BATTALIONS_WALK_STEPS.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "tiger") {
+    return (
+      <div className="space-y-3 text-sm leading-relaxed">
+        <p>
+          Это структура для уверенного, настойчивого действия, когда важно
+          заявить о себе и довести дело до результата.
+        </p>
+        <p className="font-semibold text-orange-200">Где пригодится:</p>
+        <div className="space-y-2">
+          <p>
+            <span className="font-medium">Карьера и статус.</span> Когда Вы
+            хотите получить повышение, признание или укрепить авторитет.
+            Особенно уместна в задачах управления, спорта и сферах с высокой
+            ответственностью.
+          </p>
+          <p>
+            <span className="font-medium">Дом.</span> Для защиты пространства,
+            благословения дома и наведения порядка.
+          </p>
+          <p>
+            <span className="font-medium">Личная сила.</span> Когда Вы хотите
+            почувствовать опору в себе, перестать отступать и начать отстаивать
+            свои границы.
+          </p>
+          <p>
+            <span className="font-medium">Спорт и достижения.</span> Помогает
+            укрепить выносливость, боевой дух и стремление к победе.
+          </p>
+        </div>
+        <p className="font-medium text-orange-100">
+          Это не про агрессию. Это про внутреннюю твёрдость, которая помогает
+          быть услышанным.
+        </p>
+        <p className="font-semibold text-orange-200">Как использовать:</p>
+        <p>
+          В указанный день и час действуйте уверенно и настойчиво. Например,
+          сядьте спиной к указанному сектору и позвоните человеку, с которым
+          нужно обсудить важный вопрос. На переговорах сядьте спиной к
+          указанному сектору и спокойно отстаивайте свою точку зрения.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3 text-sm leading-relaxed">
+      <p className="font-medium text-emerald-200">Используем для помощи в:</p>
+      <ul className="list-disc list-outside space-y-1.5 pl-5">
+        {GEN_AREAS.map((area, index) => (
+          <li key={index}>{area}</li>
+        ))}
+      </ul>
+      <p className="font-medium text-emerald-200">{GEN_NOTE}</p>
+      <p className="font-semibold text-emerald-200">Процесс активации:</p>
+      <ol className="list-decimal list-outside space-y-1.5 pl-5">
+        {GEN_PROCESS.map((step, index) => (
+          <li key={index}>{step}</li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function StructureInfoDialog({
+  kind,
+  title,
+}: {
+  kind: StructureInfoKind;
+  title: string;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 text-left underline decoration-dotted underline-offset-4 transition-colors hover:text-foreground"
+          aria-label={`Открыть описание структуры ${title}`}
+        >
+          {title}
+          <Info className="h-4 w-4 shrink-0 opacity-70" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-h-[80vh] max-w-lg overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-serif">{title}</DialogTitle>
+        </DialogHeader>
+        <StructureInfoContent kind={kind} />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function pluralDays(n: number): string {
   const mod10 = n % 10;
   const mod100 = n % 100;
@@ -626,7 +796,10 @@ function StructureCard({ s }: { s: QimenStructure }) {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="font-serif text-lg">
-              Структура «{s.structureName}»
+              <StructureInfoDialog
+                kind="general"
+                title={`Структура «${s.structureName}»`}
+              />
             </CardTitle>
             <span className="shrink-0 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-300">
               {formatDate(s.date)}
@@ -782,7 +955,10 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="font-serif text-lg">
-              Структура «Нефритовая Дева»
+              <StructureInfoDialog
+                kind="jade"
+                title="Структура «Нефритовая Дева»"
+              />
             </CardTitle>
             <span className="shrink-0 rounded-full bg-rose-400/15 px-3 py-1 text-xs font-medium text-rose-200">
               {formatDate(m.date)}
@@ -839,7 +1015,10 @@ function FiveBattalionsCard({ hit }: { hit: QimenFiveBattalion }) {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="font-serif text-lg">
-              Структура «Пять Батальонов»
+              <StructureInfoDialog
+                kind="battalion"
+                title="Структура «Пять Батальонов»"
+              />
             </CardTitle>
             <span className="shrink-0 rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-medium text-cyan-200">
               {formatDate(hit.date)}
@@ -891,7 +1070,10 @@ function TigerDunCard({ hit }: { hit: QimenTigerDun }) {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="font-serif text-lg">
-              Структура «Тигровый Дунь»
+              <StructureInfoDialog
+                kind="tiger"
+                title="Структура «Тигровый Дунь»"
+              />
             </CardTitle>
             <span className="shrink-0 rounded-full bg-orange-400/15 px-3 py-1 text-xs font-medium text-orange-200">
               {formatDate(hit.date)}
@@ -946,7 +1128,10 @@ function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="font-serif text-lg">
-              Структура «Три Мистика»
+              <StructureInfoDialog
+                kind="mystic"
+                title="Структура «Три Мистика»"
+              />
             </CardTitle>
             <span className="shrink-0 rounded-full bg-fuchsia-400/15 px-3 py-1 text-xs font-medium text-fuchsia-200">
               {formatDate(m.date)}

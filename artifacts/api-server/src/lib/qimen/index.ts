@@ -35,6 +35,7 @@ import { isLateZiClock } from "./birthTime";
 export type { JiFuWish } from "./jifu";
 
 const MAIDEN_DAYS = 1;
+const THREE_GENERALS_DAYS = 3;
 
 const STRUCTURE_NAME = "Три Генерала";
 const STRUCTURE_GOAL = "Деньги, доход, материальное благополучие";
@@ -625,6 +626,10 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     0,
     0,
   );
+  const threeGeneralsWindowEnd = new Date(start);
+  threeGeneralsWindowEnd.setDate(
+    threeGeneralsWindowEnd.getDate() + THREE_GENERALS_DAYS,
+  );
   for (let d = 0; d < days; d++) {
     const date = new Date(start);
     date.setDate(start.getDate() + d);
@@ -645,48 +650,50 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       const slotDay = dayInfo(slotDate);
       const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
       const h = slot.branch;
-      for (const hit of detectThreeGenerals(
-        slotDate,
-        h,
-        slot.lateZi,
-        yearStem,
-        representativeYearStem,
-      )) {
-        structures.push({
-          date: slotDay.iso,
-          dayGanZhi: slotDayGz,
-          hourBranch: h,
-          hourLabel: hourLabel(h, slot.lateZi),
-          structure: hit.structure,
-          structureName: STRUCTURE_NAME,
-          goal: STRUCTURE_GOAL,
-          direction: hit.direction,
-          dom: hit.dom,
-          wonder: hit.wonder,
-          wonderName: hit.wonderName,
-          star: hit.star,
-          starName: hit.starName,
-          door: hit.door,
-          activation: hit.activation,
-          signs: hit.signs,
-          result: hit.result,
-          note: hit.note,
-          supportRelation:
-            hit.support?.relation === "same" ||
-            hit.support?.relation === "supports"
-              ? hit.support.relation
-              : undefined,
-          supportMessage:
-            hit.support &&
-            (hit.support.relation === "same" ||
-              hit.support.relation === "supports")
-              ? jadeMaidenSupportMessage(
-                  hit.support.relation,
-                  hit.support.structureElement,
-                  hit.support.personElement,
-                )
-              : undefined,
-        });
+      if (slotDate < threeGeneralsWindowEnd) {
+        for (const hit of detectThreeGenerals(
+          slotDate,
+          h,
+          slot.lateZi,
+          yearStem,
+          representativeYearStem,
+        )) {
+          structures.push({
+            date: slotDay.iso,
+            dayGanZhi: slotDayGz,
+            hourBranch: h,
+            hourLabel: hourLabel(h, slot.lateZi),
+            structure: hit.structure,
+            structureName: STRUCTURE_NAME,
+            goal: STRUCTURE_GOAL,
+            direction: hit.direction,
+            dom: hit.dom,
+            wonder: hit.wonder,
+            wonderName: hit.wonderName,
+            star: hit.star,
+            starName: hit.starName,
+            door: hit.door,
+            activation: hit.activation,
+            signs: hit.signs,
+            result: hit.result,
+            note: hit.note,
+            supportRelation:
+              hit.support?.relation === "same" ||
+              hit.support?.relation === "supports"
+                ? hit.support.relation
+                : undefined,
+            supportMessage:
+              hit.support &&
+              (hit.support.relation === "same" ||
+                hit.support.relation === "supports")
+                ? jadeMaidenSupportMessage(
+                    hit.support.relation,
+                    hit.support.structureElement,
+                    hit.support.personElement,
+                  )
+                : undefined,
+          });
+        }
       }
       if (wealthPalace !== undefined) {
         for (const hit of detectFiveBattalions(
