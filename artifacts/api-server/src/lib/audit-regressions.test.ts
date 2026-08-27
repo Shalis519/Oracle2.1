@@ -107,6 +107,20 @@ describe("audit regressions", () => {
     expect(runtimeSchema).toContain("await ensureLongTermTransitCardSeeds();");
   });
 
+  it("keeps the progression house-cusp template compatible with stored instrumental house themes", () => {
+    const runtimeSchema = readFileSync(
+      resolve(process.cwd(), "src/lib/runtimeSchema.ts"),
+      "utf8",
+    );
+
+    expect(runtimeSchema).toContain(
+      "В этот интервал усиливаются темы, связанные с {bodyThemes}, а также с {houseThemes}.",
+    );
+    expect(runtimeSchema).not.toContain(
+      "В этот интервал меняются способы проявления темы {bodyThemes} в сфере {houseThemes}.",
+    );
+  });
+
   it("keeps the Sun-square-Uranus general card independent from house-specific topics", () => {
     const runtimeSchema = readFileSync(
       resolve(process.cwd(), "src/lib/runtimeSchema.ts"),
