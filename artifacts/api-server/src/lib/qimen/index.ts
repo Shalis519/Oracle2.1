@@ -118,6 +118,8 @@ export interface QimenFiveBattalion {
   door: string;
   doorName: string;
   goal: string;
+  supportRelation?: "same" | "supports";
+  supportMessage?: string;
 }
 
 export interface QimenTigerDun {
@@ -383,10 +385,10 @@ function jadeMaidenSupportMessage(
 ): string {
   const structure = ELEMENT_NAME_RU_LOWER[structureElement] ?? structureElement;
   const person = ELEMENT_NAME_RU_LOWER[personElement] ?? personElement;
-  const prefix = `Данная структура находится во дворце стихии ${structure}. Ваш НС года - ${person}.`;
+  const prefix = `Дворец структуры - стихия ${structure}. Личный дворец НС вашего года в этой часовой карте - стихия ${person}.`;
   return relation === "same"
-    ? `${prefix} Для вас эта прогулка благоприятна!`
-    : `${prefix} Структура вас поддерживает (У-Син). Эта прогулка с высокой вероятностью принесёт результат!`;
+    ? `${prefix} Для вас эта прогулка благоприятна.`
+    : `${prefix} Дворец структуры поддерживает ваш личный дворец по кругу У-Син. Для вас эта прогулка благоприятна.`;
 }
 
 function threeMysticsSupportMessage(
@@ -396,10 +398,10 @@ function threeMysticsSupportMessage(
 ): string {
   const structure = ELEMENT_NAME_RU_LOWER[structureElement] ?? structureElement;
   const person = ELEMENT_NAME_RU_LOWER[personElement] ?? personElement;
-  const basis = `Сектор структуры стихия «${structure}», НС вашего года - стихия «${person}».`;
+  const basis = `Дворец структуры - стихия «${structure}». Личный дворец НС вашего года в этой часовой карте - стихия «${person}».`;
   return relation === "same"
     ? `${basis} Для вас эта активация благополучна.`
-    : `${basis} Сектор питает вашу стихию по кругу У-Син, поэтому активация для вас поддерживающая.`;
+    : `${basis} Дворец структуры поддерживает ваш личный дворец по кругу У-Син, поэтому активация для вас поддерживающая.`;
 }
 
 function hourLabel(hourBranch: number, lateZi = false): string {
@@ -514,83 +516,85 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     }
   }
 
-  // Нефритовая Дева is universal and scanned over the next MAIDEN_DAYS days.
+  // Нефритовая Дева публикуется только после личной проверки пользы по НС года.
   const jadeMaidens: QimenJadeMaiden[] = [];
-  const mStart = new Date(
-    from.getFullYear(),
-    from.getMonth(),
-    from.getDate(),
-    12,
-    0,
-    0,
-  );
-  for (let d = 0; d < MAIDEN_DAYS; d++) {
-    const date = new Date(mStart);
-    date.setDate(mStart.getDate() + d);
-    const day = dayInfo(date);
-    // Последний слот 子 относится к следующему календарному дню:
-    // поздняя Крыса 23:00–00:00 завершает текущие сутки, а ранняя
-    // Крыса 00:00–01:00 открывает следующие. Поэтому слот и карта
-    // должны получать собственную календарную дату.
-    for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-      const slotDate =
-        slot.branch === 0 && !slot.lateZi
-          ? new Date(
-              date.getFullYear(),
-              date.getMonth(),
-              date.getDate() + 1,
-              12,
-              0,
-              0,
-            )
-          : date;
-      const slotDay = dayInfo(slotDate);
-      const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
-      // Для прогулки действует запрет личного столкновения: если ветвь дня
-      // конфликтует с ветвью года рождения, Нефритовую Деву не публикуем.
-      // Например, день Тигра исключает рождённых в год Обезьяны.
-      if (hasBirthDate && clashesBranch(yearBranch, slotDay.branch)) continue;
-      // Ранняя и поздняя Крыса остаются отдельными временными метками;
-      // карта строится по календарной дате конкретного слота.
-      const h = slot.branch;
-      for (const hit of detectJadeMaiden(
-        slotDate,
-        h,
-        slot.lateZi,
-        yearStem >= 0 ? yearStem : undefined,
-        representativeYearStem >= 0 ? representativeYearStem : undefined,
-      )) {
-        jadeMaidens.push({
-          date: slotDay.iso,
-          dayGanZhi: slotDayGz,
-          hourBranch: h,
-          hourLabel: hourLabel(h, slot.lateZi),
-          direction: PALACES[hit.palace].dirFull,
-          dir: PALACES[hit.palace].dir,
-          dom: PALACES[hit.palace].dom,
-          heavenStem: hit.heavenStem,
-          heavenStemName: STEM_NAME_RU[hit.heavenStem] ?? "",
-          earthStem: hit.earthStem,
-          earthStemName: STEM_NAME_RU[hit.earthStem] ?? "",
-          door: hit.door,
-          doorName: DOOR_NAME_RU[hit.door] ?? "",
-          isMainGate: hit.isMainGate,
-          supportRelation:
-            hit.support?.relation === "same" ||
-            hit.support?.relation === "supports"
-              ? hit.support.relation
-              : undefined,
-          supportMessage:
-            hit.support &&
-            (hit.support.relation === "same" ||
-              hit.support.relation === "supports")
-              ? jadeMaidenSupportMessage(
-                  hit.support.relation,
-                  hit.support.structureElement,
-                  hit.support.personElement,
-                )
-              : undefined,
-        });
+  if (hasBirthDate && yearStem >= 0) {
+    const mStart = new Date(
+      from.getFullYear(),
+      from.getMonth(),
+      from.getDate(),
+      12,
+      0,
+      0,
+    );
+    for (let d = 0; d < MAIDEN_DAYS; d++) {
+      const date = new Date(mStart);
+      date.setDate(mStart.getDate() + d);
+      const day = dayInfo(date);
+      // Последний слот 子 относится к следующему календарному дню:
+      // поздняя Крыса 23:00–00:00 завершает текущие сутки, а ранняя
+      // Крыса 00:00–01:00 открывает следующие. Поэтому слот и карта
+      // должны получать собственную календарную дату.
+      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+        const slotDate =
+          slot.branch === 0 && !slot.lateZi
+            ? new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate() + 1,
+                12,
+                0,
+                0,
+              )
+            : date;
+        const slotDay = dayInfo(slotDate);
+        const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
+        // Для прогулки действует запрет личного столкновения: если ветвь дня
+        // конфликтует с ветвью года рождения, Нефритовую Деву не публикуем.
+        // Например, день Тигра исключает рождённых в год Обезьяны.
+        if (hasBirthDate && clashesBranch(yearBranch, slotDay.branch)) continue;
+        // Ранняя и поздняя Крыса остаются отдельными временными метками;
+        // карта строится по календарной дате конкретного слота.
+        const h = slot.branch;
+        for (const hit of detectJadeMaiden(
+          slotDate,
+          h,
+          slot.lateZi,
+          yearStem >= 0 ? yearStem : undefined,
+          representativeYearStem >= 0 ? representativeYearStem : undefined,
+        )) {
+          jadeMaidens.push({
+            date: slotDay.iso,
+            dayGanZhi: slotDayGz,
+            hourBranch: h,
+            hourLabel: hourLabel(h, slot.lateZi),
+            direction: PALACES[hit.palace].dirFull,
+            dir: PALACES[hit.palace].dir,
+            dom: PALACES[hit.palace].dom,
+            heavenStem: hit.heavenStem,
+            heavenStemName: STEM_NAME_RU[hit.heavenStem] ?? "",
+            earthStem: hit.earthStem,
+            earthStemName: STEM_NAME_RU[hit.earthStem] ?? "",
+            door: hit.door,
+            doorName: DOOR_NAME_RU[hit.door] ?? "",
+            isMainGate: hit.isMainGate,
+            supportRelation:
+              hit.support?.relation === "same" ||
+              hit.support?.relation === "supports"
+                ? hit.support.relation
+                : undefined,
+            supportMessage:
+              hit.support &&
+              (hit.support.relation === "same" ||
+                hit.support.relation === "supports")
+                ? jadeMaidenSupportMessage(
+                    hit.support.relation,
+                    hit.support.structureElement,
+                    hit.support.personElement,
+                  )
+                : undefined,
+          });
+        }
       }
     }
   }
@@ -692,6 +696,8 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           h,
           wealthPalace,
           slot.lateZi,
+          yearStem,
+          representativeYearStem,
         )) {
           fiveBattalions.push({
             date: slotDay.iso,
@@ -708,6 +714,21 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
             door: hit.door,
             doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
             goal: hit.goal,
+            supportRelation:
+              hit.support?.relation === "same" ||
+              hit.support?.relation === "supports"
+                ? hit.support.relation
+                : undefined,
+            supportMessage:
+              hit.support &&
+              (hit.support.relation === "same" ||
+                hit.support.relation === "supports")
+                ? threeMysticsSupportMessage(
+                    hit.support.relation,
+                    hit.support.structureElement,
+                    hit.support.personElement,
+                  )
+                : undefined,
           });
         }
       }

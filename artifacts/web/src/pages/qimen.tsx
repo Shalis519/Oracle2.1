@@ -792,10 +792,8 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
         <CardContent className="space-y-3">
           <p className="text-sm leading-relaxed">
             Сектор{" "}
-            <span className="font-semibold text-rose-200">{m.direction}</span>{" "}
-            в{" "}
-            <span className="font-semibold text-rose-200">{m.hourLabel}</span>
-            .
+            <span className="font-semibold text-rose-200">{m.direction}</span> в{" "}
+            <span className="font-semibold text-rose-200">{m.hourLabel}</span>.
           </p>
           {m.supportMessage ? (
             <p className="text-sm leading-relaxed text-rose-100/90">
@@ -865,6 +863,11 @@ function FiveBattalionsCard({ hit }: { hit: QimenFiveBattalion }) {
               в {hit.hourLabel}.
             </p>
           </div>
+          {hit.supportMessage ? (
+            <p className="rounded-lg border border-cyan-400/15 bg-cyan-400/5 p-3 text-sm leading-relaxed text-cyan-100/90">
+              {hit.supportMessage}
+            </p>
+          ) : null}
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="rounded-full bg-cyan-400/10 px-2 py-0.5 text-xs text-cyan-100">
               Небо: {hit.heavenStemName}
@@ -1038,8 +1041,12 @@ export default function QimenPage() {
   const structures = sortBySchedule<QimenStructure>(data?.structures ?? []);
   const jiFuWishes = sortBySchedule<JiFuWish>(data?.jiFuWishes ?? []);
   const jadeMaidens = sortBySchedule<QimenJadeMaiden>(data?.jadeMaidens ?? []);
-  const threeMystics = sortBySchedule<QimenThreeMystic>(data?.threeMystics ?? []);
-  const fiveBattalions = sortBySchedule<QimenFiveBattalion>(data?.fiveBattalions ?? []);
+  const threeMystics = sortBySchedule<QimenThreeMystic>(
+    data?.threeMystics ?? [],
+  );
+  const fiveBattalions = sortBySchedule<QimenFiveBattalion>(
+    data?.fiveBattalions ?? [],
+  );
   const tigerDuns = sortBySchedule<QimenTigerDun>(data?.tigerDuns ?? []);
   const windowDays = data?.windowDays ?? 14;
   const scheduledPublications: ScheduledPublication[] = [
@@ -1182,7 +1189,9 @@ export default function QimenPage() {
         {!hasBirthDate ? (
           <Card className="bg-card/40 backdrop-blur-md">
             <CardContent className="py-8 text-center text-sm text-muted-foreground">
-              Персональные структуры рассчитываются по дате Вашего рождения. Заполните её в настройках профиля, чтобы увидеть подходящие публикации.
+              Персональные структуры рассчитываются по дате Вашего рождения.
+              Заполните её в настройках профиля, чтобы увидеть подходящие
+              публикации.
             </CardContent>
           </Card>
         ) : null}
@@ -1192,22 +1201,49 @@ export default function QimenPage() {
             {scheduledPublications.map((publication, index) => {
               switch (publication.kind) {
                 case "jade":
-                  return <JadeMaidenCard key={`jade-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`} m={publication.item} />;
+                  return (
+                    <JadeMaidenCard
+                      key={`jade-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`}
+                      m={publication.item}
+                    />
+                  );
                 case "mystic":
-                  return <ThreeMysticsCard key={`mystic-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.wonder}-${index}`} m={publication.item} />;
+                  return (
+                    <ThreeMysticsCard
+                      key={`mystic-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.wonder}-${index}`}
+                      m={publication.item}
+                    />
+                  );
                 case "battalion":
-                  return <FiveBattalionsCard key={`battalion-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`} hit={publication.item} />;
+                  return (
+                    <FiveBattalionsCard
+                      key={`battalion-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`}
+                      hit={publication.item}
+                    />
+                  );
                 case "tiger":
-                  return <TigerDunCard key={`tiger-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.variant}-${index}`} hit={publication.item} />;
+                  return (
+                    <TigerDunCard
+                      key={`tiger-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.variant}-${index}`}
+                      hit={publication.item}
+                    />
+                  );
                 case "general":
-                  return <StructureCard key={`general-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`} s={publication.item} />;
+                  return (
+                    <StructureCard
+                      key={`general-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`}
+                      s={publication.item}
+                    />
+                  );
               }
             })}
           </div>
         ) : hasBirthDate ? (
           <Card className="bg-card/40 backdrop-blur-md">
             <CardContent className="py-10 text-center text-sm text-muted-foreground">
-              На ближайшие {windowDays} {pluralDays(windowDays)} благоприятных структур не найдено. Загляните позже, публикации появляются по благоприятным дням и часам.
+              На ближайшие {windowDays} {pluralDays(windowDays)} благоприятных
+              структур не найдено. Загляните позже, публикации появляются по
+              благоприятным дням и часам.
             </CardContent>
           </Card>
         ) : null}

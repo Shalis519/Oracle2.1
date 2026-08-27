@@ -3,7 +3,6 @@ import {
   controls,
   PALACES,
   STEMS,
-  STEM_ELEMENT,
   parseGanZhi,
   type Element,
 } from "./constants";
@@ -143,6 +142,7 @@ export interface FiveBattalionsHit {
   earthStem: string;
   door: string;
   goal: string;
+  support?: SupportCheck;
 }
 
 /**
@@ -329,7 +329,7 @@ export interface SupportCheck {
   supported: boolean;
   relation: SupportRelation;
   structurePalace: number;
-  supportPalace: number;
+  personPalace: number;
   structureElement: Element;
   personElement: Element;
 }
@@ -348,7 +348,31 @@ function generates(source: Element, target: Element): boolean {
   );
 }
 
-/** Проверяет, поддерживает ли дворец структуры человека через НС года рождения. НС ищется только в Небесном кольце. */
+/**
+ * Классифицирует связь дворца структуры с личным дворцом пользователя.
+ * В публикацию допускаются только совпадение стихий и поддержка, когда
+ * стихия дворца структуры порождает стихию личного дворца.
+ */
+export function personalSupportRelation(
+  structureElement: Element,
+  personElement: Element,
+): SupportRelation {
+  if (structureElement === personElement) return "same";
+  if (generates(structureElement, personElement)) return "supports";
+  if (generates(personElement, structureElement)) return "receives";
+  if (
+    controls(structureElement, personElement) ||
+    controls(personElement, structureElement)
+  )
+    return "controls";
+  return "neutral";
+}
+
+/**
+ * Проверяет личную пользу структуры по двум дворцам часовой карты.
+ * НС года рождения нужен, чтобы найти на Небесной тарелке личный дворец
+ * пользователя. Затем сравниваются стихии этого дворца и дворца структуры.
+ */
 export function evaluateSupportPalace(
   chart: ReturnType<typeof buildChart>,
   structurePalace: number,
@@ -358,28 +382,20 @@ export function evaluateSupportPalace(
   if (birthYearStem < 0 || birthYearStem > 9 || structurePalace === 5)
     return null;
   const stem = STEMS[representativeStem];
-  const supportPalace = Object.values(chart.cells).find(
+  const personPalace = Object.values(chart.cells).find(
     (cell) => cell.heavenStem === stem,
   )?.palace;
-  if (!supportPalace || supportPalace === 5) return null;
+  if (!personPalace || personPalace === 5) return null;
+
   const structureElement = PALACES[structurePalace].element;
-  const personElement = STEM_ELEMENT[birthYearStem];
-  const relation: SupportRelation =
-    structureElement === personElement
-      ? "same"
-      : generates(structureElement, personElement)
-        ? "supports"
-        : generates(personElement, structureElement)
-          ? "receives"
-          : controls(structureElement, personElement) ||
-              controls(personElement, structureElement)
-            ? "controls"
-            : "neutral";
+  const personElement = PALACES[personPalace].element;
+  const relation = personalSupportRelation(structureElement, personElement);
+
   return {
     supported: relation === "supports" || relation === "same",
     relation,
     structurePalace,
-    supportPalace,
+    personPalace,
     structureElement,
     personElement,
   };
@@ -478,6 +494,8 @@ export function detectFiveBattalions(
   hourBranch: number,
   wealthPalace: number,
   lateZi = false,
+  birthYearStem?: number,
+  representativeStem?: number,
 ): FiveBattalionsHit[] {
   if (wealthPalace === 5 || !PALACES[wealthPalace]) return [];
   const chart = buildChart(date, hourBranch, lateZi);
@@ -507,6 +525,18 @@ export function detectFiveBattalions(
     if ((WONDER_AVOID[heavenStem] ?? []).includes(wealthPalace)) return [];
   }
 
+  const support =
+    birthYearStem === undefined
+      ? undefined
+      : evaluateSupportPalace(
+          chart,
+          wealthPalace,
+          birthYearStem,
+          representativeStem,
+        );
+  if (birthYearStem !== undefined && (!support || !support.supported))
+    return [];
+
   return [
     {
       palace: wealthPalace,
@@ -516,6 +546,7 @@ export function detectFiveBattalions(
       earthStem: cell.earthStem,
       door: cell.door,
       goal: FIVE_BATTALIONS_GOAL[cell.door],
+      support: support ?? undefined,
     },
   ];
 }

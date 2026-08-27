@@ -2073,6 +2073,10 @@ components:
         door: { type: string }
         doorName: { type: string }
         goal: { type: string }
+        supportRelation:
+          type: string
+          enum: [same, supports]
+        supportMessage: { type: string }
 
     QimenTigerDun:
       type: object
@@ -2601,7 +2605,18 @@ components:
 
     MatrixPoint:
       type: object
-      required: [id, section, position, arcanaNumber, arcanaName, essence, strength, practice, formula]
+      required:
+        [
+          id,
+          section,
+          position,
+          arcanaNumber,
+          arcanaName,
+          essence,
+          strength,
+          practice,
+          formula,
+        ]
       properties:
         id:
           type: string

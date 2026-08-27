@@ -3,8 +3,16 @@ import { GetQimenResponse } from "@workspace/api-zod";
 import { computeQimenStructures } from "./qimen";
 
 const BIRTH_DATES = [
-  "1984-06-01", "1985-06-01", "1986-06-01", "1987-06-01", "1988-06-01",
-  "1989-06-01", "1990-06-01", "1991-06-01", "1992-06-01", "1993-06-01",
+  "1984-06-01",
+  "1985-06-01",
+  "1986-06-01",
+  "1987-06-01",
+  "1988-06-01",
+  "1989-06-01",
+  "1990-06-01",
+  "1991-06-01",
+  "1992-06-01",
+  "1993-06-01",
 ];
 
 function firstSupportedGeneralsResult() {
@@ -17,7 +25,9 @@ function firstSupportedGeneralsResult() {
       if (result.structures.length > 0) return result;
     }
   }
-  throw new Error("Не найден персонально подходящий контрольный пример «Трёх Генералов»");
+  throw new Error(
+    "Не найден персонально подходящий контрольный пример «Трёх Генералов»",
+  );
 }
 
 describe("Три Генерала: персональная польза", () => {
@@ -36,9 +46,11 @@ describe("Три Генерала: персональная польза", () =>
 
     expect(result.structures.length).toBeGreaterThan(0);
     for (const hit of result.structures) {
-      expect(hit.supportRelation === "same" || hit.supportRelation === "supports").toBe(true);
-      expect(hit.supportMessage).toMatch(/^Данная структура находится во дворце стихии /);
-      expect(hit.supportMessage).toContain("НС года");
+      expect(
+        hit.supportRelation === "same" || hit.supportRelation === "supports",
+      ).toBe(true);
+      expect(hit.supportMessage).toMatch(/^Дворец структуры - стихия /);
+      expect(hit.supportMessage).toContain("Личный дворец НС вашего года");
     }
   });
 });

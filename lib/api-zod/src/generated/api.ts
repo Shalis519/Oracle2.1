@@ -721,7 +721,9 @@ export const GetQimenResponse = zod.object({
   "earthStemName": zod.string(),
   "door": zod.string(),
   "doorName": zod.string(),
-  "goal": zod.string()
+  "goal": zod.string(),
+  "supportRelation": zod.enum(['same', 'supports']).optional(),
+  "supportMessage": zod.string().optional()
 })),
   "tigerDuns": zod.array(zod.object({
   "date": zod.string(),

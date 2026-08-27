@@ -1,18 +1,14 @@
 import { describe, expect, test } from "vitest";
 import { GetQimenResponse } from "@workspace/api-zod";
 import { computeQimenStructures } from "./qimen";
-import {
-  detectTigerDun,
-  isTigerDunEarthStemAllowed,
-} from "./qimen/structures";
+import { detectTigerDun, isTigerDunEarthStemAllowed } from "./qimen/structures";
 import {
   buildChart,
   DOOR_ELEMENT,
   isHourControlsDay,
   STAR_ELEMENT,
 } from "./qimen/chart";
-import { birthYearBranch, dayInfo } from "./qimen/calendar";
-import { controls, clashesBranch, PALACES } from "./qimen/constants";
+import { controls, PALACES } from "./qimen/constants";
 import { flyingStarYear, getFlyingStar } from "./data/fengshui";
 
 const START = new Date(2026, 7, 25, 12, 0, 0);
@@ -39,19 +35,26 @@ function findTigerHits(): RawTigerHit[] {
   return hits;
 }
 
-function firstPersonalResult() {
-  const result = computeQimenStructures({
-    from: START,
-    days: 120,
-    birthDate: "1980-02-05",
-    birthTime: "16:01",
-  });
-  if (result.tigerDuns.length === 0) {
-    throw new Error(
-      "Не найден персонально подходящий Тигровый Дунь в 120-дневном окне",
-    );
+function firstSupportedTigerHit() {
+  for (const raw of findTigerHits()) {
+    for (let birthYearStem = 0; birthYearStem < 10; birthYearStem++) {
+      const supported = detectTigerDun(
+        raw.date,
+        raw.hourBranch,
+        false,
+        birthYearStem,
+        birthYearStem,
+      ).find(
+        (hit) =>
+          hit.palace === raw.palace &&
+          hit.variant === raw.variant &&
+          hit.heavenStem === raw.heavenStem &&
+          hit.earthStem === raw.earthStem,
+      );
+      if (supported?.support?.supported) return supported;
+    }
   }
-  return result;
+  throw new Error("Не найден подходящий контрольный пример Тигрового Дунь");
 }
 
 describe("Тигровый Дунь", () => {
@@ -143,23 +146,18 @@ describe("Тигровый Дунь", () => {
     expect(tigerMonth.tigerDuns).toEqual(allMonth.tigerDuns);
   }, 30_000);
 
-  test("не публикует структуру без данных рождения, а при публикации подтверждает пользу по НС года", () => {
+  test("не публикует структуру без данных рождения, а при публикации пропускает только поддерживающее отношение двух дворцов", () => {
     const withoutBirth = computeQimenStructures({ from: START, days: 14 });
     expect(GetQimenResponse.parse(withoutBirth).tigerDuns).toEqual([]);
 
-    const checked = GetQimenResponse.parse(firstPersonalResult());
-    expect(checked.tigerDuns.length).toBeGreaterThan(0);
-    const userYearBranch = birthYearBranch("1980-02-05", "16:01");
-    for (const hit of checked.tigerDuns) {
-      const date = new Date(`${hit.date}T12:00:00`);
-      expect(clashesBranch(userYearBranch, dayInfo(date).branch)).toBe(false);
-      expect(
-        hit.supportRelation === "same" || hit.supportRelation === "supports",
-      ).toBe(true);
-      expect(hit.supportMessage).toContain("НС вашего года");
-      if (hit.variant === 1 || hit.variant === 3)
-        expect(hit.earthStemRequired).toBe(true);
-      else expect(hit.earthStemRequired).toBe(false);
-    }
+    const hit = firstSupportedTigerHit();
+    expect(
+      hit.support?.relation === "same" || hit.support?.relation === "supports",
+    ).toBe(true);
+    expect(hit.support?.supported).toBe(true);
+    expect(hit.support?.personPalace).not.toBe(5);
+    if (hit.variant === 1 || hit.variant === 3)
+      expect(hit.earthStem === (hit.variant === 1 ? "辛" : "乙")).toBe(true);
+    else expect(["丁", "己"]).toContain(hit.earthStem);
   }, 30_000);
 });
