@@ -4,6 +4,7 @@ import { MONEY_STUDIO_SEEDS } from "./moneyStudioSeeds";
 import { LONG_TERM_TRANSIT_CARD_SEEDS } from "./longTermTransitCardSeeds";
 import { PLANETARY_JOY_SEEDS } from "./planetaryJoySeeds";
 import { JUPITER_TRANSIT_SEEDS } from "./jupiterTransitSeeds";
+import { SATURN_TRANSIT_SEEDS } from "./saturnTransitSeeds";
 
 /**
  * Creates small runtime support tables that are not part of the deployment shell
@@ -382,11 +383,35 @@ export async function ensureForecastTemplateSeeds(): Promise<void> {
   await ensureMoneyStudioSeeds();
   await ensureLongTermTransitCardSeeds();
   await ensureJupiterTransitSeeds();
+  await ensureSaturnTransitSeeds();
   await ensurePlanetaryJoySeeds();
 }
 
 async function ensureJupiterTransitSeeds(): Promise<void> {
   for (const seed of JUPITER_TRANSIT_SEEDS) {
+    await db
+      .insert(forecastTextTemplatesTable)
+      .values({
+        category: "long_term_transit",
+        context: "major_aspect",
+        key: seed.key,
+        title: seed.title,
+        text: seed.text,
+        sourceNote: seed.sourceNote,
+        isActive: true,
+      })
+      .onConflictDoNothing({
+        target: [
+          forecastTextTemplatesTable.category,
+          forecastTextTemplatesTable.context,
+          forecastTextTemplatesTable.key,
+        ],
+      });
+  }
+}
+
+async function ensureSaturnTransitSeeds(): Promise<void> {
+  for (const seed of SATURN_TRANSIT_SEEDS) {
     await db
       .insert(forecastTextTemplatesTable)
       .values({
