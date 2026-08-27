@@ -779,19 +779,24 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
       transition={{ duration: 0.4 }}
     >
       <Card className="bg-card/40 backdrop-blur-md border-rose-400/30">
-        <CardContent className="py-4 space-y-3">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-sm leading-relaxed">
-              Сектор{" "}
-              <span className="font-semibold text-rose-200">{m.direction}</span>{" "}
-              в{" "}
-              <span className="font-semibold text-rose-200">{m.hourLabel}</span>
-              .
-            </p>
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="font-serif text-lg">
+              Структура «Нефритовая Дева»
+            </CardTitle>
             <span className="shrink-0 rounded-full bg-rose-400/15 px-3 py-1 text-xs font-medium text-rose-200">
               {formatDate(m.date)}
             </span>
           </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm leading-relaxed">
+            Сектор{" "}
+            <span className="font-semibold text-rose-200">{m.direction}</span>{" "}
+            в{" "}
+            <span className="font-semibold text-rose-200">{m.hourLabel}</span>
+            .
+          </p>
           {m.supportMessage ? (
             <p className="text-sm leading-relaxed text-rose-100/90">
               {m.supportMessage}
@@ -940,23 +945,28 @@ function ThreeMysticsCard({ m }: { m: QimenThreeMystic }) {
       transition={{ duration: 0.4 }}
     >
       <Card className="bg-card/40 backdrop-blur-md border-fuchsia-400/30">
-        <CardContent className="py-4 space-y-3">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-sm leading-relaxed">
-              Для активации используйте сектор{" "}
-              <span className="font-semibold text-fuchsia-200">
-                {m.direction}
-              </span>{" "}
-              в{" "}
-              <span className="font-semibold text-fuchsia-200">
-                {m.hourLabel}
-              </span>
-              .
-            </p>
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="font-serif text-lg">
+              Структура «Три Мистика»
+            </CardTitle>
             <span className="shrink-0 rounded-full bg-fuchsia-400/15 px-3 py-1 text-xs font-medium text-fuchsia-200">
               {formatDate(m.date)}
             </span>
           </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm leading-relaxed">
+            Для активации используйте сектор{" "}
+            <span className="font-semibold text-fuchsia-200">
+              {m.direction}
+            </span>{" "}
+            в{" "}
+            <span className="font-semibold text-fuchsia-200">
+              {m.hourLabel}
+            </span>
+            .
+          </p>
           <p className="text-sm leading-relaxed text-fuchsia-100/90">
             <span className="font-medium">Цель:</span> {m.goal}.
           </p>
