@@ -261,12 +261,14 @@ export interface TransitBody {
 }
 
 export interface TransitAspect {
+  transitBodyKey: string;
   transitBody: string;
   transitBodySymbol: string;
   transitSign: string;        // sign of transit body today
   transitSignSymbol: string;
   transitHouse: number | null; // NATAL house the transit body is moving through today
   transitRetrograde: boolean;
+  natalBodyKey: string;
   natalBody: string;
   natalBodySymbol: string;
   natalSign: string;         // sign of natal body
@@ -599,7 +601,7 @@ export function computeTransits(
   timezone?: string | null,
   // excludedNatalBodies позволяет daily forecast исключать отдельные натальные цели
   // без удаления их из эфемерид, натальной карты или Cinderella-расчётов.
-  options?: { excludedBodies?: string[]; excludedNatalBodies?: string[] },
+  options?: { excludedBodies?: string[]; excludedNatalBodies?: string[]; maxAspects?: number | null },
 ): TransitResult | null {
   const m = /^\d{4}-(\d{2})-(\d{2})$/.exec(dateStr);
   if (!m) return null;
@@ -671,6 +673,7 @@ export function computeTransits(
       if (best) {
         const info = ASPECT_RU[best.key] ?? { label: best.key, symbol: "" };
         aspects.push({
+          transitBodyKey: t.key,
           transitBody: t.name,
           transitBodySymbol: t.symbol,
           transitSign: t.sign,
@@ -679,6 +682,7 @@ export function computeTransits(
           // дому натальной карты идёт транзитная планета — это основа семантики.
           transitHouse: getHouseForLongitude(t.longitude, natalChart.houses),
           transitRetrograde: t.retrograde,
+          natalBodyKey: natalBody.key,
           natalBody: natalBody.name,
           natalBodySymbol: natalBody.symbol,
           natalSign: natalBody.sign,
@@ -720,7 +724,9 @@ export function computeTransits(
   return {
     date: dateStr,
     transitBodies,
-    aspects: aspects.slice(0, 5),
+    aspects: options?.maxAspects === null
+      ? aspects
+      : aspects.slice(0, options?.maxAspects ?? 5),
     cinderellaGates,
   };
 }

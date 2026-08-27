@@ -8,6 +8,11 @@ import { computeSecondaryLunationWindows, computeSecondaryProgressionAspectWindo
 import { computeNatalChart, computeTransits, type NatalChartInput } from "../lib/astrology";
 import { renderProgressionEventWindows } from "../lib/progressionLiterary";
 import { renderLongTermTransit } from "../lib/longTermTransitLiterary";
+import {
+  computeFastTransitAspectWindows,
+  isFastTransitBody,
+  type LongTermTransitWindow,
+} from "../lib/longTermTransitWindows";
 
 const router: IRouter = Router();
 
@@ -235,6 +240,22 @@ const ASPECT_LABELS: Record<string, string> = {
   quincunx: "квинконс",
 };
 
+const ASPECT_ACCUSATIVE: Record<string, string> = {
+  conjunction: "соединение",
+  opposition: "оппозицию",
+  trine: "тригон",
+  square: "квадрат",
+  sextile: "секстиль",
+};
+
+function transitPhaseLabel(phase: LongTermTransitWindow["phase"]): string {
+  return phase === "applying"
+    ? "сходящаяся"
+    : phase === "separating"
+      ? "расходящаяся"
+      : "точная";
+}
+
 const PLANET_NAMES: Record<string, string> = {
   sun: "Солнце", moon: "Луна", mercury: "Меркурий", venus: "Венера", mars: "Марс",
   jupiter: "Юпитер", saturn: "Сатурн", uranus: "Уран", neptune: "Нептун", pluto: "Плутон",
@@ -267,8 +288,14 @@ function transitTechnicalLine(aspect: Record<string, unknown>): string {
   return `${transitBody}${transitHouse} образует ${aspectName} с ${natalBody}${natalHouse}.`;
 }
 
-async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, progressionWindows: SecondaryProgressionWindow[], directionWindows: DirectionWindow[]) {
+async function buildDraftBlockTexts(
+  timeline: Array<Record<string, unknown>>,
+  progressionWindows: SecondaryProgressionWindow[],
+  directionWindows: DirectionWindow[],
+  fastTransitWindows: LongTermTransitWindow[],
+) {
   const transitEntries: Array<{ date: string; key: string; text: string; transitHouse: number | null; natalHouse: number | null }> = [];
+  const transitCards: Array<{ date: string; text: string }> = [];
   const progressionLines: string[] = [];
   const directionEntries: Array<{ date: string; key: string; text: string; transitHouse: number | null; natalHouse: number | null }> = [];
   const fullDirectionLines = directionWindows.map((window) => {
@@ -321,10 +348,10 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
     return `${period}: ${item.text}`;
   });
   const groupedTransitEntries = grouped(transitEntries);
-  const transitLines: string[] = [];
   for (const item of groupedTransitEntries) {
     const [rawTransitBodyKey, rawNatalBodyKey, rawAspectKey] = item.key.split("|");
     const transitBodyKey = bodyKey(rawTransitBodyKey);
+    if (isFastTransitBody(transitBodyKey)) continue;
     const natalBodyKey = bodyKey(rawNatalBodyKey);
     const aspectKey = ({ "соединение": "conjunction", "оппозиция": "opposition", "квадрат": "square", "тригон": "trine", "секстиль": "sextile" } as Record<string, string>)[rawAspectKey] ?? rawAspectKey;
     const period = item.from === item.to ? formatDisplayDate(item.from) : `с ${formatDisplayDate(item.from)} по ${formatDisplayDate(item.to)}`;
@@ -339,8 +366,36 @@ async function buildDraftBlockTexts(timeline: Array<Record<string, unknown>>, pr
       item.transitHouse == null ? "" : String(item.transitHouse),
       item.natalHouse == null ? "" : String(item.natalHouse),
     );
-    transitLines.push(literary ?? technicalLine);
+    transitCards.push({ date: item.from, text: literary ?? technicalLine });
   }
+  for (const window of fastTransitWindows) {
+    const period = window.startDate === window.endDate
+      ? formatDisplayDate(window.startDate)
+      : `с ${formatDisplayDate(window.startDate)} по ${formatDisplayDate(window.endDate)}`;
+    const transitBody = TRANSIT_PLANET_FORMS[window.transitBodyKey] ?? `транзитный ${window.aspect.transitBody}`;
+    const natalBody = NATAL_PLANET_FORMS[window.natalBodyKey] ?? `натальным ${window.aspect.natalBody}`;
+    const aspect = ASPECT_ACCUSATIVE[window.aspectKey] ?? window.aspect.type.toLowerCase();
+    const transitHouse = window.aspect.transitHouse == null ? "" : `, проходя по Вашему натальному ${window.aspect.transitHouse} дому`;
+    const natalHouse = window.aspect.natalHouse == null ? "" : ` в ${window.aspect.natalHouse} доме`;
+    const phaseReference = window.phaseReference === "forecast_start"
+      ? "на начало выбранного периода"
+      : `на начало аспекта ${formatDisplayDate(window.focusDate)}`;
+    const technicalLine = `${period}: ${transitBody}${transitHouse} образует ${aspect} с ${natalBody}${natalHouse}; экзакт - ${formatDisplayDate(window.peakDate)}, ${phaseReference} фаза ${transitPhaseLabel(window.phase)}, орбис - ${window.focusOrb.toFixed(2)}°.`;
+    const literary = await renderLongTermTransit(
+      technicalLine,
+      window.transitBodyKey,
+      window.aspectKey,
+      window.natalBodyKey,
+      window.startDate,
+      window.endDate,
+      window.aspect.transitHouse == null ? "" : String(window.aspect.transitHouse),
+      window.aspect.natalHouse == null ? "" : String(window.aspect.natalHouse),
+    );
+    transitCards.push({ date: window.startDate, text: literary ?? technicalLine });
+  }
+  const transitLines = transitCards
+    .sort((left, right) => left.date.localeCompare(right.date) || left.text.localeCompare(right.text))
+    .map((card) => card.text);
   const draft = (lines: string[], empty: string) => lines.length ? lines.join("\n\n") : empty;
   return {
     transits: draft(transitLines, "За выбранный период значимые транзитные аспекты не выделены."),
@@ -406,7 +461,13 @@ router.post("/admin/long-term-forecasts", requireAuth, requireAdmin, async (req,
     const transit = withoutExcludedLongTermBodies(computeTransits(natal, dateFrom, input.latitude, input.longitude, input.timezone, { excludedBodies: ["moon"], excludedNatalBodies: ["chiron", "lilith", "northnode", "southnode"] }));
     const timeline = buildForecastTimeline(input, natal, parsedDateFrom, parsedDateTo);
     const directionWindows = computeDirectionWindows(input, parsedDateFrom, parsedDateTo);
-    const draftTexts = await buildDraftBlockTexts(timeline, progressionWindows, directionWindows);
+    const fastTransitWindows = computeFastTransitAspectWindows(input, natal, parsedDateFrom, parsedDateTo);
+    const draftTexts = await buildDraftBlockTexts(
+      timeline,
+      progressionWindows,
+      directionWindows,
+      fastTransitWindows,
+    );
     const [row] = await db.insert(longTermForecastsTable).values({
       userId: typeof body.userId === "number" ? body.userId : null,
       clientName: body.clientName.trim(), periodType: String(body.periodType), dateFrom, dateTo,
