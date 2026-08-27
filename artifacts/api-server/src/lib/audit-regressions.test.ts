@@ -101,7 +101,9 @@ describe("audit regressions", () => {
     );
     expect((transitSeeds.match(/sourceNote: "Авторская база для карточек\.docx"/g) ?? [])).toHaveLength(21);
     expect(literary).toContain('context === "major_aspect_exact"');
-    expect(literary).toContain("const row = usable(exactRow) ? exactRow : usable(genericRow) ? genericRow : undefined;");
+    expect(literary).toContain("const usesExactTemplate = usable(exactRow);");
+    expect(literary).toContain("const row = usesExactTemplate");
+    expect(literary).toContain(": usable(genericRow)");
     expect(runtimeSchema).toContain("await ensureLongTermTransitCardSeeds();");
   });
 
@@ -206,7 +208,7 @@ describe("audit regressions", () => {
       resolve(process.cwd(), "src/routes/forecast.ts"),
       "utf8",
     );
-    expect(forecastRoute).toContain("CURRENT_FORECAST_VERSION = 62");
+    expect(forecastRoute).toContain("CURRENT_FORECAST_VERSION = 63");
     expect(forecastRoute).toContain("serving stale prose");
   });
 

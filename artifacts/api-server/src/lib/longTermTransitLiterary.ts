@@ -40,6 +40,15 @@ const NATAL_BODY_THEMES: Record<string, string> = {
   pluto: "контроля, кризисов, силы и глубокой внутренней трансформации",
 };
 
+const PLANETARY_JOY_HOUSES: Record<string, string> = {
+  sun: "9",
+  mercury: "1",
+  venus: "5",
+  mars: "6",
+  jupiter: "11",
+  saturn: "12",
+};
+
 const ASPECT_MEANINGS: Record<string, string> = {
   conjunction:
     "Соединение усиливает общую тему двух факторов и делает её заметнее в повседневных решениях.",
@@ -113,15 +122,27 @@ export async function renderLongTermTransit(
 ): Promise<string | null> {
   if (
     !ASPECT_KEYS[aspectKey] ||
-    !["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"].includes(transitBodyKey)
+    ![
+      "sun",
+      "moon",
+      "mercury",
+      "venus",
+      "mars",
+      "jupiter",
+      "saturn",
+      "uranus",
+      "neptune",
+      "pluto",
+    ].includes(transitBodyKey)
   )
     return null;
   const rows = await loadRows();
   const key = `${transitBodyKey}:${aspectKey}:${natalBodyKey}`;
   const exactKey = `${key}:transitHouse:${transitHouse}:natalHouse:${natalHouse}`;
-  const usable = (item: TransitTemplateRow | undefined) => Boolean(
-    item?.isActive && item.text.trim() && item.text.trim() !== "В разработке",
-  );
+  const usable = (item: TransitTemplateRow | undefined) =>
+    Boolean(
+      item?.isActive && item.text.trim() && item.text.trim() !== "В разработке",
+    );
   const exactRow = rows.find(
     (item) =>
       item.category === "long_term_transit" &&
@@ -134,14 +155,31 @@ export async function renderLongTermTransit(
       item.context === "major_aspect" &&
       item.key === key,
   );
-  const row = usable(exactRow) ? exactRow : usable(genericRow) ? genericRow : undefined;
+  const usesExactTemplate = usable(exactRow);
+  const row = usesExactTemplate
+    ? exactRow
+    : usable(genericRow)
+      ? genericRow
+      : undefined;
   if (!row) return `${technicalLine}\n\nВ разработке`;
-  const transitHouseThemes = rows.find(
-    (item) => item.category === "house" && item.context === "transit" && item.key === transitHouse,
-  )?.text?.trim() ?? "";
-  const natalHouseThemes = rows.find(
-    (item) => item.category === "house" && item.context === "natal" && item.key === natalHouse,
-  )?.text?.trim() ?? "";
+  const transitHouseThemes =
+    rows
+      .find(
+        (item) =>
+          item.category === "house" &&
+          item.context === "transit" &&
+          item.key === transitHouse,
+      )
+      ?.text?.trim() ?? "";
+  const natalHouseThemes =
+    rows
+      .find(
+        (item) =>
+          item.category === "house" &&
+          item.context === "natal" &&
+          item.key === natalHouse,
+      )
+      ?.text?.trim() ?? "";
   const renderedTemplate = renderTemplate(row.text, {
     technicalLine,
     startDate: displayDate(startDate),
@@ -155,5 +193,21 @@ export async function renderLongTermTransit(
   const rendered = row.text.includes("{technicalLine}")
     ? renderedTemplate
     : `${technicalLine}\n\n${renderedTemplate}`;
-  return hasUnresolvedTokens(rendered) ? `${technicalLine}\n\nВ разработке` : rendered.trim();
+  if (hasUnresolvedTokens(rendered)) return `${technicalLine}\n\nВ разработке`;
+
+  // Exact house-pair cards remain fully independent. Planetary joy supplements
+  // only the general literary card when the transiting planet is in its joy house.
+  const joyRow =
+    !usesExactTemplate && PLANETARY_JOY_HOUSES[transitBodyKey] === transitHouse
+      ? rows.find(
+          (item) =>
+            item.category === "long_term_transit" &&
+            item.context === "planetary_joy" &&
+            item.key === transitBodyKey &&
+            usable(item),
+        )
+      : undefined;
+  return joyRow
+    ? `${rendered.trim()}\n\n${joyRow.text.trim()}`
+    : rendered.trim();
 }
