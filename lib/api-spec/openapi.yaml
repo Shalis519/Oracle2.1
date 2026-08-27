@@ -2073,10 +2073,6 @@ components:
         door: { type: string }
         doorName: { type: string }
         goal: { type: string }
-        supportRelation:
-          type: string
-          enum: [same, supports]
-        supportMessage: { type: string }
 
     QimenTigerDun:
       type: object

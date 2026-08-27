@@ -863,11 +863,6 @@ function FiveBattalionsCard({ hit }: { hit: QimenFiveBattalion }) {
               в {hit.hourLabel}.
             </p>
           </div>
-          {hit.supportMessage ? (
-            <p className="rounded-lg border border-cyan-400/15 bg-cyan-400/5 p-3 text-sm leading-relaxed text-cyan-100/90">
-              {hit.supportMessage}
-            </p>
-          ) : null}
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="rounded-full bg-cyan-400/10 px-2 py-0.5 text-xs text-cyan-100">
               Небо: {hit.heavenStemName}

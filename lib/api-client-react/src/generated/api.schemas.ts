@@ -629,14 +629,6 @@ export const QimenFiveBattalionHeavenStem = {
   戊: '戊',
 } as const;
 
-export type QimenFiveBattalionSupportRelation = typeof QimenFiveBattalionSupportRelation[keyof typeof QimenFiveBattalionSupportRelation];
-
-
-export const QimenFiveBattalionSupportRelation = {
-  same: 'same',
-  supports: 'supports',
-} as const;
-
 export interface QimenFiveBattalion {
   date: string;
   dayGanZhi: string;
@@ -652,8 +644,6 @@ export interface QimenFiveBattalion {
   door: string;
   doorName: string;
   goal: string;
-  supportRelation?: QimenFiveBattalionSupportRelation;
-  supportMessage?: string;
 }
 
 export type QimenTigerDunVariant = typeof QimenTigerDunVariant[keyof typeof QimenTigerDunVariant];

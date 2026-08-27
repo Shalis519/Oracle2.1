@@ -1,9 +1,11 @@
 import { describe, expect, test } from "vitest";
 import {
+  detectFiveBattalions,
   evaluateSupportPalace,
   personalSupportRelation,
 } from "./qimen/structures";
 import type { Element } from "./qimen/constants";
+import { buildChart } from "./qimen/chart";
 import { computeQimenStructures } from "./qimen";
 
 const ELEMENTS: Element[] = ["wood", "fire", "earth", "metal", "water"];
@@ -84,6 +86,25 @@ describe("Персональная польза структуры по двум
     expect(result.structures).toEqual([]);
     expect(result.fiveBattalions).toEqual([]);
     expect(result.tigerDuns).toEqual([]);
+  });
+
+  test("не применяет проверку НС года к самостоятельной формуле Пяти Батальонов", () => {
+    const start = new Date(2026, 7, 25, 12, 0, 0);
+
+    for (let offset = 0; offset < 365; offset++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + offset);
+      for (let hourBranch = 0; hourBranch < 12; hourBranch++) {
+        const chart = buildChart(date, hourBranch);
+        const hits = detectFiveBattalions(date, hourBranch, chart.zhiShiPalace);
+        if (hits.length > 0) {
+          expect(hits[0]).not.toHaveProperty("support");
+          return;
+        }
+      }
+    }
+
+    throw new Error("Не найден контрольный пример Пяти Батальонов");
   });
 
   test("определяет личную стихию по дворцу НС года на Небесной тарелке, а не по стихии ствола напрямую", () => {

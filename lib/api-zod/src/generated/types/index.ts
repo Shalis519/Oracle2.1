@@ -156,7 +156,6 @@ export * from './qimenBirthChart';
 export * from './qimenBirthChartCell';
 export * from './qimenFiveBattalion';
 export * from './qimenFiveBattalionHeavenStem';
-export * from './qimenFiveBattalionSupportRelation';
 export * from './qimenJadeMaiden';
 export * from './qimenJadeMaidenSupportRelation';
 export * from './qimenMonthChart';

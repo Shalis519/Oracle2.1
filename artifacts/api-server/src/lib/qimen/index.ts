@@ -118,8 +118,6 @@ export interface QimenFiveBattalion {
   door: string;
   doorName: string;
   goal: string;
-  supportRelation?: "same" | "supports";
-  supportMessage?: string;
 }
 
 export interface QimenTigerDun {
@@ -696,8 +694,6 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           h,
           wealthPalace,
           slot.lateZi,
-          yearStem,
-          representativeYearStem,
         )) {
           fiveBattalions.push({
             date: slotDay.iso,
@@ -714,21 +710,6 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
             door: hit.door,
             doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
             goal: hit.goal,
-            supportRelation:
-              hit.support?.relation === "same" ||
-              hit.support?.relation === "supports"
-                ? hit.support.relation
-                : undefined,
-            supportMessage:
-              hit.support &&
-              (hit.support.relation === "same" ||
-                hit.support.relation === "supports")
-                ? threeMysticsSupportMessage(
-                    hit.support.relation,
-                    hit.support.structureElement,
-                    hit.support.personElement,
-                  )
-                : undefined,
           });
         }
       }

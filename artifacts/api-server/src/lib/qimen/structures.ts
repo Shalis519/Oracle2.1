@@ -142,7 +142,6 @@ export interface FiveBattalionsHit {
   earthStem: string;
   door: string;
   goal: string;
-  support?: SupportCheck;
 }
 
 /**
@@ -494,8 +493,6 @@ export function detectFiveBattalions(
   hourBranch: number,
   wealthPalace: number,
   lateZi = false,
-  birthYearStem?: number,
-  representativeStem?: number,
 ): FiveBattalionsHit[] {
   if (wealthPalace === 5 || !PALACES[wealthPalace]) return [];
   const chart = buildChart(date, hourBranch, lateZi);
@@ -525,18 +522,6 @@ export function detectFiveBattalions(
     if ((WONDER_AVOID[heavenStem] ?? []).includes(wealthPalace)) return [];
   }
 
-  const support =
-    birthYearStem === undefined
-      ? undefined
-      : evaluateSupportPalace(
-          chart,
-          wealthPalace,
-          birthYearStem,
-          representativeStem,
-        );
-  if (birthYearStem !== undefined && (!support || !support.supported))
-    return [];
-
   return [
     {
       palace: wealthPalace,
@@ -546,7 +531,6 @@ export function detectFiveBattalions(
       earthStem: cell.earthStem,
       door: cell.door,
       goal: FIVE_BATTALIONS_GOAL[cell.door],
-      support: support ?? undefined,
     },
   ];
 }

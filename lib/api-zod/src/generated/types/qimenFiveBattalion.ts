@@ -6,7 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { QimenFiveBattalionHeavenStem } from './qimenFiveBattalionHeavenStem';
-import type { QimenFiveBattalionSupportRelation } from './qimenFiveBattalionSupportRelation';
 
 export interface QimenFiveBattalion {
   date: string;
@@ -23,6 +22,4 @@ export interface QimenFiveBattalion {
   door: string;
   doorName: string;
   goal: string;
-  supportRelation?: QimenFiveBattalionSupportRelation;
-  supportMessage?: string;
 }
