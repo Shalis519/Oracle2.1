@@ -147,14 +147,8 @@ export async function renderProgressionWindow(
           "moon",
           window.sourceSignKey,
         ),
-        startDate: displayDate(
-          context
-            ? maxDate(window.startDate, context.startDate)
-            : window.startDate,
-        ),
-        endDate: displayDate(
-          context ? minDate(window.endDate, context.endDate) : window.endDate,
-        ),
+        startDate: displayDate(window.startDate),
+        endDate: displayDate(window.endDate),
       },
     );
     return hasUnresolvedTokens(rendered) ? null : rendered.trim();
@@ -190,18 +184,12 @@ export async function renderProgressionWindow(
           window.sourceBodyKey,
         ),
         targetHouse: String(window.targetHouse),
-        startDate: displayDate(
-          context
-            ? maxDate(window.startDate, context.startDate)
-            : window.startDate,
-        ),
+        startDate: displayDate(window.startDate),
         peakDate: displayDate(window.peakDate),
-        endDate: displayDate(
-          context ? minDate(window.endDate, context.endDate) : window.endDate,
-        ),
+        endDate: displayDate(window.endDate),
         exactStartDate: displayDate(window.exactStartDate ?? window.peakDate),
         exactEndDate: displayDate(window.exactEndDate ?? window.peakDate),
-        exactPeriodText: exactPeriodText(window, context),
+        exactPeriodText: exactPeriodText(window),
         orb: `${window.orb}°`,
         houseThemes: get(
           selected,
@@ -236,7 +224,7 @@ export async function renderProgressionWindow(
       ),
       exactStartDate: displayDate(window.exactStartDate ?? window.peakDate),
       exactEndDate: displayDate(window.exactEndDate ?? window.peakDate),
-      exactPeriodText: exactPeriodText(window, context),
+      exactPeriodText: exactPeriodText(window),
       orb: `${window.orb}°`,
       houseThemes: get(selected, "house", "natal", String(window.targetHouse)),
     },
@@ -280,6 +268,25 @@ function phaseLabel(phase: ProgressionAspectWindow["phase"]): string {
       : "точной";
 }
 
+function lowerFirst(value: string): string {
+  return value ? value[0].toLowerCase() + value.slice(1) : value;
+}
+
+function progressionTechnicalLine(
+  window: ProgressionAspectWindow,
+  sourceBody: string,
+  targetBody: string,
+  aspect: string,
+): string {
+  const period = window.startDate === window.endDate
+    ? displayDate(window.startDate)
+    : `с ${displayDate(window.startDate)} по ${displayDate(window.endDate)}`;
+  const displayPeriod = period.startsWith("с") ? `С${period.slice(1)}` : period;
+  const sourceHouse = window.sourceHouse == null ? "" : `, проходя по Вашему натальному ${window.sourceHouse} дому`;
+  const targetHouse = window.targetHouse == null ? "" : ` в ${window.targetHouse} доме`;
+  return `${displayPeriod}: ${lowerFirst(sourceBody)}${sourceHouse} образует ${aspect} с ${natalTechnicalBody(window.targetBodyKey, targetBody)}${targetHouse}; экзакт - ${displayDate(window.peakDate)}, фаза ${phaseLabel(window.phase)}, орбис - ${window.orb.toFixed(2)}°.`;
+}
+
 function natalTechnicalBody(bodyKey: string, instrumental: string): string {
   const adjective = bodyKey === "moon" || bodyKey === "venus" ? "натальной" : bodyKey === "sun" ? "натальным" : "натальным";
   return `${adjective} ${instrumental}`;
@@ -308,6 +315,7 @@ export async function renderProgressionAspectWindow(
     ["entity", "natal", window.targetBodyKey],
   ]);
   if (!selected) return technicalAspectFallback(window, sourceBody, targetBody, aspect);
+  const technicalLine = progressionTechnicalLine(window, sourceBody, targetBody, aspect);
   const rendered = renderTemplate(
     get(selected, "progression", "major_aspect", window.aspectKey),
     {
@@ -322,14 +330,17 @@ export async function renderProgressionAspectWindow(
       targetThemes: get(selected, "entity", "natal", window.targetBodyKey),
       aspect,
       phase: phaseLabel(window.phase),
+      technicalLine,
       startDate: displayDate(window.startDate),
       peakDate: displayDate(window.peakDate),
       endDate: displayDate(window.endDate),
     },
   );
-  return hasUnresolvedTokens(rendered)
-    ? technicalAspectFallback(window, sourceBody, targetBody, aspect)
-    : rendered.trim();
+  if (hasUnresolvedTokens(rendered)) return technicalAspectFallback(window, sourceBody, targetBody, aspect);
+  const withTechnicalLine = rendered.includes(technicalLine)
+    ? rendered
+    : `${technicalLine}\n\n${rendered}`;
+  return withTechnicalLine.trim();
 }
 
 export async function renderProgressionLunationWindow(

@@ -146,6 +146,27 @@ describe("audit regressions", () => {
     expect(MONEY_STUDIO_SEEDS.every((seed) => seed.sourceNote.includes("ДЕНЬГИВНАТАЛЬНОЙКАРТЕ"))).toBe(true);
   });
 
+  it("keeps full-house technical lines for directions and progression aspects", () => {
+    const route = readFileSync(
+      resolve(process.cwd(), "src/routes/adminLongTermForecasts.ts"),
+      "utf8",
+    );
+    const literary = readFileSync(
+      resolve(process.cwd(), "src/lib/progressionLiterary.ts"),
+      "utf8",
+    );
+
+    expect(route).toContain("sourceHouse: peak.aspect.sourceHouse");
+    expect(route).toContain("targetHouse: peak.aspect.targetHouse");
+    expect(route).toContain("проходя по Вашему натальному ${window.sourceHouse} дому");
+    expect(route).toContain("с ${targetBody}${targetHouse}; экзакт -");
+    expect(literary).toContain("function progressionTechnicalLine(");
+    expect(literary).toContain("window.sourceHouse} дому");
+    expect(literary).toContain("window.targetHouse} доме");
+    expect(literary).toContain("exactPeriodText: exactPeriodText(window)");
+    expect(literary).toContain("const withTechnicalLine");
+  });
+
   it("keeps planet and aspect declension grammatically correct", () => {
     expect(buildTransitOpening({
       transitBody: "Солнце",

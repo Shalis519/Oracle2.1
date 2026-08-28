@@ -171,6 +171,8 @@ type DirectionWindow = {
   sourceBody: string;
   targetBody: string;
   aspectKey: string;
+  sourceHouse: number | null;
+  targetHouse: number | null;
 };
 
 function computeDirectionWindows(input: NatalChartInput, dateFrom: Date, dateTo: Date): DirectionWindow[] {
@@ -211,6 +213,8 @@ function computeDirectionWindows(input: NatalChartInput, dateFrom: Date, dateTo:
       sourceBody: startEntry.aspect.sourceBody,
       targetBody: startEntry.aspect.targetBody,
       aspectKey: startEntry.aspect.aspectKey,
+      sourceHouse: peak.aspect.sourceHouse,
+      targetHouse: peak.aspect.targetHouse,
     };
   }).filter((window) => window.to >= isoDate(dateFrom) && window.from <= isoDate(dateTo))
     .sort((a, b) => a.from.localeCompare(b.from) || a.sourceBody.localeCompare(b.sourceBody));
@@ -266,6 +270,11 @@ const TRANSIT_PLANET_FORMS: Record<string, string> = {
   jupiter: "транзитный Юпитер", saturn: "транзитный Сатурн", uranus: "транзитный Уран", neptune: "транзитный Нептун", pluto: "транзитный Плутон",
 };
 
+const DIRECTIONAL_PLANET_FORMS: Record<string, string> = {
+  sun: "дирекционное Солнце", moon: "дирекционная Луна", mercury: "дирекционный Меркурий", venus: "дирекционная Венера", mars: "дирекционный Марс",
+  jupiter: "дирекционный Юпитер", saturn: "дирекционный Сатурн", uranus: "дирекционный Уран", neptune: "дирекционный Нептун", pluto: "дирекционный Плутон",
+};
+
 const NATAL_PLANET_FORMS: Record<string, string> = {
   sun: "натальным Солнцем", moon: "натальной Луной", mercury: "натальным Меркурием", venus: "натальной Венерой", mars: "натальным Марсом",
   jupiter: "натальным Юпитером", saturn: "натальным Сатурном", uranus: "натальным Ураном", neptune: "натальным Нептуном", pluto: "натальным Плутоном",
@@ -275,6 +284,17 @@ function bodyKey(value: unknown): string {
   const normalized = String(value ?? "").toLowerCase().trim();
   const entry = Object.entries(PLANET_NAMES).find(([, name]) => name.toLowerCase() === normalized);
   return entry?.[0] ?? normalized;
+}
+
+function directionTechnicalLine(aspect: Record<string, unknown>): string {
+  const sourceKey = bodyKey(aspect.sourceBodyKey ?? aspect.sourceBody);
+  const targetKey = bodyKey(aspect.targetBodyKey ?? aspect.targetBody);
+  const sourceBody = DIRECTIONAL_PLANET_FORMS[sourceKey] ?? `дирекционное ${String(aspect.sourceBody)}`;
+  const targetBody = NATAL_PLANET_FORMS[targetKey] ?? `натальным ${String(aspect.targetBody)}`;
+  const aspectName = ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspect ?? "аспект").toLowerCase();
+  const sourceHouse = aspect.sourceHouse == null ? "" : `, проходя по Вашему натальному ${String(aspect.sourceHouse)} дому`;
+  const targetHouse = aspect.targetHouse == null ? "" : ` в ${String(aspect.targetHouse)} доме`;
+  return `${sourceBody}${sourceHouse} образует ${aspectName} с ${targetBody}${targetHouse}; орбис - ${String(aspect.orb)}°.`;
 }
 
 function transitTechnicalLine(aspect: Record<string, unknown>): string {
@@ -302,7 +322,11 @@ async function buildDraftBlockTexts(
     const period = window.from === window.to ? formatDisplayDate(window.from) : `с ${formatDisplayDate(window.from)} по ${formatDisplayDate(window.to)}`;
     const phase = window.phaseAtForecastStart === "separating" ? "расходящаяся" : window.phaseAtForecastStart === "applying" ? "сходящаяся" : "точная";
     const displayPeriod = period.startsWith("с") ? `С${period.slice(1)}` : period;
-    return `${displayPeriod}: дирекционный ${window.sourceBody} образует ${ASPECT_LABELS[window.aspectKey] ?? window.aspectKey} к ${window.targetBody}; экзакт — ${formatDisplayDate(window.exactDate)}, на начало выбранного периода фаза ${phase}, орбис — ${window.orbAtForecastStart.toFixed(2)}°.`;
+    const sourceBody = DIRECTIONAL_PLANET_FORMS[bodyKey(window.sourceBody)] ?? `дирекционная ${window.sourceBody}`;
+    const targetBody = NATAL_PLANET_FORMS[bodyKey(window.targetBody)] ?? `натальным ${window.targetBody}`;
+    const sourceHouse = window.sourceHouse == null ? "" : `, проходя по Вашему натальному ${window.sourceHouse} дому`;
+    const targetHouse = window.targetHouse == null ? "" : ` в ${window.targetHouse} доме`;
+    return `${displayPeriod}: ${sourceBody}${sourceHouse} образует ${ASPECT_LABELS[window.aspectKey] ?? window.aspectKey} с ${targetBody}${targetHouse}; экзакт - ${formatDisplayDate(window.exactDate)}, на начало выбранного периода фаза ${phase}, орбис - ${window.orbAtForecastStart.toFixed(2)}°.`;
   });
   for (const window of progressionWindows) {
     if (window.eventType === "sign_ingress") {
@@ -330,8 +354,8 @@ async function buildDraftBlockTexts(
     }
     const directions = point.directions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of directions?.aspects ?? []) {
-      const text = `дирекционный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`;
-      directionEntries.push({ date, key: `${aspect.sourceBodyKey ?? aspect.sourceBody}|${aspect.targetBodyKey ?? aspect.targetBody}|${aspect.aspectKey}`, text, transitHouse: null, natalHouse: null });
+      const text = directionTechnicalLine(aspect);
+      directionEntries.push({ date, key: `${aspect.sourceBodyKey ?? aspect.sourceBody}|${aspect.targetBodyKey ?? aspect.targetBody}|${aspect.aspectKey}`, text, transitHouse: typeof aspect.sourceHouse === "number" ? aspect.sourceHouse : null, natalHouse: typeof aspect.targetHouse === "number" ? aspect.targetHouse : null });
     }
   }
   const grouped = (entries: Array<{ date: string; key: string; text: string; transitHouse: number | null; natalHouse: number | null }>) => {
