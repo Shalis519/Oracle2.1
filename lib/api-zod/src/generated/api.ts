@@ -765,6 +765,22 @@ export const GetQimenResponse = zod.object({
   "supportRelation": zod.enum(['same', 'supports']),
   "supportMessage": zod.string()
 })),
+  "nobleHelperDoors": zod.array(zod.object({
+  "date": zod.string(),
+  "dayGanZhi": zod.string(),
+  "hourBranch": zod.number(),
+  "hourLabel": zod.string(),
+  "direction": zod.string(),
+  "dir": zod.string(),
+  "dom": zod.string(),
+  "nobleKind": zod.enum(['yang', 'yin']),
+  "nobleBranch": zod.string(),
+  "heavenStem": zod.string(),
+  "heavenStemName": zod.string(),
+  "deity": zod.string(),
+  "deityName": zod.string(),
+  "goal": zod.string()
+})),
   "birthChart": zod.union([zod.object({
   "hourGz": zod.string(),
   "ju": zod.number(),

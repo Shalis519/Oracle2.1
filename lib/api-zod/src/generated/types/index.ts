@@ -159,6 +159,8 @@ export * from './qimenFiveBattalionHeavenStem';
 export * from './qimenJadeMaiden';
 export * from './qimenJadeMaidenSupportRelation';
 export * from './qimenMonthChart';
+export * from './qimenNobleHelperDoor';
+export * from './qimenNobleHelperDoorNobleKind';
 export * from './qimenStructure';
 export * from './qimenStructureSupportRelation';
 export * from './qimenSummary';

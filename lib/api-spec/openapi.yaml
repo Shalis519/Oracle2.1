@@ -2163,6 +2163,26 @@ components:
         supportRelation: { type: string, enum: [same, supports] }
         supportMessage: { type: string }
 
+    QimenNobleHelperDoor:
+      type: object
+      required:
+        [date, dayGanZhi, hourBranch, hourLabel, direction, dir, dom, nobleKind, nobleBranch, heavenStem, heavenStemName, deity, deityName, goal]
+      properties:
+        date: { type: string }
+        dayGanZhi: { type: string }
+        hourBranch: { type: integer }
+        hourLabel: { type: string }
+        direction: { type: string }
+        dir: { type: string }
+        dom: { type: string }
+        nobleKind: { type: string, enum: [yang, yin] }
+        nobleBranch: { type: string }
+        heavenStem: { type: string }
+        heavenStemName: { type: string }
+        deity: { type: string }
+        deityName: { type: string }
+        goal: { type: string }
+
     QimenBirthChartCell:
       type: object
       required:
@@ -2265,6 +2285,7 @@ components:
           fiveBattalions,
           windDuns,
           tigerDuns,
+          nobleHelperDoors,
           birthChart,
           monthChart,
         ]
@@ -2305,6 +2326,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QimenTigerDun"
+        nobleHelperDoors:
+          type: array
+          items:
+            $ref: "#/components/schemas/QimenNobleHelperDoor"
         birthChart:
           oneOf:
             - $ref: "#/components/schemas/QimenBirthChart"

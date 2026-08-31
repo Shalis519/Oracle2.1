@@ -28,6 +28,8 @@ import {
   detectThreeGenerals,
   detectThreeMystics,
   detectJadeMaiden,
+  detectNobleHelperDoor,
+  type NobleHelperKind,
 } from "./structures";
 import { computeJiFuWishes, type JiFuWish } from "./jifu";
 import { DOOR_NAME_RU, STEM_NAME_RU } from "../../data/qimen/maidens";
@@ -38,6 +40,12 @@ export type { JiFuWish } from "./jifu";
 
 const MAIDEN_DAYS = 1;
 const THREE_GENERALS_DAYS = 3;
+const NOBLE_HELPER_DAYS = 3;
+
+const NOBLE_HELPER_GOALS: Record<NobleHelperKind, string> = {
+  yang: "используйте данную структуру, если Вам необходимо реализовать публичные цели: маркетинг, пиар, продажи, запуск новых товаров, карьерный рост, превзойти конкурентов, добиться публичного продвижения и вопросов, которые должны стать известны широкому кругу людей.",
+  yin: "используйте данную структуру, если Вам необходимо решить вопросы, связанные, с семейными делами, приватным общением, тайной информацией, решить внутренние конфликты в коллективе, оплатить счета, улучшить контроль и наладить взаимодействие внутри организации.",
+};
 
 const STRUCTURE_NAME = "Три Генерала";
 const STRUCTURE_GOAL = "Деньги, доход, материальное благополучие";
@@ -144,6 +152,23 @@ export interface QimenWindDun {
   supportMessage: string;
 }
 
+export interface QimenNobleHelperDoor {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  nobleKind: NobleHelperKind;
+  nobleBranch: string;
+  heavenStem: string;
+  heavenStemName: string;
+  deity: string;
+  deityName: string;
+  goal: string;
+}
+
 export interface QimenTigerDun {
   date: string;
   dayGanZhi: string;
@@ -220,6 +245,7 @@ export interface QimenResult {
   fiveBattalions: QimenFiveBattalion[];
   windDuns: QimenWindDun[];
   tigerDuns: QimenTigerDun[];
+  nobleHelperDoors: QimenNobleHelperDoor[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }
@@ -626,6 +652,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const fiveBattalions: QimenFiveBattalion[] = [];
   const windDuns: QimenWindDun[] = [];
   const tigerDuns: QimenTigerDun[] = [];
+  const nobleHelperDoors: QimenNobleHelperDoor[] = [];
   if (!hasBirthDate || yearBranch < 0) {
     return {
       hasBirthDate,
@@ -639,9 +666,43 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       fiveBattalions,
       windDuns,
       tigerDuns,
+      nobleHelperDoors,
       birthChart,
       monthChart,
     };
+  }
+
+  // «Личная дверь Великого Благородного» имеет собственное окно в 3 дня
+  // и не использует фильтры других структур.
+  for (let d = 0; d < NOBLE_HELPER_DAYS; d++) {
+    const date = new Date(from);
+    date.setDate(from.getDate() + d);
+    for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+      const slotDate =
+        slot.branch === 0 && !slot.lateZi
+          ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
+          : date;
+      const slotDay = dayInfo(slotDate);
+      const dayGanZhi = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
+      for (const hit of detectNobleHelperDoor(slotDate, slot.branch, yearStem, slot.lateZi)) {
+        nobleHelperDoors.push({
+          date: slotDay.iso,
+          dayGanZhi,
+          hourBranch: slot.branch,
+          hourLabel: hourLabel(slot.branch, slot.lateZi),
+          direction: hit.direction,
+          dir: PALACES[hit.palace].dir,
+          dom: hit.dom,
+          nobleKind: hit.kind,
+          nobleBranch: hit.nobleBranch,
+          heavenStem: hit.heavenStem,
+          heavenStemName: STEM_NAME_RU[hit.heavenStem] ?? hit.heavenStem,
+          deity: hit.deity,
+          deityName: hit.deity === "太阴" ? "Великий Инь" : "Шесть Гармоний",
+          goal: NOBLE_HELPER_GOALS[hit.kind],
+        });
+      }
+    }
   }
 
   const start = new Date(
@@ -896,6 +957,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     fiveBattalions,
     windDuns,
     tigerDuns,
+    nobleHelperDoors,
     birthChart,
     monthChart,
   };

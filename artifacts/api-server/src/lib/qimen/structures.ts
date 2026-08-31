@@ -5,6 +5,8 @@ import {
   STEMS,
   parseGanZhi,
   type Element,
+  BRANCH_PALACE,
+  BRANCHES,
 } from "./constants";
 import {
   buildChart,
@@ -302,6 +304,66 @@ export function detectThreeMystics(
       door: cell.door,
       activation: THREE_MYSTICS_ACTIVATION[cell.star],
       support: support ?? undefined,
+    });
+  }
+  return hits;
+}
+
+// --- "Личная дверь Великого Благородного" -------------------------------
+// Отдельная формула: выбранный Янский или Иньский Благородный задаёт дворец,
+// а в этом же дворце одновременно должны быть НС года рождения на Небесной
+// тарелке, Пустота и Великий Инь либо Шесть Гармоний. Другие формулы и
+// ограничения структур намеренно сюда не переносятся.
+const NOBLE_HELPER_BRANCHES_BY_STEM: Record<number, { yang: number; yin: number }> = {
+  0: { yang: 7, yin: 1 }, // 甲: 未 / 丑
+  1: { yang: 8, yin: 0 }, // 乙: 申 / 子
+  2: { yang: 9, yin: 11 }, // 丙: 酉 / 亥
+  3: { yang: 11, yin: 9 }, // 丁: 亥 / 酉
+  4: { yang: 1, yin: 7 }, // 戊: 丑 / 未
+  5: { yang: 0, yin: 8 }, // 己: 子 / 申
+  6: { yang: 1, yin: 7 }, // 庚: 丑 / 未
+  7: { yang: 2, yin: 6 }, // 辛: 寅 / 午
+  8: { yang: 3, yin: 5 }, // 壬: 卯 / 巳
+  9: { yang: 5, yin: 3 }, // 癸: 巳 / 卯
+};
+
+export type NobleHelperKind = "yang" | "yin";
+
+export interface NobleHelperDoorHit {
+  kind: NobleHelperKind;
+  palace: number;
+  direction: string;
+  dom: string;
+  nobleBranch: string;
+  heavenStem: string;
+  deity: "太阴" | "六合";
+}
+
+export function detectNobleHelperDoor(
+  date: Date,
+  hourBranch: number,
+  birthYearStem: number,
+  lateZi = false,
+): NobleHelperDoorHit[] {
+  const chart = buildChart(date, hourBranch, lateZi);
+  const branches = NOBLE_HELPER_BRANCHES_BY_STEM[birthYearStem];
+  if (!branches) return [];
+
+  const hits: NobleHelperDoorHit[] = [];
+  for (const kind of ["yang", "yin"] as const) {
+    const nobleBranchIndex = branches[kind];
+    const palace = BRANCH_PALACE[nobleBranchIndex];
+    const cell = chart.cells[palace];
+    if (!cell || cell.heavenStem !== STEMS[birthYearStem]) continue;
+    if (!cell.isVoid || (cell.deity !== "太阴" && cell.deity !== "六合")) continue;
+    hits.push({
+      kind,
+      palace,
+      direction: PALACES[palace].dirFull,
+      dom: PALACES[palace].dom,
+      nobleBranch: BRANCHES[nobleBranchIndex],
+      heavenStem: cell.heavenStem,
+      deity: cell.deity,
     });
   }
   return hits;

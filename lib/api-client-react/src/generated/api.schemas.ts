@@ -752,6 +752,31 @@ export interface QimenTigerDun {
   supportMessage: string;
 }
 
+export type QimenNobleHelperDoorNobleKind = typeof QimenNobleHelperDoorNobleKind[keyof typeof QimenNobleHelperDoorNobleKind];
+
+
+export const QimenNobleHelperDoorNobleKind = {
+  yang: 'yang',
+  yin: 'yin',
+} as const;
+
+export interface QimenNobleHelperDoor {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  nobleKind: QimenNobleHelperDoorNobleKind;
+  nobleBranch: string;
+  heavenStem: string;
+  heavenStemName: string;
+  deity: string;
+  deityName: string;
+  goal: string;
+}
+
 export interface QimenBirthChartCell {
   palace: number;
   direction: string;
@@ -808,6 +833,7 @@ export interface QimenSummary {
   fiveBattalions: QimenFiveBattalion[];
   windDuns: QimenWindDun[];
   tigerDuns: QimenTigerDun[];
+  nobleHelperDoors: QimenNobleHelperDoor[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }

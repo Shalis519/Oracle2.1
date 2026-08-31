@@ -13,6 +13,7 @@ import type {
   QimenFiveBattalion,
   QimenWindDun,
   QimenTigerDun,
+  QimenNobleHelperDoor,
   QimenBirthChart,
   QimenMonthChart,
 } from "@workspace/api-client-react";
@@ -77,6 +78,7 @@ type ScheduledPublication =
   | { kind: "battalion"; item: QimenFiveBattalion }
   | { kind: "wind"; item: QimenWindDun }
   | { kind: "tiger"; item: QimenTigerDun }
+  | { kind: "noble"; item: QimenNobleHelperDoor }
   | { kind: "general"; item: QimenStructure };
 
 function compareSchedule(
@@ -832,6 +834,46 @@ function BirthChartCard({
   );
 }
 
+function NobleHelperDoorCard({ item }: { item: QimenNobleHelperDoor }) {
+  const isYang = item.nobleKind === "yang";
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="bg-card/40 backdrop-blur-md border-violet-400/30">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="font-serif text-lg">
+              Личная дверь Великого Благородного
+            </CardTitle>
+            <span className="shrink-0 rounded-full bg-violet-400/15 px-3 py-1 text-xs font-medium text-violet-200">
+              {formatDate(item.date)}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-start gap-2 text-sm">
+            <Target className="mt-0.5 h-4 w-4 shrink-0 text-violet-300/80" />
+            <p className="leading-relaxed">
+              <span className="font-medium">Цель:</span> {item.goal}
+            </p>
+          </div>
+          <div className="grid gap-2 text-sm sm:grid-cols-2">
+            <p><span className="font-medium">Тип:</span> {isYang ? "Янский Благородный" : "Иньский Благородный"}</p>
+            <p><span className="font-medium">Направление:</span> {item.direction}</p>
+            <p><span className="font-medium">Благородный:</span> {item.nobleBranch}</p>
+            <p><span className="font-medium">Час:</span> {item.hourLabel}</p>
+            <p><span className="font-medium">Небо:</span> {item.heavenStemName}</p>
+            <p><span className="font-medium">Дух:</span> {item.deityName}</p>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 function StructureCard({ s }: { s: QimenStructure }) {
   return (
     <motion.div
@@ -1339,6 +1381,9 @@ export default function QimenPage() {
   );
   const windDuns = sortBySchedule<QimenWindDun>(data?.windDuns ?? []);
   const tigerDuns = sortBySchedule<QimenTigerDun>(data?.tigerDuns ?? []);
+  const nobleHelperDoors = sortBySchedule<QimenNobleHelperDoor>(
+    data?.nobleHelperDoors ?? [],
+  );
   const windowDays = data?.windowDays ?? 14;
   const scheduledPublications: ScheduledPublication[] = [
     ...jadeMaidens.map((item) => ({ kind: "jade" as const, item })),
@@ -1346,6 +1391,7 @@ export default function QimenPage() {
     ...fiveBattalions.map((item) => ({ kind: "battalion" as const, item })),
     ...windDuns.map((item) => ({ kind: "wind" as const, item })),
     ...tigerDuns.map((item) => ({ kind: "tiger" as const, item })),
+    ...nobleHelperDoors.map((item) => ({ kind: "noble" as const, item })),
     ...structures.map((item) => ({ kind: "general" as const, item })),
   ].sort((left, right) => compareSchedule(left.item, right.item));
 
@@ -1525,6 +1571,13 @@ export default function QimenPage() {
                     <TigerDunCard
                       key={`tiger-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.variant}-${index}`}
                       hit={publication.item}
+                    />
+                  );
+                case "noble":
+                  return (
+                    <NobleHelperDoorCard
+                      key={`noble-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.nobleKind}-${index}`}
+                      item={publication.item}
                     />
                   );
                 case "general":
