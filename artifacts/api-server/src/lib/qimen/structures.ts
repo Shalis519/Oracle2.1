@@ -314,7 +314,7 @@ export function detectThreeMystics(
 // а в этом же дворце одновременно должны быть НС года рождения на Небесной
 // тарелке, Пустота и Великий Инь либо Шесть Гармоний. Другие формулы и
 // ограничения структур намеренно сюда не переносятся.
-const NOBLE_HELPER_BRANCHES_BY_STEM: Record<number, { yang: number; yin: number }> = {
+export const NOBLE_HELPER_BRANCHES_BY_STEM: Record<number, { yang: number; yin: number }> = {
   0: { yang: 7, yin: 1 }, // 甲: 未 / 丑
   1: { yang: 8, yin: 0 }, // 乙: 申 / 子
   2: { yang: 9, yin: 11 }, // 丙: 酉 / 亥
