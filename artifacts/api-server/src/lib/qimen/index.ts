@@ -455,7 +455,7 @@ function threeMysticsSupportMessage(
 
 function hourLabel(hourBranch: number, lateZi = false): string {
   if (hourBranch === 0) {
-    return `${lateZi ? "Поздняя" : "Ранняя"} Крыса (${lateZi ? "23:00–00:00" : "00:00–01:00"})`;
+    return `час ${lateZi ? "Поздней" : "Ранней"} Крысы (${lateZi ? "23:00–00:00" : "00:00–01:00"})`;
   }
   return `час ${BRANCH_ANIMAL_RU_GEN[hourBranch]} (${BRANCH_HOUR_WINDOW[hourBranch]})`;
 }
