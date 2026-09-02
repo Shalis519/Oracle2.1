@@ -38,7 +38,7 @@ import { isLateZiClock } from "./birthTime";
 
 export type { JiFuWish } from "./jifu";
 
-const MAIDEN_DAYS = 1;
+const MAIDEN_DAYS = 2;
 const THREE_GENERALS_DAYS = 3;
 const NOBLE_HELPER_DAYS = 3;
 
