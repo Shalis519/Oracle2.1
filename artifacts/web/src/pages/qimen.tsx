@@ -180,12 +180,12 @@ const JADE_INTRO = (
     <p>
       🧭 Правильно определить направление можно на сайте{" "}
       <a
-        href="https://mingle.ru"
+        href="https://mingli.ru"
         target="_blank"
         rel="noreferrer"
         className="underline underline-offset-4"
       >
-        mingle.ru
+        mingli.ru
       </a>
       , в разделе навигатор направлений.
     </p>
