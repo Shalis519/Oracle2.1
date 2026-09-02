@@ -40,7 +40,7 @@ export type { JiFuWish } from "./jifu";
 
 const MAIDEN_DAYS = 2;
 const THREE_GENERALS_DAYS = 3;
-const NOBLE_HELPER_DAYS = 3;
+const NOBLE_HELPER_DAYS = 2;
 
 const NOBLE_HELPER_GOALS: Record<NobleHelperKind, string> = {
   yang: "используйте данную структуру, если Вам необходимо реализовать публичные цели: маркетинг, пиар, продажи, запуск новых товаров, карьерный рост, превзойти конкурентов, добиться публичного продвижения и вопросов, которые должны стать известны широкому кругу людей.",
@@ -672,7 +672,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     };
   }
 
-  // «Личная дверь Великого Благородного» имеет собственное окно в 3 дня
+  // «Личная дверь Великого Благородного» имеет собственное окно в 2 дня
   // и не использует фильтры других структур.
   for (let d = 0; d < NOBLE_HELPER_DAYS; d++) {
     const date = new Date(from);
