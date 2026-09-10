@@ -293,11 +293,7 @@ function natalTechnicalBody(bodyKey: string, instrumental: string): string {
 }
 
 function technicalAspectFallback(window: ProgressionAspectWindow, sourceBody: string, targetBody: string, aspect: string): string {
-  const period = window.startDate === window.endDate
-    ? displayDate(window.startDate)
-    : `с ${displayDate(window.startDate)} по ${displayDate(window.endDate)}`;
-  const displayPeriod = period.startsWith("с") ? `С${period.slice(1)}` : period;
-  const technicalLine = `${displayPeriod}: ${sourceBody} образует ${aspect} с ${natalTechnicalBody(window.targetBodyKey, targetBody)}; точность — ${displayDate(window.peakDate)}, фаза ${phaseLabel(window.phase)}, орбис — ${window.orb.toFixed(2)}°.`;
+  const technicalLine = progressionTechnicalLine(window, sourceBody, targetBody, aspect);
   return `${technicalLine}\nВ разработке`;
 }
 
