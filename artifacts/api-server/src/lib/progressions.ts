@@ -351,7 +351,10 @@ export function computeSolarArcDirections(input: NatalChartInput, targetDate: Da
   const secondary = computeSecondaryProgressions(input, targetDate, natalOverride);
   const natal = natalOverride ?? computeNatalChart(input);
   const houses = shiftHouses(natal.houses, secondary.solarArc);
-  const points = makeProgressedPoints(natal, natal, houses, secondary.solarArc, "solar_arc");
+  // For technical direction lines, the source planet's house is read against natal cusps.
+  // The shifted cusps remain available in `houses` for the directed chart itself,
+  // but using them here incorrectly keeps a directed planet in its natal house.
+  const points = makeProgressedPoints(natal, natal, natal.houses, secondary.solarArc, "solar_arc");
   const aspects = buildAspects("solar_arc", isoDate(targetDate), points, natal.bodies, 1);
   return {
     ...secondary,
