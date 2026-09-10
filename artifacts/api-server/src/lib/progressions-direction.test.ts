@@ -24,5 +24,7 @@ describe("solar arc direction house display", () => {
     expect(aspect).toBeDefined();
     expect(aspect?.sourceHouse).toBe(11);
     expect(aspect?.targetHouse).toBe(11);
+    expect(aspect?.sourceSign).toBe("Козерог");
+    expect(aspect?.targetSign).toBe("Козерог");
   });
 });

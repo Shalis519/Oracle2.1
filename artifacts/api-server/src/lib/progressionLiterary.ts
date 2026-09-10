@@ -282,9 +282,11 @@ function progressionTechnicalLine(
     ? displayDate(window.startDate)
     : `с ${displayDate(window.startDate)} по ${displayDate(window.endDate)}`;
   const displayPeriod = period.startsWith("с") ? `С${period.slice(1)}` : period;
+  const sourceSign = window.sourceSign ? ` в ${window.sourceSign}` : "";
   const sourceHouse = window.sourceHouse == null ? "" : `, проходя по Вашему натальному ${window.sourceHouse} дому`;
+  const targetSign = window.targetSign ? ` в ${window.targetSign}` : "";
   const targetHouse = window.targetHouse == null ? "" : ` в ${window.targetHouse} доме`;
-  return `${displayPeriod}: ${lowerFirst(sourceBody)}${sourceHouse} образует ${aspect} с ${natalTechnicalBody(window.targetBodyKey, targetBody)}${targetHouse}; экзакт - ${displayDate(window.peakDate)}, фаза ${phaseLabel(window.phase)}, орбис - ${window.orb.toFixed(2)}°.`;
+  return `${displayPeriod}: ${lowerFirst(sourceBody)}${sourceSign}${sourceHouse} образует ${aspect} с ${natalTechnicalBody(window.targetBodyKey, targetBody)}${targetSign}${targetHouse}; экзакт - ${displayDate(window.peakDate)}, фаза ${phaseLabel(window.phase)}, орбис - ${window.orb.toFixed(2)}°.`;
 }
 
 function natalTechnicalBody(bodyKey: string, instrumental: string): string {

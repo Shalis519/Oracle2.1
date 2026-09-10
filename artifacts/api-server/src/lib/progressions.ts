@@ -37,6 +37,8 @@ export interface ProgressionAspect {
   phase: "applying" | "exact" | "separating";
   sourceHouse: number | null;
   targetHouse: number | null;
+  sourceSign: string;
+  targetSign: string;
 }
 
 export interface ProgressionResult {
@@ -83,6 +85,8 @@ export interface ProgressionAspectWindow {
   phase: "applying" | "exact" | "separating";
   sourceHouse: number | null;
   targetHouse: number | null;
+  sourceSign: string;
+  targetSign: string;
   descriptionKey: "progressed_to_natal" | "progressed_to_progressed";
 }
 
@@ -260,6 +264,8 @@ function buildAspects(
           phase,
           sourceHouse: source.house,
           targetHouse: target.house,
+          sourceSign: source.sign,
+          targetSign: target.sign,
         });
       }
     }
@@ -524,7 +530,16 @@ export function computeSecondaryProgressionAspectWindows(
           const point = result.points.find((item) => item.key === source.key);
           if (!point) return { date: dates[index], value: null };
           const orb = majorAspectDistance(point.longitude, target.longitude, aspect.key);
-          return { date: dates[index], value: { orb, sourceHouse: point.house, targetHouse: target.house ?? null } };
+          return {
+            date: dates[index],
+            value: {
+              orb,
+              sourceHouse: point.house,
+              targetHouse: target.house ?? null,
+              sourceSign: point.sign,
+              targetSign: target.sign,
+            },
+          };
         });
         const orbLimit = source.key === "moon" ? PROGRESSED_MOON_ORB : PROGRESSION_ORB;
         for (const group of groupWindow(samples, (value) => value.orb <= orbLimit, (value) => value.orb)) {
@@ -547,6 +562,8 @@ export function computeSecondaryProgressionAspectWindows(
             phase,
             sourceHouse: peak.sourceHouse,
             targetHouse: peak.targetHouse,
+            sourceSign: peak.sourceSign,
+            targetSign: peak.targetSign,
             descriptionKey: "progressed_to_natal",
           });
         }

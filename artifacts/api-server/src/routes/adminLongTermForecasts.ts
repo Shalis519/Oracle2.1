@@ -173,6 +173,8 @@ type DirectionWindow = {
   aspectKey: string;
   sourceHouse: number | null;
   targetHouse: number | null;
+  sourceSign: string;
+  targetSign: string;
 };
 
 function computeDirectionWindows(input: NatalChartInput, dateFrom: Date, dateTo: Date): DirectionWindow[] {
@@ -215,6 +217,8 @@ function computeDirectionWindows(input: NatalChartInput, dateFrom: Date, dateTo:
       aspectKey: startEntry.aspect.aspectKey,
       sourceHouse: peak.aspect.sourceHouse,
       targetHouse: peak.aspect.targetHouse,
+      sourceSign: peak.aspect.sourceSign,
+      targetSign: peak.aspect.targetSign,
     };
   }).filter((window) => window.to >= isoDate(dateFrom) && window.from <= isoDate(dateTo))
     .sort((a, b) => a.from.localeCompare(b.from) || a.sourceBody.localeCompare(b.sourceBody));
@@ -292,9 +296,11 @@ function directionTechnicalLine(aspect: Record<string, unknown>): string {
   const sourceBody = DIRECTIONAL_PLANET_FORMS[sourceKey] ?? `дирекционное ${String(aspect.sourceBody)}`;
   const targetBody = NATAL_PLANET_FORMS[targetKey] ?? `натальным ${String(aspect.targetBody)}`;
   const aspectName = ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspect ?? "аспект").toLowerCase();
+  const sourceSign = aspect.sourceSign == null ? "" : ` в ${String(aspect.sourceSign)}`;
   const sourceHouse = aspect.sourceHouse == null ? "" : `, проходя по Вашему натальному ${String(aspect.sourceHouse)} дому`;
+  const targetSign = aspect.targetSign == null ? "" : ` в ${String(aspect.targetSign)}`;
   const targetHouse = aspect.targetHouse == null ? "" : ` в ${String(aspect.targetHouse)} доме`;
-  return `${sourceBody}${sourceHouse} образует ${aspectName} с ${targetBody}${targetHouse}; орбис - ${String(aspect.orb)}°.`;
+  return `${sourceBody}${sourceSign}${sourceHouse} образует ${aspectName} с ${targetBody}${targetSign}${targetHouse}; орбис - ${String(aspect.orb)}°.`;
 }
 
 function transitTechnicalLine(aspect: Record<string, unknown>): string {
@@ -303,9 +309,11 @@ function transitTechnicalLine(aspect: Record<string, unknown>): string {
   const transitBody = TRANSIT_PLANET_FORMS[transitKey] ?? `транзитный ${String(aspect.transitBody)}`;
   const natalBody = NATAL_PLANET_FORMS[natalKey] ?? `натальной ${String(aspect.natalBody)}`;
   const aspectName = ASPECT_LABELS[String(aspect.typeKey)] ?? String(aspect.type ?? "аспект").toLowerCase();
+  const transitSign = aspect.transitSign == null ? "" : ` в ${String(aspect.transitSign)}`;
   const transitHouse = aspect.transitHouse == null ? "" : `, проходя по Вашему натальному ${String(aspect.transitHouse)} дому`;
+  const natalSign = aspect.natalSign == null ? "" : ` в ${String(aspect.natalSign)}`;
   const natalHouse = aspect.natalHouse == null ? "" : ` в ${String(aspect.natalHouse)} доме`;
-  return `${transitBody}${transitHouse} образует ${aspectName} с ${natalBody}${natalHouse}.`;
+  return `${transitBody}${transitSign}${transitHouse} образует ${aspectName} с ${natalBody}${natalSign}${natalHouse}.`;
 }
 
 async function buildDraftBlockTexts(
@@ -324,9 +332,11 @@ async function buildDraftBlockTexts(
     const displayPeriod = period.startsWith("с") ? `С${period.slice(1)}` : period;
     const sourceBody = DIRECTIONAL_PLANET_FORMS[bodyKey(window.sourceBody)] ?? `дирекционная ${window.sourceBody}`;
     const targetBody = NATAL_PLANET_FORMS[bodyKey(window.targetBody)] ?? `натальным ${window.targetBody}`;
+    const sourceSign = window.sourceSign ? ` в ${window.sourceSign}` : "";
     const sourceHouse = window.sourceHouse == null ? "" : `, проходя по Вашему натальному ${window.sourceHouse} дому`;
+    const targetSign = window.targetSign ? ` в ${window.targetSign}` : "";
     const targetHouse = window.targetHouse == null ? "" : ` в ${window.targetHouse} доме`;
-    return `${displayPeriod}: ${sourceBody}${sourceHouse} образует ${ASPECT_LABELS[window.aspectKey] ?? window.aspectKey} с ${targetBody}${targetHouse}; экзакт - ${formatDisplayDate(window.exactDate)}, на начало выбранного периода фаза ${phase}, орбис - ${window.orbAtForecastStart.toFixed(2)}°.`;
+    return `${displayPeriod}: ${sourceBody}${sourceSign}${sourceHouse} образует ${ASPECT_LABELS[window.aspectKey] ?? window.aspectKey} с ${targetBody}${targetSign}${targetHouse}; экзакт - ${formatDisplayDate(window.exactDate)}, на начало выбранного периода фаза ${phase}, орбис - ${window.orbAtForecastStart.toFixed(2)}°.`;
   });
   for (const window of progressionWindows) {
     if (window.eventType === "sign_ingress") {
@@ -350,7 +360,9 @@ async function buildDraftBlockTexts(
     }
     const progressions = point.progressions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of progressions?.aspects ?? []) {
-      progressionLines.push(`${formatDisplayDate(date)}: прогрессивный ${String(aspect.sourceBody)} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}; орбис — ${String(aspect.orb)}°.`);
+      const sourceSign = aspect.sourceSign == null ? "" : ` в ${String(aspect.sourceSign)}`;
+      const targetSign = aspect.targetSign == null ? "" : ` в ${String(aspect.targetSign)}`;
+      progressionLines.push(`${formatDisplayDate(date)}: прогрессивный ${String(aspect.sourceBody)}${sourceSign} образует ${ASPECT_LABELS[String(aspect.aspectKey)] ?? String(aspect.aspectKey)} к ${String(aspect.targetBody)}${targetSign}; орбис - ${String(aspect.orb)}°.`);
     }
     const directions = point.directions as { aspects?: Array<Record<string, unknown>> } | undefined;
     for (const aspect of directions?.aspects ?? []) {
