@@ -295,7 +295,9 @@ export function computeSecondaryProgressions(
   const natalSun = natal.bodies.find((body) => body.key === "sun");
   const solarArc = progressedSun && natalSun ? normalize(progressedSun.longitude - natalSun.longitude) : 0;
   const houses = shiftHouses(natal.houses, solarArc);
-  const points = makeProgressedPoints(natal, progressed, houses, solarArc, "secondary", activeBodyKeys);
+  // Technical progression lines use natal houses for the progressed planet's transit through natal houses.
+  // The shifted cusps remain part of the progressed chart, but must not determine sourceHouse.
+  const points = makeProgressedPoints(natal, progressed, natal.houses, solarArc, "secondary", activeBodyKeys);
   let futurePoints: ProgressionPoint[] = [];
   if (includePhase) {
     const nextDate = addDays(targetDate, 1);
@@ -304,7 +306,7 @@ export function computeSecondaryProgressions(
     const nextProgressed = computeNatalChart({ ...input, ...dateParts(nextProgressedDate) });
     const nextSun = nextProgressed.bodies.find((body) => body.key === "sun");
     const nextArc = nextSun && natalSun ? normalize(nextSun.longitude - natalSun.longitude) : solarArc;
-    futurePoints = makeProgressedPoints(natal, nextProgressed, shiftHouses(natal.houses, nextArc), nextArc, "secondary", activeBodyKeys);
+    futurePoints = makeProgressedPoints(natal, nextProgressed, natal.houses, nextArc, "secondary", activeBodyKeys);
   }
   const aspects = buildAspects("secondary", isoDate(targetDate), points, natal.bodies, PROGRESSION_ORB, activeBodyKeys, futurePoints);
   const moon = activeBodyKeys?.has("moon") === false ? undefined : points.find((point) => point.key === "moon");
