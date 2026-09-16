@@ -271,7 +271,11 @@ export function computeVtalkivanieMoneyActivation(
       const hours = strictHours(date, natalBranches, nobleBranches, postHorseBranch);
       if (hours.length === 0) continue;
       const { stars, warning } = sectorsForDate(date);
-      if (stars.length === 0) continue;
+      // Активация выводится только полным набором из трёх активаторов.
+      // Сектор «Центр» не используется никогда; сектор, занятый месячной
+      // звездой 5, тоже не используется. Если хотя бы одна из звёзд 1/6/8
+      // осталась без допустимого сектора — день молча пропускается.
+      if (stars.length < 3) continue;
       return {
         date: isoDate(date),
         daysUntil: offset,
