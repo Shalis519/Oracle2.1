@@ -129,14 +129,13 @@ export function WeatherClock({ city }: { city: string | null | undefined }) {
               rel="noopener noreferrer"
               className="text-sm text-primary underline underline-offset-2 hover:text-primary/80 break-all text-center"
             >
-              
-            
+              tbank.ru/cf/88rx8d2TvHq
+            </a>
+            <p className="text-[10px] text-slate-400 mt-2 text-center max-w-[220px] mx-auto leading-tight opacity-75">Перевод является добровольным безвозмездным пожертвованием на развитие проекта и не является оплатой услуг.</p>
           </div>
         )}
       </div>
     </div>
   );
 }
-
-
 
