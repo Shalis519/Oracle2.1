@@ -1,4 +1,4 @@
-import {
+﻿import {
   useGetProfile,
   useUpdateProfile,
   getGetProfileQueryKey,
@@ -223,14 +223,14 @@ export default function ProfilePage() {
 
       <Card className="bg-card/40 backdrop-blur-md border-border shadow-lg">
         <CardHeader>
-          <CardTitle className="font-serif text-2xl">Личные данные</CardTitle>
-          <CardDescription>Эти данные используются для расчетов Бацзы, Матрицы Судьбы и натальной карты. Для астрологии важны точное время и место рождения.</CardDescription>
+          <CardTitle className="font-serif text-2xl">Данные для расчета</CardTitle>
+          <CardDescription>Эти данные используются для расчетов Бацзы, Матрицы Судьбы и натальной карты. Для астрологии важны точное время и Город рождения.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="name">Имя</Label>
+                <Label htmlFor="name">Никнейм</Label>
                 <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
               </div>
               <div className="space-y-2">
@@ -260,7 +260,7 @@ export default function ProfilePage() {
                 </RadioGroup>
               </div>
               <div className="space-y-2">
-                <Label>Место рождения</Label>
+                <Label>Город рождения</Label>
                 <Popover open={birthCityOpen} onOpenChange={setBirthCityOpen}>
                   <PopoverTrigger asChild>
                     <Button
