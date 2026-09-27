@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Cookie, X } from "lucide-react";
@@ -51,15 +51,13 @@ export function CookieBanner() {
         </div>
 
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Сервис «Aether Oracle / Oracle2.1» использует файлы Cookie и локальное хранилище (localStorage) для авторизации через Clerk, сохранения пользовательских настроек и обеспечения корректной работы сервиса в соответствии с 152-ФЗ и GDPR. Подробнее в нашей{" "}
-          <Link
+          Мы используем файлы cookie, чтобы сайт работал быстро и надежно. Оставаясь на сайте, вы соглашаетесь с нашей <Link
             href="/privacy-policy"
             className="text-primary underline underline-offset-2 hover:text-primary/90"
           >
-            Политике конфиденциальности
-          </Link>
-          .
-        </p>
+            Политикой конфиденциальности
+          </Link>.
+                </p>
 
         <div className="flex items-center justify-end gap-2 pt-1">
           <Button
@@ -76,3 +74,4 @@ export function CookieBanner() {
 }
 
 export default CookieBanner;
+
