@@ -26,9 +26,13 @@ const TarotPage = lazy(() => import("./pages/tarot"));
 const JournalPage = lazy(() => import("./pages/journal"));
 const PsychologyPage = lazy(() => import("./pages/psychology"));
 import PrivacyPage from "./pages/privacy";
+import PrivacyPolicyPage from "./pages/privacy-policy";
+import TermsOfServicePage from "./pages/terms-of-service";
 const AdminStudioPage = lazy(() => import("./pages/admin-studio"));
 import NotFound from "./pages/not-found";
 import AppLayout from "./components/layout/app-layout";
+import { CookieBanner } from "./components/cookie-banner";
+import { Footer } from "./components/footer";
 
 const clerkPubKey = publishableKeyFromHost(
   window.location.hostname,
@@ -197,6 +201,44 @@ function ProtectedRoute({ component: Component }: { component: any }) {
   );
 }
 
+const APP_SHELL_PREFIXES = [
+  "/dashboard",
+  "/profile",
+  "/matrix",
+  "/bazi",
+  "/qimen",
+  "/astrology",
+  "/fengshui",
+  "/contacts",
+  "/dreams",
+  "/journal",
+  "/psychology",
+  "/admin",
+  "/habits",
+  "/travel",
+  "/tarot",
+];
+
+/**
+ * Глобальные элементы, требуемые 152-ФЗ РФ и GDPR:
+ * - CookieBanner показывается на всех страницах до получения согласия;
+ * - Footer отображается на публичных страницах (страницы приложения
+ *   получают Footer внутри AppLayout, чтобы он был виден в нижней части экрана).
+ */
+function SiteChrome() {
+  const [location] = useLocation();
+  const isAppShellRoute = APP_SHELL_PREFIXES.some(
+    (prefix) => location === prefix || location.startsWith(`${prefix}/`),
+  );
+
+  return (
+    <>
+      {!isAppShellRoute && <Footer />}
+      <CookieBanner />
+    </>
+  );
+}
+
 function ClerkProviderWithRoutes() {
   const [, setLocation] = useLocation();
 
@@ -247,6 +289,8 @@ function ClerkProviderWithRoutes() {
             <Route path="/sign-in/*?" component={SignInPage} />
             <Route path="/sign-up/*?" component={SignUpPage} />
             <Route path="/privacy" component={PrivacyPage} />
+            <Route path="/privacy-policy" component={PrivacyPolicyPage} />
+            <Route path="/terms-of-service" component={TermsOfServicePage} />
             
             <Route path="/dashboard" component={() => <ProtectedRoute component={DashboardPage} />} />
             <Route path="/profile" component={() => <ProtectedRoute component={ProfilePage} />} />
@@ -267,6 +311,7 @@ function ClerkProviderWithRoutes() {
               <Route component={NotFound} />
             </Switch>
           </Suspense>
+          <SiteChrome />
           <Toaster />
         </TooltipProvider>
       </QueryClientProvider>

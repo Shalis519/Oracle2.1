@@ -26,6 +26,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { userProfileAppearance } from "@/lib/clerk-appearance";
 import { ChatWidget } from "@/components/chat-widget";
+import { Footer } from "@/components/footer";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -181,10 +182,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-x-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-[radial-gradient(ellipse_at_top_right,rgba(74,124,247,0.1),transparent_50%)] pointer-events-none"></div>
-        {children}
-      </main>
+      <div className="flex-1 flex flex-col min-w-0">
+        <main className="flex-1 overflow-x-hidden relative">
+          <div className="absolute top-0 left-0 w-full h-[500px] bg-[radial-gradient(ellipse_at_top_right,rgba(74,124,247,0.1),transparent_50%)] pointer-events-none"></div>
+          {children}
+        </main>
+
+        <Footer />
+      </div>
 
       <ChatWidget />
     </div>
