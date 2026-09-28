@@ -162,6 +162,78 @@ export interface FiveBattalionsHit {
  * This detector intentionally does not enter QimenResult and cannot be
  * published until the remaining school-specific conditions are verified.
  */
+export interface DragonTurnsHeadHit {
+  structure: "dragon_turns_head";
+  palace: number;
+  direction: string;
+  dom: string;
+  heavenStem: string;
+  earthStem: "丙";
+  door: string;
+  isLeaderJia: boolean;
+  support?: {
+    supported: boolean;
+    relation: "same" | "supports";
+    structureElement: string;
+    personElement: string;
+  };
+}
+
+export function detectDragonTurnsHead(
+  date: Date,
+  hourBranch: number,
+  lateZi = false,
+  birthYearStem?: number,
+  representativeStem?: number,
+): DragonTurnsHeadHit[] {
+  const chart = buildChart(date, hourBranch, lateZi);
+  if (chart.fuYin || isHourControlsDay(chart)) return [];
+
+  const periodIndex = parseGanZhi(chart.hourGz).index;
+  const hiddenJia = STEMS[xunInfo(periodIndex).yiStem]; // Лидер декады (Фу-то)
+
+  const hits: DragonTurnsHeadHit[] = [];
+  for (let p = 1; p <= 9; p++) {
+    if (p === 5) continue;
+    const cell = chart.cells[p];
+
+    // Внизу строго Огонь Ян (Бин 丙)
+    if (cell.earthStem !== "丙") continue;
+
+    // Наверху либо Земля Ян (У 戊), либо Дерево Ян (скрытый лидер декады Фу-то)
+    const isWu = cell.heavenStem === "戊";
+    const isLeader = cell.heavenStem === hiddenJia;
+    if (!isWu && !isLeader) continue;
+
+    // Исключения и безопасность
+    if (cell.isVoid) continue; // Избегаем Пустоты
+    if (isAnnualYellowFive(p, date)) continue; // Годовая Жёлтая Пятёрка
+    if (hasDoorPalaceConflict(cell.door, p)) continue;
+    if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue;
+
+    // Личная проверка по НС года рождения пользователя
+    const support =
+      birthYearStem === undefined
+        ? undefined
+        : evaluateSupportPalace(chart, p, birthYearStem, representativeStem);
+    if (birthYearStem !== undefined && (!support || !support.supported))
+      continue;
+
+    hits.push({
+      structure: "dragon_turns_head",
+      palace: p,
+      direction: PALACES[p].dirFull,
+      dom: PALACES[p].dom,
+      heavenStem: cell.heavenStem,
+      earthStem: "丙",
+      door: cell.door,
+      isLeaderJia: isLeader,
+      support: support ?? undefined,
+    });
+  }
+  return hits;
+}
+
 export function detectFlyingBirdFallsIntoCave(
   date: Date,
   hourBranch: number,

@@ -213,10 +213,45 @@ type StructureInfoKind =
   | "wind"
   | "tiger"
   | "bird"
+  | "dragon"
   | "general";
 
 function StructureInfoContent({ kind }: { kind: StructureInfoKind }) {
-    if (kind === "bird") {
+      if (kind === "dragon") {
+    return (
+      <div className="space-y-4 text-sm leading-relaxed text-foreground/90">
+        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
+          <p className="font-semibold text-amber-200">
+            🐉 Вторая величайшая структура: Фундаментальный стратегический успех
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Приносит результат длительный, фундаментальный, хотя он может приходить не сразу.
+            Решает более глобальные задачи. Приносит удачу и процветание во всех делах, помогает абсолютно во всех сферах жизни.
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <p className="font-semibold text-foreground">4 способа активации Дракона:</p>
+          <ol className="list-decimal list-outside space-y-2 pl-5">
+            <li>
+              Ставим в сектор Дракона вентилятор (или маятник/мобиль), а сами сидим в противоположном секторе.
+            </li>
+            <li>
+              Ставим в сектор Дракона вентилятор и НЕ сидим в противоположном секторе, если там собрались во Дворце неблагоприятные факторы.
+            </li>
+            <li>
+              Работаем, сидя <span className="font-semibold text-foreground">лицом к Дракону</span> (смотрим в направлении Дракона).
+            </li>
+            <li>
+              Двигаемся в направлении Дракона (прогулка), но здесь очень важны хорошие благоприятные Врата.
+            </li>
+          </ol>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "bird") {
     return (
       <div className="space-y-4 text-sm leading-relaxed text-foreground/90">
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
@@ -1221,6 +1256,64 @@ function FiveBattalionsCard({ hit }: { hit: QimenFiveBattalion }) {
   );
 }
 
+function DragonTurnsHeadCard({ hit }: { hit: any }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="border-amber-500/20 bg-card/60 backdrop-blur-sm transition-colors hover:border-amber-500/40">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="font-serif text-lg">
+              <StructureInfoDialog
+                kind="dragon"
+                title="Структура «Дракон поворачивает голову»"
+              />
+            </CardTitle>
+            <span className="shrink-0 rounded-full bg-amber-400/15 px-3 py-1 text-xs font-medium text-amber-200">
+              {formatDate(hit.date)}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-start gap-2 text-sm">
+            <Target className="mt-0.5 h-4 w-4 shrink-0 text-amber-300/80" />
+            <p className="leading-relaxed">
+              <span className="font-medium">Цель:</span> {hit.goal}
+            </p>
+          </div>
+          <div className="flex items-start gap-2 text-sm">
+            <Compass className="mt-0.5 h-4 w-4 shrink-0 text-amber-300/80" />
+            <p className="leading-relaxed">
+              Сектор{" "}
+              <span className="font-semibold text-amber-200">
+                {hit.direction}
+              </span>{" "}
+              в {hit.hourLabel}.
+            </p>
+          </div>
+          <p className="rounded-lg border border-amber-400/15 bg-amber-400/5 p-3 text-sm leading-relaxed text-amber-100/90">
+            {hit.supportMessage}
+          </p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-amber-400/10 px-2 py-0.5 text-xs text-amber-100">
+              Небо: {hit.heavenStemName}
+            </span>
+            <span className="rounded-full bg-amber-400/10 px-2 py-0.5 text-xs text-amber-100">
+              Земля: {hit.earthStemName}
+            </span>
+            <span className="rounded-full bg-amber-400/10 px-2 py-0.5 text-xs text-amber-100">
+              Врата: {hit.doorName}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 function BirdInNestCard({ hit }: { hit: any }) {
   return (
     <motion.div
@@ -1523,6 +1616,7 @@ export default function QimenPage() {
     ...windDuns.map((item) => ({ kind: "wind" as const, item })),
     ...tigerDuns.map((item) => ({ kind: "tiger" as const, item })),
     ...(data?.birdsInNest ?? []).map((item: any) => ({ kind: "bird" as const, item })),
+    ...(data?.dragonsTurnHead ?? []).map((item: any) => ({ kind: "dragon" as const, item })),
     ...nobleHelperDoors.map((item) => ({ kind: "noble" as const, item })),
     ...structures.map((item) => ({ kind: "general" as const, item })),
   ].sort((left, right) => compareSchedule(left.item, right.item));
