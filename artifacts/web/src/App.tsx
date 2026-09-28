@@ -32,6 +32,7 @@ const AdminStudioPage = lazy(() => import("./pages/admin-studio"));
 import NotFound from "./pages/not-found";
 import AppLayout from "./components/layout/app-layout";
 import { CookieBanner } from "./components/cookie-banner";
+import { TermsUpdateModal } from "./components/terms-update-modal";
 import { Footer } from "./components/footer";
 
 const clerkPubKey = publishableKeyFromHost(
@@ -262,6 +263,11 @@ const APP_SHELL_PREFIXES = [
 /**
  * Глобальные элементы, требуемые 152-ФЗ РФ и GDPR:
  * - CookieBanner показывается на всех страницах до получения согласия;
+ * - TermsUpdateModal показывается авторизованным пользователям, пока они
+ *   не подтвердят согласие с актуальной редакцией документов
+ *   (ключ `oracle_terms_accepted_v2` в localStorage). Компонент смонтирован
+ *   здесь, поэтому гарантированно работает в личном кабинете (/dashboard
+ *   и остальных защищённых разделах внутри AppLayout);
  * - Footer отображается на публичных страницах (страницы приложения
  *   получают Footer внутри AppLayout, чтобы он был виден в нижней части экрана).
  */
@@ -275,6 +281,7 @@ function SiteChrome() {
     <>
       {!isAppShellRoute && <Footer />}
       <CookieBanner />
+      <TermsUpdateModal />
     </>
   );
 }

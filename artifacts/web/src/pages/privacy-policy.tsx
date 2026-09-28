@@ -454,6 +454,8 @@ export default function PrivacyPolicyPage() {
             id="personal-data-consent"
             className="space-y-3 scroll-mt-24"
           >
+            {/* Якорь для ссылки /privacy-policy#consent из окна согласия */}
+            <span id="consent" className="block scroll-mt-24" aria-hidden="true" />
             <h2 className="text-xl font-serif font-semibold text-foreground flex items-center gap-2">
               <ScrollText className="w-5 h-5 text-primary" />
               8. Согласие на обработку персональных данных
