@@ -43,7 +43,10 @@ export default function PrivacyPolicyPage() {
       </header>
 
       <main className="container mx-auto px-6 py-10 relative z-10 max-w-4xl flex-1">
-        <article className="bg-card/40 backdrop-blur-md border border-border rounded-3xl p-8 md:p-12 space-y-8 shadow-xl">
+        <article
+            id="article-content"
+            className="text-justify leading-relaxed bg-card/40 backdrop-blur-md border border-border rounded-3xl p-8 md:p-12 space-y-8 shadow-xl"
+          >
           <div className="space-y-3 border-b border-border/60 pb-6">
             <h1 className="text-3xl md:text-4xl font-serif font-bold tracking-tight">
               Политика конфиденциальности и обработки персональных данных
@@ -51,7 +54,7 @@ export default function PrivacyPolicyPage() {
           </div>
 
           <section className="space-y-3">
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-justify">
               Настоящая Политика разработана в соответствии с требованиями
               Федерального закона РФ от 27.07.2006 № 152-ФЗ «О персональных
               данных» (далее – «Закон») и определяет порядок сбора, записи,
@@ -70,7 +73,7 @@ export default function PrivacyPolicyPage() {
               </a>
               .
             </p>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-justify">
               Для направления юридических запросов, предложений и обращений
               субъектов персональных данных используется адрес электронной
               почты:{" "}
@@ -79,7 +82,7 @@ export default function PrivacyPolicyPage() {
               </a>
               .
             </p>
-            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed">
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed text-justify">
               <li>
                 Оператор ставит своей важнейшей целью соблюдение прав и свобод
                 человека и гражданина при обработке его персональных данных, в
@@ -114,7 +117,7 @@ export default function PrivacyPolicyPage() {
               <FileText className="w-5 h-5 text-primary" />
               1. Термины и определения
             </h2>
-            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed">
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed text-justify">
               <li>
                 <span className="text-foreground font-medium">
                   Автоматизированная обработка персональных данных
@@ -196,7 +199,7 @@ export default function PrivacyPolicyPage() {
               <Database className="w-5 h-5 text-primary" />
               2. Категории и состав обрабатываемых данных
             </h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-justify">
               Оператор обрабатывает следующие персональные данные Пользователя:
             </p>
             <div className="grid gap-4 mt-2">
@@ -204,7 +207,7 @@ export default function PrivacyPolicyPage() {
                 <h3 className="font-semibold text-foreground text-sm mb-1">
                   2.1. Учётные данные аутентификации (интеграция платформы Clerk)
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed text-justify">
                   Адрес электронной почты (e-mail), никнейм/псевдоним,
                   идентификатор в системе авторизации, фото профиля (аватар).
                 </p>
@@ -213,7 +216,7 @@ export default function PrivacyPolicyPage() {
                 <h3 className="font-semibold text-foreground text-sm mb-1">
                   2.2. Астрологические и расчётные данные
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed text-justify">
                   Дата рождения, точное время и город рождения, текущий город
                   проживания, пол. Обработка этих данных осуществляется
                   исключительно для алгоритмического расчёта натальных карт,
@@ -225,7 +228,7 @@ export default function PrivacyPolicyPage() {
                 <h3 className="font-semibold text-foreground text-sm mb-1">
                   2.3. Пользовательские записи
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed text-justify">
                   Данные интерактивных модулей Сайта (заметки, записи личного
                   дневника, трекер привычек).
                 </p>
@@ -234,7 +237,7 @@ export default function PrivacyPolicyPage() {
                 <h3 className="font-semibold text-foreground text-sm mb-1">
                   2.4. Технические данные и файлы Cookie
                 </h3>
-                <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground leading-relaxed">
+                <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground leading-relaxed text-justify">
                   <li>
                     На Сайте не используются сторонние маркетинговые сервисы
                     веб-аналитики (Яндекс.Метрика, Google Analytics и
@@ -267,7 +270,7 @@ export default function PrivacyPolicyPage() {
               <Eye className="w-5 h-5 text-primary" />
               3. Цели обработки данных
             </h2>
-            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed">
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed text-justify">
               <li>
                 Регистрация и безопасная аутентификация Пользователя через
                 платформу Clerk;
@@ -293,11 +296,11 @@ export default function PrivacyPolicyPage() {
               <Scale className="w-5 h-5 text-primary" />
               4. Правовые основания обработки персональных данных
             </h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-justify">
               Правовыми основаниями обработки персональных данных Оператором
               являются:
             </p>
-            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed">
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed text-justify">
               <li>
                 нормы ст. 6 Федерального закона от 27.07.2006 № 152-ФЗ «О
                 персональных данных»;
@@ -313,7 +316,7 @@ export default function PrivacyPolicyPage() {
                 Сайта и проведения персональных расчётов.
               </li>
             </ul>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-justify">
               Оператор обрабатывает персональные данные только в случае их
               самостоятельного и добровольного предоставления Пользователем при
               регистрации или использовании Сайта.
@@ -325,7 +328,7 @@ export default function PrivacyPolicyPage() {
               <Lock className="w-5 h-5 text-primary" />
               5. Порядок, способы, сроки обработки и трансграничная передача
             </h2>
-            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed">
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed text-justify">
               <li>
                 <span className="text-foreground font-medium">5.1. Способы обработки:</span>{" "}
                 Обработка осуществляется автоматизированным способом (сбор,
@@ -394,10 +397,10 @@ export default function PrivacyPolicyPage() {
               <Users className="w-5 h-5 text-primary" />
               6. Права Пользователя (субъекта персональных данных)
             </h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-justify">
               Каждый Пользователь имеет право:
             </p>
-            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed">
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed text-justify">
               <li>
                 Получать информацию, касающуюся обработки его персональных
                 данных;
@@ -420,7 +423,7 @@ export default function PrivacyPolicyPage() {
               <ScrollText className="w-5 h-5 text-primary" />
               7. Заключительные положения
             </h2>
-            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed">
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed text-justify">
               <li>
                 <span className="text-foreground font-medium">
                   7.1. Изменение Политики:
@@ -457,6 +460,31 @@ export default function PrivacyPolicyPage() {
                 .
               </li>
             </ul>
+          </section>
+
+          <section
+            id="personal-data-consent"
+            className="space-y-3 scroll-mt-24"
+          >
+            <h2 className="text-xl font-serif font-semibold text-foreground flex items-center gap-2">
+              <ScrollText className="w-5 h-5 text-primary" />
+              8. Согласие на обработку персональных данных
+            </h2>
+            <p className="text-muted-foreground leading-relaxed text-justify">
+              Регистрируясь на сайте «<a href="https://aether-oracle-web.onrender.com" target="_blank" rel="noopener noreferrer" className={linkClass}>https://aether-oracle-web.onrender.com</a>» и начиная пользоваться его сервисами, я даю согласие Администрации сервиса «Aether Oracle» (Оператору) на обработку, в том числе на сбор, систематизацию, накопление, хранение (уточнение, обновление, изменение), использование, передачу третьим лицам, обезличивание, блокирование и уничтожение моих персональных данных – псевдонима, имени, даты и времени рождения, пола, города рождения, города проживания, адреса электронной почты. Целью данного согласия является предоставление мне функционала Сайта, алгоритмических расчетов, возможности участия в чате сообщества и интерактивных модулях Сайта, а также получения обратной связи.
+            </p>
+            <p className="text-muted-foreground leading-relaxed text-justify">
+              Настоящим, я также даю свое прямое согласие на трансграничную передачу моих персональных данных (с использованием инфраструктуры хостинга Render и международной системы аутентификации Clerk), в том числе на территории иностранных государств, не включенных в перечень, утвержденный Приказом Роскомнадзора от 15.03.2013 N 274, для выполнения вышеуказанных целей обработки персональных данных.
+            </p>
+            <p className="text-muted-foreground leading-relaxed text-justify">
+              Подтверждаю, что персональные данные и иные сведения, относящиеся ко мне, предоставлены мною Сайту путем внесения их при регистрации на сайте <a href="https://aether-oracle-web.onrender.com" target="_blank" rel="noopener noreferrer" className={linkClass}>https://aether-oracle-web.onrender.com</a> добровольно и являются достоверными.
+            </p>
+            <p className="text-muted-foreground leading-relaxed text-justify">
+              Я согласен, что мои персональные данные будут обрабатываться способами, соответствующими целям обработки персональных данных, без возможности принятия юридически значимых решений на основании исключительно автоматизированной обработки моих персональных данных.
+            </p>
+            <p className="text-muted-foreground leading-relaxed text-justify">
+              Настоящее согласие может быть отозвано мной в любой момент путем направления электронного требования в адрес администрации Сайта. Адрес электронной почты: <a href="mailto:trimorion@inbox.ru" className={linkClass}>trimorion@inbox.ru</a>.
+            </p>
           </section>
         </article>
       </main>
