@@ -25,8 +25,6 @@ type FormData = {
   birthLatitude: number | null;
   birthLongitude: number | null;
   birthTimezone: string | null;
-  phone: string;
-  email: string;
   synastryEnabled: boolean;
 };
 
@@ -176,8 +174,6 @@ const emptyForm: FormData = {
   birthLatitude: null,
   birthLongitude: null,
   birthTimezone: null,
-  phone: "",
-  email: "",
   synastryEnabled: false,
 };
 
@@ -197,9 +193,6 @@ export default function ContactsPage() {
   const [birthCityOpen, setBirthCityOpen] = useState(false);
   const [birthCityQuery, setBirthCityQuery] = useState("");
   const [birthCityDebounced, setBirthCityDebounced] = useState("");
-  const [cityOpen, setCityOpen] = useState(false);
-  const [cityQuery, setCityQuery] = useState("");
-  const [cityDebounced, setCityDebounced] = useState("");
   const [search, setSearch] = useState("");
   const [synastryContactId, setSynastryContactId] = useState<number | null>(null);
 
@@ -208,18 +201,9 @@ export default function ContactsPage() {
     return () => clearTimeout(timer);
   }, [birthCityQuery]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setCityDebounced(cityQuery.trim()), 250);
-    return () => clearTimeout(timer);
-  }, [cityQuery]);
-
   const { data: birthCities, isFetching: isFetchingBirth, isError: isBirthSearchError, refetch: refetchBirthCities } = useSearchCities(
     { q: birthCityDebounced },
     { query: { enabled: birthCityDebounced.length >= 2, queryKey: getSearchCitiesQueryKey({ q: birthCityDebounced }) } },
-  );
-  const { data: cities, isFetching, isError: isCitySearchError, refetch: refetchCities } = useSearchCities(
-    { q: cityDebounced },
-    { query: { enabled: cityDebounced.length >= 2, queryKey: getSearchCitiesQueryKey({ q: cityDebounced }) } },
   );
 
   const handleSelectBirthCity = (city: City) => {
@@ -227,16 +211,11 @@ export default function ContactsPage() {
     setBirthCityOpen(false);
   };
 
-  const handleSelectCity = (city: City) => {
-    setFormData((previous) => ({ ...previous, city: `${city.name}, ${countryRu(city.country)}` }));
-    setCityOpen(false);
-  };
-
   const query = search.trim().toLowerCase();
   const visibleContacts = (contacts ?? [])
     .filter((c) => {
       if (!query) return true;
-      return [c.name, c.relationshipType, c.city, c.birthPlace, c.phone, c.email]
+      return [c.name, c.relationshipType, c.birthPlace, c.city]
         .filter(Boolean)
         .some((field) => field!.toLowerCase().includes(query));
     })
@@ -261,8 +240,6 @@ export default function ContactsPage() {
       birthLatitude: contact.birthLatitude ?? null,
       birthLongitude: contact.birthLongitude ?? null,
       birthTimezone: contact.birthTimezone ?? null,
-      phone: contact.phone ?? "",
-      email: contact.email ?? "",
       synastryEnabled: contact.synastryEnabled ?? false,
     });
     setIsOpen(true);
@@ -278,13 +255,10 @@ export default function ContactsPage() {
       birthTime: formData.birthTime || null,
       relationshipType: formData.relationshipType || null,
       gender: formData.gender,
-      city: formData.city || null,
-          birthPlace: formData.birthPlace || null,
-          birthLatitude: formData.birthLatitude,
-          birthLongitude: formData.birthLongitude,
-          birthTimezone: formData.birthTimezone,
-          phone: formData.phone || null,
-      email: formData.email || null,
+      birthPlace: formData.birthPlace || null,
+      birthLatitude: formData.birthLatitude,
+      birthLongitude: formData.birthLongitude,
+      birthTimezone: formData.birthTimezone,
       synastryEnabled: formData.synastryEnabled,
     };
 
@@ -387,29 +361,7 @@ export default function ContactsPage() {
                 </RadioGroup>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Телефон (необязательно)</label>
-                <Input type="tel" placeholder="Например: +7 900 000-00-00" value={formData.phone} onChange={e => setFormData(p => ({...p, phone: e.target.value}))} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Email (необязательно)</label>
-                <Input type="email" placeholder="Например: name@example.com" value={formData.email} onChange={e => setFormData(p => ({...p, email: e.target.value}))} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Город проживания (необязательно)</label>
-                <Popover open={cityOpen} onOpenChange={setCityOpen}>
-                  <PopoverTrigger asChild>
-                    <Button type="button" variant="outline" role="combobox" className="w-full justify-start font-normal">
-                      <MapPin className="w-4 h-4 mr-2 text-muted-foreground shrink-0" />
-                      <span className={formData.city ? "truncate" : "text-muted-foreground"}>{formData.city || "Выберите город проживания"}</span>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 w-[--radix-popover-trigger-width]"><Command shouldFilter={false}><CommandInput placeholder="Поиск города..." value={cityQuery} onValueChange={setCityQuery} /><CommandList>
-                    {cityDebounced.length < 2 ? <CommandEmpty>Введите минимум две буквы.</CommandEmpty> : isFetching ? <CommandEmpty>Поиск...</CommandEmpty> : isCitySearchError ? <CommandEmpty className="flex flex-col gap-2 py-3"><span>Не удалось выполнить поиск.</span><Button type="button" variant="secondary" size="sm" onClick={() => refetchCities()}>Повторить</Button></CommandEmpty> : !cities?.length ? <CommandEmpty>Ничего не найдено.</CommandEmpty> : <CommandGroup>{cities.map((city, index) => <CommandItem key={`${city.name}-${city.lat}-${city.lng}-${index}`} value={`${city.name}-${index}`} onSelect={() => handleSelectCity(city)}><MapPin className="w-4 h-4 mr-2 text-muted-foreground shrink-0" /><span className="truncate">{city.name}, {countryRu(city.country)}</span></CommandItem>)}</CommandGroup>}
-                  </CommandList></Command></PopoverContent>
-                </Popover>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Место рождения (необязательно)</label>
+                <label className="text-sm font-medium">Город / место рождения (необязательно)</label>
                 <Popover open={birthCityOpen} onOpenChange={setBirthCityOpen}>
                   <PopoverTrigger asChild>
                     <Button type="button" variant="outline" role="combobox" className="w-full justify-start font-normal">
@@ -430,6 +382,9 @@ export default function ContactsPage() {
                   <span className="block text-xs text-muted-foreground mt-1">Для расчёта нужны дата, точное время и место рождения.</span>
                 </span>
               </label>
+              <p className="text-xs text-muted-foreground">
+                Данные сохраняются в вашем личном кабинете исключительно для расчета совместимости
+              </p>
               <Button type="submit" className="w-full" disabled={isSaving}>Сохранить</Button>
             </form>
           </DialogContent>
@@ -502,7 +457,7 @@ export default function ContactsPage() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Поиск по имени, городу, телефону..."
+          placeholder="Поиск по имени, городу рождения..."
           className="pl-10"
         />
       </div>

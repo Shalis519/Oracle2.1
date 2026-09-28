@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { setBaseUrl, setAuthTokenGetter } from "@workspace/api-client-react";
 import { ClerkProvider, SignIn, SignUp, Show, useClerk, useAuth } from "@clerk/react";
 import { ruRU } from "@clerk/localizations";
@@ -118,11 +118,51 @@ function SignInPage() {
 }
 
 function SignUpPage() {
+  const [agreed, setAgreed] = useState(false);
+
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(179,155,200,0.15),transparent_50%)] pointer-events-none"></div>
       <div className="relative z-10 flex flex-col items-center gap-5">
-        <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} />
+        <label className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card/60 max-w-sm cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="h-4 w-4 accent-primary rounded cursor-pointer"
+          />
+          <span className="text-xs text-muted-foreground">
+            Я принимаю условия{" "}
+            <Link href="/terms-of-service" className="text-primary underline">
+              Пользовательского соглашения
+            </Link>{" "}
+            и даю{" "}
+            <Link href="/privacy-policy" className="text-primary underline">
+              Согласие на обработку персональных данных
+            </Link>
+          </span>
+        </label>
+
+        <div className="relative w-full flex justify-center">
+          <div
+            className={
+              agreed
+                ? "w-full flex justify-center"
+                : "w-full flex justify-center pointer-events-none opacity-50 select-none"
+            }
+            aria-hidden={!agreed}
+          >
+            <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} />
+          </div>
+          {!agreed && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center px-6 pointer-events-auto">
+              <p className="max-w-xs text-center text-sm font-medium text-foreground/90 drop-shadow-sm">
+                Пожалуйста, подтвердите согласие выше для регистрации
+              </p>
+            </div>
+          )}
+        </div>
+
         <p className="max-w-sm text-center text-sm text-muted-foreground">
           Регистрируясь, вы соглашаетесь с{" "}
           <Link href="/privacy" className="text-primary underline-offset-4 hover:underline">
