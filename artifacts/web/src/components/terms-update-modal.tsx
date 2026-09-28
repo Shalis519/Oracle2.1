@@ -127,7 +127,7 @@ export function TermsUpdateModal() {
               href="/privacy-policy#consent"
               className="text-sm text-foreground underline underline-offset-2 transition-colors hover:text-primary"
             >
-              Политику обработки персональных данных
+              Политика обработки персональных данных
             </Link>
           </li>
         </ul>
