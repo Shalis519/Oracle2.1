@@ -436,8 +436,8 @@ function jadeMaidenSupportMessage(
   const person = ELEMENT_NAME_RU_LOWER[personElement] ?? personElement;
   const prefix = `Дворец структуры - стихия ${structure}. Личный дворец НС вашего года в этой часовой карте - стихия ${person}.`;
   return relation === "same"
-    ? `${prefix} Для вас эта прогулка благоприятна.`
-    : `${prefix} Дворец структуры поддерживает ваш личный дворец по кругу У-Син. Для вас эта прогулка благоприятна.`;
+    ? `${prefix} Для вас эта структура благоприятна.`
+    : `${prefix} Дворец структуры поддерживает ваш личный дворец по кругу У-Син. Для вас эта структура благоприятна.`;
 }
 
 function threeMysticsSupportMessage(

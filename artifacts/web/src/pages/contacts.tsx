@@ -361,7 +361,7 @@ export default function ContactsPage() {
                 </RadioGroup>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Город / место рождения (необязательно)</label>
+                <label className="text-sm font-medium">Город рождения (необязательно)</label>
                 <Popover open={birthCityOpen} onOpenChange={setBirthCityOpen}>
                   <PopoverTrigger asChild>
                     <Button type="button" variant="outline" role="combobox" className="w-full justify-start font-normal">
