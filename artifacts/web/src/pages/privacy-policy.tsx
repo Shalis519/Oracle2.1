@@ -15,11 +15,11 @@ export default function PrivacyPolicyPage() {
           <div className="flex items-center gap-3 cursor-pointer">
             <img
               src={`${basePath}/logo.png`}
-              alt="Aether Oracle / Oracle2.1"
+              alt="Aether Oracle"
               className="w-9 h-9 object-contain"
             />
             <span className="font-serif text-xl font-bold tracking-wide">
-              Aether Oracle / Oracle2.1
+              Aether Oracle
             </span>
           </div>
         </Link>
@@ -42,7 +42,7 @@ export default function PrivacyPolicyPage() {
               Политика конфиденциальности и обработки персональных данных
             </h1>
             <p className="text-sm text-muted-foreground">
-              Сервис «Aether Oracle / Oracle2.1» • Дата последнего обновления: {updatedDate}
+              Сервис «Aether Oracle» • Дата последнего обновления: {updatedDate}
             </p>
           </div>
 
@@ -52,7 +52,7 @@ export default function PrivacyPolicyPage() {
               1. Общие положения
             </h2>
             <p className="text-muted-foreground leading-relaxed">
-              Настоящая Политика конфиденциальности (далее — «Политика») определяет порядок сбора, записи, систематизации, накопления, хранения, уточнения, извлечения, использования, передачи, обезличивания, блокирования, удаления и уничтожения персональных данных пользователей сервиса «Aether Oracle / Oracle2.1» (далее — «Сервис», «Оператор»).
+              Настоящая Политика конфиденциальности (далее — «Политика») определяет порядок сбора, записи, систематизации, накопления, хранения, уточнения, извлечения, использования, передачи, обезличивания, блокирования, удаления и уничтожения персональных данных пользователей сервиса «Aether Oracle» (далее — «Сервис», «Оператор»).
             </p>
             <p className="text-muted-foreground leading-relaxed">
               Политика разработана в строгом соответствии с требованиями Федерального закона РФ от 27.07.2006 № 152-ФЗ «О персональных данных», а также принципами Общего регламента по защите данных Европейского Союза (GDPR — Regulation (EU) 2016/679).
@@ -155,7 +155,7 @@ export default function PrivacyPolicyPage() {
               6. Обратная связь и контакты
             </h2>
             <p className="text-muted-foreground leading-relaxed">
-              По любым вопросам, касающимся обработки и защиты персональных данных, реализации ваших прав согласно 152-ФЗ и GDPR, вы можете обращаться по электронной почте службы поддержки проекта «Aether Oracle / Oracle2.1»: <span className="text-foreground font-medium">privacy@oracle-aether.internal</span> или через форму обратной связи в личном кабинете.
+              По любым вопросам, касающимся обработки и защиты персональных данных, реализации ваших прав согласно 152-ФЗ и GDPR, вы можете обращаться по электронной почте службы поддержки проекта «Aether Oracle»: <span className="text-foreground font-medium">privacy@oracle-aether.internal</span> или через форму обратной связи в личном кабинете.
             </p>
           </section>
         </article>

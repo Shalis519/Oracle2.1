@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ShieldCheck, Scale, Cookie } from "lucide-react";
+import { ShieldCheck, Scale } from "lucide-react";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -12,7 +12,7 @@ export function Footer() {
       <div className="container mx-auto px-6 py-8 flex flex-col items-center gap-5 text-center">
         <Link href="/" className="flex items-center gap-2.5 group">
           <span className="font-serif text-lg font-bold tracking-wide text-foreground group-hover:text-primary transition-colors">
-            Oracle2.1
+            Aether Oracle
           </span>
         </Link>
 
@@ -38,25 +38,7 @@ export function Footer() {
         </nav>
 
         <p className="text-sm text-muted-foreground">
-          © {year} Oracle2.1. Все права защищены.
-        </p>
-
-        <p className="max-w-2xl text-xs leading-relaxed text-muted-foreground/80">
-          Астрологические и ИИ-прогнозы носят информационно-развлекательный характер и не
-          являются публичной офертой. Финансовые переводы — добровольные безвозмездные
-          пожертвования (дарения). Сервис использует Cookie и localStorage в соответствии с{" "}
-          <Link
-            href="/privacy-policy"
-            className="text-primary underline underline-offset-2 hover:text-primary/90"
-          >
-            политикой обработки персональных данных
-          </Link>
-          .
-        </p>
-
-        <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/70">
-          <Cookie className="h-3.5 w-3.5" aria-hidden="true" />
-          Соответствует 152-ФЗ РФ и GDPR
+          © {year} Aether Oracle. Все права защищены
         </p>
       </div>
     </footer>
