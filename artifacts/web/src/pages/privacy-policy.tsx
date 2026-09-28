@@ -45,7 +45,7 @@ export default function PrivacyPolicyPage() {
       <main className="container mx-auto px-6 py-10 relative z-10 max-w-4xl flex-1">
         <article
             id="article-content"
-            className="text-justify leading-relaxed bg-card/40 backdrop-blur-md border border-border rounded-3xl p-8 md:p-12 space-y-8 shadow-xl"
+            className="text-base text-justify leading-relaxed bg-card/40 backdrop-blur-md border border-border rounded-3xl p-8 md:p-12 space-y-8 shadow-xl"
           >
           <div className="space-y-3 border-b border-border/60 pb-6">
             <h1 className="text-3xl md:text-4xl font-serif font-bold tracking-tight">
@@ -54,7 +54,7 @@ export default function PrivacyPolicyPage() {
           </div>
 
           <section className="space-y-3">
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Настоящая Политика разработана в соответствии с требованиями
               Федерального закона РФ от 27.07.2006 № 152-ФЗ «О персональных
               данных» (далее – «Закон») и определяет порядок сбора, записи,
@@ -73,7 +73,7 @@ export default function PrivacyPolicyPage() {
               </a>
               .
             </p>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Для направления юридических запросов, предложений и обращений
               субъектов персональных данных используется адрес электронной
               почты:{" "}
@@ -199,70 +199,58 @@ export default function PrivacyPolicyPage() {
               <Database className="w-5 h-5 text-primary" />
               2. Категории и состав обрабатываемых данных
             </h2>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Оператор обрабатывает следующие персональные данные Пользователя:
             </p>
-            <div className="grid gap-4 mt-2">
-              <div className="p-4 rounded-xl bg-background/50 border border-border/60">
-                <h3 className="font-semibold text-foreground text-sm mb-1">
-                  2.1. Учётные данные аутентификации (интеграция платформы Clerk)
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed text-justify">
-                  Адрес электронной почты (e-mail), никнейм/псевдоним,
-                  идентификатор в системе авторизации, фото профиля (аватар).
-                </p>
-              </div>
-              <div className="p-4 rounded-xl bg-background/50 border border-border/60">
-                <h3 className="font-semibold text-foreground text-sm mb-1">
-                  2.2. Астрологические и расчётные данные
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed text-justify">
-                  Дата рождения, точное время и город рождения, текущий город
-                  проживания, пол. Обработка этих данных осуществляется
-                  исключительно для алгоритмического расчёта натальных карт,
-                  Матрицы Судьбы, столпов Бацзы, раскладов Ци Мэнь Дунь Цзя и
-                  формирования персональных рекомендаций.
-                </p>
-              </div>
-              <div className="p-4 rounded-xl bg-background/50 border border-border/60">
-                <h3 className="font-semibold text-foreground text-sm mb-1">
-                  2.3. Пользовательские записи
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed text-justify">
-                  Данные интерактивных модулей Сайта (заметки, записи личного
-                  дневника, трекер привычек).
-                </p>
-              </div>
-              <div className="p-4 rounded-xl bg-background/50 border border-border/60">
-                <h3 className="font-semibold text-foreground text-sm mb-1">
-                  2.4. Технические данные и файлы Cookie
-                </h3>
-                <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground leading-relaxed text-justify">
-                  <li>
-                    На Сайте не используются сторонние маркетинговые сервисы
-                    веб-аналитики (Яндекс.Метрика, Google Analytics и
-                    аналогичные), а также не осуществляется сбор данных в
-                    рекламных целях или для профилирования пользователей;
-                  </li>
-                  <li>
-                    На Сайте используются исключительно технические файлы cookie
-                    (cookie) и локальное хранилище браузера (localStorage),
-                    необходимые для поддержания сессии через Clerk, сохранения
-                    темы интерфейса и фиксации согласия с правилами{" "}
-                    <code className="text-xs bg-muted px-1.5 py-0.5 rounded text-foreground font-mono">
-                      oracle_cookie_consent
-                    </code>
-                    ;
-                  </li>
-                  <li>
-                    Логи инфраструктуры хостинга (IP-адрес, тип браузера, время
-                    обращения) обрабатываются исключительно для предотвращения
-                    сетевых атак, предотвращения спама и обеспечения
-                    отказоустойчивости Сайта.
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <ul className="list-disc pl-6 space-y-3 text-base leading-relaxed text-justify text-muted-foreground">
+              <li>
+                <span className="text-foreground font-medium">
+                  2.1. Учётные данные аутентификации (интеграция платформы
+                  Clerk).
+                </span>{" "}
+                Адрес электронной почты (e-mail), никнейм/псевдоним,
+                идентификатор в системе авторизации, фото профиля (аватар).
+              </li>
+              <li>
+                <span className="text-foreground font-medium">
+                  2.2. Астрологические и расчётные данные.
+                </span>{" "}
+                Дата рождения, точное время и город рождения, текущий город
+                проживания, пол. Обработка этих данных осуществляется
+                исключительно для алгоритмического расчёта натальных карт,
+                Матрицы Судьбы, столпов Бацзы, раскладов Ци Мэнь Дунь Цзя и
+                формирования персональных рекомендаций.
+              </li>
+              <li>
+                <span className="text-foreground font-medium">
+                  2.3. Пользовательские записи.
+                </span>{" "}
+                Данные интерактивных модулей Сайта (заметки, записи личного
+                дневника, трекер привычек).
+              </li>
+              <li>
+                <span className="text-foreground font-medium">
+                  2.4. Технические данные и файлы Cookie.
+                </span>{" "}
+                На Сайте не используются сторонние маркетинговые сервисы
+                веб-аналитики (Яндекс.Метрика, Google Analytics и аналогичные),
+                а также не осуществляется сбор данных в рекламных целях или для
+                профилирования пользователей.
+              </li>
+              <li>
+                На Сайте используются исключительно технические файлы cookie
+                (cookie) и локальное хранилище браузера (localStorage),
+                необходимые для поддержания сессии через Clerk, сохранения темы
+                интерфейса и фиксации согласия с правилами
+                «oracle_cookie_consent»;
+              </li>
+              <li>
+                Логи инфраструктуры хостинга (IP-адрес, тип браузера, время
+                обращения) обрабатываются исключительно для предотвращения
+                сетевых атак, предотвращения спама и обеспечения
+                отказоустойчивости Сайта.
+              </li>
+            </ul>
           </section>
 
           <section className="space-y-3">
@@ -296,7 +284,7 @@ export default function PrivacyPolicyPage() {
               <Scale className="w-5 h-5 text-primary" />
               4. Правовые основания обработки персональных данных
             </h2>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Правовыми основаниями обработки персональных данных Оператором
               являются:
             </p>
@@ -316,7 +304,7 @@ export default function PrivacyPolicyPage() {
                 Сайта и проведения персональных расчётов.
               </li>
             </ul>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Оператор обрабатывает персональные данные только в случае их
               самостоятельного и добровольного предоставления Пользователем при
               регистрации или использовании Сайта.
@@ -397,7 +385,7 @@ export default function PrivacyPolicyPage() {
               <Users className="w-5 h-5 text-primary" />
               6. Права Пользователя (субъекта персональных данных)
             </h2>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Каждый Пользователь имеет право:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed text-justify">
@@ -470,19 +458,19 @@ export default function PrivacyPolicyPage() {
               <ScrollText className="w-5 h-5 text-primary" />
               8. Согласие на обработку персональных данных
             </h2>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Регистрируясь на сайте «<a href="https://aether-oracle-web.onrender.com" target="_blank" rel="noopener noreferrer" className={linkClass}>https://aether-oracle-web.onrender.com</a>» и начиная пользоваться его сервисами, я даю согласие Администрации сервиса «Aether Oracle» (Оператору) на обработку, в том числе на сбор, систематизацию, накопление, хранение (уточнение, обновление, изменение), использование, передачу третьим лицам, обезличивание, блокирование и уничтожение моих персональных данных – псевдонима, имени, даты и времени рождения, пола, города рождения, города проживания, адреса электронной почты. Целью данного согласия является предоставление мне функционала Сайта, алгоритмических расчетов, возможности участия в чате сообщества и интерактивных модулях Сайта, а также получения обратной связи.
             </p>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Настоящим, я также даю свое прямое согласие на трансграничную передачу моих персональных данных (с использованием инфраструктуры хостинга Render и международной системы аутентификации Clerk), в том числе на территории иностранных государств, не включенных в перечень, утвержденный Приказом Роскомнадзора от 15.03.2013 N 274, для выполнения вышеуказанных целей обработки персональных данных.
             </p>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Подтверждаю, что персональные данные и иные сведения, относящиеся ко мне, предоставлены мною Сайту путем внесения их при регистрации на сайте <a href="https://aether-oracle-web.onrender.com" target="_blank" rel="noopener noreferrer" className={linkClass}>https://aether-oracle-web.onrender.com</a> добровольно и являются достоверными.
             </p>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Я согласен, что мои персональные данные будут обрабатываться способами, соответствующими целям обработки персональных данных, без возможности принятия юридически значимых решений на основании исключительно автоматизированной обработки моих персональных данных.
             </p>
-            <p className="text-muted-foreground leading-relaxed text-justify">
+            <p className="text-base leading-relaxed text-justify text-muted-foreground">
               Настоящее согласие может быть отозвано мной в любой момент путем направления электронного требования в адрес администрации Сайта. Адрес электронной почты: <a href="mailto:trimorion@inbox.ru" className={linkClass}>trimorion@inbox.ru</a>.
             </p>
           </section>

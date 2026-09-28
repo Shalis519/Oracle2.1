@@ -1,8 +1,4 @@
-import { Link, useLocation } from "wouter";
-import { useCallback, type MouseEvent } from "react";
-
-const CONSENT_ANCHOR = "personal-data-consent";
-const CONSENT_HREF = `/privacy-policy#${CONSENT_ANCHOR}`;
+import { Link } from "wouter";
 
 function Divider() {
   return (
@@ -20,24 +16,6 @@ const linkClass =
 
 export function Footer() {
   const year = new Date().getFullYear();
-  const [, navigate] = useLocation();
-
-  const handleConsentClick = useCallback(
-    (event: MouseEvent<HTMLAnchorElement>) => {
-      const target = document.getElementById(CONSENT_ANCHOR);
-      if (!target) {
-        return; // раздел согласия ещё не открыт — обычный переход по маршруту
-      }
-      event.preventDefault();
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.history.replaceState(
-        null,
-        "",
-        `${window.location.pathname}${window.location.search}#${CONSENT_ANCHOR}`,
-      );
-    },
-    [navigate],
-  );
 
   return (
     <footer
@@ -57,16 +35,6 @@ export function Footer() {
 
           <Link href="/terms-of-service" className={linkClass}>
             Пользовательское соглашение
-          </Link>
-
-          <Divider />
-
-          <Link
-            href={CONSENT_HREF}
-            className={linkClass}
-            onClick={handleConsentClick}
-          >
-            Согласие на обработку данных
           </Link>
         </nav>
 
