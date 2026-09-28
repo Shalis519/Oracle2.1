@@ -20,6 +20,7 @@ import {
 import { buildChart, buildPeriodMap, type PalaceCell } from "./chart";
 import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
 import {
+  detectFlyingBirdFallsIntoCave,
   detectFiveBattalions,
   detectTigerDun,
   detectWindDun,
@@ -45,6 +46,17 @@ const NOBLE_HELPER_DAYS = 2;
 const NOBLE_HELPER_GOALS: Record<NobleHelperKind, string> = {
   yang: "используйте данную структуру, если Вам необходимо реализовать публичные цели: маркетинг, пиар, продажи, запуск новых товаров, карьерный рост, превзойти конкурентов, добиться публичного продвижения и вопросов, которые должны стать известны широкому кругу людей.",
   yin: "используйте данную структуру, если Вам необходимо решить вопросы, связанные, с семейными делами, приватным общением, тайной информацией, решить внутренние конфликты в коллективе, оплатить счета, улучшить контроль и наладить взаимодействие внутри организации.",
+};
+
+const BIRD_GOALS_BY_DOOR: Record<string, string> = {
+  "景门": "В статике: размещение рекламы, подача заявок в конкурсах, публикации, привлечение внимания. На прогулке: знакомства, произвести яркое впечатление.",
+  "生门": "В статике и на прогулке: финансовая удача без усилий, прибыль, быстрые сделки, продажи, подписание договоров.",
+  "开门": "В статике и на прогулке: карьерный рост, легкий старт бизнеса, решение вопросов с руководством и госорганами.",
+  "休门": "В статике и на прогулке: примирение, мягкие переговоры, привлечение помощи влиятельных лиц.",
+  "杜门": "В статике: скрытое планирование, защита активов. На прогулке: быть невидимым и незаметным для окружающих, не встретить знакомых, избежать внимания.",
+  "伤门": "В статике: взыскание долгов, победа в жесткой конкурентной борьбе, подача исков и претензий.",
+  "惊门": "В статике: психологическое давление на конкурентов, подавить соперников своей мощью и силой, победа в дебатах.",
+  "死门": "В статике: фиксация позиций, покупка недвижимости или земли, завершение бесперспективных процессов.",
 };
 
 const STRUCTURE_NAME = "Три Генерала";
@@ -169,6 +181,25 @@ export interface QimenNobleHelperDoor {
   goal: string;
 }
 
+export interface QimenBirdInNest {
+  date: string;
+  dayGanZhi: string;
+  hourBranch: number;
+  hourLabel: string;
+  direction: string;
+  dir: string;
+  dom: string;
+  heavenStem: string;
+  heavenStemName: string;
+  earthStem: string;
+  earthStemName: string;
+  door: string;
+  doorName: string;
+  goal: string;
+  supportRelation: "same" | "supports";
+  supportMessage: string;
+}
+
 export interface QimenTigerDun {
   date: string;
   dayGanZhi: string;
@@ -245,6 +276,7 @@ export interface QimenResult {
   fiveBattalions: QimenFiveBattalion[];
   windDuns: QimenWindDun[];
   tigerDuns: QimenTigerDun[];
+  birdsInNest: QimenBirdInNest[];
   nobleHelperDoors: QimenNobleHelperDoor[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
@@ -661,6 +693,63 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     }
   }
 
+  const birdsInNest: QimenBirdInNest[] = [];
+  if (hasBirthDate && yearStem >= 0) {
+    const bStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
+    for (let d = 0; d < days; d++) {
+      const date = new Date(bStart);
+      date.setDate(bStart.getDate() + d);
+      const day = dayInfo(date);
+      if (clashesBranch(yearBranch, day.branch)) continue;
+
+      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+        const slotDate =
+          slot.branch === 0 && !slot.lateZi
+            ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
+            : date;
+        const slotDay = dayInfo(slotDate);
+        if (clashesBranch(yearBranch, slotDay.branch)) continue;
+        const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
+
+        for (const hit of detectFlyingBirdFallsIntoCave(
+          slotDate,
+          slot.branch,
+          slot.lateZi,
+          yearStem,
+          representativeYearStem,
+        )) {
+          const support = hit.support!;
+          const earthName = hit.isLeaderJia
+            ? `${STEM_NAME_RU[hit.earthStem] ?? hit.earthStem} (Фу-то / 甲)`
+            : (STEM_NAME_RU[hit.earthStem] ?? hit.earthStem);
+
+          birdsInNest.push({
+            date: slotDay.iso,
+            dayGanZhi: slotDayGz,
+            hourBranch: slot.branch,
+            hourLabel: hourLabel(slot.branch, slot.lateZi),
+            direction: hit.direction,
+            dir: PALACES[hit.palace].dir,
+            dom: hit.dom,
+            heavenStem: hit.heavenStem,
+            heavenStemName: STEM_NAME_RU[hit.heavenStem] ?? hit.heavenStem,
+            earthStem: hit.earthStem,
+            earthStemName: earthName,
+            door: hit.door,
+            doorName: DOOR_NAME_RU[hit.door] ?? hit.door,
+            goal: BIRD_GOALS_BY_DOOR[hit.door] ?? "Удача без усилий, решение текущих вопросов в моменте.",
+            supportRelation: support.relation as "same" | "supports",
+            supportMessage: threeMysticsSupportMessage(
+              support.relation as "same" | "supports",
+              support.structureElement,
+              support.personElement,
+            ),
+          });
+        }
+      }
+    }
+  }
+
   const structures: QimenStructure[] = [];
   const fiveBattalions: QimenFiveBattalion[] = [];
   const windDuns: QimenWindDun[] = [];
@@ -679,6 +768,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       fiveBattalions,
       windDuns,
       tigerDuns,
+      birdsInNest,
       nobleHelperDoors,
       birthChart,
       monthChart,

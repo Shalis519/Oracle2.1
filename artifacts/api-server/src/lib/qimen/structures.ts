@@ -166,26 +166,52 @@ export function detectFlyingBirdFallsIntoCave(
   date: Date,
   hourBranch: number,
   lateZi = false,
+  birthYearStem?: number,
+  representativeStem?: number,
 ): FlyingBirdFallsIntoCaveHit[] {
   const chart = buildChart(date, hourBranch, lateZi);
+  if (chart.fuYin || isHourControlsDay(chart)) return [];
+
   const periodIndex = parseGanZhi(chart.hourGz).index;
-  const hiddenJia = STEMS[
-    xunInfo(periodIndex).yiStem
-  ] as FlyingBirdFallsIntoCaveHit["earthStem"];
+  const hiddenJia = STEMS[xunInfo(periodIndex).yiStem]; // Лидер декады (Фу-то)
+
   const hits: FlyingBirdFallsIntoCaveHit[] = [];
   for (let p = 1; p <= 9; p++) {
     if (p === 5) continue;
     const cell = chart.cells[p];
-    if (cell.heavenStem !== "丙" || cell.earthStem !== hiddenJia) continue;
+
+    // Наверху строго Огонь Ян (Бин 丙)
+    if (cell.heavenStem !== "丙") continue;
+
+    // Внизу либо Земля Ян (У 戊), либо Дерево Ян (скрытый лидер декады Фу-то)
+    const isWu = cell.earthStem === "戊";
+    const isLeader = cell.earthStem === hiddenJia;
+    if (!isWu && !isLeader) continue;
+
+    // Исключения и безопасность
+    if (cell.isVoid) continue; // Избегаем Пустоты
+    if (isAnnualYellowFive(p, date)) continue; // Годовая Жёлтая Пятёрка
+    if (hasDoorPalaceConflict(cell.door, p)) continue;
+    if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue;
+
+    // Личная проверка по НС года рождения пользователя
+    const support =
+      birthYearStem === undefined
+        ? undefined
+        : evaluateSupportPalace(chart, p, birthYearStem, representativeStem);
+    if (birthYearStem !== undefined && (!support || !support.supported))
+      continue;
+
     hits.push({
       structure: "flying_bird_falls_into_cave",
       palace: p,
       direction: PALACES[p].dirFull,
+      dom: PALACES[p].dom,
       heavenStem: "丙",
-      earthStem: hiddenJia,
-      hiddenJia: `甲${chart.hourGz.charAt(1)}`,
-      status: "placeholder",
-      published: false,
+      earthStem: cell.earthStem,
+      door: cell.door,
+      isLeaderJia: isLeader,
+      support: support ?? undefined,
     });
   }
   return hits;

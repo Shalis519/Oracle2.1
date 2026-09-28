@@ -212,9 +212,47 @@ type StructureInfoKind =
   | "battalion"
   | "wind"
   | "tiger"
+  | "bird"
   | "general";
 
 function StructureInfoContent({ kind }: { kind: StructureInfoKind }) {
+    if (kind === "bird") {
+    return (
+      <div className="space-y-4 text-sm leading-relaxed text-foreground/90">
+        <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
+          <p className="font-semibold text-primary">
+            ✨ Главный эффект структуры: «Удача без усилий»
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Краткосрочная структура — действует в моменте указанной двухчасовки.
+            Не даёт долгого пролонгированного эффекта, но помогает моментально получить идеи, прибыль, клиентов или нужный результат.
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <p className="font-semibold text-foreground">Процесс активации:</p>
+          <ol className="list-decimal list-outside space-y-1.5 pl-5">
+            <li>
+              <span className="font-medium text-foreground">В статике:</span> сядьте в указанном секторе дома или офиса (максимально близко к внешнему периметру помещения) спиной к направлению сектора.
+            </li>
+            <li>
+              <span className="font-medium text-foreground">На прогулке:</span> двигайтесь в указанном направлении от дома (не менее 500 м) и зафиксируйтесь на 15–20 минут.
+            </li>
+            <li>
+              <span className="font-medium text-foreground">Время:</span> начинайте через 15 минут после начала двухчасовки и завершайте за 15 минут до её окончания (минимум 1,5 часа активного фокуса).
+            </li>
+            <li>
+              <span className="font-medium text-foreground">Действуйте по цели:</span> во время нахождения в секторе активно работайте по своей задаче (звонки, реклама, подача заявок). Не отвлекайтесь на бытовые дела (сериалы, готовка, пустые разговоры).
+            </li>
+            <li>
+              Выходить из сектора можно не более чем на 5 минут и только по неотложным делам.
+            </li>
+          </ol>
+        </div>
+      </div>
+    );
+  }
+
   if (kind === "jade") {
     return (
       <div className="space-y-3 text-sm leading-relaxed">
@@ -1183,6 +1221,64 @@ function FiveBattalionsCard({ hit }: { hit: QimenFiveBattalion }) {
   );
 }
 
+function BirdInNestCard({ hit }: { hit: any }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="border-emerald-500/20 bg-card/60 backdrop-blur-sm transition-colors hover:border-emerald-500/40">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="font-serif text-lg">
+              <StructureInfoDialog
+                kind="bird"
+                title="Структура «Птица падает в гнездо»"
+              />
+            </CardTitle>
+            <span className="shrink-0 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-medium text-emerald-200">
+              {formatDate(hit.date)}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-start gap-2 text-sm">
+            <Target className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300/80" />
+            <p className="leading-relaxed">
+              <span className="font-medium">Цель:</span> {hit.goal}
+            </p>
+          </div>
+          <div className="flex items-start gap-2 text-sm">
+            <Compass className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300/80" />
+            <p className="leading-relaxed">
+              Сектор{" "}
+              <span className="font-semibold text-emerald-200">
+                {hit.direction}
+              </span>{" "}
+              в {hit.hourLabel}.
+            </p>
+          </div>
+          <p className="rounded-lg border border-emerald-400/15 bg-emerald-400/5 p-3 text-sm leading-relaxed text-emerald-100/90">
+            {hit.supportMessage}
+          </p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-emerald-400/10 px-2 py-0.5 text-xs text-emerald-100">
+              Небо: {hit.heavenStemName}
+            </span>
+            <span className="rounded-full bg-emerald-400/10 px-2 py-0.5 text-xs text-emerald-100">
+              Земля: {hit.earthStemName}
+            </span>
+            <span className="rounded-full bg-emerald-400/10 px-2 py-0.5 text-xs text-emerald-100">
+              Врата: {hit.doorName}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 function WindDunCard({ hit }: { hit: QimenWindDun }) {
   return (
     <motion.div
@@ -1426,6 +1522,7 @@ export default function QimenPage() {
     ...fiveBattalions.map((item) => ({ kind: "battalion" as const, item })),
     ...windDuns.map((item) => ({ kind: "wind" as const, item })),
     ...tigerDuns.map((item) => ({ kind: "tiger" as const, item })),
+    ...(data?.birdsInNest ?? []).map((item: any) => ({ kind: "bird" as const, item })),
     ...nobleHelperDoors.map((item) => ({ kind: "noble" as const, item })),
     ...structures.map((item) => ({ kind: "general" as const, item })),
   ].sort((left, right) => compareSchedule(left.item, right.item));
