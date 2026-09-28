@@ -95,6 +95,8 @@ export interface QimenStructure {
   note?: string;
   supportRelation?: "same" | "supports";
   supportMessage?: string;
+  resonance?: string[];
+  specialNote?: string;
 }
 
 export interface QimenJadeMaiden {
@@ -114,6 +116,8 @@ export interface QimenJadeMaiden {
   isMainGate: boolean;
   supportRelation?: "same" | "supports";
   supportMessage?: string;
+  resonance?: string[];
+  specialNote?: string;
 }
 
 export interface QimenThreeMystic {
@@ -136,6 +140,8 @@ export interface QimenThreeMystic {
   activation: string;
   supportRelation?: "same" | "supports";
   supportMessage?: string;
+  resonance?: string[];
+  specialNote?: string;
 }
 
 export interface QimenFiveBattalion {
@@ -491,6 +497,19 @@ const ELEMENT_NAME_RU_LOWER: Record<string, string> = {
   water: "вода",
 };
 
+
+function getPeachBlossomPalace(yearBranch: number): number {
+  // Обезьяна (8), Крыса (0), Дракон (4) -> Петух (Запад, дворец 7)
+  if ([8, 0, 4].includes(yearBranch)) return 7;
+  // Свинья (11), Кролик (3), Коза (7) -> Крыса (Север, дворец 1)
+  if ([11, 3, 7].includes(yearBranch)) return 1;
+  // Тигр (2), Лошадь (6), Собака (10) -> Кролик (Восток, дворец 3)
+  if ([2, 6, 10].includes(yearBranch)) return 3;
+  // Змея (5), Петух (9), Бык (1) -> Лошадь (Юг, дворец 9)
+  if ([5, 9, 1].includes(yearBranch)) return 9;
+  return -1;
+}
+
 function jadeMaidenSupportMessage(
   relation: "same" | "supports",
   structureElement: string,
@@ -689,6 +708,43 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           yearStem >= 0 ? yearStem : undefined,
           representativeYearStem >= 0 ? representativeYearStem : undefined,
         )) {
+          // Расчет персонального резонанса для Дин + Дин + Главные Врата
+          let specialNote: string | undefined = undefined;
+          const resonance: string[] = [];
+
+          const isSupreme = hit.heavenStem === "丁" && hit.earthStem === "丁" && hit.isMainGate;
+          if (isSupreme) {
+            specialNote = "Высшая форма структуры: Небо Дин + Земля Дин + Главные Врата. Максимальная сила женского и мужского магнетизма, флирта и обаяния. Способность очаровать нужного человека, расположить к себе на переговорах и добиться целей через личную притягательность и красоту.";
+
+            // 1. Дворец Судьбы (DP)
+            if (birthChart?.destinyPalace && hit.palace === birthChart.destinyPalace) {
+              resonance.push("✨ Попадает в ваш личный Дворец Судьбы: ваша харизма, личный магнетизм и обаяние раскрываются на максимум! Используйте эту энергию, чтобы очаровать собеседника, решить важные карьерные или деловые вопросы через флирт, дипломатию и романтический шарм.");
+            }
+
+            // 2. Дом Брака (Шесть Гармоний в натальной карте)
+            const marriageCell = birthChart?.cells.find((c) => c.deity === "六合");
+            if (marriageCell && hit.palace === marriageCell.palace) {
+              resonance.push("💍 Попадает в ваш натальный Дом Брака (Шесть Гармоний): если вы в поиске спутника жизни — обязательно используйте данную структуру для судьбоносного знакомства. Если вы в браке — пригласите на свидание свою любовь!");
+            }
+
+            // 3. Дом Семьи (Врата Отдыха в натальной карте)
+            const familyCell = birthChart?.cells.find((c) => c.door === "休门");
+            if (familyCell && hit.palace === familyCell.palace) {
+              resonance.push("🏡 Попадает в ваш натальный Дом Семьи (Врата Отдыха): если вы в браке — обязательно устройте семейный выход в уютное кафе или душевную прогулку. Если вы ищете партнера для жизни — структура привлекает человека для надежной, счастливой семьи.");
+            }
+
+            // 4. Цветок Персика (Цветок Романтики)
+            const peachPalace = getPeachBlossomPalace(yearBranch);
+            if (hit.palace === peachPalace) {
+              resonance.push("🌸 Сектор совпадает с вашим личным Цветком Романтики: пик романтической притягательности и сексуальности! Время для яркого флирта, свиданий и комплиментов — вы производите неизгладимое впечатление.");
+            }
+
+            // 5. Резонанс ствола года
+            if ([3, 2, 5].includes(yearStem)) {
+              resonance.push("🌟 Максимальный резонанс с годом рождения: Огонь Инь структуры находится в идеальном созвучии с вашей натальной энергией.");
+            }
+          }
+
           jadeMaidens.push({
             date: slotDay.iso,
             dayGanZhi: slotDayGz,
@@ -704,6 +760,8 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
             door: hit.door,
             doorName: DOOR_NAME_RU[hit.door] ?? "",
             isMainGate: hit.isMainGate,
+            resonance: resonance.length > 0 ? resonance : undefined,
+            specialNote,
             supportRelation:
               hit.support?.relation === "same" ||
               hit.support?.relation === "supports"
