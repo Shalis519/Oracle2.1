@@ -603,9 +603,11 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     for (let d = 0; d < MAIDEN_DAYS; d++) {
       const date = new Date(mysticsStart);
       date.setDate(mysticsStart.getDate() + d);
-      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-        const slotDate =
-          slot.branch === 0 && !slot.lateZi
+      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {        // Календарный день для пользователя:
+        const displayDate = date;
+        // Карта Ци Мэнь: для поздней Крысы (23:00-00:00) китайские сутки наступают в 23:00 (следующий день)
+        const chartDate =
+          slot.branch === 0 && slot.lateZi
             ? new Date(
                 date.getFullYear(),
                 date.getMonth(),
@@ -615,6 +617,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
                 0,
               )
             : date;
+        const slotDate = chartDate;
         const slotDay = dayInfo(slotDate);
         const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
         for (const hit of detectThreeMystics(
@@ -626,7 +629,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
         )) {
           const support = hit.support!;
           threeMystics.push({
-            date: slotDay.iso,
+            date: dayInfo(displayDate).iso,
             dayGanZhi: slotDayGz,
             hourBranch: slot.branch,
             hourLabel: hourLabel(slot.branch, slot.lateZi),
@@ -680,9 +683,11 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       // поздняя Крыса 23:00–00:00 завершает текущие сутки, а ранняя
       // Крыса 00:00–01:00 открывает следующие. Поэтому слот и карта
       // должны получать собственную календарную дату.
-      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-        const slotDate =
-          slot.branch === 0 && !slot.lateZi
+      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {        // Календарный день для пользователя:
+        const displayDate = date;
+        // Карта Ци Мэнь: для поздней Крысы (23:00-00:00) китайские сутки наступают в 23:00 (следующий день)
+        const chartDate =
+          slot.branch === 0 && slot.lateZi
             ? new Date(
                 date.getFullYear(),
                 date.getMonth(),
@@ -692,6 +697,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
                 0,
               )
             : date;
+        const slotDate = chartDate;
         const slotDay = dayInfo(slotDate);
         const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
         // Для прогулки действует запрет личного столкновения: если ветвь дня
@@ -746,7 +752,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           }
 
           jadeMaidens.push({
-            date: slotDay.iso,
+            date: dayInfo(displayDate).iso,
             dayGanZhi: slotDayGz,
             hourBranch: h,
             hourLabel: hourLabel(h, slot.lateZi),
@@ -793,10 +799,12 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       if (clashesBranch(yearBranch, day.branch)) continue;
 
       for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-        const slotDate =
-          slot.branch === 0 && !slot.lateZi
+        const displayDate = date;
+        const chartDate =
+          slot.branch === 0 && slot.lateZi
             ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
             : date;
+        const slotDate = chartDate;
         const slotDay = dayInfo(slotDate);
         if (clashesBranch(yearBranch, slotDay.branch)) continue;
         const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
@@ -814,7 +822,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
             : (STEM_NAME_RU[hit.heavenStem] ?? hit.heavenStem);
 
           dragonsTurnHead.push({
-            date: slotDay.iso,
+            date: dayInfo(displayDate).iso,
             dayGanZhi: slotDayGz,
             hourBranch: slot.branch,
             hourLabel: hourLabel(slot.branch, slot.lateZi),
@@ -850,10 +858,12 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       if (clashesBranch(yearBranch, day.branch)) continue;
 
       for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-        const slotDate =
-          slot.branch === 0 && !slot.lateZi
+        const displayDate = date;
+        const chartDate =
+          slot.branch === 0 && slot.lateZi
             ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
             : date;
+        const slotDate = chartDate;
         const slotDay = dayInfo(slotDate);
         if (clashesBranch(yearBranch, slotDay.branch)) continue;
         const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
@@ -871,7 +881,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
             : (STEM_NAME_RU[hit.earthStem] ?? hit.earthStem);
 
           birdsInNest.push({
-            date: slotDay.iso,
+            date: dayInfo(displayDate).iso,
             dayGanZhi: slotDayGz,
             hourBranch: slot.branch,
             hourLabel: hourLabel(slot.branch, slot.lateZi),
@@ -929,15 +939,17 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     const date = new Date(from);
     date.setDate(from.getDate() + d);
     for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-      const slotDate =
-        slot.branch === 0 && !slot.lateZi
+      const displayDate = date;
+      const chartDate =
+        slot.branch === 0 && slot.lateZi
           ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
           : date;
+      const slotDate = chartDate;
       const slotDay = dayInfo(slotDate);
       const dayGanZhi = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
       for (const hit of detectNobleHelperDoor(slotDate, slot.branch, yearStem, slot.lateZi)) {
         nobleHelperDoors.push({
-          date: slotDay.iso,
+          date: dayInfo(displayDate).iso,
           dayGanZhi,
           hourBranch: slot.branch,
           hourLabel: hourLabel(slot.branch, slot.lateZi),
@@ -973,18 +985,21 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     date.setDate(start.getDate() + d);
     const day = dayInfo(date);
     if (clashesBranch(yearBranch, day.branch)) continue; // personal 六冲 filter
-    for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-      const slotDate =
-        slot.branch === 0 && !slot.lateZi
-          ? new Date(
-              date.getFullYear(),
-              date.getMonth(),
-              date.getDate() + 1,
-              12,
-              0,
-              0,
-            )
-          : date;
+    for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {        // Календарный день для пользователя:
+        const displayDate = date;
+        // Карта Ци Мэнь: для поздней Крысы (23:00-00:00) китайские сутки наступают в 23:00 (следующий день)
+        const chartDate =
+          slot.branch === 0 && slot.lateZi
+            ? new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate() + 1,
+                12,
+                0,
+                0,
+              )
+            : date;
+        const slotDate = chartDate;
       const slotDay = dayInfo(slotDate);
       const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
       const h = slot.branch;
@@ -997,7 +1012,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           representativeYearStem,
         )) {
           structures.push({
-            date: slotDay.iso,
+            date: dayInfo(displayDate).iso,
             dayGanZhi: slotDayGz,
             hourBranch: h,
             hourLabel: hourLabel(h, slot.lateZi),
@@ -1041,7 +1056,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           slot.lateZi,
         )) {
           fiveBattalions.push({
-            date: slotDay.iso,
+            date: dayInfo(displayDate).iso,
             dayGanZhi: slotDayGz,
             hourBranch: h,
             hourLabel: hourLabel(h, slot.lateZi),
@@ -1068,7 +1083,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
         )) {
           const support = hit.support!;
           windDuns.push({
-            date: slotDay.iso,
+            date: dayInfo(displayDate).iso,
             dayGanZhi: slotDayGz,
             hourBranch: h,
             hourLabel: hourLabel(h, slot.lateZi),
@@ -1101,7 +1116,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
         )) {
           const support = hit.support!;
           tigerDuns.push({
-            date: slotDay.iso,
+            date: dayInfo(displayDate).iso,
             dayGanZhi: slotDayGz,
             hourBranch: h,
             hourLabel: hourLabel(h, slot.lateZi),
@@ -1141,9 +1156,11 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       const day = dayInfo(date);
       if (clashesBranch(yearBranch, day.branch)) continue;
 
-      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
-        const slotDate =
-          slot.branch === 0 && !slot.lateZi
+      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {        // Календарный день для пользователя:
+        const displayDate = date;
+        // Карта Ци Мэнь: для поздней Крысы (23:00-00:00) китайские сутки наступают в 23:00 (следующий день)
+        const chartDate =
+          slot.branch === 0 && slot.lateZi
             ? new Date(
                 date.getFullYear(),
                 date.getMonth(),
@@ -1153,6 +1170,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
                 0,
               )
             : date;
+        const slotDate = chartDate;
         const slotDay = dayInfo(slotDate);
         if (clashesBranch(yearBranch, slotDay.branch)) continue;
         const slotDayGz = STEMS[slotDay.stem] + BRANCHES[slotDay.branch];
@@ -1166,7 +1184,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
         )) {
           const support = hit.support!;
           tigerDuns.push({
-            date: slotDay.iso,
+            date: dayInfo(displayDate).iso,
             dayGanZhi: slotDayGz,
             hourBranch: slot.branch,
             hourLabel: hourLabel(slot.branch, slot.lateZi),
@@ -1209,6 +1227,8 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     windDuns,
     tigerDuns,
     nobleHelperDoors,
+    dragonsTurnHead,
+    birdsInNest,
     birthChart,
     monthChart,
   };

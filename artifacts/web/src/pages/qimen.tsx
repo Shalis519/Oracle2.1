@@ -1615,8 +1615,8 @@ export default function QimenPage() {
     ...fiveBattalions.map((item) => ({ kind: "battalion" as const, item })),
     ...windDuns.map((item) => ({ kind: "wind" as const, item })),
     ...tigerDuns.map((item) => ({ kind: "tiger" as const, item })),
-    ...(data?.birdsInNest ?? []).map((item: any) => ({ kind: "bird" as const, item })),
-    ...(data?.dragonsTurnHead ?? []).map((item: any) => ({ kind: "dragon" as const, item })),
+    ...((data as any)?.birdsInNest ?? []).map((item: any) => ({ kind: "bird" as const, item })),
+    ...((data as any)?.dragonsTurnHead ?? []).map((item: any) => ({ kind: "dragon" as const, item })),
     ...nobleHelperDoors.map((item) => ({ kind: "noble" as const, item })),
     ...structures.map((item) => ({ kind: "general" as const, item })),
   ].sort((left, right) => compareSchedule(left.item, right.item));

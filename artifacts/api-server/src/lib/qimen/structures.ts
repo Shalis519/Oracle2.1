@@ -97,11 +97,14 @@ export interface FlyingBirdFallsIntoCaveHit {
   structure: "flying_bird_falls_into_cave";
   palace: number;
   direction: string;
+  dom: string;
   heavenStem: "丙";
-  earthStem: "戊" | "己" | "庚" | "辛" | "壬" | "癸";
-  hiddenJia: string;
-  status: "placeholder";
-  published: false;
+  earthStem: string;
+  door: string;
+  isLeaderJia: boolean;
+  status?: string;
+  published?: boolean;
+  support?: any;
 }
 
 export interface GeneralsHit {
@@ -209,7 +212,7 @@ export function detectDragonTurnsHead(
     if (cell.isVoid) continue; // Избегаем Пустоты
     if (isAnnualYellowFive(p, date)) continue; // Годовая Жёлтая Пятёрка
     if (hasDoorPalaceConflict(cell.door, p)) continue;
-    if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue;
+    if ((cell.heavenStem as string) === "庚" || (cell.earthStem as string) === "庚") continue;
 
     // Личная проверка по НС года рождения пользователя
     const support =
@@ -228,7 +231,7 @@ export function detectDragonTurnsHead(
       earthStem: "丙",
       door: cell.door,
       isLeaderJia: isLeader,
-      support: support ?? undefined,
+      support: (support as any) ?? undefined,
     });
   }
   return hits;
@@ -264,7 +267,7 @@ export function detectFlyingBirdFallsIntoCave(
     if (cell.isVoid) continue; // Избегаем Пустоты
     if (isAnnualYellowFive(p, date)) continue; // Годовая Жёлтая Пятёрка
     if (hasDoorPalaceConflict(cell.door, p)) continue;
-    if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue;
+    if ((cell.heavenStem as string) === "庚" || (cell.earthStem as string) === "庚") continue;
 
     // Личная проверка по НС года рождения пользователя
     const support =
@@ -283,7 +286,7 @@ export function detectFlyingBirdFallsIntoCave(
       earthStem: cell.earthStem,
       door: cell.door,
       isLeaderJia: isLeader,
-      support: support ?? undefined,
+      support: (support as any) ?? undefined,
     });
   }
   return hits;
@@ -310,7 +313,7 @@ export function detectThreeGenerals(
 
     // --- Exclusions (Правила активации) ---
     if (cell.isVoid) continue; // Избегаем дворца ПУСТОТЫ (空亡)
-    if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue; // Избегаем Гэн
+    if ((cell.heavenStem as string) === "庚" || (cell.earthStem as string) === "庚") continue; // Избегаем Гэн
     if (TOMB[wonder] === p) continue; // Избегаем сектора МОГИЛЫ (墓)
     if (isAnnualYellowFive(p, date)) continue; // Годовая Жёлтая Пятёрка
     if (hasDoorPalaceConflict(cell.door, p)) continue;
@@ -341,7 +344,7 @@ export function detectThreeGenerals(
       signs: row.signs,
       result: row.result,
       note: row.note,
-      support: support ?? undefined,
+      support: (support as any) ?? undefined,
     });
   }
   return hits;
@@ -374,7 +377,7 @@ export function detectThreeMystics(
 
     // Явные табу исходной схемы и общие безопасные ограничения активаций.
     if (cell.isVoid) continue;
-    if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue;
+    if ((cell.heavenStem as string) === "庚" || (cell.earthStem as string) === "庚") continue;
     if (TOMB[wonder] === p) continue;
     if ((WONDER_AVOID[wonder] ?? []).includes(p)) continue;
     if (hasDoorPalaceConflict(cell.door, p)) continue;
@@ -401,7 +404,7 @@ export function detectThreeMystics(
       starName: GENERALS_STAR_NAME[cell.star],
       door: cell.door,
       activation: THREE_MYSTICS_ACTIVATION[cell.star],
-      support: support ?? undefined,
+      support: (support as any) ?? undefined,
     });
   }
   return hits;
@@ -628,7 +631,7 @@ export function detectWindDun(
     if (!variant) continue;
 
     if (cell.isVoid) continue;
-    if (cell.heavenStem === "庚" || cell.earthStem === "庚") continue;
+    if ((cell.heavenStem as string) === "庚" || (cell.earthStem as string) === "庚") continue;
     if (isAnnualYellowFive(palace, date)) continue;
     if (controls(DOOR_ELEMENT[cell.door], STAR_ELEMENT[cell.star])) continue;
     // In rows 1-3 the direction and door are explicit parts of the formula.
@@ -656,7 +659,7 @@ export function detectWindDun(
       earthStem: cell.earthStem,
       door: cell.door,
       deity: cell.deity,
-      support: support ?? undefined,
+      support: (support as any) ?? undefined,
     });
   }
 
@@ -739,7 +742,7 @@ export function detectJadeMaiden(
       earthStem: e,
       door: c.door,
       isMainGate: isMain,
-      support: support ?? undefined,
+      support: (support as any) ?? undefined,
     });
   }
   return hits;
@@ -922,7 +925,7 @@ export function detectTigerDun(
       earthStem: cell.earthStem,
       door: cell.door,
       star: cell.star,
-      support: support ?? undefined,
+      support: (support as any) ?? undefined,
     });
   }
   return hits;
