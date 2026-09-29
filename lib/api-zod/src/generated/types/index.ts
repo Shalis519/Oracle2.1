@@ -167,6 +167,8 @@ export * from './qimenSummary';
 export * from './qimenThreeMystic';
 export * from './qimenThreeMysticSupportRelation';
 export * from './qimenThreeMysticWonder';
+export * from './qimenThreeVictory';
+export * from './qimenThreeVictoryLevel';
 export * from './qimenTigerDun';
 export * from './qimenTigerDunDoor';
 export * from './qimenTigerDunHeavenStem';

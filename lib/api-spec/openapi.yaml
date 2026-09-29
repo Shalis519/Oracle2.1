@@ -2286,6 +2286,7 @@ components:
           windDuns,
           tigerDuns,
           nobleHelperDoors,
+          threeVictories,
           birthChart,
           monthChart,
         ]
@@ -2330,12 +2331,54 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QimenNobleHelperDoor"
+        threeVictories:
+          type: array
+          items:
+            $ref: "#/components/schemas/QimenThreeVictory"
         birthChart:
           oneOf:
             - $ref: "#/components/schemas/QimenBirthChart"
             - type: "null"
         monthChart:
           $ref: "#/components/schemas/QimenMonthChart"
+
+
+    QimenThreeVictory:
+      type: object
+      required:
+        [
+          id,
+          level,
+          levelLabel,
+          badge,
+          targetSectorName,
+          targetPalace,
+          direction,
+          date,
+          dateBadge,
+          hourLabel,
+          instruction,
+          door,
+          deity,
+          isBirdInNest,
+          goal,
+        ]
+      properties:
+        id: { type: string }
+        level: { type: string, enum: ["month", "month_day", "day_hour"] }
+        levelLabel: { type: string }
+        badge: { type: string }
+        targetSectorName: { type: string }
+        targetPalace: { type: integer }
+        direction: { type: string }
+        date: { type: string }
+        dateBadge: { type: string }
+        hourLabel: { type: string }
+        instruction: { type: string }
+        door: { type: string }
+        deity: { type: string }
+        isBirdInNest: { type: boolean }
+        goal: { type: string }
 
     PromotionActivation:
       type: object

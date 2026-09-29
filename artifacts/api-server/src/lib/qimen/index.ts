@@ -1,3 +1,5 @@
+export type { QimenThreeVictory, VictoryComponent, VictoryLevel } from "./threeVictories";
+import { computeThreeVictories, type DayHourCheckItem, type ChartPalaceInfo } from "./threeVictories";
 // Qi Men Dun Jia — public entry: scan an N-day window for personal walk structures.
 import {
   BRANCH_ANIMAL_RU,
@@ -314,6 +316,7 @@ export interface QimenResult {
   windDuns: QimenWindDun[];
   tigerDuns: QimenTigerDun[];
   birdsInNest: QimenBirdInNest[];
+  threeVictories: QimenThreeVictory[];
   dragonsTurnHead: QimenDragonTurnsHead[];
   nobleHelperDoors: QimenNobleHelperDoor[];
   birthChart: QimenBirthChart | null;
@@ -928,6 +931,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
       birdsInNest,
       dragonsTurnHead,
       nobleHelperDoors,
+      threeVictories: [],
       birthChart,
       monthChart,
     };
@@ -1214,6 +1218,52 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     }
   }
 
+
+// Расчет структуры «Три Победы» (三胜)
+  const threeVictoryDaysHours: DayHourCheckItem[] = [];
+  if (birthChart) {
+    const tvStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
+    for (let d = 0; d < days; d++) {
+      const date = new Date(tvStart);
+      date.setDate(tvStart.getDate() + d);
+      for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
+        const chartDate =
+          slot.branch === 0 && slot.lateZi
+            ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12, 0, 0)
+            : date;
+        const slotChart = buildChart(chartDate, slot.branch, slot.lateZi);
+        const pMap: Record<number, ChartPalaceInfo> = {};
+        for (let p = 1; p <= 9; p++) {
+          if (p === 5) continue;
+          const cell = slotChart.cells[p];
+          pMap[p] = {
+            palace: p,
+            doorName: cell.door?.name,
+            deityName: cell.deity,
+            heavenStem: cell.heavenStem,
+            earthStem: cell.earthStem,
+            starName: cell.star?.name,
+          };
+        }
+        threeVictoryDaysHours.push({
+          date: chartDate,
+          dateBadge: dayInfo(date).iso,
+          hourLabel: hourLabel(slot.branch, slot.lateZi),
+          level: "day_hour",
+          levelLabel: "День + Час",
+          palaces: pMap,
+        });
+      }
+    }
+  }
+
+  const threeVictories = computeThreeVictories({
+    birthChart,
+    monthChart,
+    daysAndHours: threeVictoryDaysHours,
+    now: from,
+  });
+
   return {
     hasBirthDate,
     birthYearAnimal: BRANCH_ANIMAL_RU[yearBranch],
@@ -1228,7 +1278,11 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
     tigerDuns,
     nobleHelperDoors,
     dragonsTurnHead,
+
+
+
     birdsInNest,
+    threeVictories,
     birthChart,
     monthChart,
   };

@@ -781,6 +781,23 @@ export const GetQimenResponse = zod.object({
   "deityName": zod.string(),
   "goal": zod.string()
 })),
+  "threeVictories": zod.array(zod.object({
+  "id": zod.string(),
+  "level": zod.enum(['month', 'month_day', 'day_hour']),
+  "levelLabel": zod.string(),
+  "badge": zod.string(),
+  "targetSectorName": zod.string(),
+  "targetPalace": zod.number(),
+  "direction": zod.string(),
+  "date": zod.string(),
+  "dateBadge": zod.string(),
+  "hourLabel": zod.string(),
+  "instruction": zod.string(),
+  "door": zod.string(),
+  "deity": zod.string(),
+  "isBirdInNest": zod.boolean(),
+  "goal": zod.string()
+})),
   "birthChart": zod.union([zod.object({
   "hourGz": zod.string(),
   "ju": zod.number(),

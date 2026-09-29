@@ -13,6 +13,7 @@ import type { QimenMonthChart } from './qimenMonthChart';
 import type { QimenNobleHelperDoor } from './qimenNobleHelperDoor';
 import type { QimenStructure } from './qimenStructure';
 import type { QimenThreeMystic } from './qimenThreeMystic';
+import type { QimenThreeVictory } from './qimenThreeVictory';
 import type { QimenTigerDun } from './qimenTigerDun';
 import type { QimenWindDun } from './qimenWindDun';
 
@@ -30,6 +31,7 @@ export interface QimenSummary {
   windDuns: QimenWindDun[];
   tigerDuns: QimenTigerDun[];
   nobleHelperDoors: QimenNobleHelperDoor[];
+  threeVictories: QimenThreeVictory[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }

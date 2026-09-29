@@ -820,6 +820,33 @@ export interface QimenMonthChart {
   cells: QimenBirthChartCell[];
 }
 
+export type QimenThreeVictoryLevel = typeof QimenThreeVictoryLevel[keyof typeof QimenThreeVictoryLevel];
+
+
+export const QimenThreeVictoryLevel = {
+  month: 'month',
+  month_day: 'month_day',
+  day_hour: 'day_hour',
+} as const;
+
+export interface QimenThreeVictory {
+  id: string;
+  level: QimenThreeVictoryLevel;
+  levelLabel: string;
+  badge: string;
+  targetSectorName: string;
+  targetPalace: number;
+  direction: string;
+  date: string;
+  dateBadge: string;
+  hourLabel: string;
+  instruction: string;
+  door: string;
+  deity: string;
+  isBirdInNest: boolean;
+  goal: string;
+}
+
 export interface QimenSummary {
   hasBirthDate: boolean;
   /** @nullable */
@@ -834,6 +861,7 @@ export interface QimenSummary {
   windDuns: QimenWindDun[];
   tigerDuns: QimenTigerDun[];
   nobleHelperDoors: QimenNobleHelperDoor[];
+  threeVictories: QimenThreeVictory[];
   birthChart: QimenBirthChart | null;
   monthChart: QimenMonthChart;
 }
