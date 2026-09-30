@@ -304,10 +304,15 @@ export function computeThreeVictories(params: {
       let matched = false;
       let activeDeityLabel = cfg.deityLabel;
 
+      // КРИТИЧЕСКОЕ ПРАВИЛО: В целевом дворце (targetPalace) карты периода
+      // ОБЯЗАТЕЛЬНО должны стоять Врата Жизни (生门). Если в targetPalace стоят
+      // другие врата (Смерть, Ранение, Открытие и т.д.) — структура НЕ формируется.
+      if (!hasSheng) continue;
+
       if (cfg.code === "B1" || cfg.code === "B2" || cfg.code === "B3") {
         matched = hasSheng && hasJiu;
       } else if (cfg.code === "B4") {
-        matched = (hasJiu && hasZhi) || (hasSheng && (hasJiu || hasZhi));
+        matched = hasSheng && ((hasJiu && hasZhi) || hasJiu || hasZhi);
       } else if (cfg.code === "B5") {
         matched = hasSheng && hasZhi;
       } else if (cfg.code === "B6") {
@@ -362,14 +367,18 @@ export function computeThreeVictories(params: {
         const isBird = checkBirdInNest(hCell.heavenStem, hCell.earthStem);
 
         let hourMatched = false;
-        if (cfg.code === "B1" || cfg.code === "B2" || cfg.code === "B3") {
-          hourMatched = hasSheng && hasJiu;
+
+        // КРИТИЧЕСКОЕ ПРАВИЛО: В целевом дворце карты ЧАСА обязательно Врата Жизни (生门).
+        if (!hasSheng) {
+          hourMatched = false;
+        } else if (cfg.code === "B1" || cfg.code === "B2" || cfg.code === "B3") {
+          hourMatched = hasJiu;
         } else if (cfg.code === "B4") {
-          hourMatched = (hasJiu && hasZhi) || (hasSheng && (hasJiu || hasZhi));
+          hourMatched = hasJiu || hasZhi;
         } else if (cfg.code === "B5") {
-          hourMatched = hasSheng && hasZhi;
+          hourMatched = hasZhi;
         } else if (cfg.code === "B6") {
-          hourMatched = hasSheng && (hasJiu || hasZhi);
+          hourMatched = hasJiu || hasZhi;
         }
 
         if (hourMatched) {
@@ -409,16 +418,27 @@ export function computeThreeVictories(params: {
         let comboMatched = false;
         let badgeDesc = "";
 
-        if (cfg.code === "B1" || cfg.code === "B2" || cfg.code === "B3") {
-          if (dSheng && hJiu) {
+        // КРИТИЧЕСКОЕ ПРАВИЛО: Врата Жизни (生门) ОБЯЗАТЕЛЬНО должны стоять
+        // в целевом дворце карты ЧАСА (оперативная карта периода), где
+        // активируется структура. Без них в варианте структура не формируется.
+        const shengOk = hSheng;
+
+        if (!shengOk) {
+          comboMatched = false;
+        } else if (cfg.code === "B1" || cfg.code === "B2" || cfg.code === "B3") {
+          if (hJiu) {
+            comboMatched = true;
+            badgeDesc = "Врата Жизни (Час) + 9 Небес (Час)";
+          } else if (dSheng && hJiu) {
             comboMatched = true;
             badgeDesc = "Врата Жизни (День) + 9 Небес (Час)";
-          } else if (dJiu && hSheng) {
-            comboMatched = true;
-            badgeDesc = "9 Небес (День) + Врата Жизни (Час)";
           }
         } else if (cfg.code === "B4") {
-          if (dJiu && hZhi) {
+          // Требуются Духи в целевом дворце + Врата Жизни в карте часа.
+          if (hJiu && hZhi) {
+            comboMatched = true;
+            badgeDesc = "Врата Жизни (Час) + 9 Небес и Главный Дух (Час)";
+          } else if (dJiu && hZhi) {
             comboMatched = true;
             badgeDesc = "9 Небес (День) + Главный Дух (Час)";
           } else if (dZhi && hJiu) {
@@ -426,7 +446,10 @@ export function computeThreeVictories(params: {
             badgeDesc = "Главный Дух (День) + 9 Небес (Час)";
           }
         } else if (cfg.code === "B5") {
-          if (dSheng && hZhi) {
+          if (hZhi) {
+            comboMatched = true;
+            badgeDesc = "Врата Жизни (Час) + Главный Дух (Час)";
+          } else if (dSheng && hZhi) {
             comboMatched = true;
             badgeDesc = "Врата Жизни (День) + Главный Дух (Час)";
           } else if (dZhi && hSheng) {
@@ -434,7 +457,10 @@ export function computeThreeVictories(params: {
             badgeDesc = "Главный Дух (День) + Врата Жизни (Час)";
           }
         } else if (cfg.code === "B6") {
-          if (dSheng && (hJiu || hZhi)) {
+          if (hJiu || hZhi) {
+            comboMatched = true;
+            badgeDesc = `Врата Жизни (Час) + ${hJiu ? "9 Небес" : "Главный Дух"} (Час)`;
+          } else if (dSheng && (hJiu || hZhi)) {
             comboMatched = true;
             badgeDesc = `Врата Жизни (День) + ${hJiu ? "9 Небес" : "Главный Дух"} (Час)`;
           } else if ((dJiu || dZhi) && hSheng) {
@@ -481,16 +507,26 @@ export function computeThreeVictories(params: {
         let monthDayMatched = false;
         let mdBadge = "";
 
-        if (cfg.code === "B1" || cfg.code === "B2" || cfg.code === "B3") {
-          if (mSheng && dJiu) {
+        // КРИТИЧЕСКОЕ ПРАВИЛО: Врата Жизни (生门) ОБЯЗАТЕЛЬНО должны стоять
+        // в целевом дворце карты МЕСЯЦА (оперативная карта периода для
+        // уровня month_day). Без них структура не формируется.
+        const shengOk = mSheng;
+
+        if (!shengOk) {
+          monthDayMatched = false;
+        } else if (cfg.code === "B1" || cfg.code === "B2" || cfg.code === "B3") {
+          if (mJiu) {
+            monthDayMatched = true;
+            mdBadge = "Врата Жизни (Месяц) + 9 Небес (Месяц)";
+          } else if (mSheng && dJiu) {
             monthDayMatched = true;
             mdBadge = "Врата Жизни (Месяц) + 9 Небес (День)";
-          } else if (mJiu && dSheng) {
-            monthDayMatched = true;
-            mdBadge = "9 Небес (Месяц) + Врата Жизни (День)";
           }
         } else if (cfg.code === "B4") {
-          if (mJiu && dZhi) {
+          if (mJiu && mZhi) {
+            monthDayMatched = true;
+            mdBadge = "Врата Жизни (Месяц) + 9 Небес и Главный Дух (Месяц)";
+          } else if (mJiu && dZhi) {
             monthDayMatched = true;
             mdBadge = "9 Небес (Месяц) + Главный Дух (День)";
           } else if (mZhi && dJiu) {
@@ -498,7 +534,10 @@ export function computeThreeVictories(params: {
             mdBadge = "Главный Дух (Месяц) + 9 Небес (День)";
           }
         } else if (cfg.code === "B5") {
-          if (mSheng && dZhi) {
+          if (mZhi) {
+            monthDayMatched = true;
+            mdBadge = "Врата Жизни (Месяц) + Главный Дух (Месяц)";
+          } else if (mSheng && dZhi) {
             monthDayMatched = true;
             mdBadge = "Врата Жизни (Месяц) + Главный Дух (День)";
           } else if (mZhi && dSheng) {
@@ -506,7 +545,10 @@ export function computeThreeVictories(params: {
             mdBadge = "Главный Дух (Месяц) + Врата Жизни (День)";
           }
         } else if (cfg.code === "B6") {
-          if (mSheng && (dJiu || dZhi)) {
+          if (mJiu || mZhi) {
+            monthDayMatched = true;
+            mdBadge = `Врата Жизни (Месяц) + ${mJiu ? "9 Небес" : "Главный Дух"} (Месяц)`;
+          } else if (mSheng && (dJiu || dZhi)) {
             monthDayMatched = true;
             mdBadge = `Врата Жизни (Месяц) + ${dJiu ? "9 Небес" : "Главный Дух"} (День)`;
           } else if ((mJiu || mZhi) && dSheng) {

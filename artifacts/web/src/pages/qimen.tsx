@@ -80,7 +80,9 @@ type ScheduledPublication =
   | { kind: "tiger"; item: QimenTigerDun }
   | { kind: "noble"; item: QimenNobleHelperDoor }
   | { kind: "general"; item: QimenStructure }
-  | { kind: "victory"; item: any };
+  | { kind: "victory"; item: any }
+  | { kind: "bird"; item: any }
+  | { kind: "dragon"; item: any };
 
 function compareSchedule(
   left: { date: string; hourBranch: number },
@@ -1887,6 +1889,20 @@ export default function QimenPage() {
                     <NobleHelperDoorCard
                       key={`noble-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.nobleKind}-${index}`}
                       item={publication.item}
+                    />
+                  );
+                                case "bird":
+                  return (
+                    <BirdInNestCard
+                      key={`bird-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`}
+                      hit={publication.item}
+                    />
+                  );
+                case "dragon":
+                  return (
+                    <DragonTurnsHeadCard
+                      key={`dragon-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`}
+                      hit={publication.item}
                     />
                   );
                 case "victory":
