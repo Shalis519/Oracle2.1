@@ -20,7 +20,7 @@ import {
   xunInfo,
 } from "./calendar";
 import { buildChart, buildPeriodMap, type PalaceCell } from "./chart";
-import { monthJoeyYapJuForDate, monthPillarForDate } from "./ju";
+import { monthJoeyYapJuForDate, monthPillarForDate, dayJoeyYapJuForDate } from "./ju";
 import {
   detectDragonTurnsHead,
   detectFlyingBirdFallsIntoCave,
@@ -375,6 +375,17 @@ function localCalendarNoon(
       0,
     );
   }
+}
+
+
+function buildDayChart(date: Date) {
+  const dInfo = dayInfo(date);
+  const pillar = {
+    stem: dInfo.stem,
+    branch: dInfo.branch,
+    label: `${STEMS[dInfo.stem]} ${BRANCHES[dInfo.branch]}`,
+  };
+  return buildPeriodMap(date, "day", pillar, dayJoeyYapJuForDate(date));
 }
 
 function buildMonthChart(date: Date): QimenMonthChart {
@@ -1221,11 +1232,45 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
 
 // Расчет структуры «Три Победы» (三胜)
   const threeVictoryDaysHours: DayHourCheckItem[] = [];
+  const monthCharts: any[] = [];
+  
   if (birthChart) {
+    // 1. Месячные расклады на 3 месяца вперёд (текущий + 2 следующих)
+    for (let mOffset = 0; mOffset < 3; mOffset++) {
+      const mDate = new Date(from.getFullYear(), from.getMonth() + mOffset, 15, 12, 0, 0);
+      const mChart = buildMonthChart(mDate);
+      (mChart as any).date = mDate;
+      monthCharts.push(mChart);
+    }
+
+    // 2. Дни и двухчасовки с картой дня
     const tvStart = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 12, 0, 0);
     for (let d = 0; d < days; d++) {
       const date = new Date(tvStart);
       date.setDate(tvStart.getDate() + d);
+
+      // Строим суточную карту дня
+      let dayPMap: Record<number, ChartPalaceInfo> = {};
+      try {
+        const dChart = buildDayChart(date);
+        for (let p = 1; p <= 9; p++) {
+          if (p === 5) continue;
+          const cell = dChart.cells[p];
+          if (cell) {
+            dayPMap[p] = {
+              palace: p,
+              doorName: cell.door?.name,
+              deityName: cell.deity,
+              heavenStem: cell.heavenStem,
+              earthStem: cell.earthStem,
+              starName: cell.star?.name,
+            };
+          }
+        }
+      } catch (e) {
+        console.error("Error building day chart for Three Victories:", e);
+      }
+
       for (const slot of CHRONOLOGICAL_HOUR_SLOTS) {
         const chartDate =
           slot.branch === 0 && slot.lateZi
@@ -1252,6 +1297,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           level: "day_hour",
           levelLabel: "День + Час",
           palaces: pMap,
+          dayPalaces: dayPMap,
         });
       }
     }
@@ -1260,6 +1306,7 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
   const threeVictories = computeThreeVictories({
     birthChart,
     monthChart,
+    monthCharts,
     daysAndHours: threeVictoryDaysHours,
     now: from,
   });

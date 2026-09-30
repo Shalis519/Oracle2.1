@@ -79,7 +79,8 @@ type ScheduledPublication =
   | { kind: "wind"; item: QimenWindDun }
   | { kind: "tiger"; item: QimenTigerDun }
   | { kind: "noble"; item: QimenNobleHelperDoor }
-  | { kind: "general"; item: QimenStructure };
+  | { kind: "general"; item: QimenStructure }
+  | { kind: "victory"; item: any };
 
 function compareSchedule(
   left: { date: string; hourBranch: number },
@@ -214,7 +215,8 @@ type StructureInfoKind =
   | "tiger"
   | "bird"
   | "dragon"
-  | "general";
+  | "general"
+  | "victory";
 
 function StructureInfoContent({ kind }: { kind: StructureInfoKind }) {
       if (kind === "dragon") {
@@ -283,6 +285,23 @@ function StructureInfoContent({ kind }: { kind: StructureInfoKind }) {
               Выходить из сектора можно не более чем на 5 минут и только по неотложным делам.
             </li>
           </ol>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "victory") {
+    return (
+      <div className="space-y-4 text-sm leading-relaxed text-foreground/90">
+        <div className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-500/5 p-3">
+          <p className="font-semibold text-fuchsia-200">
+            🏆 Структура «Три Победы»
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Эта формула напрямую связана с Вашей личной картой Ци Мэнь Дунь
+            Цзя. Используйте ее, если Вам надо решить актуальные задачи с помощью
+            сильных энергий ЦИ.
+          </p>
         </div>
       </div>
     );
@@ -1201,6 +1220,69 @@ function JadeMaidenCard({ m }: { m: QimenJadeMaiden }) {
   );
 }
 
+function ThreeVictoriesCard({ item }: { item: any }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Card className="bg-card/40 backdrop-blur-md border-fuchsia-400/30">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="font-serif text-lg">
+              <StructureInfoDialog
+                kind="victory"
+                title="Структура «Три Победы»"
+              />
+            </CardTitle>
+            <span className="shrink-0 rounded-full bg-fuchsia-400/15 px-3 py-1 text-xs font-medium text-fuchsia-200">
+              {formatDate(item.date)}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-start gap-2 text-sm">
+            <Target className="mt-0.5 h-4 w-4 shrink-0 text-fuchsia-300/80" />
+            <p className="leading-relaxed">
+              <span className="font-medium">Цель:</span> {item.goal}.
+            </p>
+          </div>
+          <div className="flex items-start gap-2 text-sm">
+            <Compass className="mt-0.5 h-4 w-4 shrink-0 text-fuchsia-300/80" />
+            <p className="leading-relaxed">
+              Сектор{" "}
+              <span className="font-semibold text-fuchsia-200">
+                {item.direction}
+              </span>{" "}
+              в {item.hourLabel}.
+            </p>
+          </div>
+          <p className="rounded-lg border border-fuchsia-400/15 bg-fuchsia-400/5 p-3 text-sm leading-relaxed text-fuchsia-100/90">
+            {item.instruction}
+          </p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-100">
+              Уровень: {item.levelLabel}
+            </span>
+            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-100">
+              Врата: Врата Жизни
+            </span>
+            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-100">
+              Дух: {item.deity}
+            </span>
+            {item.isBirdInNest ? (
+              <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-100">
+                Птица падает в гнездо ✨
+              </span>
+            ) : null}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 function FiveBattalionsCard({ hit }: { hit: QimenFiveBattalion }) {
   return (
     <motion.div
@@ -1617,6 +1699,7 @@ export default function QimenPage() {
     ...tigerDuns.map((item) => ({ kind: "tiger" as const, item })),
     ...((data as any)?.birdsInNest ?? []).map((item: any) => ({ kind: "bird" as const, item })),
     ...((data as any)?.dragonsTurnHead ?? []).map((item: any) => ({ kind: "dragon" as const, item })),
+    ...((data as any)?.threeVictories ?? []).map((item: any) => ({ kind: "victory" as const, item })),
     ...nobleHelperDoors.map((item) => ({ kind: "noble" as const, item })),
     ...structures.map((item) => ({ kind: "general" as const, item })),
   ].sort((left, right) => compareSchedule(left.item, right.item));
@@ -1803,6 +1886,13 @@ export default function QimenPage() {
                   return (
                     <NobleHelperDoorCard
                       key={`noble-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${publication.item.nobleKind}-${index}`}
+                      item={publication.item}
+                    />
+                  );
+                case "victory":
+                  return (
+                    <ThreeVictoriesCard
+                      key={`victory-${publication.item.date}-${publication.item.hourBranch}-${publication.item.dom}-${index}`}
                       item={publication.item}
                     />
                   );
