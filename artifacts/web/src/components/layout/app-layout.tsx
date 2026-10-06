@@ -18,7 +18,8 @@ import {
   User,
   BookHeart,
   Sparkles,
-  BrainCircuit
+  BrainCircuit,
+  Library,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     { href: "/fengshui", label: "Фэн-шуй", icon: Wind },
     { href: "/tarot", label: "Таро", icon: Star },
     { href: "/dreams", label: "Сны и сонник", icon: Moon },
+    { href: "/media", label: "Медиатека", icon: Library },
     { href: "/journal", label: "Мой дневник", icon: BookHeart },
     { href: "/psychology", label: "Психология", icon: BrainCircuit },
     { href: "/contacts", label: "Контакты", icon: Users },

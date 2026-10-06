@@ -25,6 +25,7 @@ const TravelPage = lazy(() => import("./pages/travel"));
 const TarotPage = lazy(() => import("./pages/tarot"));
 const JournalPage = lazy(() => import("./pages/journal"));
 const PsychologyPage = lazy(() => import("./pages/psychology"));
+const MediaPage = lazy(() => import("./pages/media"));
 import PrivacyPage from "./pages/privacy";
 import PrivacyPolicyPage from "./pages/privacy-policy";
 import TermsOfServicePage from "./pages/terms-of-service";
@@ -258,6 +259,7 @@ const APP_SHELL_PREFIXES = [
   "/habits",
   "/travel",
   "/tarot",
+  "/media",
 ];
 
 /**
@@ -348,6 +350,7 @@ function ClerkProviderWithRoutes() {
             <Route path="/fengshui" component={() => <ProtectedRoute component={FengShuiPage} />} />
             <Route path="/contacts" component={() => <ProtectedRoute component={ContactsPage} />} />
             <Route path="/dreams" component={() => <ProtectedRoute component={DreamsPage} />} />
+            <Route path="/media" component={() => <ProtectedRoute component={MediaPage} />} />
             <Route path="/journal" component={() => <ProtectedRoute component={JournalPage} />} />
             <Route path="/psychology" component={() => <ProtectedRoute component={PsychologyPage} />} />
             <Route path="/admin/studio" component={() => <ProtectedRoute component={AdminStudioPage} />} />
