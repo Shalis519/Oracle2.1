@@ -18,10 +18,6 @@ export default function MediaPage() {
           <Library className="h-9 w-9 text-secondary" />
           <h1 className="font-serif text-4xl font-bold">Медиатека</h1>
         </div>
-        <p className="max-w-2xl text-muted-foreground">
-          Видео и аудиопрактики с YouTube-канала проекта. Сейчас здесь доступен
-          плейлист «Саблиминалы».
-        </p>
       </motion.div>
 
       <motion.div
