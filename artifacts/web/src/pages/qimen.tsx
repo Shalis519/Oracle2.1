@@ -224,9 +224,6 @@ function StructureInfoContent({ kind }: { kind: StructureInfoKind }) {
   if (kind === "dragon") {
     return (
       <div className="space-y-4 text-sm leading-relaxed text-foreground/90">
-        <p className="font-semibold text-amber-200">
-          🐉 «ЗЕЛЕНЫЙ ДРАКОН ПОВОРАЧИВАЕТ ГОЛОВУ»
-        </p>
         <div className="space-y-1">
           <p className="font-semibold text-amber-200">Используйте для:</p>
           <p>🏆 успеха во всех делах</p>
