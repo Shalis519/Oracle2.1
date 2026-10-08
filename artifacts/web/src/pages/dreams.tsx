@@ -28,11 +28,15 @@ export default function DreamsPage() {
       {
         onSuccess: () => {
           setDreamText("");
-          toast({ title: "Сон сохранен и интерпретирован" });
+          toast({ title: "Сон сохранен и проанализирован" });
           queryClient.invalidateQueries({ queryKey: getListDreamsQueryKey() });
         },
-        onError: () => {
-          toast({ title: "Ошибка при сохранении", variant: "destructive" });
+        onError: (error) => {
+          toast({
+            title: "Не удалось проанализировать сон",
+            description: error instanceof Error ? error.message : "Попробуйте повторить позже.",
+            variant: "destructive",
+          });
         }
       }
     );
@@ -58,7 +62,7 @@ export default function DreamsPage() {
           <Moon className="text-secondary" />
           Сны и сонник
         </h1>
-        <p className="text-muted-foreground">Дневник сновидений с мистической интерпретацией.</p>
+        <p className="text-muted-foreground">Дневник сновидений с бережным психологическим анализом.</p>
       </motion.div>
 
       <Card className="bg-card/40 backdrop-blur-md shadow-lg border-secondary/20">
@@ -71,8 +75,11 @@ export default function DreamsPage() {
               onChange={(e) => setDreamText(e.target.value)}
               required
             />
+            <p className="text-xs text-muted-foreground">
+              Для одного аккаунта доступно до 3 анализов сновидений в сутки.
+            </p>
             <Button type="submit" disabled={createDream.isPending} className="bg-secondary text-secondary-foreground hover:bg-secondary/90 w-full md:w-auto">
-              {createDream.isPending ? "Расшифровка..." : "Сохранить и расшифровать"}
+              {createDream.isPending ? "ИИ анализирует сон..." : "Сохранить и проанализировать"}
               {!createDream.isPending && <Sparkles className="ml-2 w-4 h-4" />}
             </Button>
           </form>

@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { and, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import { db, dreamsTable, type Dream } from "@workspace/db";
 import {
   ListDreamsResponse,
@@ -8,7 +8,21 @@ import {
   DeleteDreamParams,
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
-import { interpretDream, todayString } from "../lib/oracle";
+import { DreamInterpreterError, interpretDreamWithAi } from "../lib/dreamInterpreter";
+
+const DAILY_DREAM_ANALYSIS_LIMIT = 3;
+const PROJECT_TIMEZONE = process.env.PROJECT_TIMEZONE ?? "Europe/Moscow";
+
+function projectDateString(): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: PROJECT_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
 
 const router: IRouter = Router();
 
@@ -42,15 +56,47 @@ router.post("/dreams", requireAuth, async (req, res): Promise<void> => {
     res.status(400).json({ error: "Опишите сон." });
     return;
   }
-  const { interpretation, keywords } = interpretDream(parsed.data.dreamText);
+  const today = projectDateString();
+  const [{ value: analysesToday }] = await db
+    .select({ value: count() })
+    .from(dreamsTable)
+    .where(
+      and(
+        eq(dreamsTable.userId, req.localUser!.id),
+        eq(dreamsTable.date, today),
+      ),
+    );
+
+  if (analysesToday >= DAILY_DREAM_ANALYSIS_LIMIT) {
+    res.status(429).json({
+      error:
+        "Вы использовали 3 анализа сновидений за сегодня. Новые интерпретации будут доступны после наступления следующих календарных суток.",
+    });
+    return;
+  }
+
+  let interpretation: string;
+  try {
+    const result = await interpretDreamWithAi(parsed.data.dreamText);
+    interpretation = result.interpretation;
+  } catch (error) {
+    if (error instanceof DreamInterpreterError) {
+      const status = error.code === "missing_key" ? 503 : 502;
+      res.status(status).json({ error: error.message });
+      return;
+    }
+    res.status(502).json({ error: "Не удалось завершить анализ сна." });
+    return;
+  }
+
   const [row] = await db
     .insert(dreamsTable)
     .values({
       userId: req.localUser!.id,
-      date: todayString(),
+      date: today,
       dreamText: parsed.data.dreamText,
       interpretation,
-      keywords,
+      keywords: [],
     })
     .returning();
   res.status(201).json(CreateDreamResponse.parse(serialize(row)));
