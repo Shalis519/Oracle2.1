@@ -20,10 +20,72 @@ const DREAM_SYSTEM_PROMPT = `Ты — психологический помощ�
 Дай глубокий, бережный и понятный анализ, но не выдавай его за единственно правильную трактовку. Не предсказывай будущее, не утверждай, что сон гарантирует событие, не ставь диагнозы и не делай медицинских, юридических или финансовых выводов. Не называй себя реальным врачом или психотерапевтом и не создавай впечатление, что анализ заменяет профессиональную помощь. Если в описании есть признаки сильного кризиса, самоповреждения или угрозы жизни, мягко укажи на важность обращения за срочной поддержкой, не ставя диагноз.`;
 
 export class DreamInterpreterError extends Error {
-  constructor(message: string, public readonly code: "missing_key" | "provider" | "empty_response") {
+  constructor(
+    message: string,
+    public readonly code:
+      | "missing_key"
+      | "provider"
+      | "quota"
+      | "rate_limit"
+      | "empty_response",
+  ) {
     super(message);
     this.name = "DreamInterpreterError";
   }
+}
+
+async function getProviderError(response: Response): Promise<{
+  message: string;
+  code: "provider" | "quota" | "rate_limit";
+}> {
+  const raw = await response.text();
+  let providerMessage = "";
+  let providerCode = "";
+  try {
+    const parsed = JSON.parse(raw) as {
+      error?: { message?: unknown; code?: unknown; type?: unknown };
+    };
+    providerMessage = typeof parsed.error?.message === "string" ? parsed.error.message : "";
+    providerCode = typeof parsed.error?.code === "string" ? parsed.error.code : "";
+    if (!providerCode && typeof parsed.error?.type === "string") {
+      providerCode = parsed.error.type;
+    }
+  } catch {
+    // Некоторые шлюзы возвращают обычный текст.
+  }
+
+  const lower = `${providerCode} ${providerMessage}`.toLowerCase();
+  if (
+    response.status === 429 &&
+    (lower.includes("quota") || lower.includes("billing") || lower.includes("credit"))
+  ) {
+    return {
+      code: "quota",
+      message:
+        "У ключа внешнего ИИ закончилась доступная квота или не подключён биллинг. Проверьте лимиты API-аккаунта, затем повторите попытку.",
+    };
+  }
+
+  if (response.status === 429) {
+    return {
+      code: "rate_limit",
+      message:
+        "Внешний ИИ временно ограничил частоту запросов. Подождите немного и повторите попытку.",
+    };
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    return {
+      code: "provider",
+      message:
+        "Ключ внешнего ИИ недействителен или не имеет доступа к API. Проверьте DREAMS_KEY в Render.",
+    };
+  }
+
+  return {
+    code: "provider",
+    message: `Внешний сервис анализа временно недоступен (код ${response.status}).`,
+  };
 }
 
 function extractResponseText(payload: unknown): string {
@@ -84,10 +146,8 @@ export async function interpretDreamWithAi(dreamText: string): Promise<{
     });
 
     if (!response.ok) {
-      throw new DreamInterpreterError(
-        `Внешний сервис анализа временно недоступен (код ${response.status}).`,
-        "provider",
-      );
+      const providerError = await getProviderError(response);
+      throw new DreamInterpreterError(providerError.message, providerError.code);
     }
 
     const payload = (await response.json()) as unknown;

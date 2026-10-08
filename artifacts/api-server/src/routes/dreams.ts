@@ -81,7 +81,11 @@ router.post("/dreams", requireAuth, async (req, res): Promise<void> => {
     interpretation = result.interpretation;
   } catch (error) {
     if (error instanceof DreamInterpreterError) {
-      const status = error.code === "missing_key" ? 503 : 502;
+      const status = error.code === "missing_key"
+        ? 503
+        : error.code === "quota" || error.code === "rate_limit"
+          ? 429
+          : 502;
       res.status(status).json({ error: error.message });
       return;
     }
