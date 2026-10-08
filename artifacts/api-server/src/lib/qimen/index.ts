@@ -1,5 +1,10 @@
 export type { QimenThreeVictory, VictoryComponent, VictoryLevel } from "./threeVictories";
-import { computeThreeVictories, type DayHourCheckItem, type ChartPalaceInfo } from "./threeVictories";
+import {
+  computeThreeVictories,
+  type ChartPalaceInfo,
+  type DayHourCheckItem,
+  type QimenThreeVictory,
+} from "./threeVictories";
 // Qi Men Dun Jia — public entry: scan an N-day window for personal walk structures.
 import {
   BRANCH_ANIMAL_RU,
@@ -383,6 +388,7 @@ function buildDayChart(date: Date) {
   const pillar = {
     stem: dInfo.stem,
     branch: dInfo.branch,
+    index: dInfo.index,
     label: `${STEMS[dInfo.stem]} ${BRANCHES[dInfo.branch]}`,
   };
   return buildPeriodMap(date, "day", pillar, dayJoeyYapJuForDate(date));
@@ -1259,11 +1265,11 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           if (cell) {
             dayPMap[p] = {
               palace: p,
-              doorName: cell.door?.name,
+              doorName: cell.door,
               deityName: cell.deity,
               heavenStem: cell.heavenStem,
               earthStem: cell.earthStem,
-              starName: cell.star?.name,
+              starName: cell.star,
             };
           }
         }
@@ -1283,11 +1289,11 @@ export function computeQimenStructures(opts: ComputeOptions = {}): QimenResult {
           const cell = slotChart.cells[p];
           pMap[p] = {
             palace: p,
-            doorName: cell.door?.name,
+            doorName: cell.door,
             deityName: cell.deity,
             heavenStem: cell.heavenStem,
             earthStem: cell.earthStem,
-            starName: cell.star?.name,
+            starName: cell.star,
           };
         }
         threeVictoryDaysHours.push({

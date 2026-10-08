@@ -19,15 +19,15 @@ describe("Qimen Three Victories (三胜)", () => {
   };
 
   const mockMonthChart: QimenMonthChart = {
-    yearGanZhi: "Bing Wu",
-    monthGanZhi: "Geng Yin",
-    solarTerm: "Yushui",
-    yinYang: "Yang",
-    structureNumber: 8,
-    leadLeaderStem: "Jia",
-    leadLeaderStar: "Tian Xin",
-    leadGateDoor: "Открытие",
-    cells: mockPalaces as any,
+    monthGz: "Geng Yin",
+    ju: 8,
+    yin: false,
+    fuYin: false,
+    zhiFuStar: "Tian Xin",
+    zhiShiDoor: "Открытие",
+    zhiFuPalace: 6,
+    zhiShiPalace: 1,
+    cells: Object.values(mockPalaces) as any,
   };
 
   const mockBirthChart: QimenBirthChart = {
