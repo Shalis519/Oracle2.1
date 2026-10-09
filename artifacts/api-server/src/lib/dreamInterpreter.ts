@@ -1,5 +1,6 @@
 const DREAM_PROMPT_VERSION = "dream-interpreter-v1";
-const DEFAULT_MODEL = "gpt-4o-mini";
+const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
+const DEFAULT_MODEL = "openrouter/free";
 const MAX_DREAM_LENGTH = 12000;
 
 const DREAM_SYSTEM_PROMPT = `Ты — психологический помощник по символическому анализу сновидений, использующий идеи аналитической психологии Карла Юнга.
@@ -78,7 +79,7 @@ async function getProviderError(response: Response): Promise<{
     return {
       code: "provider",
       message:
-        "Ключ внешнего ИИ недействителен или не имеет доступа к API. Проверьте DREAMS_KEY в Render.",
+        "Ключ OpenRouter недействителен или не имеет доступа к API. Проверьте OPENROUTER_API_KEY или DREAMS_KEY в Render.",
     };
   }
 
@@ -90,19 +91,16 @@ async function getProviderError(response: Response): Promise<{
 
 function extractResponseText(payload: unknown): string {
   if (!payload || typeof payload !== "object") return "";
-  const response = payload as { output_text?: unknown; output?: unknown };
-  if (typeof response.output_text === "string") return response.output_text.trim();
-
-  if (!Array.isArray(response.output)) return "";
-  return response.output
-    .flatMap((item) => {
-      if (!item || typeof item !== "object") return [];
-      const content = (item as { content?: unknown }).content;
-      return Array.isArray(content) ? content : [];
-    })
-    .map((item) => {
-      if (!item || typeof item !== "object") return "";
-      const text = (item as { text?: unknown }).text;
+  const response = payload as {
+    choices?: Array<{ message?: { content?: unknown } }>;
+  };
+  const content = response.choices?.[0]?.message?.content;
+  if (typeof content === "string") return content.trim();
+  if (!Array.isArray(content)) return "";
+  return content
+    .map((part) => {
+      if (!part || typeof part !== "object") return "";
+      const text = (part as { text?: unknown }).text;
       return typeof text === "string" ? text : "";
     })
     .filter(Boolean)
@@ -115,7 +113,7 @@ export async function interpretDreamWithAi(dreamText: string): Promise<{
   promptVersion: string;
   model: string;
 }> {
-  const apiKey = process.env.DREAMS_KEY?.trim();
+  const apiKey = (process.env.OPENROUTER_API_KEY || process.env.DREAMS_KEY)?.trim();
   if (!apiKey) {
     throw new DreamInterpreterError(
       "Сервис анализа сновидений пока не настроен.",
@@ -129,18 +127,21 @@ export async function interpretDreamWithAi(dreamText: string): Promise<{
   const timeout = setTimeout(() => controller.abort(), 60_000);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch(OPENROUTER_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
+        "HTTP-Referer": process.env.OPENROUTER_SITE_URL || "https://aether-oracle-web.onrender.com",
+        "X-OpenRouter-Title": "Этер Оракул",
       },
       body: JSON.stringify({
         model,
-        instructions: DREAM_SYSTEM_PROMPT,
-        input,
-        store: false,
-        max_output_tokens: 3000,
+        messages: [
+          { role: "system", content: DREAM_SYSTEM_PROMPT },
+          { role: "user", content: input },
+        ],
+        max_tokens: 3000,
       }),
       signal: controller.signal,
     });
