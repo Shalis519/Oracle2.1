@@ -1,6 +1,6 @@
 const DREAM_PROMPT_VERSION = "dream-interpreter-v1";
 const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
-const DEFAULT_MODEL = "openrouter/free";
+const DEFAULT_MODEL = "google/gemma-4-26b-a4b:free";
 const MAX_DREAM_LENGTH = 12000;
 
 const DREAM_SYSTEM_PROMPT = `Ты — психологический помощник по символическому анализу сновидений, использующий идеи аналитической психологии Карла Юнга.
