@@ -110,6 +110,13 @@ function checkBirdInNest(hStem?: string, eStem?: string): boolean {
   return (h === "丙" || h === "Bing") && (e === "戊" || e === "Wu" || e === "甲" || e === "Jia");
 }
 
+function sourceLevelLabel(description: string): string {
+  return description
+    .replace(/([^+]+?)\s+\((Час|День|Месяц)\)/g, "$2: $1")
+    .replace(/\s*\+\s*/g, " + ")
+    .trim();
+}
+
 export function computeThreeVictories(params: {
   birthChart: any;
   monthChart?: any;
@@ -325,7 +332,7 @@ export function computeThreeVictories(params: {
         addVictory({
           id: `tv_${cfg.code.toLowerCase()}_month_${p}_${mDate.getFullYear()}_${mDate.getMonth()}`,
           level: "month",
-          levelLabel: "Месячная структура",
+          levelLabel: sourceLevelLabel(`${cfg.doorLabel} (Месяц) + ${activeDeityLabel} (Месяц)`),
           badge: `${cfg.name}: ${cfg.badgeText}`,
           targetSectorName: targetInfo.sector,
           targetPalace: p,
@@ -385,7 +392,7 @@ export function computeThreeVictories(params: {
           addVictory({
             id: `tv_${cfg.code.toLowerCase()}_hour_${p}_${itemDate.getTime()}`,
             level: "day_hour",
-            levelLabel: "День + Час",
+            levelLabel: sourceLevelLabel(`${cfg.doorLabel} (Час) + ${cfg.deityLabel} (Час)`),
             badge: `${cfg.name}: ${cfg.badgeText}`,
             targetSectorName: targetInfo.sector,
             targetPalace: p,
@@ -474,7 +481,7 @@ export function computeThreeVictories(params: {
           addVictory({
             id: `tv_${cfg.code.toLowerCase()}_dhcombo_${p}_${itemDate.getTime()}`,
             level: "day_hour",
-            levelLabel: "День + Час",
+            levelLabel: sourceLevelLabel(badgeDesc),
             badge: `${cfg.name}: ${badgeDesc}`,
             targetSectorName: targetInfo.sector,
             targetPalace: p,
@@ -562,7 +569,7 @@ export function computeThreeVictories(params: {
           addVictory({
             id: `tv_${cfg.code.toLowerCase()}_monthday_${p}_${itemDate.getTime()}`,
             level: "month_day",
-            levelLabel: "Месяц + День",
+            levelLabel: sourceLevelLabel(mdBadge),
             badge: `${cfg.name}: ${mdBadge}`,
             targetSectorName: targetInfo.sector,
             targetPalace: p,
