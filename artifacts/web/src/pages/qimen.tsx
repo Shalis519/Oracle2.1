@@ -1244,22 +1244,9 @@ function ThreeVictoriesCard({ item }: { item: any }) {
           <p className="rounded-lg border border-fuchsia-400/15 bg-fuchsia-400/5 p-3 text-sm leading-relaxed text-fuchsia-100/90">
             {item.instruction}
           </p>
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-100">
-              Уровень: {item.levelLabel}
-            </span>
-            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-100">
-              Врата: Врата Жизни
-            </span>
-            <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-100">
-              Дух: {item.deity}
-            </span>
-            {item.isBirdInNest ? (
-              <span className="rounded-full bg-fuchsia-400/10 px-2 py-0.5 text-xs text-fuchsia-100">
-                Птица падает в гнездо ✨
-              </span>
-            ) : null}
-          </div>
+          <p className="text-sm leading-relaxed text-fuchsia-100/90">
+            {item.levelLabel}
+          </p>
         </CardContent>
       </Card>
     </motion.div>
