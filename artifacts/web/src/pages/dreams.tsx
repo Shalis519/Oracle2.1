@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useListDreams, useCreateDream, useDeleteDream, getListDreamsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,68 @@ import { motion } from "framer-motion";
 import { Moon, Sparkles, Trash2, Key } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
+
+function formatInline(text: string): ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={index} className="font-semibold text-foreground">{part.slice(2, -2)}</strong>;
+    }
+    return <span key={index}>{part.replace(/\*\*/g, "")}</span>;
+  });
+}
+
+function normalizeInterpretation(text: string): string {
+  return text
+    .replace(/\r\n/g, "\n")
+    .replace(/\s*---\s*/g, "\n\n")
+    .replace(/\s*###\s*/g, "\n\n")
+    .replace(/\s+(?=(?:\d+\.)\s)/g, "\n\n")
+    .replace(/\s+\*\s+(?=\*\*?)/g, "\n- ")
+    .replace(/[ \t]+\n/g, "\n")
+    .trim();
+}
+
+function InterpretationText({ text }: { text: string }) {
+  const blocks = normalizeInterpretation(text)
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  return (
+    <div className="space-y-4 break-words text-[15px] leading-7 [overflow-wrap:anywhere]">
+      {blocks.map((block, index) => {
+        const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
+        const isHeading = /^(?:\d+\.|#{1,4}\s)/.test(lines[0]);
+        const listLines = lines.filter((line) => /^[-*•]\s+/.test(line));
+
+        if (isHeading) {
+          const heading = lines[0].replace(/^#{1,4}\s*/, "");
+          return (
+            <h5 key={index} className="pt-1 text-base font-semibold leading-6 text-secondary">
+              {formatInline(heading)}
+            </h5>
+          );
+        }
+
+        if (listLines.length === lines.length && listLines.length > 0) {
+          return (
+            <ul key={index} className="list-disc space-y-1 pl-5 marker:text-secondary">
+              {listLines.map((line, itemIndex) => (
+                <li key={itemIndex}>{formatInline(line.replace(/^[-*•]\s+/, ""))}</li>
+              ))}
+            </ul>
+          );
+        }
+
+        return (
+          <p key={index} className="whitespace-pre-line">
+            {formatInline(lines.join("\n"))}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function DreamsPage() {
   const { data: dreams, isLoading } = useListDreams();
@@ -114,7 +176,7 @@ export default function DreamsPage() {
                     <h4 className="font-bold flex items-center gap-2 mb-2 text-secondary">
                       <Sparkles className="w-4 h-4" /> Толкование
                     </h4>
-                    <p className="text-sm leading-relaxed">{dream.interpretation}</p>
+                    <InterpretationText text={dream.interpretation} />
                   </div>
                   
                   {dream.keywords && dream.keywords.length > 0 && (
