@@ -1,6 +1,6 @@
 const DREAM_PROMPT_VERSION = "dream-interpreter-v1";
 const GOOGLE_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
-const DEFAULT_MODEL = "gemini-3.8-flash";
+const DEFAULT_MODEL = "gemini-2.5-flash";
 const MAX_DREAM_LENGTH = 12000;
 
 const DREAM_SYSTEM_PROMPT = `Ты — психологический помощник по символическому анализу сновидений, использующий идеи аналитической психологии Карла Юнга.
