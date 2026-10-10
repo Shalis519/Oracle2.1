@@ -1,6 +1,6 @@
 const DREAM_PROMPT_VERSION = "dream-interpreter-v1";
-const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
-const DEFAULT_MODEL = "google/gemma-4-26b-a4b:free";
+const GOOGLE_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+const DEFAULT_MODEL = "gemini-2.5-flash";
 const MAX_DREAM_LENGTH = 12000;
 
 const DREAM_SYSTEM_PROMPT = `Ты — психологический помощник по символическому анализу сновидений, использующий идеи аналитической психологии Карла Юнга.
@@ -52,7 +52,7 @@ async function getProviderError(response: Response): Promise<{
       providerCode = parsed.error.type;
     }
   } catch {
-    // Некоторые шлюзы возвращают обычный текст.
+    // Шлюз вернул текст.
   }
 
   const lower = `${providerCode} ${providerMessage}`.toLowerCase();
@@ -63,7 +63,7 @@ async function getProviderError(response: Response): Promise<{
     return {
       code: "quota",
       message:
-        "У ключа внешнего ИИ закончилась доступная квота или не подключён биллинг. Проверьте лимиты API-аккаунта, затем повторите попытку.",
+        "У Google API ключа закончилась квота. Проверьте настройки в Google AI Studio.",
     };
   }
 
@@ -71,7 +71,7 @@ async function getProviderError(response: Response): Promise<{
     return {
       code: "rate_limit",
       message:
-        "Внешний ИИ временно ограничил частоту запросов. Подождите немного и повторите попытку.",
+        "Google временно ограничил частоту запросов. Подождите немного.",
     };
   }
 
@@ -79,13 +79,13 @@ async function getProviderError(response: Response): Promise<{
     return {
       code: "provider",
       message:
-        "Ключ OpenRouter недействителен или не имеет доступа к API. Проверьте OPENROUTER_API_KEY или DREAMS_KEY в Render.",
+        "Ключ Google API недействителен. Проверьте правильность ключа на Render.",
     };
   }
 
   return {
     code: "provider",
-    message: `Внешний сервис анализа временно недоступен (код ${response.status}).`,
+    message: `Сервис Google AI временно недоступен (код ${response.status}).`,
   };
 }
 
@@ -113,10 +113,11 @@ export async function interpretDreamWithAi(dreamText: string): Promise<{
   promptVersion: string;
   model: string;
 }> {
-  const apiKey = (process.env.OPENROUTER_API_KEY || process.env.DREAMS_KEY)?.trim();
+  // Ищем ключ Google (можно использовать GOOGLE_API_KEY или старый OPENROUTER_API_KEY)
+  const apiKey = (process.env.GOOGLE_API_KEY || process.env.OPENROUTER_API_KEY || process.env.DREAMS_KEY)?.trim();
   if (!apiKey) {
     throw new DreamInterpreterError(
-      "Сервис анализа сновидений пока не настроен.",
+      "Сервис анализа сновидений пока не настроен (отсутствует ключ API).",
       "missing_key",
     );
   }
@@ -127,13 +128,11 @@ export async function interpretDreamWithAi(dreamText: string): Promise<{
   const timeout = setTimeout(() => controller.abort(), 60_000);
 
   try {
-    const response = await fetch(OPENROUTER_ENDPOINT, {
+    const response = await fetch(GOOGLE_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
-        "HTTP-Referer": process.env.OPENROUTER_SITE_URL || "https://aether-oracle-web.onrender.com",
-        "X-OpenRouter-Title": "Этер Оракул",
       },
       body: JSON.stringify({
         model,
@@ -155,7 +154,7 @@ export async function interpretDreamWithAi(dreamText: string): Promise<{
     const interpretation = extractResponseText(payload);
     if (!interpretation) {
       throw new DreamInterpreterError(
-        "Внешний сервис не вернул интерпретацию.",
+        "Google API не вернул интерпретацию.",
         "empty_response",
       );
     }
@@ -164,7 +163,7 @@ export async function interpretDreamWithAi(dreamText: string): Promise<{
   } catch (error) {
     if (error instanceof DreamInterpreterError) throw error;
     throw new DreamInterpreterError(
-      "Не удалось связаться с внешним сервисом анализа.",
+      "Не удалось связаться с Google AI.",
       "provider",
     );
   } finally {
