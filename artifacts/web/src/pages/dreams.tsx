@@ -40,15 +40,20 @@ function InterpretationText({ text }: { text: string }) {
     <div className="space-y-4 break-words text-[15px] leading-7 [overflow-wrap:anywhere]">
       {blocks.map((block, index) => {
         const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
-        const isHeading = /^(?:\d+\.|#{1,4}\s)/.test(lines[0]);
+        const isHeading = /^(?:#{1,4}\s|(?:[1-7]\.\s+)(?:Общее впечатление|Главные образы|Эмоциональный фон|Возможная связь с реальной жизнью|Практическое применение|Примеры возможных жизненных ситуаций|Вопросы для саморефлексии))/i.test(lines[0]);
         const listLines = lines.filter((line) => /^[-*•]\s+/.test(line));
 
         if (isHeading) {
           const heading = lines[0].replace(/^#{1,4}\s*/, "");
           return (
-            <h5 key={index} className="pt-1 text-base font-semibold leading-6 text-secondary">
-              {formatInline(heading)}
-            </h5>
+            <div key={index} className="space-y-2">
+              <h5 className="pt-1 text-base font-semibold leading-6 text-secondary">
+                {formatInline(heading)}
+              </h5>
+              {lines.length > 1 ? (
+                <p className="whitespace-pre-line">{formatInline(lines.slice(1).join("\n"))}</p>
+              ) : null}
+            </div>
           );
         }
 
